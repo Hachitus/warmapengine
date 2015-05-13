@@ -7,8 +7,11 @@ War map engine for browsers in development. Project will move forward at its own
 
 ###NodeJS backend
 *Requirements*: npm install -g forever, npm install -g browserify, npm install -g babel, npm install -g babelify, npm install -g gulp, npm install-g browserify
+
 *start server* forever start app.js --uid warMapEngine --watchDirectory public
+
 *gulp compiler* gulp compile
+
 *gulp watcher* gulp watchAndCompile (unfortunately crashes when errors)
 
 ##Tests

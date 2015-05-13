@@ -1,3 +1,6 @@
+#Introduction
+War map engine for browsers in development. Project will move forward at its own phase. If interested contact me.
+
 #Readme
 ##Game development environment
 *URL*: warMapEngine.level7.fi

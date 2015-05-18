@@ -8,14 +8,14 @@ War map engine for browsers in development. Project will move forward at its own
 ###NodeJS backend
 *Requirements*: npm install -g forever, npm install -g browserify, npm install -g babel, npm install -g babelify, npm install -g gulp, npm install-g browserify
 
-*start server* forever start app.js --uid warMapEngine --watchDirectory public
+*start server* forever start --uid warMapEngine --watchDirectory public startApp.js
 
 *gulp compiler* gulp compile
 
 *gulp watcher* gulp watchAndCompile (unfortunately crashes when errors)
 
 ##Tests
-node_modules/mocha/bin/mocha map-spec.js --compilers js:mocha-traceur tests/test-spec.js
+node_modules/mocha/bin/mocha --compilers js:mocha-traceur tests/test-spec.js
 
 ##Style guide
 We use airbnb javascript style guide.

@@ -7,18 +7,12 @@
 import { createMap } from '../../components/factories/MapFactory.js';
 
 /* Read data from files, to use with testing */
+import { gameData } from '../../tests/data/gameData.js';
 import { typeData } from '../../tests/data/typeData.js';
-import { graphicData } from '../../tests/data/graphics.js';
-import { terrainData } from '../../tests/data/terrainData.js';
+import { mapData } from '../../tests/data/mapData.js';
 
-let convertedTerrainData = dataCoverterForTestData_terrain(terrainData);
-
-Hyvin tärkeää nyt miettiä, miten toi data pitäs olla organisoitu. Eli älä mieti koodin puolen implementointia vaan "interfacea"
-Voit väännellä dataa kyllä koodin puolella, kuten haluat.
-0. Mites mahdollinen API!? Se on ehkä tärkein osa tässä miettiä!
-1. Pitäskö olla yhdessä pötkössä, kuten nyt
-2. Pitäskö olla tree-mallisesti kuten testi-datassa
-3. Miten tietokanta siitä tykkää?
+/*
+1. Datat yhdessä pötkössä, kuten tää nykyinen testi-data. Eli noi testit datat tiedostoon ja pitää muuttaa oikeaan muotoon!
 
 You should use this data instead of the testData below. You should convert this data to suit the standards so that there
 is another class / module that handles the transformation and you define a good set of principle how it's done. Data in this:
@@ -27,14 +21,13 @@ is another class / module that handles the transformation and you define a good 
   "_id":"53837d49976fed3b240006b3",
   "coord":{"x":0,"y":0}
 }"
-What do we do with the _id and should that should be replaced with actual data, when we instantiate the objects. Though
-where that data comes from and is stored depends.
-debugger;
+What do we do with the _id and should that be replaced with actual data, when we instantiate the objects.
+
+Always request data from backend with gameID and turn, like: domain.fi/API/mapData/832948hfdjsh93/1
 
 /* ====== Tests ====== */
 describe("basic map - without plugins", function() {
-
-  let mapData = {
+  /*let mapData = {
     mapSize: { x: 100, y: 100 },
     pluginsToActivate: false,
     stages: [{
@@ -52,20 +45,7 @@ describe("basic map - without plugins", function() {
           objectGroups: [{
             type: "Objects_terrain",
             name: "TerrainBase", // I guess only for debugging?
-            typeImageData: {
-              images: [
-                "/assets/img/map/collection.png"
-              ],
-              "frames": [
-                [0,0,96,48],
-                [0,48,96,48],
-                [0,96,96,48],
-                [0,144,96,48],
-                [0,192,96,48],
-                [0,240,96,48]
-              ],
-              "imageSize":[96,48]
-            },
+            typeImageData: "terrainBase",
             objects: [{
                 name: "Plain",
                 coordinates: { x: 40, y: 40 },
@@ -92,20 +72,7 @@ describe("basic map - without plugins", function() {
           objectGroups: [{
             type: "Objects_unit",
             name: "Unit", // I guess only for debugging?
-            typeImageData: {
-              images: [
-                "/assets/img/map/collection.png"
-              ],
-              "frames": [
-                [0,0,96,48],
-                [0,48,96,48],
-                [0,96,96,48],
-                [0,144,96,48],
-                [0,192,96,48],
-                [0,240,96,48]
-              ],
-              "imageSize":[96,48]
-            },
+            typeImageData: "unit",
             objects: [{
               name: "Infantry 1",
               coordinates: { x: 60, y: 60 },
@@ -118,10 +85,11 @@ describe("basic map - without plugins", function() {
       }]
     }]
   };
+  */
 
 
   describe("=> make map", function() {
-    let map = createMap(mapData);
+    let map = createMap(gameData, mapData, typeData);
 
     it("=> exists", function(){
       expect(map).toBeDefined();
@@ -152,13 +120,3 @@ describe("basic map - without plugins", function() {
 
 
 /* some functions to help tests */
-function dataCoverterForTestData_terrain(jsonedData) {
-  /* strip the required data to the object and return it */
-  return jsonedData.objects.map(function(thisData) {
-    return {
-      objType: thisData.objType,
-      _id: thisData._id,
-      coord: thisData.coord
-    };
-  });
-}

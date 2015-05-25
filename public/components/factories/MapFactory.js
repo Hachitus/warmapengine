@@ -97,16 +97,18 @@ Coordinates are always defaulted to 0,0 if none are given.
 }
 */
 
-export function createMap(givenMapData) {
+export function createMap(gameDataArg, mapDataArg, typeDataArg) {
   console.log("============================================")
   var map = new Map();
   var basePath = "/var/www/warMapEngine/public/components/";
-  let mapData = (typeof givenMapData === "string") ? JSON.parse(givenMapData) : givenMapData;
-
+  let mapData = (typeof mapDataArg === "string") ? JSON.parse(mapDataArg) : mapDataArg;
+  let typeData = (typeof typeDataArg === "string") ? JSON.parse(typeDataArg) : typeDataArg;
+  let gameData = (typeof gameDataArg === "string") ? JSON.parse(gameDataArg) : gameDataArg;
+console.log("gameData", gameData.pluginsToActivate, gameData.pluginsToActivate.map)
   /* Activate plugins */
-  if(mapData.pluginsToActivate && mapData.pluginsToActivate.length > 0) {
+  if(gameData.pluginsToActivate.map && gameData.pluginsToActivate.map.length > 0) {
     Promise.all(
-          mapData.pluginsToActivate.map(x => System.import(x)))
+          gameData.pluginsToActivate.map.map(x => System.import(x)))
       .then(([module1, module2, module3]) => {
           console.log("all plugins loaded");
       }).catch(e => {
@@ -131,20 +133,20 @@ export function createMap(givenMapData) {
       }
 
       layerData.objectGroups.forEach( objectGroup => {
+        let spritesheet, objTypeData;
+        let spritesheetType = objectGroup.typeImageData;
+
+        if(spritesheetType) {
+          let spritesheetData = typeData.graphicData[spritesheetType];
+
+          objTypeData = typeData.objectData[spritesheetType][objType];
+          spritesheet = allSpritesheets.addSpritesheet(spritesheetData);
+        }
+
         objectGroup.objects.forEach( object => {
-          let imageData;
+          let currentFrameNumber = objTypeData.image;
 
-          /* If the object is a sprite */
-          if(objectGroup.typeImageData) {
-            imageData = {
-              spritesheet: allSpritesheets.addSpritesheet(objectGroup.typeImageData),
-              currentFrameNumber: object.imageData
-            };
-          } else {
-            imageData = object.imageData;
-          }
-
-          thisLayer.addChild( new functionsInObj[objectGroup.type]( object.coordinates, object.data, imageData.spritesheet, imageData.currentFrameNumber ) );
+          thisLayer.addChild( new functionsInObj[objectGroup.type]( object.coord, object.data, spritesheet, currentFrameNumber ) );
         });
       });
     });

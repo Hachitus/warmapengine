@@ -15,9 +15,8 @@ import { preload } from '/var/www/warMapEngine/public/components/preloading/prel
 /* test datas */
 import { typeData } from '/var/www/warMapEngine/public/tests/data/typeData';
 import { graphicData } from '/var/www/warMapEngine/public/tests/data/graphics';
-import { terrainData } from '/var/www/warMapEngine/public/tests/data/terrainData';
+import { gameData } from '/var/www/warMapEngine/public/tests/data/gameData';
 let spritesheetData = graphicData.terrainBase;
-let terrainObjectsData = terrainData.objects;
 
 let canvasEleID = "mapCanvas";
 let stageNamesAndEle = [{

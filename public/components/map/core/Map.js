@@ -50,13 +50,13 @@ export class Map {
     this.activeTickCB = false;
   }
   /* options.mapSize = new createjs.Rectangle*/
-  init(plugins) {
+  init(tickCB, plugins) {
     if(plugins) {
       this.activatePlugins(plugins);
     }
+    debugger;
     this.drawMap();
-    this.tickOn();
-
+    this.tickOn(tickCB);
 
     return this;
   }

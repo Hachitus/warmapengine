@@ -18,10 +18,19 @@
 
   <!-- include spec files here... -->
   <script src="spec/mapFactory-spec.js"></script>
+  <script src="spec/preloader-spec.js"></script>
 
 </head>
 
 <body>
-  <canvas id="mapCanvas" style="float:left"></canvas>
+  <script>
+    window.addEventListener("load", function() {
+      var canv = document.createElement('canvas');
+
+      canv.id = 'mapCanvas';
+      document.body.appendChild(canv);
+      document.getElementsByTagName('body')[0].appendChild(canv);
+    });
+  </script>
 </body>
 </html>

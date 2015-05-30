@@ -8,6 +8,7 @@ Map is the main class for constructing 2D map for strategy games
 */
 
 /* ===== 3rd party library imports ===== */
+//import { System } from 'systemjs';
 
 /* ====== Own module imports ====== */
 import { Map } from '../map/core/Map';
@@ -104,8 +105,9 @@ export function createMap(gameDataArg, mapDataArg, typeDataArg) {
   let mapData = (typeof mapDataArg === "string") ? JSON.parse(mapDataArg) : mapDataArg;
   let typeData = (typeof typeDataArg === "string") ? JSON.parse(typeDataArg) : typeDataArg;
   let gameData = (typeof gameDataArg === "string") ? JSON.parse(gameDataArg) : gameDataArg;
-console.log("gameData", gameData.pluginsToActivate, gameData.pluginsToActivate.map)
+
   /* Activate plugins */
+  /* The system does not work :(
   if(gameData.pluginsToActivate.map && gameData.pluginsToActivate.map.length > 0) {
     Promise.all(
           gameData.pluginsToActivate.map.map(x => System.import(x)))
@@ -115,10 +117,11 @@ console.log("gameData", gameData.pluginsToActivate, gameData.pluginsToActivate.m
         console.log(e.stack);
       });
   }
+  */
 
   /* We iterate through the given map data and create objects accordingly */
   mapData.stages.forEach( stageData => {
-    let thisStage = new functionsInObj[stageData.type](stageData.name);
+    let thisStage = new functionsInObj[stageData.type](stageData.name, document.querySelector( stageData.element ) );
 
     map.addStage( thisStage );
 
@@ -133,17 +136,25 @@ console.log("gameData", gameData.pluginsToActivate, gameData.pluginsToActivate.m
       }
 
       layerData.objectGroups.forEach( objectGroup => {
-        let spritesheet, objTypeData;
+        let spritesheet;
         let spritesheetType = objectGroup.typeImageData;
+
+        if(!spritesheetType) {
+          console.log("Error with spritesheetType-data");
+          return;
+        }
 
         if(spritesheetType) {
           let spritesheetData = typeData.graphicData[spritesheetType];
-
-          objTypeData = typeData.objectData[spritesheetType][objType];
+console.log("spritesheetList", spritesheetType, typeData.graphicData, spritesheetData)
           spritesheet = allSpritesheets.addSpritesheet(spritesheetData);
         }
 
         objectGroup.objects.forEach( object => {
+          let objTypeData = typeData.objectData[spritesheetType][object.objType];
+          if(!objTypeData) {
+            console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
+          }
           let currentFrameNumber = objTypeData.image;
 
           thisLayer.addChild( new functionsInObj[objectGroup.type]( object.coord, object.data, spritesheet, currentFrameNumber ) );

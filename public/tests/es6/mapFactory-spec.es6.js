@@ -27,6 +27,7 @@ Always request data from backend with gameID and turn, like: domain.fi/API/mapDa
 
 /* ====== Tests ====== */
 describe("basic map - without plugins", function() {
+  let mapCanvas = document.getElementById("mapCanvas");
   /*let mapData = {
     mapSize: { x: 100, y: 100 },
     pluginsToActivate: false,
@@ -105,12 +106,22 @@ describe("basic map - without plugins", function() {
       expect(map.stages[0].children.length > 0).toBeTruthy();
     });
     it("=> terrain properties are correct", function(){
-      debugger;
-      expect(map.getLayerNamed("terrainBaseLayer").children[0].x === 40).toBeTruthy();
+      expect(Number( map.getLayerNamed("terrainBaseLayer").children[1].y ) === 480).toBeTruthy();
       expect(map.getLayerNamed("terrainBaseLayer").children.length > 1).toBeTruthy();
     });
     it("=> unit properties are correct", function(){
-      expect(map.getLayerNamed("unitLayer").children[0].x === 60).toBeTruthy();
+      expect(Number( map.getLayerNamed("unitLayer").children[0].x ) === 60).toBeTruthy();
+    });
+    it("=> unit properties are correct", function(done){
+      map.init( tickDoneFunc );
+
+      function tickDoneFunc(tickDone) {
+        done();
+      }
+
+      expect( true ).toBeTruthy();
+
+
     });
   });
 

@@ -8,6 +8,18 @@ gulp.task('watchAndCompile', function() {
     gulp.watch('./public/initGame.es6.js', ['compile']);
 });
 
+gulp.task('compileTest_map', function() {
+  browserify({
+    entries: './public/tests/es6/map-spec.es6.js',
+    debug: true
+  })
+  .transform(babelify)
+  .bundle()
+  .on("error", function (err) { console.log("Error : " + err.message); })
+  .pipe(source('map-spec.js'))
+  .pipe(gulp.dest('./public/tests/spec'));
+});
+
 gulp.task('compileTest_mapFactory', function() {
   browserify({
     entries: './public/tests/es6/mapFactory-spec.es6.js',
@@ -32,4 +44,4 @@ gulp.task('compileTest_preloader', function() {
   .pipe(gulp.dest('./public/tests/spec'));
 });
 
-gulp.task('compileTest', ['compileTest_mapFactory', 'compileTest_preloader']);
+gulp.task('compileTest', ['compileTest_map']);

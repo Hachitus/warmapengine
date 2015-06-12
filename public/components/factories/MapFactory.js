@@ -100,11 +100,10 @@ Coordinates are always defaulted to 0,0 if none are given.
 
 export function createMap(gameDataArg, mapDataArg, typeDataArg) {
   console.log("============================================")
-  var map = new Map();
-  var basePath = "/var/www/warMapEngine/public/components/";
   let mapData = (typeof mapDataArg === "string") ? JSON.parse(mapDataArg) : mapDataArg;
   let typeData = (typeof typeDataArg === "string") ? JSON.parse(typeDataArg) : typeDataArg;
   let gameData = (typeof gameDataArg === "string") ? JSON.parse(gameDataArg) : gameDataArg;
+  let map = new Map({ mapSize: gameData.mapSize });
 
   /* Activate plugins */
   /* The system does not work :(
@@ -146,7 +145,7 @@ export function createMap(gameDataArg, mapDataArg, typeDataArg) {
 
         if(spritesheetType) {
           let spritesheetData = typeData.graphicData[spritesheetType];
-console.log("spritesheetList", spritesheetType, typeData.graphicData, spritesheetData)
+
           spritesheet = allSpritesheets.addSpritesheet(spritesheetData);
         }
 

@@ -16,7 +16,6 @@ import { Map_stage } from './Map_stage';
 import { Map_layer } from './Map_layer';
 import { validatorMod } from "./map_validators";
 
-
 /** ===== Private functions declared ===== */
 let privateFunctions = {
     _getStageIndex
@@ -41,12 +40,14 @@ let validators = {
  *    x: Number,
  *    y: Number
  * }
+ *
+ * Plugins are provided in an array of plugin functions
 */
 export class Map {
   constructor(options) {
     this.stages = [];
     this.plugins = [];
-    this.mapSize = (options && options.mapSize) || { x:0, y:0, width:0, height:0 };
+    this.mapSize = (options && options.mapSize) || { x:0, y:0 };
     this.activeTickCB = false;
   }
   /* options.mapSize = new createjs.Rectangle*/
@@ -54,7 +55,6 @@ export class Map {
     if(plugins) {
       this.activatePlugins(plugins);
     }
-    debugger;
     this.drawMap();
     this.tickOn(tickCB);
 
@@ -72,8 +72,8 @@ export class Map {
   getSize( ) {
       return this.mapSize;
   }
-  setSize(x1, y1, x2, y2) {
-    this.mapSize = { x:x1, y:y1, width:x2, height:y2 };
+  setSize(x1, y1) {
+    this.mapSize = { x:x1, y:y1 };
 
     return this.mapSize;
   }
@@ -135,7 +135,7 @@ export class Map {
   cacheMap() {
       this.stages.forEach(function(stage) {
           if(stage.cacheEnabled) {
-              this.cache(this.mapSize.x, this.mapSize.y);
+              this.cache(0, 0, this.mapSize.x, this.mapSize.y);
           }
       });
 
@@ -171,9 +171,10 @@ export class Map {
     Parameter pluginToUse.func.name is part of ES6 standard to get function name.
   }] */
   activatePlugins(pluginsArray) {
-    pluginsArray.forEach(function(pluginToUse) {
-      this.plugins[pluginToUse.func.name] = new pluginToUse.func(...pluginToUse.args);
-      this.plugins[pluginToUse.func.name].init();
+
+    pluginsArray.forEach(pluginToUse => {
+      this.plugins[pluginToUse.pluginName] = pluginToUse;
+      this.plugins[pluginToUse.pluginName].init(this);
     });
   }
   tickOn(tickCB) {

@@ -14,14 +14,29 @@
   <script src="lib/jasmine-2.3.4/boot.js"></script>
 <!-- ========== JASMINE LIBRARY END ========== -->
 
+<!-- ========== OTHER LIBRARIES ========== -->
+<script src="/assets/lib/webcomponents/webcomponents.min.js"></script>
+
   <!-- include source files here... -->
 
-  <!-- include spec files here... -->
-  <script src="spec/mapFactory-spec.js"></script>
-
+  <style>
+    html, body {
+      width: 100%;
+      height: 100%;
+      margin: 0px;
+      border: 0;
+      overflow: hidden; /*  Disable scrollbars */
+      display: block;  /* No floating content on sides */
+    }
+  </style>
 </head>
 
 <body>
-  <canvas id="mapCanvas" style="float:left"></canvas>
+  <canvas id="mapCanvas" height="600" width="1200">
+    Canvas not supported!
+  </canvas>
+
+  <!-- include spec files here... -->
+  <script src="spec/map-spec.js"></script>
 </body>
 </html>

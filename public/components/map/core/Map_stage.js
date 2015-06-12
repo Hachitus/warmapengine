@@ -6,6 +6,7 @@
 */
 
 import { validatorMod } from "./map_validators";
+import { addPrototype as mapFunc_addPrototype } from "./mapFunctions";
 
 /** ===== Private functions declared ===== */
 let privateFunctions = { };
@@ -26,6 +27,7 @@ export class Map_stage extends createjs.Stage {
     constructor(name, ...args) {
         super(...args);
 
+        this.superPrototype = this.constructor.prototype;
         this._cacheEnabled = true;
         this.name = "" + name; // For debugging AND getting children by name. Shows up in toString
         this.drawThisChild = true;
@@ -37,6 +39,8 @@ export class Map_stage extends createjs.Stage {
         this.mouseChildren = false;
         this.mouseEnabled = false;
         this.preventSelection = true;
+        this.movable = true;
+        this.interactive = false;
         this.autoClear = false;
         //this.drawRect = MAYBE THIS should be the area of the canvas size? So the whole stage isn't drawn only visible part?
     }
@@ -64,7 +68,8 @@ export class Map_stage extends createjs.Stage {
 
       return false;
     }
-};
+}
+Map_stage.prototype.addPrototype = mapFunc_addPrototype;
 
 /* The node-easel, nor minified easeljs doesn't have the SpriteStage (and node doesn't have the extend) */
 

@@ -7,17 +7,18 @@ describe("basic map - without plugins", function() {
     expect(preload).toBeDefined();
   });
 
-  new preload( false )
-    .setErrorHandler( preloadErrorHandler )
-    //.setProgressHandler( progressHandler )
-    .loadManifest( ["assets/img/map/collection.png"])
-    .resolveOnComplete()
-    .then(runWhenComplete);
-
-  it("=> completes", function(done){
+  it("=> preloader completes", function(done){
     runWhenComplete = function() {
       done();
     }
+
+    let prel = new preload( false );
+    prel.setErrorHandler( preloadErrorHandler );
+      //.setProgressHandler( progressHandler )
+    prel.loadManifest([ {id: "terrain_spritesheet", src:"http://warmapengine.level7.fi/assets/img/map/collection.png"} ]);
+    prel.resolveOnComplete()
+      .then(runWhenComplete);
+
   });
 
     /* ====== private functions, or to be moved elsewhere ====== */

@@ -7,6 +7,7 @@
 
 /* ====== Own module imports ====== */
 import { validatorMod } from "./map_validators";
+import { addPrototype as mapFunc_addPrototype } from "./mapFunctions";
 
 /* ===== Constants ===== */
 const TYPES = {
@@ -39,17 +40,22 @@ export class Map_layer extends createjs.Container {
   constructor(name, type, subContainers) {
     super();
 
+    this.superPrototype = this.constructor.prototype;
     this.type = subContainers ? TYPES.imagesInSubContainers : type;
     this.visible = true;
     this.useSubcontainers = subContainers || false;
     this.name = "" + name; // For debugging. Shows up in toString
     this.drawThisChild = true;
+    this.interactive = false;
 
     /* Controlling and optimizing the engine */
     this.tickEnabled = false;
     this.tickChildren = false;
     this.mouseChildren = false;
     this.mouseEnabled = false;
+  }
+  addPrototype(name, functionToAdd) {
+    super.prototype[name] = functionToAdd;
   }
   /* overloaded inherited method */
   addChildToSubContainer(object, index) {
@@ -85,6 +91,7 @@ export class Map_layer extends createjs.Container {
     return TYPES[name];
   }
 }
+Map_layer.prototype.addPrototype = mapFunc_addPrototype;
 
 /* The node-easel, nor minified easeljs doesn't have the SpriteStage (and node doesn't have the extend) */
 /*

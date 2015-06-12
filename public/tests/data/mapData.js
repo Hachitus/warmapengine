@@ -5,7 +5,7 @@ export let mapData = {
     type: "Map_stage",
     coordinates: { x: 0, y: 0 },
     name: "terrainStage",
-    element: "#canvasTerrain",
+    element: "#mapCanvas",
     layers: [{
       type: "Map_layer",
       coordinates: { x: 0, y: 0 },

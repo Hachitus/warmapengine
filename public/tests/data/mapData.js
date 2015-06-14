@@ -17,7 +17,7 @@ export let mapData = {
         cache: true
       },
       objectGroups: [{
-        type: "Objects_terrain",
+        type: "Object_terrain",
         name: "TerrainBase", // I guess only for debugging?
         typeImageData: "terrainBase",
         objects: [{
@@ -170,7 +170,7 @@ export let mapData = {
         "cache": "false"
       },
       "objectGroups": [{
-        "type": "Objects_unit",
+        "type": "Object_unit",
         "name": "Unit", // I guess only for debugging?
         "typeImageData": "unit",
         "objects": [{

@@ -11,7 +11,7 @@ for animation or such
 All of the objects need to have same argumentAPI for creating objects: coords, data, imageData
 */
 
-export class Objects_sprite extends createjs.Sprite {
+export class Object_sprite extends createjs.Sprite {
   constructor(coords, data,  spritesheet, currentFrameNumber) {
     super(spritesheet);
 

@@ -41,7 +41,6 @@ export class Map_stage extends createjs.Stage {
         this.preventSelection = true;
         this.movable = true;
         this.interactive = false;
-        this.autoClear = false;
         //this.drawRect = MAYBE THIS should be the area of the canvas size? So the whole stage isn't drawn only visible part?
     }
     getCacheEnabled() {

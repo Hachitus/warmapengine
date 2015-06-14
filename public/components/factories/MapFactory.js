@@ -14,8 +14,8 @@ Map is the main class for constructing 2D map for strategy games
 import { Map } from '../map/core/Map';
 import { Map_stage } from '../map/core/Map_stage';
 import { Map_layer } from '../map/core/Map_layer';
-import { Objects_terrain } from '../map/objects/Objects_terrain';
-import { Objects_unit } from '../map/objects/Objects_unit';
+import { Object_terrain } from '../map/objects/Object_terrain';
+import { Object_unit } from '../map/objects/Object_unit';
 import { spritesheetList } from '../map/core/spritesheetList';
 let allSpritesheets = spritesheetList();
 import { validatorMod } from "../map/core/map_validators";
@@ -23,8 +23,8 @@ import { validatorMod } from "../map/core/map_validators";
 let functionsInObj = {
   Map_stage,
   Map_layer,
-  Objects_terrain,
-  Objects_unit
+  Object_terrain,
+  Object_unit
 }
 
 /** ===== Private functions declared ===== */

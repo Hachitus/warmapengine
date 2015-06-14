@@ -1,7 +1,7 @@
 'use strict';
 
 import { Map_API } from 'Map_API';
-import { Unit } from 'Objects_unit';
+import { Unit } from 'Object_unit';
 
 Object.assign(Units.prototype, Unit_addActions);
 

@@ -1,8 +1,8 @@
 'use strict';
 
-import { Objects_sprite } from '../core/Objects';
+import { Object_sprite } from '../core/Object';
 
-export class Objects_terrain extends Objects_sprite {
+export class Object_terrain extends Object_sprite {
   construct(coords, data, spriteSheet, currFrameNumber) {
     super.spriteSheet(coords, data, spriteSheet, currFrameNumber);
 

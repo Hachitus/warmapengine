@@ -61,4 +61,4 @@ gulp.task('compile_testPreloader', function() {
     .pipe(gulp.dest('./public/tests/spec'));
 });
 
-gulp.task('compileTest', ['bundle_testMap']);
+gulp.task('compileTest', ['compile_testMap']);

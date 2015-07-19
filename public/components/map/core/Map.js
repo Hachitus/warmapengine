@@ -143,11 +143,12 @@ export class Map {
   cacheLayers() {
       return this;
   }
-  getObjectsUnderMapPoint() {
+  getObjectsUnderMapPoint(clickCoords) {
       let objects = [];
 
-      this.stages.forEach(function(value, index) {
-          objects[index] = value;
+      this.stages.forEach(function(stage) {
+        objects[stage.name] = objects[stage.name] || [];
+        objects[stage.name].push(stage.getObjectsUnderPoint(clickCoords));
       });
 
       return objects;

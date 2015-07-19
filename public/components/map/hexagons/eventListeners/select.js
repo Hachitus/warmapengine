@@ -3,10 +3,9 @@
 export function setupHexagonClick(map, element, callback) {
   return element.addEventListener("click", function(e) {
     var globalCoords = element.localToGlobal(e.x, e.y);
-    var objects, centerCoords;
+    var objects;
 
-    centerCoords = map.toHexaCenterCoord(globalCoords.x, globalCoords.y);
-    objects = map.getObjectsUnderPoint(map.stages, centerCoords);
+    objects = map.getObjectsUnderPoint(globalCoords);
 
     callback(objects);
   });

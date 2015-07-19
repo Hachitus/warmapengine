@@ -18,9 +18,7 @@ import { setupHexagonClick } from '../eventListeners/select';
 
 export let object_select_hexagon = function object_select_hexagon(hexRadius) {
   var scope = {};
-  /* This needs the size of hexagons */
   var hexCoordsModule = Map_coords_horizontalHex(hexRadius);
-
   scope.pluginName = "object_select";
 
   /**
@@ -38,46 +36,37 @@ export let object_select_hexagon = function object_select_hexagon(hexRadius) {
   return scope;
 
   /* Prototypes */
-  function getCenterCoords() {
-    let bounds = this.getBounds();
-    let centerCoords = {};
-
-    if(bounds.x === 0 && bounds.y === 0) {
-      bounds = this.getFrameBounds();
-    }
-
-    centerCoords.x = bounds.width / 2 + bounds.x;
-    centerCoords.x = bounds.height / 2 + bounds.y;
-
-    return centerCoords;
+  function getCenterCoords(clickCoords) {
+    return hexCoordsModule.toHexaCenterCoord(clickCoords.x, clickCoords.y);
   }
   function getObjectsForMap(clickCoords) {
-    this.stages.forEach(function(stage) {
-      stage.getObjectsUnderPoint(clickCoords);
-    });
-  }
+    var objectArrays = [];
+    var centerCoords = getCenterCoords(clickCoords);
 
-  function getObjectsForStage(clickCoords) {
-    this.children.forEach(function(layer) {
-      layer.getObjectsUnderPoint(clickCoords);
+    this.stages.forEach(function(stage) {
+      objectArrays.push(stage.getObjectsUnderPoint(centerCoords));
     });
+
+    return objectArrays;
   }
   function getObjectsForLayer(clickCoords) {
-    this.children.forEach(function(child) {
-      child.getCenterCoords();
-      child.getObjectsUnderPoint(clickCoords);
+    return this.children.filter(function(child) {
+      if(child.x === clickCoords.x && child.y === clickCoords.y) {
+        return true;
+      }
+
+      return false;
     });
   }
   /* ====== Private functions ====== */
   /**
-   * Attached the correct prototypes to map
+   * Attached the correct prototypes to map. I do not think we need to override getObjectsUnderPoint for stages.
    *
    * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
    * @param {Map} map - The Map class object
    */
   function _createPrototypes(map) {
-    map.prototype.getObjectsUnderPoint = getObjectsForMap;
-    map.stages[0].prototype.getObjectsUnderPoint = getObjectsForStage;
+    map.prototype.getObjectsUnderMapPoint = getObjectsForMap;
     map.stages[0].layers[0].prototype.getObjectsUnderPoint = getObjectsForLayer;
     map.stages[0].layers[0].prototype.getCenterCoords = getCenterCoords;
   }
@@ -87,29 +76,6 @@ export let object_select_hexagon = function object_select_hexagon(hexRadius) {
    */
   function _startClickListener( map, canvas ) {
     return setupHexagonClick(map, canvas, showSelectionChoices);
-  }
-  /**
-   * Adds function for the map object and prototype-functions for it's stages and layers. Creates moveMap function
-   * for the given map object and moveStage & moveLayer - prototype functions for the stages and layers in the map.
-   */
-  function _getObjects(clickCoords) {
-    var hexaCenterCoords, mapStage;
-
-    this.stages.forEach(function(stage) {
-      if(stage.constructor.name === "Map_stage") {
-        /* We need to use the layer for getting objects, since stages don't have good enough methods for this. They do
-        not get objects recursively :( */
-        hexaCenterCoords = hexCoordsModule.toHexaCenterCoord(clickCoords.x, clickCoords.y);
-        mapStage = stage;
-
-        return stage.getObjectsUnderPoint(hexaCenterCoords.x, hexaCenterCoords.y, 0);
-      }
-    });
-
-    if(!hexaCenterCoords) {
-      throw new Error("no center coordinates for hexagon found");
-    }
-    return mapStage.getObjectsUnderPoint(hexaCenterCoords.x, hexaCenterCoords.y, 0);
   }
 
   /* This should be separated elsewhere. This is definitely not supposed to be in this class */

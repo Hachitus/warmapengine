@@ -5,7 +5,6 @@
 /* ====== Own module imports ====== */
 //var Map = require( '../public/components/map/Map');
 import { createMap } from '../../components/factories/MapFactory';
-
 /* Read data from files, to use with testing */
 import { gameData } from '../../tests/data/gameData';
 import { typeData } from '../../tests/data/typeData';

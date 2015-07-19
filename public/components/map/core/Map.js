@@ -1,5 +1,3 @@
-'use strict';
-
 /**
 Map is the main class for constructing 2D map for strategy games
 
@@ -12,9 +10,9 @@ Map is the main class for constructing 2D map for strategy games
 //import { System } from 'es6-module-loader';
 
 /* ====== Own module imports ====== */
-import { Map_stage } from './Map_stage';
-import { Map_layer } from './Map_layer';
 import { validatorMod } from "./map_validators";
+
+'use strict';
 
 /** ===== Private functions declared ===== */
 let privateFunctions = {
@@ -43,6 +41,7 @@ let validators = {
  *
  * Plugins are provided in an array of plugin functions
 */
+
 export class Map {
   constructor(options) {
     this.stages = [];
@@ -170,6 +169,7 @@ export class Map {
 
     Parameter pluginToUse.func.name is part of ES6 standard to get function name.
   }] */
+
   activatePlugins(pluginsArray) {
 
     pluginsArray.forEach(pluginToUse => {

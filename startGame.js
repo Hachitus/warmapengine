@@ -1,3 +1,5 @@
+// async stack traces
+require('longjohn');
 
 // Express dependencies
 var express = require('express');

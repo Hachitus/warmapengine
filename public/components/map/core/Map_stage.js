@@ -38,6 +38,7 @@ export class Map_stage extends createjs.Stage {
         this.tickChildren = false;
         this.mouseChildren = false;
         this.mouseEnabled = false;
+        this.mouseEnabled = true;
         this.preventSelection = true;
         this.movable = true;
         this.interactive = false;
@@ -67,6 +68,7 @@ export class Map_stage extends createjs.Stage {
 
       return false;
     }
+
 }
 Map_stage.prototype.addPrototype = mapFunc_addPrototype;
 

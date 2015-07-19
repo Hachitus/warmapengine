@@ -4,135 +4,142 @@
 
 /* ====== Own module imports ====== */
 //var Map = require( '../public/components/map/Map');
-import { createMap } from '../../components/factories/MapFactory.js';
+import { createMap } from '../../components/factories/MapFactory';
 
 /* Read data from files, to use with testing */
-import { gameData } from '../../tests/data/gameData.js';
-import { typeData } from '../../tests/data/typeData.js';
-import { mapData } from '../../tests/data/mapData.js';
-import { preload } from '/var/www/warMapEngine/public/components/preloading/preloading';
+import { gameData } from '../../tests/data/gameData';
+import { typeData } from '../../tests/data/typeData';
+import { mapData } from '../../tests/data/mapData';
+import { preload } from '../../components/preloading/preloading';
 
 /* ===== Import plugins ===== */
 import { map_move } from "../../components/map/move/map_move";
+import { object_select_hexagon } from '../../components/map/hexagons/object_select/object_select_hexagon';
 
-describe("preloader => ", function(done) {
-  var runWhenComplete = false;
+window.testMap = function() {
+  describe("preloader => ", function(done) {
+    var runWhenComplete = false;
 
-  it("=> exists", function(){
-    expect(preload).toBeDefined();
-  });
+    it("=> exists", function(){
+      expect(preload).toBeDefined();
+    });
 
-  it("=> preloader completes", function(done){
-    runWhenComplete = function() {
-      let i = 0;
-      while(i < 1000000) {
-        i++;
-        i + i + 2 + "y";
-      }
-      expect(true).toBeTruthy();
-      done();
-    };
+    it("=> preloader completes", function(done){
+      runWhenComplete = function() {
+        let i = 0;
+        while(i < 1000000) {
+          i++;
+          i + i + 2 + "y";
+        }
+        expect(true).toBeTruthy();
+        done();
+      };
 
-    let prel = new preload( false );
-    prel.setErrorHandler( preloadErrorHandler );
-      //.setProgressHandler( progressHandler )
-    prel.loadManifest([ {
-      id: "terrain_spritesheet",
-      src:"http://warmapengine.level7.fi/assets/img/map/collection.png"
-    } ]);
-    prel.resolveOnComplete()
-      .then(runWhenComplete);
+      let prel = new preload( false );
+      prel.setErrorHandler( preloadErrorHandler );
+        //.setProgressHandler( progressHandler )
+      prel.loadManifest([ {
+        id: "terrain_spritesheet",
+        src:"http://warmapengine.level7.fi/assets/img/map/collection.png"
+      } ]);
+      prel.resolveOnComplete()
+        .then(runWhenComplete);
 
-  });
+    });
 
-    /* ====== private functions, or to be moved elsewhere ====== */
-  function preloadErrorHandler(err) {
-    console.log("PRELOADER ERROR", err );
-  }
-
-
-
-/*
-1. Datat yhdessä pötkössä, kuten tää nykyinen testi-data. Eli noi testit datat tiedostoon ja pitää muuttaa oikeaan muotoon!
-
-You should use this data instead of the testData below. You should convert this data to suit the standards so that there
-is another class / module that handles the transformation and you define a good set of principle how it's done. Data in this:
-"{
-  "objType":2,
-  "_id":"53837d49976fed3b240006b3",
-  "coord":{"x":0,"y":0}
-}"
-What do we do with the _id and should that be replaced with actual data, when we instantiate the objects.
-
-Always request data from backend with gameID and turn, like: domain.fi/API/mapData/832948hfdjsh93/1
-
-/* ====== Tests ====== */
-  let map;
-
-  it("=> exists", function(done){
-    map = createMap(gameData, mapData, typeData);
-    expect(map).toBeDefined();
-    done();
-  });
-  it("=> stage properties are correct", function(){
-    expect(map.stages[0].name === "terrainStage").toBeTruthy();
-    expect(map.stages[0].children.length > 0).toBeTruthy();
-    expect(map.getChildNamed("terrainStage").name  === "terrainStage").toBeTruthy();
-    expect(typeof map.getChildNamed("terrainStage") === "object").toBeTruthy();
-  });
-  it("=> layer properties are correct", function(){
-    expect(typeof map.getLayerNamed("unitLayer") === "object").toBeTruthy();
-    expect(map.stages[0].children.length > 0).toBeTruthy();
-  });
-  it("=> terrain properties are correct", function(){
-    expect(Number( map.getLayerNamed("terrainBaseLayer").children[1].y ) === 480).toBeTruthy();
-    expect(map.getLayerNamed("terrainBaseLayer").children.length > 1).toBeTruthy();
-  });
-  it("=> unit properties are correct", function(){
-    expect(Number( map.getLayerNamed("unitLayer").children[0].x ) === 60).toBeTruthy();
-  });
-  it("=> unit properties are correct", function(done){
-    map.init( tickDoneFunc );
-
-    function tickDoneFunc(tickDone) {
-      done();
+      /* ====== private functions, or to be moved elsewhere ====== */
+    function preloadErrorHandler(err) {
+      console.log("PRELOADER ERROR", err );
     }
 
-    expect( true ).toBeTruthy();
 
 
-  });
-  it("jeje", function(done) {
-    window.setTimeout(function() {
-      map.stages[0].drawThisChild = true;
-      map.drawMap();
+  /*
+  1. Datat yhdessä pötkössä, kuten tää nykyinen testi-data. Eli noi testit datat tiedostoon ja pitää muuttaa oikeaan muotoon!
+
+  You should use this data instead of the testData below. You should convert this data to suit the standards so that there
+  is another class / module that handles the transformation and you define a good set of principle how it's done. Data in this:
+  "{
+    "objType":2,
+    "_id":"53837d49976fed3b240006b3",
+    "coord":{"x":0,"y":0}
+  }"
+  What do we do with the _id and should that be replaced with actual data, when we instantiate the objects.
+
+  Always request data from backend with gameID and turn, like: domain.fi/API/mapData/832948hfdjsh93/1
+
+  /* ====== Tests ====== */
+    let map;
+
+    it("=> exists", function(done){
+      map = createMap(gameData, mapData, typeData);
+      expect(map).toBeDefined();
       done();
-    }, 400);
-
-    expect( true ).toBeTruthy();
-  })
-
-  it("=> exists", function(done){
-    map = createMap(gameData, mapData, typeData);
-    expect(map).toBeDefined();
-    done();
-  });
-
-  it("=> unit properties are correct", function(done){
-    try {
-      map.init( tickDoneFunc, [ map_move ] );
+    });
+    it("=> stage properties are correct", function(){
+      expect(map.stages[0].name === "terrainStage").toBeTruthy();
+      expect(map.stages[0].children.length > 0).toBeTruthy();
+      expect(map.getChildNamed("terrainStage").name  === "terrainStage").toBeTruthy();
+      expect(typeof map.getChildNamed("terrainStage") === "object").toBeTruthy();
+    });
+    it("=> layer properties are correct", function(){
+      expect(typeof map.getLayerNamed("unitLayer") === "object").toBeTruthy();
+      expect(map.stages[0].children.length > 0).toBeTruthy();
+    });
+    it("=> terrain properties are correct", function(){
+      expect(Number( map.getLayerNamed("terrainBaseLayer").children[1].y ) === 480).toBeTruthy();
+      expect(map.getLayerNamed("terrainBaseLayer").children.length > 1).toBeTruthy();
+    });
+    it("=> unit properties are correct", function(){
+      expect(Number( map.getLayerNamed("unitLayer").children[0].x ) === 60).toBeTruthy();
+    });
+    it("=> unit properties are correct", function(done){
+      map.init( tickDoneFunc );
 
       function tickDoneFunc(tickDone) {
         done();
       }
 
       expect( true ).toBeTruthy();
-    } catch(e) {
-      console.log("ERROR", e)
-    }
 
+
+    });
+    it("jeje", function(done) {
+      var timeoutter = (function (map) {
+        return function() {
+          map.stages[0].drawThisChild = true;
+          map.drawMap();
+          done();
+        };
+      })(map);
+
+      window.setTimeout(timeoutter, 400);
+
+      expect( true ).toBeTruthy();
+    })
+
+    it("=> exists", function(done){
+      map = createMap(gameData, mapData, typeData);
+      expect(map).toBeDefined();
+      done();
+    });
+
+    it("=> unit properties are correct", function(done){
+      try {
+        map.init( tickDoneFunc, [ map_move, object_select_hexagon ] );
+
+        function tickDoneFunc(tickDone) {
+          done();
+        }
+
+        expect( true ).toBeTruthy();
+      } catch(e) {
+        console.log("ERROR", e)
+      }
+
+    });
   });
-});
+}
 
 /* ===== Private functions ===== */
 // none

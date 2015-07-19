@@ -5,6 +5,7 @@
  * children are out of bound of the present area -> calculates new bounds and updates the bound with map.setBounds(),
  * http://www.createjs.com/docs/easeljs/files/easeljs_display_DisplayObject.js.html#l1152
  */
+
 export let map_cache = (function map_move() {
   var scope = {};
 
@@ -35,6 +36,11 @@ export let map_cache = (function map_move() {
   }
 
   function _updateBounds_layer(newChild) {
+     USE THIS
+ stage event: "added "
+Inherited from DisplayObject: added:632
+Dispatched when the display object is added to a parent container.
+
     if(newChild === "outOfBounds") {
       newBounds = calculateNewBounds(newChild);
     }

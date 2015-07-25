@@ -37,9 +37,11 @@ let validators = {
 
 /** ===== EXPORT ===== */
 export class Map_layer extends createjs.Container {
-  constructor(name, type, subContainers) {
+  constructor(name, type, subContainers, coord) {
     super();
 
+    this.x = coord ? ( coord.x || 0 ) : 0;
+    this.y = coord ? ( coord.y || 0 ) : 0;
     this.superPrototype = this.constructor.prototype;
     this.type = subContainers ? TYPES.imagesInSubContainers : type;
     this.visible = true;

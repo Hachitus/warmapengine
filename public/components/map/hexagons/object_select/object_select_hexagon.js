@@ -13,12 +13,12 @@ HOW we do the whole organizational stuff?
 
 'use strict';
 
-import { Map_coords_horizontalHex } from '../coordinates/Map_coords_horizontalHex';
+//import { map_coords_horizontalHex } from '../coordinates/Map_coords_horizontalHex';
 import { setupHexagonClick } from '../eventListeners/select';
+import { UI } from '../../core/UI';
 
-export let object_select_hexagon = function object_select_hexagon(hexRadius) {
+export let object_select_hexagon = function object_select_hexagon() {
   var scope = {};
-  var hexCoordsModule = Map_coords_horizontalHex(hexRadius);
   scope.pluginName = "object_select";
 
   /**
@@ -35,16 +35,12 @@ export let object_select_hexagon = function object_select_hexagon(hexRadius) {
 
   return scope;
 
-  /* Prototypes */
-  function getCenterCoords(clickCoords) {
-    return hexCoordsModule.toHexaCenterCoord(clickCoords.x, clickCoords.y);
-  }
   function getObjectsForMap(clickCoords) {
     var objectArrays = [];
-    var centerCoords = getCenterCoords(clickCoords);
 
     this.stages.forEach(function(stage) {
-      objectArrays.push(stage.getObjectsUnderPoint(centerCoords));
+      var objects = stage.getObjectsUnderPoint(clickCoords.x, clickCoords.y);
+      objectArrays = objectArrays.concat(objects);
     });
 
     return objectArrays;
@@ -66,26 +62,16 @@ export let object_select_hexagon = function object_select_hexagon(hexRadius) {
    * @param {Map} map - The Map class object
    */
   function _createPrototypes(map) {
-    map.prototype.getObjectsUnderMapPoint = getObjectsForMap;
-    map.stages[0].layers[0].prototype.getObjectsUnderPoint = getObjectsForLayer;
-    map.stages[0].layers[0].prototype.getCenterCoords = getCenterCoords;
+    map.__proto__.getObjectsUnderMapPoint = getObjectsForMap;
+    map.stages[0].children[0].__proto__.getObjectsUnderPoint = getObjectsForLayer;
   }
   /**
    * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
    * @param {Map} map - The Map class object
    */
   function _startClickListener( map, canvas ) {
-    return setupHexagonClick(map, canvas, showSelectionChoices);
-  }
+    var singletonUI = UI();
 
-  /* This should be separated elsewhere. This is definitely not supposed to be in this class */
-  function showSelectionChoices(objects) {
-    if(objects && objects.length > 1) {
-      alert("You have objects to choose from:" + objects.length);
-      console.log(objects);
-    } else {
-      alert("You just selected an object");
-      console.log(objects[0]);
-    }
+    return setupHexagonClick(map, canvas, singletonUI.showSelections);
   }
 };

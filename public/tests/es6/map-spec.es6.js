@@ -15,6 +15,8 @@ import { preload } from '../../components/preloading/preloading';
 import { map_move } from "../../components/map/move/map_move";
 import { object_select_hexagon } from '../../components/map/hexagons/object_select/object_select_hexagon';
 
+window.map = {};
+
 window.testMap = function() {
   describe("preloader => ", function(done) {
     var runWhenComplete = false;
@@ -68,29 +70,27 @@ window.testMap = function() {
   Always request data from backend with gameID and turn, like: domain.fi/API/mapData/832948hfdjsh93/1
 
   /* ====== Tests ====== */
-    let map;
-
     it("=> exists", function(done){
       map = createMap(gameData, mapData, typeData);
       expect(map).toBeDefined();
       done();
     });
-    it("=> stage properties are correct", function(){
+    it("=> are stage properties correct?", function(){
       expect(map.stages[0].name === "terrainStage").toBeTruthy();
       expect(map.stages[0].children.length > 0).toBeTruthy();
       expect(map.getChildNamed("terrainStage").name  === "terrainStage").toBeTruthy();
       expect(typeof map.getChildNamed("terrainStage") === "object").toBeTruthy();
     });
-    it("=> layer properties are correct", function(){
+    it("=> are layer properties correct?", function(){
       expect(typeof map.getLayerNamed("unitLayer") === "object").toBeTruthy();
       expect(map.stages[0].children.length > 0).toBeTruthy();
     });
-    it("=> terrain properties are correct", function(){
-      expect(Number( map.getLayerNamed("terrainBaseLayer").children[1].y ) === 480).toBeTruthy();
+    it("=> are terrain properties correct?", function(){
+      expect(Number( map.getLayerNamed("terrainBaseLayer").children[1].y ) === 141).toBeTruthy();
       expect(map.getLayerNamed("terrainBaseLayer").children.length > 1).toBeTruthy();
     });
-    it("=> unit properties are correct", function(){
-      expect(Number( map.getLayerNamed("unitLayer").children[0].x ) === 60).toBeTruthy();
+    it("=> unit properties are correct?", function(){
+      expect(Number( map.getLayerNamed("unitLayer").children[0].x ) === 82).toBeTruthy();
     });
     it("=> unit properties are correct", function(done){
       map.init( tickDoneFunc );
@@ -117,26 +117,7 @@ window.testMap = function() {
       expect( true ).toBeTruthy();
     })
 
-    it("=> exists", function(done){
-      map = createMap(gameData, mapData, typeData);
-      expect(map).toBeDefined();
-      done();
-    });
 
-    it("=> unit properties are correct", function(done){
-      try {
-        map.init( tickDoneFunc, [ map_move, object_select_hexagon ] );
-
-        function tickDoneFunc(tickDone) {
-          done();
-        }
-
-        expect( true ).toBeTruthy();
-      } catch(e) {
-        console.log("ERROR", e)
-      }
-
-    });
   });
 }
 

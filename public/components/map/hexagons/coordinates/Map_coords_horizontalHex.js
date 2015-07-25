@@ -1,5 +1,7 @@
 'use strict';
 
+/* @todo should be removed. This is not used */
+
 /* HORIZONTAL HEXAGONS
   This calculates in which hexagon the given coordinate is in. For example if the player clicks the map we need to
   determine which hexagon he clicked.
@@ -9,16 +11,19 @@
   @param {coordinates} coords { x: Number, y: Number }
   @param {object} mapSize { x: Number, y: Number, blocks: { xCount: Number, yCount: Number } }. Blocks are the amount of hexagons
   in horizontal and vertical
+
+  @todo I think this should be multiton. If needed we need to instantiate more than one instance of this.
 */
-export class Map_coords_horizontalHex {
-  constructor(radius) {
-    this.hexaSize = _getHexaSize(radius);
-  }
-  toHexaCenterCoord(x, y) {
-    var radius = this.hexaSize.radius;
+export let map_coords_horizontalHex = function map_coords_horizontalHex(hexRadius) {
+  var hexaSize;
+
+  hexaSize = _getHexaSize(hexRadius);
+
+  return function toHexaCenterCoord(x, y) {
+    var radius = hexaSize.radius;
     var halfHexaSize = {
-      x: this.hexaSize.radius,
-      y: this.hexaSize.y * 0.5
+      x: hexaSize.radius,
+      y: hexaSize.y * 0.5
     };
     var centerCoords = {};
     var coordinateIndexes;
@@ -29,17 +34,13 @@ export class Map_coords_horizontalHex {
       throw new Error("click outside of the hexagon area");
     }
     centerCoords = {
-      x: Math.round(coordinateIndexes.x * this.hexaSize.x + halfHexaSize.x),
-      y: Math.round(coordinateIndexes.y * this.hexaSize.y + halfHexaSize.y)
+      x: Math.round(coordinateIndexes.x * hexaSize.x + halfHexaSize.x),
+      y: Math.round(coordinateIndexes.y * hexaSize.y + halfHexaSize.y)
     };
 
     return centerCoords;
-  }
-
-  init (mapObj) {
-    mapObj.toHexaCenterCoord = this.toHexaCenterCoord;
-  }
-}
+  };
+};
 
 /* ===== Private functions ===== */
 function _getHexaSize(radius) {

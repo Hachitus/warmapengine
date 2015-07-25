@@ -2,17 +2,17 @@ export let typeData = {
   "graphicData": {
     "general":{
       "terrain":{
-        "tileWidth":96,
-        "tileHeight":48
+        "tileWidth":82,
+        "tileHeight":94
       }
     },
     "terrainBase":{
       "images":
-      ["/assets/img/map/collection.png"],
+      ["/assets/img/map/testHexagons/testHexagonSpritesheet.png"],
       "frames":[
-        [0,0,96,48],[0,48,96,48],[0,96,96,48],[0,144,96,48],[0,192,96,48],[0,240,96,48]
+        [0,0,82,94],[82,0,164,94],[164,0,246,94],[246,0,328,94]
       ],
-      "imageSize":[96,48]
+      "imageSize":[82,94]
     },
     "terrain":{
       "images":["/assets/img/map/amplio2/terrain1.png"],
@@ -53,7 +53,7 @@ export let typeData = {
     },
     "unit":{
       "images":["/assets/img/map/amplio2/units.png"],
-      "frames":{"width":66,"height":50}
+      "frames":{"width":63,"height":50}
     }
   },
   "objectData": {

@@ -172,7 +172,6 @@ export class Map {
   }] */
 
   activatePlugins(pluginsArray) {
-
     pluginsArray.forEach(pluginToUse => {
       this.plugins[pluginToUse.pluginName] = pluginToUse;
       this.plugins[pluginToUse.pluginName].init(this);

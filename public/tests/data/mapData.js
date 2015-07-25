@@ -3,12 +3,12 @@ export let mapData = {
   turn: 1,
   stages: [{
     type: "Map_stage",
-    coordinates: { x: 0, y: 0 },
+    coord: { x: 0, y: 0 },
     name: "terrainStage",
     element: "#mapCanvas",
     layers: [{
       type: "Map_layer",
-      coordinates: { x: 0, y: 0 },
+      coord: { x: 0, y: 0 },
       name: "terrainBaseLayer",
       specials: [{
         "interactive": false
@@ -17,26 +17,26 @@ export let mapData = {
         cache: true
       },
       objectGroups: [{
-        type: "Object_terrain",
+        type: "Object_terrain_hexa",
         name: "TerrainBase", // I guess only for debugging?
         typeImageData: "terrainBase",
         objects: [{
-           "objType":5,
+           "objType":0,
            "name":"swamp",
            "_id":"53837d49976fed3b240006b8",
            "coord":{
               "x":"0",
-              "y":"240"
+              "y":"0"
            },
            "data": {},
            "lastSeenTurn":"1"
         },{
-           "objType":5,
+           "objType":1,
            "name":"swamp",
            "_id":"53837d49976fed3b240006bd",
            "coord":{
               "x":"0",
-              "y":"480"
+              "y":"141"
            },
            "data": {},
            "lastSeenTurn":"1"
@@ -46,8 +46,8 @@ export let mapData = {
            "name":"tundra",
            "_id":"53837d49976fed3b240006c2",
            "coord":{
-              "x":"0",
-              "y":"720"
+              "x":"41",
+              "y":"70"
            },
            "data": {},
            "lastSeenTurn":"1"
@@ -57,109 +57,11 @@ export let mapData = {
            "name":"forest",
            "_id":"53837d49976fed3b240006c7",
            "coord":{
-              "x":"0",
-              "y":"960"
+              "x":"41",
+              "y":"140"
            },
            "data": {},
            "lastSeenTurn":"1"
-        },
-        {
-           "objType":2,
-           "name":"forest",
-           "_id":"53837d49976fed3b240006cc",
-           "coord":{
-              "x":"0",
-              "y":"1200"
-           },
-           "data": {},
-           "lastSeenTurn":"1"
-        },
-        {
-           "objType":3,
-           "name":"tundra",
-           "_id":"53837d49976fed3b240006d1",
-           "coord":{
-              "x":"0",
-              "y":"1440"
-           },
-           "data": {},
-           "lastSeenTurn":"1"
-        },
-        {
-           "objType":2,
-           "name":"forest",
-           "_id":"53837d49976fed3b240006d6",
-           "coord":{
-              "x":"48",
-              "y":"72"
-           },
-           "data": {},
-           "lastSeenTurn":"1"
-        },
-        {
-           "objType":2,
-           "name":"forest",
-           "_id":"53837d49976fed3b240006b4",
-           "coord":{
-              "x":"0",
-              "y":"48"
-           },
-           "data": {},
-           "lastSeenTurn":"1"
-        },
-        {
-           "objType":5,
-           "name":"swamp",
-           "_id":"53837d49976fed3b240006b9",
-           "coord":{
-              "x":"0",
-              "y":"288"
-           },
-           "data": {},
-           "lastSeenTurn":"1"
-        },
-        {
-           "objType":3,
-           "name":"tundra",
-           "_id":"53837d49976fed3b240006be",
-           "coord":{
-              "x":"0",
-              "y":"528"
-           },
-           "data": {},
-           "lastSeenTurn":"1"
-        },
-        {
-           "objType":2,
-           "name":"forest",
-           "_id":"53837d49976fed3b240006c3",
-           "coord":{
-              "x":"0",
-              "y":"768"
-           },
-           "data": {},
-           "lastSeenTurn":"1"
-        },
-        {
-           "objType":3,
-           "name":"tundra",
-           "_id":"53837d49976fed3b240006c8",
-           "coord":{
-              "x":"0",
-              "y":"1008"
-           },
-           "data": {},
-           "lastSeenTurn":"1"
-        },
-        {
-           "objType":2,
-           "name":"forest",
-           "_id":"53837d49976fed3b240006cd",
-           "coord":{
-              "x":"0",
-              "y":"1248"
-           },
-           "data": {}
         }]
       }]
     },{
@@ -170,13 +72,15 @@ export let mapData = {
         "cache": "false"
       },
       "objectGroups": [{
-        "type": "Object_unit",
+        "type": "Object_unit_hexa",
         "name": "Unit", // I guess only for debugging?
         "typeImageData": "unit",
         "objects": [{
-          "objType":2,
+          "objType":0,
           "name": "Horsey the wild",
-          "coord": { "x": "60", "y": "60" },
+          "coord": {
+            "x": "82", "y": "94"
+          },
           "data": {
             "someCustomData": "true"
           },

@@ -1,12 +1,14 @@
 'use strict';
 
 export function setupHexagonClick(map, element, callback) {
-  return element.addEventListener("click", function(e) {
-    var globalCoords = element.localToGlobal(e.x, e.y);
+  return element.addEventListener("stagemousedown", function(e) {
+    var globalCoords = element.localToGlobal(e.stageX, e.stageY);
     var objects;
 
-    objects = map.getObjectsUnderPoint(globalCoords);
+    objects = map.getObjectsUnderMapPoint(globalCoords);
 
-    callback(objects);
+    if(objects && objects.length > 0) {
+      callback(objects);
+    }
   });
 }

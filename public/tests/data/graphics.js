@@ -1,3 +1,4 @@
+/*
 export let graphicData = {
   "general":{
     "terrain":{
@@ -52,5 +53,6 @@ export let graphicData = {
   },
   "unit":{
     "images":["/assets/img/map/amplio2/units.png"],
-    "frames":{"width":66,"height":50}
+    "frames":{"width":60,"height":50}
   }};
+  */

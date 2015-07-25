@@ -14,18 +14,24 @@ Map is the main class for constructing 2D map for strategy games
 import { Map } from '../map/core/Map';
 import { Map_stage } from '../map/core/Map_stage';
 import { Map_layer } from '../map/core/Map_layer';
+import { Object_terrain_hexa } from '../map/hexagons/object/Object_terrain_hexa';
+import { Object_unit_hexa } from '../map/hexagons/object/Object_unit_hexa';
 import { Object_terrain } from '../map/object/Object_terrain';
 import { Object_unit } from '../map/object/Object_unit';
 import { spritesheetList } from '../map/core/spritesheetList';
 let allSpritesheets = spritesheetList();
 import { validatorMod } from "../map/core/map_validators";
+import { UI } from '../map/core/UI';
+import { UI_default } from "../map/UIs/default/default.js";
 
 let functionsInObj = {
   Map_stage,
   Map_layer,
   Object_terrain,
-  Object_unit
-}
+  Object_unit,
+  Object_terrain_hexa,
+  Object_unit_hexa
+};
 
 /** ===== Private functions declared ===== */
 let privateFunctions = {
@@ -100,10 +106,16 @@ Coordinates are always defaulted to 0,0 if none are given.
 
 export function createMap(gameDataArg, mapDataArg, typeDataArg) {
   console.log("============================================")
-  let mapData = (typeof mapDataArg === "string") ? JSON.parse(mapDataArg) : mapDataArg;
-  let typeData = (typeof typeDataArg === "string") ? JSON.parse(typeDataArg) : typeDataArg;
-  let gameData = (typeof gameDataArg === "string") ? JSON.parse(gameDataArg) : gameDataArg;
-  let map = new Map({ mapSize: gameData.mapSize });
+  var mapData = (typeof mapDataArg === "string") ? JSON.parse(mapDataArg) : mapDataArg;
+  var typeData = (typeof typeDataArg === "string") ? JSON.parse(typeDataArg) : typeDataArg;
+  var gameData = (typeof gameDataArg === "string") ? JSON.parse(gameDataArg) : gameDataArg;
+  var map = new Map({ mapSize: gameData.mapSize });
+  var dialog_selection = document.getElementById("selectionDialog");
+  var defaultUI = new UI_default(dialog_selection);
+  defaultUI.init();
+
+  /* Initialize UI as singleton */
+  UI(defaultUI, map);
 
   /* Activate plugins */
   /* The system does not work :(
@@ -128,7 +140,7 @@ export function createMap(gameDataArg, mapDataArg, typeDataArg) {
       let thisLayer;
 
       try {
-        thisLayer = new functionsInObj[layerData.type](layerData.name, layerData.type, false);
+        thisLayer = new functionsInObj[layerData.type](layerData.name, layerData.type, false, layerData.coord);
         thisStage.addChild( thisLayer );
       } catch(e) {
         console.log("Problem:", layerData.type, e.stack)
@@ -151,12 +163,19 @@ export function createMap(gameDataArg, mapDataArg, typeDataArg) {
 
         objectGroup.objects.forEach( object => {
           let objTypeData = typeData.objectData[spritesheetType][object.objType];
+
           if(!objTypeData) {
             console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
+            throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
           }
-          let currentFrameNumber = objTypeData.image;
 
-          thisLayer.addChild( new functionsInObj[objectGroup.type]( object.coord, object.data, spritesheet, currentFrameNumber ) );
+          let currentFrameNumber = objTypeData.image;
+          let objData = {
+            typeData: objTypeData,
+            activeData: object.data
+          };
+          let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, spritesheet, currentFrameNumber, { radius: 47 } );
+          thisLayer.addChild( newObject );
         });
       });
     });

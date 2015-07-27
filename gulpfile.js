@@ -3,27 +3,31 @@ var gulp = require("gulp");
 var babelify = require('babelify');
 var browserify = require('browserify');
 var glob = require('glob');
+var q = require('q');
 var concat = require('gulp-concat');
 var transpile  = require('gulp-es6-module-transpiler');
 //var babel = require("gulp-babel");
 
 gulp.task('watchAndCompile', function() {
-    gulp.watch('./public/manual/es6/createMap-test.es6.js', ['compile_manualTestMap']);
+    gulp.watch('./public/tests/manual/createMap-test.es6.js', ['compile_manualTestMap']);
+    gulp.watch('./public/tests/es6/*.es6.js', ['compile_unitTests']);
 });
 
 gulp.task('compile_unitTests', function(done) {
   glob('./public/tests/es6/*.es6.js', function(err, files) {
-        if(err) {
-          done(err);
-          return;
-        }
+    if(err) {
+      done(err);
+      return;
+    }
+
+    var streamForDone;
 
     files.map(function(entry) {
       var filename = entry.split("/");
       filename = filename[filename.length-1];
 
       console.log("transpiling:",filename);
-      return browserify({
+      streamForDone = browserify({
           entries: entry,
           debug: true
         })
@@ -36,11 +40,13 @@ gulp.task('compile_unitTests', function(done) {
         .pipe(gulp.dest('./public/tests/spec/'));
     });
 
-    console.log("read?")
+    streamForDone.on("end", function() {
+      done();
+    })
   });
 });
 
-gulp.task('compile_manualTestMap', function() {
+gulp.task('compile_manualTestMap', function(done) {
   return browserify({
       entries: './public/tests/manual/createMap-test.es6.js',
       debug: true

@@ -17,7 +17,7 @@ HOW we do the whole organizational stuff?
 import { setupHexagonClick } from '../eventListeners/select';
 import { UI } from '../../core/UI';
 
-export let object_select_hexagon = function object_select_hexagon() {
+export let object_select_hexagon = (function object_select_hexagon() {
   var scope = {};
   scope.pluginName = "object_select";
 
@@ -74,4 +74,4 @@ export let object_select_hexagon = function object_select_hexagon() {
 
     return setupHexagonClick(map, canvas, singletonUI.showSelections);
   }
-};
+})();

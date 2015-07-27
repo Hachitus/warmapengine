@@ -50,10 +50,15 @@ export class Map {
     this.activeTickCB = false;
   }
   /* options.mapSize = new createjs.Rectangle*/
-  init(tickCB, plugins) {
+  init(tickCB, plugins, coord) {
     if(plugins) {
       this.activatePlugins(plugins);
     }
+    this.stages.forEach(stage => {
+      stage.x = coord.x;
+      stage.y = coord.y;
+    });
+
     this.drawMap();
     this.tickOn(tickCB);
 

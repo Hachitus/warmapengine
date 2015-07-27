@@ -4,7 +4,7 @@
 
 /* ====== Own module imports ====== */
 //var Map = require( '../public/components/map/Map');
-import { createMap } from '../../components/factories/MapFactory';
+import { createMap } from '../../components/factories/horizontalHexaFactory';
 /* Read data from files, to use with testing */
 import { gameData } from '../../tests/data/gameData';
 import { typeData } from '../../tests/data/typeData';
@@ -117,7 +117,26 @@ window.testMap = function() {
       expect( true ).toBeTruthy();
     })
 
+    it("=> re-initialize map with plugins", function(done){
+      map = createMap(gameData, mapData, typeData);
+      expect(map).toBeDefined();
+      done();
+    });
 
+    it("=> unit properties ok", function(done){
+      try {
+        map.init( tickDoneFunc, [ map_move, object_select_hexagon ] );
+
+        function tickDoneFunc(tickDone) {
+          done();
+        }
+
+        expect( true ).toBeTruthy();
+      } catch(e) {
+        console.log("ERROR", e)
+      }
+
+    });
   });
 }
 

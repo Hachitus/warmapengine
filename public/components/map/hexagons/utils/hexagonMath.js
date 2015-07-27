@@ -1,5 +1,7 @@
 'use strict';
 
+/* NOTE: These calculations are for vertical hexagons */
+
 export function calcHeight(radius) {
   return radius * Math.sqrt(3);
 }

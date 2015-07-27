@@ -1,6 +1,6 @@
 import { preload } from '/var/www/warMapEngine/public/components/preloading/preloading';
 
-describe("basic map - without plugins", function() {
+describe("unitTest preloader -> ", function() {
   var runWhenComplete = false;
 
   it("=> exists", function(){

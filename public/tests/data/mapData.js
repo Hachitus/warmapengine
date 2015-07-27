@@ -36,13 +36,13 @@ export let mapData = {
            "_id":"53837d49976fed3b240006bd",
            "coord":{
               "x":"0",
-              "y":"141"
+              "y":"140"
            },
            "data": {},
            "lastSeenTurn":"1"
         },
         {
-           "objType":3,
+           "objType":2,
            "name":"tundra",
            "_id":"53837d49976fed3b240006c2",
            "coord":{
@@ -53,11 +53,11 @@ export let mapData = {
            "lastSeenTurn":"1"
         },
         {
-           "objType":2,
+           "objType":3,
            "name":"forest",
            "_id":"53837d49976fed3b240006c7",
            "coord":{
-              "x":"41",
+              "x":"82",
               "y":"140"
            },
            "data": {},
@@ -79,7 +79,7 @@ export let mapData = {
           "objType":0,
           "name": "Horsey the wild",
           "coord": {
-            "x": "82", "y": "94"
+            "x": "41", "y": "70"
           },
           "data": {
             "someCustomData": "true"

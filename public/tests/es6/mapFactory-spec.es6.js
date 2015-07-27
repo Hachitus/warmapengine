@@ -4,7 +4,7 @@
 
 /* ====== Own module imports ====== */
 //var Map = require( '../public/components/map/Map');
-import { createMap } from '../../components/factories/MapFactory.js';
+import { createMap } from '../../components/factories/horizontalHexaFactory.js';
 
 /* Read data from files, to use with testing */
 import { gameData } from '../../tests/data/gameData.js';

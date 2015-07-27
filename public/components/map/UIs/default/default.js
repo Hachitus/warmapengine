@@ -20,7 +20,7 @@ export class UI_default {
     this.closingElements = _DOMElementsToArray(this.modal.getElementsByClassName("modal_close"));
   }
   showSelections(objects) {
-    if(objects && objects.length > 1) {
+    if (objects && objects.length > 1) {
       this.modal.innerHTML = "objects:<br>";
       objects.map( object => {
         this.modal.innerHTML += object.data.typeData.name + "<br>";
@@ -44,19 +44,19 @@ export class UI_default {
 }
 
 function _activateClosingElement(element, closeCB) {
-      element.addEventListener("click", function(e) {
+  element.addEventListener("click", function(e) {
         closeCB();
       });
 }
 function _DOMElementsToArray(elements) {
-  if(!elements) {
+  if (!elements) {
     throw new Error(this.constructor + " function needs elements");
   }
 
   var length = elements.length;
   var elementArray = [];
 
-  for(let i = 0; i < length; i++) {
+  for (let i = 0; i < length; i++) {
     elementArray.push(elements[i]);
   }
 

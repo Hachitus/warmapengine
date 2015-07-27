@@ -47,7 +47,7 @@ export let object_select_hexagon = (function object_select_hexagon() {
   }
   function getObjectsForLayer(clickCoords) {
     return this.children.filter(function(child) {
-      if(child.x === clickCoords.x && child.y === clickCoords.y) {
+      if (child.x === clickCoords.x && child.y === clickCoords.y) {
         return true;
       }
 

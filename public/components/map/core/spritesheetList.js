@@ -12,7 +12,7 @@ export function spritesheetList () {
   scope.addSpritesheet = function (spritesheetData) {
     let spriteSheet;
 
-    if(scope.spritesheetAlreadyExists( _createID( spritesheetData ) ) ) {
+    if (scope.spritesheetAlreadyExists( _createID( spritesheetData ) ) ) {
       return false;
     }
 

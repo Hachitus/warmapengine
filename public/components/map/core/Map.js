@@ -6,28 +6,13 @@ Map is the main class for constructing 2D map for strategy games
 */
 
 /* ====== 3rd party imports ====== */
+
 //var System = require('es6-module-loader').System;
 //import { System } from 'es6-module-loader';
 
 /* ====== Own module imports ====== */
-import { validatorMod } from "./map_validators";
 
 'use strict';
-
-/** ===== Private functions declared ===== */
-let privateFunctions = {
-    _getStageIndex
-};
-
-/** ===== Validators used in this module. Imported from map_validators ===== */
-let validators = {
-    _is_index: validatorMod.isIndex,
-    _is_coordinates: validatorMod.isCoordinates,
-    _is_SubContainerAmount: validatorMod.isSubContainerAmount,
-    _is_UseOfSubLayers: validatorMod.isUseOfSubLayers,
-    _is_UseOfSubContainers: validatorMod.isUseOfSubContainers,
-    _is_canvas: validatorMod.isCanvas
-};
 
 /** ===== EXPORT ===== */
 
@@ -48,12 +33,14 @@ export class Map {
     this.plugins = [];
     this.mapSize = (options && options.mapSize) || { x:0, y:0 };
     this.activeTickCB = false;
+    this._fullScreenFunction = null;
   }
   /* options.mapSize = new createjs.Rectangle*/
   init(tickCB, plugins, coord) {
-    if(plugins) {
+    if (plugins) {
       this.activatePlugins(plugins);
     }
+
     this.stages.forEach(stage => {
       stage.x = coord.x;
       stage.y = coord.y;
@@ -64,42 +51,48 @@ export class Map {
 
     return this;
   }
+
   drawMap() {
     this.stages.forEach(function(stage) {
-      if(stage.drawThisChild) {
+      if (stage.drawThisChild) {
         stage.update();
         stage.drawThisChild = false;
       }
     });
-      return this;
+
+    return this;
   }
-  getSize( ) {
-      return this.mapSize;
+
+  getSize() {
+    return this.mapSize;
   }
-  setSize(x1, y1) {
-    this.mapSize = { x:x1, y:y1 };
+
+  setSize(width, height) {
+    this.mapSize = { x:width, y:height };
 
     return this.mapSize;
   }
+
   getChildNamed(name) {
-    for(let stage of this.stages) {
+    for (let stage of this.stages) {
       let child;
 
-      if(stage.name.toLowerCase() === name.toLowerCase()) {
+      if (stage.name.toLowerCase() === name.toLowerCase()) {
         return stage;
       }
 
-      if(child = stage.getChildNamed(name)) {
+      if (child = stage.getChildNamed(name)) {
         return child;
       }
     }
 
     return false;
   }
+
   addStage(stage) {
     let stages = [];
 
-    if(! (stage instanceof Array) ) {
+    if (!(stage instanceof Array)) {
       stages.push(stage);
     }
 
@@ -107,62 +100,60 @@ export class Map {
 
     return this;
   }
+
   replaceStage(newCanvas, oldCanvas) {
-    let oldIndex = privateFunctions._getStageIndex(this.stages, oldCanvas);
+    let oldIndex = _getStageIndex(this.stages, oldCanvas);
     this.stages[oldIndex] = newCanvas;
 
     return this;
   }
-  addLayer(layer, stage) {
 
-      return this;
-  }
-  removeLayer(layer) {
-      return this;
-  }
-  replaceLayer(newLayer, oldLayer) {
-      return this;
-  }
-  toggleLayer(layer) {
-      return this;
-  }
   getLayerNamed(name) {
     let theLayer;
 
-    for(let stage of this.stages) {
-      if(theLayer = stage.getChildNamed(name)) {
+    for (let stage of this.stages) {
+      if (theLayer = stage.getChildNamed(name)) {
         return theLayer;
       }
     }
+
     return false;
   }
+
   cacheMap() {
-      this.stages.forEach(function(stage) {
-          if(stage.cacheEnabled) {
+    this.stages.forEach(function(stage) {
+      if (stage.getCacheEnabled()) {
+        this.cache(0, 0, this.mapSize.x, this.mapSize.y);
+      } else {
+        stage.children.forEach(function(layer) {
+            if (layer.getCacheEnabled()) {
               this.cache(0, 0, this.mapSize.x, this.mapSize.y);
-          }
-      });
+            }
+          });
+      }
+    });
 
-      return this;
+    return this;
   }
-  cacheLayers() {
-      return this;
-  }
+
   getObjectsUnderMapPoint(clickCoords) {
-      let objects = [];
+    let objects = [];
 
-      this.stages.forEach(function(stage) {
-        objects[stage.name] = objects[stage.name] || [];
-        objects[stage.name].push(stage.getObjectsUnderPoint(clickCoords));
-      });
+    this.stages.forEach(function(stage) {
+      objects[stage.name] = objects[stage.name] || [];
+      objects[stage.name].push(stage.getObjectsUnderPoint(clickCoords));
+    });
 
-      return objects;
+    return objects;
   }
+
   activateFullSize() {
-    window.addEventListener("resize", _setStagesToFullSize.bind(this));
+    this._fullScreenFunction = _setStagesToFullSize.bind(this);
+    window.addEventListener("resize", this._fullScreenFunction);
   }
+
   deactivateFullSize() {
-    window.removeEventListener("resize", this._setStagesToFullSize.bind(this));
+    window.removeEventListener("resize", this._fullScreenFunction);
   }
   /* Activate plugins for the map. Must be in array format:
   [{
@@ -172,8 +163,6 @@ export class Map {
       second argument,
       ...
     ]
-
-    Parameter pluginToUse.func.name is part of ES6 standard to get function name.
   }] */
 
   activatePlugins(pluginsArray) {
@@ -182,8 +171,9 @@ export class Map {
       this.plugins[pluginToUse.pluginName].init(this);
     });
   }
+
   tickOn(tickCB) {
-    if(this.activeTickCB) {
+    if (this.activeTickCB) {
       throw new Error("there already exists one tick callback. Need to remove it first, before setting up a new one");
     }
 
@@ -193,6 +183,7 @@ export class Map {
 
     return this;
   }
+
   tickOff() {
     createjs.Ticker.removeEventListener("tick", this.activeTickCB);
 
@@ -206,19 +197,20 @@ export class Map {
 function _getStageIndex(stages, stageToFind) {
   var foundIndex = stages.indexOf(stageToFind);
 
-  return ( foundIndex === -1 ) ? false : foundIndex;
+  return (foundIndex === -1) ? false : foundIndex;
 }
 /** == Context sensitive, you need to bind, call or apply these == */
 function _handleTick() {
   this.stages.forEach(function(stage) {
-    if(stage.updateStage === true) {
+    if (stage.updateStage === true) {
       stage.update();
     }
   });
 }
+
 function _setStagesToFullSize() {
-  for( let canvas of this.stages ) {
-    let ctx = canvas.getContext( "2d" );
+  for (let canvas of this.stages) {
+    let ctx = canvas.getContext("2d");
 
     ctx.canvas.width = window.innerWidth;
     ctx.canvas.height = window.innerHeight;

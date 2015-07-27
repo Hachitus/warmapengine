@@ -39,25 +39,25 @@ export let map_move = (function map_move() {
         var moveListeners = [];
 
         moveListeners.push({
-            "action": "stagemousemove",
-            "cb": topMostStage.on("stagemousemove", _dragListener.call(topMostStage, map))
+          "action": "stagemousemove",
+          "cb": topMostStage.on("stagemousemove", _dragListener.call(topMostStage, map))
         });
         moveListeners.push({
-            "action": "stagemousemove",
-            "cb": topMostStage.on("stagemousemove",function() {
+          "action": "stagemousemove",
+          "cb": topMostStage.on("stagemousemove", function() {
               console.log("moved");
             })
         });
 
         moveListeners.push({
-            "action": "stagemouseup",
-            "cb": topMostStage.on("stagemouseup", function() {
+          "action": "stagemouseup",
+          "cb": topMostStage.on("stagemouseup", function() {
               moveListeners.forEach(function(cbData) {
-                  topMostStage.off(cbData.action, cbData.cb);
+                topMostStage.off(cbData.action, cbData.cb);
               });
             })
         });
-      } catch(e) {
+      } catch (e) {
         console.log(e);
       }
     };
@@ -95,7 +95,7 @@ export let map_move = (function map_move() {
    * for the given map object and moveStage & moveLayer - prototype functions for the stages and layers in the map.
    */
   function _createPrototypes (mapObj) {
-    if(mapObj.stages && mapObj.stages[0]) {
+    if (mapObj.stages && mapObj.stages[0]) {
       mapObj.stages[0].addPrototype("moveStage", _moveStage(mapObj));
     }
 
@@ -109,7 +109,7 @@ export let map_move = (function map_move() {
      */
     function _moveMap(coords) {
       this.stages.forEach(function(stage) {
-        if(stage.movable) {
+        if (stage.movable) {
           stage.moveStage(coords);
         }
       });
@@ -142,15 +142,15 @@ export let map_move = (function map_move() {
      * @param {object} coords Format { x: Number, y: Number }
      * @return this for chaining
      */
-     /*
-    function _moveLayer(coords) {
-      if(this.movable) {
-        this.x = coords.x;
-        this.y = coords.y;
-      }
+    /*
+   function _moveLayer(coords) {
+     if(this.movable) {
+       this.x = coords.x;
+       this.y = coords.y;
+     }
 
-      return this;
-    }*/
+     return this;
+   }*/
   }
 
   function _offsetCoords() {

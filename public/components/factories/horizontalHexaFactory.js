@@ -33,11 +33,6 @@ let functionsInObj = {
   Object_unit_hexa
 };
 
-/** ===== Private functions declared ===== */
-let privateFunctions = {
-    _getStageIndex
-};
-
 /** ===== Validators used in this module. Imported from map_validators ===== */
 let validators = {
     _is_index: validatorMod.isIndex
@@ -143,7 +138,7 @@ export function createMap(gameDataArg, mapDataArg, typeDataArg) {
         thisLayer = new functionsInObj[layerData.type](layerData.name, layerData.type, false, layerData.coord);
         thisStage.addChild( thisLayer );
       } catch(e) {
-        console.log("Problem:", layerData.type, e.stack)
+        console.log("Problem:", layerData.type, e.stack);
       }
 
       layerData.objectGroups.forEach( objectGroup => {
@@ -199,11 +194,4 @@ export function createMap(gameDataArg, mapDataArg, typeDataArg) {
     _CreateUILayer_arrow
     _CreateUILayer_selection
 */
-
-  function _calculateMapSize() {
-
-  }
 }
-
-/* ==== Private functions ==== */
-function _getStageIndex() {}

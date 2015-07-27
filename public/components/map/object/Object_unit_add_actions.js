@@ -24,10 +24,10 @@ class Unit_addActions {
         attack: function( from, to ) {
           Map_API.move( from, to, this );
           this.actions = {
-             move: {
-                from: from,
-                to: to
-             }
+            move: {
+              from: from,
+              to: to
+            }
           };
         },
         execMove: function( to ) {

@@ -61,6 +61,6 @@ export class Object_sprite extends createjs.Sprite {
     };
   }
   getBoundsFromFrames() {
-     return this.spriteSheet.getFrameBounds( this.currentFrame );
+    return this.spriteSheet.getFrameBounds( this.currentFrame );
   }
 }

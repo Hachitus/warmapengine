@@ -30,7 +30,7 @@ export let map_coords_horizontalHex = function map_coords_horizontalHex(hexRadiu
 
     coordinateIndexes = _setCellByPoint(radius, x, y);
 
-    if(coordinateIndexes.x < 0 && coordinateIndexes.x < 0) {
+    if (coordinateIndexes.x < 0 && coordinateIndexes.x < 0) {
       throw new Error("click outside of the hexagon area");
     }
     centerCoords = {
@@ -65,7 +65,7 @@ function _setCellByPoint(radius, x, y) {
   var cy = ty - HEIGHT * cj;
 
   if (cx > Math.abs(radius / 2 - radius * cy / HEIGHT)) {
-      return {
+    return {
         x: ci,
         y: cj
       };

@@ -14,11 +14,11 @@ var scope;
 
 export function UI (givenUITheme, givenMap) {
   /* This is a singleton class, so if already instantiated return scope */
-  if(scope) {
+  if (scope) {
     return scope;
   }
 
-  if(!givenUITheme || !givenMap) {
+  if (!givenUITheme || !givenMap) {
     throw new Error("UI-module requires UITheme and mapObj");
   }
 

@@ -1,0 +1,30 @@
+{
+  "esnext": true,
+  "validateIndentation": 2,
+  "validateLineBreaks": "LF",
+  "requireSpaceAfterKeywords": [
+    "if",
+    "else",
+    "for",
+    "while",
+    "do",
+    "switch",
+    "case",
+    "return",
+    "try",
+    "catch",
+    "typeof"
+  ],
+  "requireDotNotation": true,
+  "requireSpacesInForStatement": true,
+  "requireSpaceBetweenArguments": true,
+  "requireCurlyBraces": [
+    "do"
+  ],
+  "disallowMixedSpacesAndTabs": true,
+  "disallowQuotedKeysInObjects": true,
+  "disallowTrailingWhitespace": true,
+  "disallowTrailingComma": true,
+  "disallowKeywords": [ "with" ],
+    "disallowKeywordsOnNewLine": ["else"]
+}

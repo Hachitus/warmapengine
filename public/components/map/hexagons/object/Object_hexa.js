@@ -21,7 +21,7 @@ export class Object_sprite_hexa extends Object_sprite {
     this.HEIGHT = HEIGHT;
     this.SIDE = SIDE;
 
-    if(!extra.radius) {
+    if (!extra.radius) {
       throw new Error("Need radius!");
     }
 
@@ -36,7 +36,7 @@ export class Object_sprite_hexa extends Object_sprite {
 }
 
 function setAndGetShape(radius) {
-  if(!shape) {
+  if (!shape) {
     let hexagonSize = hexagonMath.getHexaSize(radius);
     /* x and y are reversed, since this is horizontal hexagon and calculations are for vertical */
     shape = createHexagon({ x:hexagonSize.y + hexagonSize.y /2, y:hexagonSize.x + hexagonSize.x / 2 }, radius);

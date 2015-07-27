@@ -20,7 +20,7 @@ function onMouseDown(map, element, callback) {
 
     objects = map.getObjectsUnderMapPoint(globalCoords);
 
-    if(objects && objects.length > 0) {
+    if (objects && objects.length > 0) {
       callback(objects);
     }
   });

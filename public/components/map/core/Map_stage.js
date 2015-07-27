@@ -25,43 +25,43 @@ let validators = {
 export class Map_stage extends createjs.Stage {
   /* Takes the canvas element as argument */
     constructor(name, ...args) {
-        super(...args);
+      super(...args);
 
-        this.superPrototype = this.constructor.prototype;
-        this._cacheEnabled = true;
-        this.name = "" + name; // For debugging AND getting children by name. Shows up in toString
-        this.drawThisChild = true;
+      this.superPrototype = this.constructor.prototype;
+      this._cacheEnabled = true;
+      this.name = "" + name; // For debugging AND getting children by name. Shows up in toString
+      this.drawThisChild = true;
 
-        /* Controlling and optimizing the engine */
-        this.tickEnabled = false;
-        this.tickOnUpdate = false;
-        this.tickChildren = false;
-        this.mouseChildren = false;
-        this.mouseEnabled = false;
-        this.mouseEnabled = true;
-        this.preventSelection = true;
-        this.movable = true;
-        this.interactive = false;
-        //this.drawRect = MAYBE THIS should be the area of the canvas size? So the whole stage isn't drawn only visible part?
+      /* Controlling and optimizing the engine */
+      this.tickEnabled = false;
+      this.tickOnUpdate = false;
+      this.tickChildren = false;
+      this.mouseChildren = false;
+      this.mouseEnabled = false;
+      this.mouseEnabled = true;
+      this.preventSelection = true;
+      this.movable = true;
+      this.interactive = false;
+      //this.drawRect = MAYBE THIS should be the area of the canvas size? So the whole stage isn't drawn only visible part?
     }
     getCacheEnabled() {
-        return this._cacheEnabled;
+      return this._cacheEnabled;
     }
     setCacheEnabled(status) {
-        validators._is_boolean(status);
-        this._cacheEnabled = status;
+      validators._is_boolean(status);
+      this._cacheEnabled = status;
 
-        return this;
+      return this;
     }
     getChildNamed(name) {
-      for(let layer of this.children) {
+      for (let layer of this.children) {
         let child;
 
-        if(layer.name.toLowerCase() === name.toLowerCase()) {
+        if (layer.name.toLowerCase() === name.toLowerCase()) {
           return layer;
         }
 
-        if(child = layer.getChildNamed(name)) {
+        if (child = layer.getChildNamed(name)) {
           return child;
         }
       }

@@ -11,17 +11,17 @@ let privateFunctions = {
 export let validatorMod = (function validatorMod() {
   return {
     isIndex(int) {
-        return privateFunctions.isInt(int);
+      return privateFunctions.isInt(int);
     },
     isBoolean(bool) {
-        return bool === Boolean(bool);
+      return bool === Boolean(bool);
     },
     isCoordinates(x, y) {
-        if(privateFunctions.isInt(x) && privateFunctions.isInt(y) ) {
-            return true;
-        }
+      if (privateFunctions.isInt(x) && privateFunctions.isInt(y) ) {
+        return true;
+      }
 
-        return false;
+      return false;
     },
     isSubContainerAmount() {
 
@@ -38,7 +38,7 @@ export let validatorMod = (function validatorMod() {
 /** ===== Private functions ===== */
 function _isInt(wannabeInt) {
   /* ES6 */
-  if(Number.isInteger) {
+  if (Number.isInteger) {
     return Number.isInteger(wannabeInt);
   }
 

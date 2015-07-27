@@ -1,4 +1,4 @@
 'use strict';
 
-export function SelectObjectsOnMap {
+export function SelectObjectsOnMap () {
 }

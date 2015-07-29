@@ -4,8 +4,7 @@ var babelify = require('babelify');
 var browserify = require('browserify');
 var glob = require('glob');
 var q = require('q');
-var concat = require('gulp-concat');
-var transpile  = require('gulp-es6-module-transpiler');
+var jscs = require('gulp-jscs')
 //var babel = require("gulp-babel");
 
 gulp.task('watchAndCompile', function() {
@@ -46,7 +45,7 @@ gulp.task('compile_unitTests', function(done) {
   });
 });
 
-gulp.task('compile_manualTestMap', function(done) {
+gulp.task('compile_manualTestMap', function() {
   return browserify({
       entries: './public/tests/manual/createMap-test.es6.js',
       debug: true
@@ -57,6 +56,17 @@ gulp.task('compile_manualTestMap', function(done) {
     .pipe(source('map-spec.js'))
     .pipe(gulp.dest('./public/tests/manual'));
 });
+
+gulp.task('jscs', function () {
+  return gulp.src('public/components/**/*.js')
+    .pipe(jscs({
+      fix: true,
+      esnext: true
+    }))
+    .pipe(gulp.dest('public/components/'));
+});
+
+gulp.task('default', ['compileAll']);
 
 gulp.task('bundle_testMap', function() {
   // need to implement a bundling without transpiling the ES6 features, so only import / export module budnling, nothing else

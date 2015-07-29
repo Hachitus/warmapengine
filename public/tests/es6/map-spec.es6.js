@@ -12,7 +12,8 @@ import { mapData } from '../../tests/data/mapData';
 import { preload } from '../../components/preloading/preloading';
 
 /* ===== Import plugins ===== */
-import { map_drag } from "../../components/map/move/map_drag";
+import { map_drag } from "../../components/map/core/move/map_drag";
+import { map_zoom } from '../../components/map/core/zoom/map_zoom';
 import { object_select_hexagon } from '../../components/map/hexagons/object_select/object_select_hexagon';
 
 window.map = {};
@@ -78,7 +79,7 @@ window.testMap = function() {
       done();
     });
     it("are stage properties correct?", function(){
-      expect(map.stages[0].name === "terrainStage").toBeTruthy();
+      expect(map._stage[0].name === "terrainStage").toBeTruthy();
       expect(map.stages[0].children.length > 0).toBeTruthy();
       expect(map.getChildNamed("terrainStage").name  === "terrainStage").toBeTruthy();
       expect(typeof map.getChildNamed("terrainStage") === "object").toBeTruthy();
@@ -95,7 +96,7 @@ window.testMap = function() {
       expect(Number( map.getLayerNamed("unitLayer").children[0].x ) === 82).toBeTruthy();
     });
     it("unit properties are correct", function(done){
-      map.init( tickDoneFunc );
+      map.init( undefined, undefined, tickDoneFunc );
 
       function tickDoneFunc(tickDone) {
         done();
@@ -128,7 +129,7 @@ window.testMap = function() {
     it("unit properties ok", function(done){
       try {
         debugger;
-        map.init( tickDoneFunc, [ map_drag, object_select_hexagon ] );
+        map.init( [ map_zoom, map_drag, object_select_hexagon ], tickDoneFunc );
 
         function tickDoneFunc(tickDone) {
           done();

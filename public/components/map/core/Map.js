@@ -31,13 +31,14 @@ import { Map_layer } from './Map_layer';
 const LISTENER_TYPES = {
   "mousemove": "stagemousemove",
   "mouseup": "stagemouseup",
-  "mousedown": "stagemousedown"
+  "mousedown": "stagemousedown",
+  "mousewheel": "wheel"
 };
 
 export class Map {
   constructor(canvas, options) {
     if(!canvas) {
-      throw new Error(this.constructor.name + " needs canvas!")
+      throw new Error(this.constructor.name + " needs canvas!");
     }
     options = options || {};
     this._stage = new Map_stage("daddyStage", canvas);
@@ -48,8 +49,9 @@ export class Map {
     this.activeTickCB = false;
     this._fullScreenFunction = null;
     this._eventListeners = _getEmptyEventListenerArray();
+    this._drawMapOnNextTick = false;
   }
-  init(tickCB, plugins, coord) {
+  init(plugins, coord, tickCB) {
     if (plugins) {
       this.activatePlugins(plugins);
     }
@@ -59,12 +61,16 @@ export class Map {
       this.mommyLayer.y = coord.y;
     }
 
-    this.drawMap();
-    this.tickOn(tickCB);
+    this.drawOnNextTick();
+    _defaultTick(this);
+    tickCB && this.customTickOn(tickCB);
 
     return this;
   }
 
+  drawOnNextTick() {
+    this._drawMapOnNextTick = true;
+  }
   drawMap() {
     this._stage.update();
 
@@ -156,7 +162,7 @@ export class Map {
     });
   }
 
-  tickOn(tickCB) {
+  customTickOn(tickCB) {
     if (this.activeTickCB) {
       throw new Error("there already exists one tick callback. Need to remove it first, before setting up a new one");
     }
@@ -168,7 +174,7 @@ export class Map {
     return this;
   }
 
-  tickOff() {
+  customTickOff() {
     createjs.Ticker.removeEventListener("tick", this.activeTickCB);
 
     this.activeTickCB = undefined;
@@ -176,6 +182,7 @@ export class Map {
     return this;
   }
   setListener(action, callback) {
+    /* There has been several different mousewheel events before, but now all except opera should support "wheel" */
     this._eventListeners[action].push(callback);
     this._stage.addEventListener(LISTENER_TYPES[action], callback);
 
@@ -230,9 +237,24 @@ function _setToFullSize() {
   ctx.canvas.height = window.innerHeight;
 }
 function _getEmptyEventListenerArray() {
-  return {
-    mousedown: [],
-    mouseup: [],
-    mousemove: []
-  };
+  var objects = {};
+
+  Object.keys(LISTENER_TYPES).forEach(function(type) {
+    objects[type] = [];
+  });
+
+  return objects;
+}
+/* This should handle the default drawing of the map, so that map always updates when drawOnNextTick === true */
+function _defaultTick(map) {
+  createjs.Ticker.addEventListener("tick", _tickFunc);
+
+  return _tickFunc;
+
+  function _tickFunc() {
+    if(map._drawMapOnNextTick === true) {
+      map.drawMap();
+      map._drawMapOnNextTick = false;
+    }
+  }
 }

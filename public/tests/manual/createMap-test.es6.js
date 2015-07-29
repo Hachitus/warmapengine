@@ -12,10 +12,11 @@ import { mapData } from '../../tests/data/mapData';
 import { preload } from '../../components/preloading/preloading';
 
 /* ===== Import plugins ===== */
-import { map_drag } from "../../components/map/move/map_drag";
+import { map_drag } from "../../components/map/core/move/map_drag";
+import { map_zoom } from '../../components/map/core/zoom/map_zoom';
 import { object_select_hexagon } from '../../components/map/hexagons/object_select/object_select_hexagon';
 
-var map = window.map = {};
+var map;
 window.initMap = function () {
   var canvasElement = document.getElementById("mapCanvas");
 
@@ -34,25 +35,11 @@ window.initMap = function () {
   prel.resolveOnComplete()
     .then(function() {
       console.log("preloading complete? Map should be ready to init?");
-      map.init( tickDoneFunc, [ map_drag, object_select_hexagon ], { x: 41, y:47 } );
+      map.init( [ map_zoom, map_drag, object_select_hexagon ], { x: 41, y: 47 }, undefined );
     });
 
     /* ====== private functions, or to be moved elsewhere ====== */
   function preloadErrorHandler(err) {
     console.log("PRELOADER ERROR", err );
   }
-
-  function tickDoneFunc(tickDone) {
-
-  }
-/*
-  var timeoutter = (function (map) {
-    return function() {
-      map.stages[0].drawThisChild = true;
-      map.drawMap();
-    };
-  })(map);
-
-  window.setTimeout(timeoutter, 400);
-*/
-}
+};

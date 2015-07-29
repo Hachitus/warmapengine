@@ -113,7 +113,7 @@ describe("basic map - without plugins", function() {
       expect(Number( map.getLayerNamed("unitLayer").children[0].x ) === 60).toBeTruthy();
     });
     it("=> unit properties are correct", function(done){
-      map.init( tickDoneFunc );
+      map.init( undefined, undefined, tickDoneFunc );
 
       function tickDoneFunc(tickDone) {
         done();

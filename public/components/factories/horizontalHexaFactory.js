@@ -17,7 +17,7 @@ import { Object_unit_hexa } from '../map/hexagons/object/Object_unit_hexa';
 import { spritesheetList } from '../map/core/spritesheetList';
 let allSpritesheets = spritesheetList();
 import { UI } from '../map/core/UI';
-import { UI_default } from "../map/UIs/default/default.js";
+import { UI_default } from "../map/core/UI/default/default.js";
 
 let functionsInObj = {
   Object_terrain: Object_terrain_hexa,

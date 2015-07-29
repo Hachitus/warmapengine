@@ -1,6 +1,6 @@
 'use strict';
 
-export let map_drag = (function map_move() {
+export let map_drag = (function map_drag() {
   var scope = {};
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
@@ -8,7 +8,7 @@ export let map_drag = (function map_move() {
   /* ===== For testing ===== */
   scope._startDragListener = _startDragListener;
 
-  scope.pluginName = "map_drag";
+  scope.pluginName = map_drag.name;
 
   /**
    * @param {Map object} mapObj - the Map class object

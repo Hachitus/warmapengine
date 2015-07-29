@@ -12,12 +12,14 @@ import { mapData } from '../../tests/data/mapData';
 import { preload } from '../../components/preloading/preloading';
 
 /* ===== Import plugins ===== */
-import { map_move } from "../../components/map/move/map_move";
+import { map_drag } from "../../components/map/move/map_drag";
 import { object_select_hexagon } from '../../components/map/hexagons/object_select/object_select_hexagon';
 
 var map = window.map = {};
 window.initMap = function () {
-  map = createMap(gameData, mapData, typeData);
+  var canvasElement = document.getElementById("mapCanvas");
+
+  map = createMap(canvasElement, gameData, mapData, typeData);
 
   let prel = new preload( false );
   prel.setErrorHandler( preloadErrorHandler );
@@ -32,7 +34,7 @@ window.initMap = function () {
   prel.resolveOnComplete()
     .then(function() {
       console.log("preloading complete? Map should be ready to init?");
-      map.init( tickDoneFunc, [ map_move, object_select_hexagon ], { x: 41, y:47 } );
+      map.init( tickDoneFunc, [ map_drag, object_select_hexagon ], { x: 41, y:47 } );
     });
 
     /* ====== private functions, or to be moved elsewhere ====== */

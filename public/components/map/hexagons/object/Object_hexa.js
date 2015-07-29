@@ -26,8 +26,6 @@ export class Object_sprite_hexa extends Object_sprite {
     }
 
     /* Draw hexagon to test the hits with hitArea */
-    //shape = createHexagon({ x:0, y:0 }, extra.radius, 6, extra.pointSize, 30, extra.color);
-
     this.hitArea = setAndGetShape(extra.radius);
   }
   static getShape() {
@@ -39,7 +37,7 @@ function setAndGetShape(radius) {
   if (!shape) {
     let hexagonSize = hexagonMath.getHexaSize(radius);
     /* x and y are reversed, since this is horizontal hexagon and calculations are for vertical */
-    shape = createHexagon({ x:hexagonSize.y + hexagonSize.y /2, y:hexagonSize.x + hexagonSize.x / 2 }, radius);
+    shape = createHexagon({ x: hexagonSize.y / 2, y: hexagonSize.x / 2 }, radius);
   }
 
   return shape;

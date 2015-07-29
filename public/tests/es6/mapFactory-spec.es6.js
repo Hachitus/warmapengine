@@ -90,7 +90,7 @@ describe("basic map - without plugins", function() {
 
 
   describe("=> make map", function() {
-    let map = createMap(gameData, mapData, typeData);
+    let map = createMap(mapCanvas, gameData, mapData, typeData);
 
     it("=> exists", function(){
       expect(map).toBeDefined();

@@ -12,30 +12,16 @@ Map is the main class for constructing 2D map for strategy games
 
 /* ====== Own module imports ====== */
 import { Map } from '../map/core/Map';
-import { Map_stage } from '../map/core/Map_stage';
-import { Map_layer } from '../map/core/Map_layer';
 import { Object_terrain_hexa } from '../map/hexagons/object/Object_terrain_hexa';
 import { Object_unit_hexa } from '../map/hexagons/object/Object_unit_hexa';
-import { Object_terrain } from '../map/object/Object_terrain';
-import { Object_unit } from '../map/object/Object_unit';
 import { spritesheetList } from '../map/core/spritesheetList';
 let allSpritesheets = spritesheetList();
-import { validatorMod } from "../map/core/map_validators";
 import { UI } from '../map/core/UI';
 import { UI_default } from "../map/UIs/default/default.js";
 
 let functionsInObj = {
-  Map_stage,
-  Map_layer,
-  Object_terrain,
-  Object_unit,
-  Object_terrain_hexa,
-  Object_unit_hexa
-};
-
-/** ===== Validators used in this module. Imported from map_validators ===== */
-let validators = {
-    _is_index: validatorMod.isIndex
+  Object_terrain: Object_terrain_hexa,
+  Object_unit: Object_unit_hexa
 };
 
 /** ===== EXPORT ===== */
@@ -99,12 +85,12 @@ Coordinates are always defaulted to 0,0 if none are given.
 }
 */
 
-export function createMap(gameDataArg, mapDataArg, typeDataArg) {
+export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
   console.log("============================================")
   var mapData = (typeof mapDataArg === "string") ? JSON.parse(mapDataArg) : mapDataArg;
   var typeData = (typeof typeDataArg === "string") ? JSON.parse(typeDataArg) : typeDataArg;
   var gameData = (typeof gameDataArg === "string") ? JSON.parse(gameDataArg) : gameDataArg;
-  var map = new Map({ mapSize: gameData.mapSize });
+  var map = new Map(canvasElement, { mapSize: gameData.mapSize });
   var dialog_selection = document.getElementById("selectionDialog");
   var defaultUI = new UI_default(dialog_selection);
   defaultUI.init();
@@ -126,55 +112,50 @@ export function createMap(gameDataArg, mapDataArg, typeDataArg) {
   */
 
   /* We iterate through the given map data and create objects accordingly */
-  mapData.stages.forEach( stageData => {
-    let thisStage = new functionsInObj[stageData.type](stageData.name, document.querySelector( stageData.element ) );
+  mapData.layers.forEach( layerData => {
+    let thisLayer;
 
-    map.addStage( thisStage );
+    try {
+      thisLayer = map.addLayers( layerData.name, 2, false, layerData.coord );
+    } catch(e) {
+      console.log("Problem:", layerData.type, e.stack);
+    }
 
-    stageData.layers.forEach( layerData => {
-      let thisLayer;
+    layerData.objectGroups.forEach( objectGroup => {
+      let spritesheet;
+      let spritesheetType = objectGroup.typeImageData;
 
-      try {
-        thisLayer = new functionsInObj[layerData.type](layerData.name, layerData.type, false, layerData.coord);
-        thisStage.addChild( thisLayer );
-      } catch(e) {
-        console.log("Problem:", layerData.type, e.stack);
+      if(!spritesheetType) {
+        console.log("Error with spritesheetType-data");
+        return;
       }
 
-      layerData.objectGroups.forEach( objectGroup => {
-        let spritesheet;
-        let spritesheetType = objectGroup.typeImageData;
+      if(spritesheetType) {
+        let spritesheetData = typeData.graphicData[spritesheetType];
 
-        if(!spritesheetType) {
-          console.log("Error with spritesheetType-data");
-          return;
+        spritesheet = allSpritesheets.addSpritesheet(spritesheetData);
+      }
+
+      objectGroup.objects.forEach( object => {
+        let objTypeData = typeData.objectData[spritesheetType][object.objType];
+
+        if(!objTypeData) {
+          console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
+          throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
         }
 
-        if(spritesheetType) {
-          let spritesheetData = typeData.graphicData[spritesheetType];
-
-          spritesheet = allSpritesheets.addSpritesheet(spritesheetData);
-        }
-
-        objectGroup.objects.forEach( object => {
-          let objTypeData = typeData.objectData[spritesheetType][object.objType];
-
-          if(!objTypeData) {
-            console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
-            throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
-          }
-
-          let currentFrameNumber = objTypeData.image;
-          let objData = {
-            typeData: objTypeData,
-            activeData: object.data
-          };
-          let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, spritesheet, currentFrameNumber, { radius: 47 } );
-          thisLayer.addChild( newObject );
-        });
+        let currentFrameNumber = objTypeData.image;
+        let objData = {
+          typeData: objTypeData,
+          activeData: object.data
+        };
+        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, spritesheet, currentFrameNumber, { radius: 47 } );
+        thisLayer.addChild( newObject );
       });
     });
   });
+
+  map.moveMap(mapData.startPoint);
 
   return map;
 

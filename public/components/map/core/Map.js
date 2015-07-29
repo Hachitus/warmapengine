@@ -1,3 +1,4 @@
+'use strict';
 /**
 Map is the main class for constructing 2D map for strategy games
 
@@ -11,8 +12,8 @@ Map is the main class for constructing 2D map for strategy games
 //import { System } from 'es6-module-loader';
 
 /* ====== Own module imports ====== */
-
-'use strict';
+import { Map_stage } from './Map_stage';
+import { Map_layer } from './Map_layer';
 
 /** ===== EXPORT ===== */
 
@@ -27,24 +28,36 @@ Map is the main class for constructing 2D map for strategy games
  * Plugins are provided in an array of plugin functions
 */
 
+const LISTENER_TYPES = {
+  "mousemove": "stagemousemove",
+  "mouseup": "stagemouseup",
+  "mousedown": "stagemousedown"
+};
+
 export class Map {
-  constructor(options) {
-    this.stages = [];
+  constructor(canvas, options) {
+    if(!canvas) {
+      throw new Error(this.constructor.name + " needs canvas!")
+    }
+    options = options || {};
+    this._stage = new Map_stage("daddyStage", canvas);
+    this.mommyLayer = new Map_layer("mommyLayer", options.type, options.subContainers, options.startCoord);
+    this._stage.addChild(this.mommyLayer);
     this.plugins = [];
-    this.mapSize = (options && options.mapSize) || { x:0, y:0 };
+    this.mapSize = options.mapSize || { x:0, y:0 };
     this.activeTickCB = false;
     this._fullScreenFunction = null;
+    this._eventListeners = _getEmptyEventListenerArray();
   }
-  /* options.mapSize = new createjs.Rectangle*/
   init(tickCB, plugins, coord) {
     if (plugins) {
       this.activatePlugins(plugins);
     }
 
-    this.stages.forEach(stage => {
-      stage.x = coord.x;
-      stage.y = coord.y;
-    });
+    if(coord) {
+      this.mommyLayer.x = coord.x;
+      this.mommyLayer.y = coord.y;
+    }
 
     this.drawMap();
     this.tickOn(tickCB);
@@ -53,14 +66,13 @@ export class Map {
   }
 
   drawMap() {
-    this.stages.forEach(function(stage) {
-      if (stage.drawThisChild) {
-        stage.update();
-        stage.drawThisChild = false;
-      }
-    });
+    this._stage.update();
 
     return this;
+  }
+
+  getStage() {
+    return this._stage;
   }
 
   getSize() {
@@ -73,65 +85,41 @@ export class Map {
     return this.mapSize;
   }
 
-  getChildNamed(name) {
-    for (let stage of this.stages) {
-      let child;
+  addLayers(name, type, subContainers, coord) {
+    var layer = new Map_layer(name, type, subContainers, coord);
 
-      if (stage.name.toLowerCase() === name.toLowerCase()) {
-        return stage;
-      }
+    this.mommyLayer.addChild(layer);
 
-      if (child = stage.getChildNamed(name)) {
-        return child;
-      }
-    }
-
-    return false;
+    return layer;
   }
 
-  addStage(stage) {
-    let stages = [];
+  removeLayer(layer) {
+    this.mommyLayer.removeChild(layer);
 
-    if (!(stage instanceof Array)) {
-      stages.push(stage);
-    }
-
-    this.stages.push(...stages);
-
-    return this;
-  }
-
-  replaceStage(newCanvas, oldCanvas) {
-    let oldIndex = _getStageIndex(this.stages, oldCanvas);
-    this.stages[oldIndex] = newCanvas;
-
-    return this;
+    return layer;
   }
 
   getLayerNamed(name) {
-    let theLayer;
+    return this.mommyLayer.getChildNamed(name);
+  }
+  moveMap(coordinates) {
+    this.mommyLayer.move(coordinates);
 
-    for (let stage of this.stages) {
-      if (theLayer = stage.getChildNamed(name)) {
-        return theLayer;
-      }
-    }
+    this.drawMap();
 
-    return false;
+    return this;
   }
 
   cacheMap() {
-    this.stages.forEach(function(stage) {
-      if (stage.getCacheEnabled()) {
-        this.cache(0, 0, this.mapSize.x, this.mapSize.y);
-      } else {
-        stage.children.forEach(function(layer) {
-            if (layer.getCacheEnabled()) {
-              this.cache(0, 0, this.mapSize.x, this.mapSize.y);
-            }
-          });
-      }
-    });
+    if(this.mommyLayer.getCacheEnabled()) {
+      this.mommyLayer.cache(0, 0, this.mapSize.x, this.mapSize.y);
+    } else {
+      this.mommyLayer.children.forEach(child => {
+        if(child.getCacheEnabled()) {
+          child.cache(0, 0, this.mapSize.x, this.mapSize.y);
+        }
+      });
+    }
 
     return this;
   }
@@ -139,16 +127,13 @@ export class Map {
   getObjectsUnderMapPoint(clickCoords) {
     let objects = [];
 
-    this.stages.forEach(function(stage) {
-      objects[stage.name] = objects[stage.name] || [];
-      objects[stage.name].push(stage.getObjectsUnderPoint(clickCoords));
-    });
+    this.mommyLayer.getObjectsUnderPoint(clickCoords);
 
     return objects;
   }
 
   activateFullSize() {
-    this._fullScreenFunction = _setStagesToFullSize.bind(this);
+    this._fullScreenFunction = _setToFullSize.bind(this);
     window.addEventListener("resize", this._fullScreenFunction);
   }
 
@@ -164,7 +149,6 @@ export class Map {
       ...
     ]
   }] */
-
   activatePlugins(pluginsArray) {
     pluginsArray.forEach(pluginToUse => {
       this.plugins[pluginToUse.pluginName] = pluginToUse;
@@ -191,28 +175,64 @@ export class Map {
 
     return this;
   }
+  setListener(action, callback) {
+    this._eventListeners[action].push(callback);
+    this._stage.addEventListener(LISTENER_TYPES[action], callback);
+
+    return this;
+  }
+  removeAllListeners() {
+    var listeners = this._eventListeners;
+
+    Object.keys(listeners).forEach( typeIndex => {
+      listeners[typeIndex].forEach(callback => {
+        this._stage.off(LISTENER_TYPES[typeIndex], callback);
+      });
+    });
+    listeners = _getEmptyEventListenerArray();
+
+    return this;
+  }
+  removeListeners(type) {
+    var listeners = this._eventListeners;
+
+    if(typeof type === "string" ) {
+      listeners[type].forEach(callback => {
+        this._stage.off(LISTENER_TYPES[type], callback);
+      });
+    } else if (type instanceof Array ) {
+      type.forEach(thisType => {
+        this._eventListeners[thisType].forEach(callback => {
+          this._stage.off(LISTENER_TYPES[thisType], callback);
+        });
+      });
+    }
+
+    listeners = [];
+
+    return this;
+  }
+
 }
 
 /** ===== Private functions ===== */
-function _getStageIndex(stages, stageToFind) {
-  var foundIndex = stages.indexOf(stageToFind);
-
-  return (foundIndex === -1) ? false : foundIndex;
-}
 /** == Context sensitive, you need to bind, call or apply these == */
 function _handleTick() {
-  this.stages.forEach(function(stage) {
-    if (stage.updateStage === true) {
-      stage.update();
-    }
-  });
+  if (this.mommyLayer.drawThisChild === true) {
+    this.drawMap();
+  }
 }
 
-function _setStagesToFullSize() {
-  for (let canvas of this.stages) {
-    let ctx = canvas.getContext("2d");
+function _setToFullSize() {
+  let ctx = this._stage.getContext("2d");
 
-    ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
-  }
+  ctx.canvas.width = window.innerWidth;
+  ctx.canvas.height = window.innerHeight;
+}
+function _getEmptyEventListenerArray() {
+  return {
+    mousedown: [],
+    mouseup: [],
+    mousemove: []
+  };
 }

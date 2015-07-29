@@ -24,7 +24,7 @@ export class Map_layer extends createjs.Container {
     this.y = coord ? ( coord.y || 0 ) : 0;
     this.superPrototype = this.constructor.prototype;
     this._cacheEnabled = true;
-    this.type = subContainers ? TYPES.imagesInSubContainers : type;
+    this.type = subContainers ? TYPES.imagesInSubContainers : ( type || TYPES.noSubContainers );
     this.visible = true;
     this.useSubcontainers = subContainers || false;
     this.name = "" + name; // For debugging. Shows up in toString
@@ -36,12 +36,12 @@ export class Map_layer extends createjs.Container {
     this.tickChildren = false;
     this.mouseChildren = false;
     this.mouseEnabled = false;
+    this.movable = true;
   }
   getCacheEnabled() {
     return this._cacheEnabled;
   }
   setCacheEnabled(status) {
-    validators._is_boolean(status);
     this._cacheEnabled = status;
 
     return this;
@@ -63,6 +63,13 @@ export class Map_layer extends createjs.Container {
     }
 
     return this;
+  }
+  move(coordinates) {
+    if (this.movable) {
+      this.x += coordinates.x;
+      this.y += coordinates.y;
+      this.drawThisChild = true;
+    }
   }
   getChildNamed(name) {
     if (this.children[0] instanceof createjs.Container) {

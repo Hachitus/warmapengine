@@ -12,12 +12,14 @@ import { mapData } from '../../tests/data/mapData';
 import { preload } from '../../components/preloading/preloading';
 
 /* ===== Import plugins ===== */
-import { map_move } from "../../components/map/move/map_move";
+import { map_drag } from "../../components/map/move/map_drag";
 import { object_select_hexagon } from '../../components/map/hexagons/object_select/object_select_hexagon';
 
 window.map = {};
 
 window.testMap = function() {
+  var canvasElement = document.getElementById("mapCanvas");
+
   describe("preloader => ", function(done) {
     var runWhenComplete = false;
 
@@ -70,29 +72,29 @@ window.testMap = function() {
   Always request data from backend with gameID and turn, like: domain.fi/API/mapData/832948hfdjsh93/1
 
   /* ====== Tests ====== */
-    it("=> exists", function(done){
-      map = createMap(gameData, mapData, typeData);
+    it("exists", function(done){
+      map = createMap(canvasElement, gameData, mapData, typeData);
       expect(map).toBeDefined();
       done();
     });
-    it("=> are stage properties correct?", function(){
+    it("are stage properties correct?", function(){
       expect(map.stages[0].name === "terrainStage").toBeTruthy();
       expect(map.stages[0].children.length > 0).toBeTruthy();
       expect(map.getChildNamed("terrainStage").name  === "terrainStage").toBeTruthy();
       expect(typeof map.getChildNamed("terrainStage") === "object").toBeTruthy();
     });
-    it("=> are layer properties correct?", function(){
+    it("are layer properties correct?", function(){
       expect(typeof map.getLayerNamed("unitLayer") === "object").toBeTruthy();
       expect(map.stages[0].children.length > 0).toBeTruthy();
     });
-    it("=> are terrain properties correct?", function(){
-      expect(Number( map.getLayerNamed("terrainBaseLayer").children[1].y ) === 141).toBeTruthy();
-      expect(map.getLayerNamed("terrainBaseLayer").children.length > 1).toBeTruthy();
+    it("are terrain properties correct?", function(){
+      expect(Number( map.getLayerNamed("terrainBaseLayer").children[1].y ) === 141, "y = 141").toBeTruthy();
+      expect(map.getLayerNamed("terrainBaseLayer").children.length > 1, "length > 1").toBeTruthy();
     });
-    it("=> unit properties are correct?", function(){
+    it("unit properties are correct?", function(){
       expect(Number( map.getLayerNamed("unitLayer").children[0].x ) === 82).toBeTruthy();
     });
-    it("=> unit properties are correct", function(done){
+    it("unit properties are correct", function(done){
       map.init( tickDoneFunc );
 
       function tickDoneFunc(tickDone) {
@@ -103,7 +105,7 @@ window.testMap = function() {
 
 
     });
-    it("jeje", function(done) {
+    it("test", function(done) {
       var timeoutter = (function (map) {
         return function() {
           map.stages[0].drawThisChild = true;
@@ -117,15 +119,16 @@ window.testMap = function() {
       expect( true ).toBeTruthy();
     })
 
-    it("=> re-initialize map with plugins", function(done){
-      map = createMap(gameData, mapData, typeData);
+    it("re-initialize map with plugins", function(done){
+      map = createMap(canvasElement, gameData, mapData, typeData);
       expect(map).toBeDefined();
       done();
     });
 
-    it("=> unit properties ok", function(done){
+    it("unit properties ok", function(done){
       try {
-        map.init( tickDoneFunc, [ map_move, object_select_hexagon ] );
+        debugger;
+        map.init( tickDoneFunc, [ map_drag, object_select_hexagon ] );
 
         function tickDoneFunc(tickDone) {
           done();

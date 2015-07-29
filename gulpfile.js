@@ -61,3 +61,5 @@ gulp.task('compile_manualTestMap', function(done) {
 gulp.task('bundle_testMap', function() {
   // need to implement a bundling without transpiling the ES6 features, so only import / export module budnling, nothing else
 });
+
+gulp.task('compileAll', ["compile_manualTestMap", 'compile_unitTests']);

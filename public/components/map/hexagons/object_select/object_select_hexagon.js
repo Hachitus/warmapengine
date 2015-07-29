@@ -16,6 +16,7 @@ HOW we do the whole organizational stuff?
 //import { map_coords_horizontalHex } from '../coordinates/Map_coords_horizontalHex';
 import { setupHexagonClick } from '../eventListeners/select';
 import { UI } from '../../core/UI';
+import { Map_layer } from '../../core/Map_layer';
 
 export let object_select_hexagon = (function object_select_hexagon() {
   var scope = {};
@@ -26,24 +27,17 @@ export let object_select_hexagon = (function object_select_hexagon() {
    */
   scope.init = function(mapObj) {
     /* We take the top-most stage on the map and add the listener to it */
-    var topMostStage = mapObj.stages.slice(-1)[0];
-
     _createPrototypes(mapObj);
 
-    _startClickListener(mapObj, topMostStage);
+    _startClickListener(mapObj);
   };
 
   return scope;
 
   function getObjectsForMap(clickCoords) {
-    var objectArrays = [];
+    var objects = this._stage.getObjectsUnderPoint(clickCoords.x, clickCoords.y);
 
-    this.stages.forEach(function(stage) {
-      var objects = stage.getObjectsUnderPoint(clickCoords.x, clickCoords.y);
-      objectArrays = objectArrays.concat(objects);
-    });
-
-    return objectArrays;
+    return objects;
   }
   function getObjectsForLayer(clickCoords) {
     return this.children.filter(function(child) {
@@ -63,7 +57,7 @@ export let object_select_hexagon = (function object_select_hexagon() {
    */
   function _createPrototypes(map) {
     map.__proto__.getObjectsUnderMapPoint = getObjectsForMap;
-    map.stages[0].children[0].__proto__.getObjectsUnderPoint = getObjectsForLayer;
+    Map_layer.__proto__.getObjectsUnderPoint = getObjectsForLayer;
   }
   /**
    * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
@@ -72,6 +66,6 @@ export let object_select_hexagon = (function object_select_hexagon() {
   function _startClickListener( map, canvas ) {
     var singletonUI = UI();
 
-    return setupHexagonClick(map, canvas, singletonUI.showSelections);
+    return setupHexagonClick(map, singletonUI.showSelections);
   }
 })();

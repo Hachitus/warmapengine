@@ -3,19 +3,30 @@
 import logger from "../../../logger/log.js";
 
 export function setupHexagonClick(map, callback) {
-  try {
-    onMouseDown(map, callback);
-    onMouseUp(map, callback);
-  } catch (e) {
-    logger.debug(e, "onMouseDown or onMouseUp hexagonClick error:");
-  }
+  return onMouseDown(map, callback);
 
-  return true;
+  return false;
 }
 
 function onMouseDown(map, callback) {
-  map.setListener("mousedown", function(e) {
-    var globalCoords =  {x: e.stageX, y: e.stageY };
+  map.setListener("mousedown", mouseDownListener);
+
+  function mouseDownListener() {
+    onMouseUp(map, callback);
+  }
+
+  return mouseDownListener;
+}
+
+function onMouseUp(map, callback) {
+  map.setListener("mouseup", retrieveClickData);
+
+  function retrieveClickData(e) {
+    if( map.mapMoved() ) {
+      map.removeListeners("mouseup", retrieveClickData);
+      return false;
+    }
+    var globalCoords =  {x: e.x, y: e.y };
     var objects;
 
     objects = map.getObjectsUnderMapPoint(globalCoords);
@@ -23,11 +34,7 @@ function onMouseDown(map, callback) {
     if (objects && objects.length > 0) {
       callback(objects);
     }
-  });
-}
 
-function onMouseUp(map, element) {
-  map.setListener("mouseup", function(e) {
-    map.removeListeners("mouseup");
-  });
+    map.removeListeners("mouseup", retrieveClickData);
+  }
 }

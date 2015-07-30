@@ -28,23 +28,31 @@ export let map_zoom = (function map_zoom() {
   function zoomIn (amount) {
     if(_isOverZoomLimit( amount ) )
 
-    this.scaleX -= zoomModifier;
-    this.scaleY -= zoomModifier;
+    this.getLayersWithAttributes("zoomable", true).forEach(layer => {
+      layer.scaleX -= zoomModifier;
+      layer.scaleY -= zoomModifier;
+    });
+
+    return this;
   }
   function zoomOut (amount) {
     if(_isOverZoomLimit( amount ) )
 
-    this.scaleX += zoomModifier;
-    this.scaleY += zoomModifier;
+    this.getLayersWithAttributes("zoomable", true).forEach(layer => {
+      layer.scaleX += zoomModifier;
+      layer.scaleY += zoomModifier;
+    });
+
+    return this;
   }
   /**
   * @param {Map object} mapObj - the Map class object
   */
   scope.init = function(map) {
-    map.__proto__.zoomIn = zoomIn;
-    map.__proto__.zoomOut = zoomOut;
-    map.__proto__.setZoomLimits = setZoomLimits;
-    map.__proto__.setZoomModifier = setZoomModifier;
+    map.setPrototype("zoomIn", zoomIn);
+    map.setPrototype("zoomOut", zoomOut);
+    map.setPrototype("setZoomLimits", setZoomLimits);
+    map.setPrototype("setZoomModifier", setZoomModifier);
     _startZoomListener(map);
   };
 
@@ -77,7 +85,7 @@ export let map_zoom = (function map_zoom() {
         map.zoomOut();
       }
 
-      map.update();
+      map.drawOnNextTick();
     };
   }
 })();

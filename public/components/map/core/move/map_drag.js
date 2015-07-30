@@ -27,51 +27,65 @@ export let map_drag = (function map_drag() {
     return function startDrag(e) {
       try {
         offsetCoords.setOffset({
-          x: e.stageX,
-          y: e.stageY
+          x: e.x,
+          y: e.y
         });
         /* We take all the eventlisteners unbindings to this array, so we can unbind them when the mouse is up */
 
-        map.setListener("mousemove", _dragListener(map));
-        map.setListener("mousemove", function(e) {
-          /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
-          if(e.nativeEvent.buttons === 0) {
-            map.removeListeners(["mousemove", "mouseup"]);
-          }
-        });
-        map.setListener("mouseup", function() {
-          map.removeListeners(["mousemove", "mouseup"]);
-        });
+        var moveCallback1 = _dragListener(map);
+        var mouseupCallback = _setupMouseupListener(map);
+        map.setListener("mousemove", moveCallback1);
+        map.setListener("mouseup", mouseupCallback);
       } catch (e) {
         console.log(e);
       }
-    };
-  }
-  /* Event listeners are in their separate file; eventListeners.js */
-  function _dragListener(map) {
-    try {
-      return function dragger(e) {
-        var offset = offsetCoords.getOffset();
-        var moved = {
-          x: e.stageX - offset.x,
-          y: e.stageY - offset.y
+
+      function _setupMouseupListener(map) {
+        return function() {
+          map.removeListeners("mousemove", moveCallback1);
+          map.removeListeners("mouseup", mouseupCallback);
+          _mapMoved(map);
         };
+      }
+      /* Event listeners are in their separate file; eventListeners.js */
+      function _dragListener(map) {
+        try {
+          return function dragger(e) {
+            map.mapMoved(true);
+            /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
+            if(e.buttons === 0) {
+              map.removeListeners("mousemove", moveCallback1);
+              map.removeListeners("mouseup", mouseupCallback);
+              _mapMoved(map);
+            }
 
-        map.moveMap(moved);
+            var offset = offsetCoords.getOffset();
+            var moved = {
+              x: e.x - offset.x,
+              y: e.y - offset.y
+            };
 
-        offsetCoords.setOffset({
-          x: e.stageX,
-          y: e.stageY
-        });
+            if(moved.x !== 0 || moved.y !== 0) {
+              map.moveMap(moved);
+            } else {
+              map.mapMoved(false);
+            }
 
-        /* The mouse has been moved after pressing. This prevent the click
-          event to fire at the same time with the mouseDown / dragging event
-        */
-        //map.mouseMoved( true );
-      };
-    } catch (e) {
-      console.log(e);
-    }
+            offsetCoords.setOffset({
+              x: e.x,
+              y: e.y
+            });
+
+            /* The mouse has been moved after pressing. This prevent the click
+              event to fire at the same time with the mouseDown / dragging event
+            */
+            //map.mouseMoved( true );
+          };
+        } catch (e) {
+          console.log(e);
+        }
+      }
+    };
   }
 
   /* ====== Private functions ====== */
@@ -89,3 +103,10 @@ export let map_drag = (function map_drag() {
     return scope;
   };
 })();
+
+/* Without this, the other eventListeners might fire inappropriate events. */
+function _mapMoved(map) {
+  window.setTimeout(function (){
+    map.mapMoved(false);
+  }, 1);
+}

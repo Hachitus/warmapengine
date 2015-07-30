@@ -41,3 +41,43 @@ export var mouseUtils = ( function mouseUtils() {
   };
   return scope;
 } )();
+export function toggleFullScreen() {
+  var elem = document.body; // Make the body go full screen.
+  var isInFullScreen = ( document.fullScreenElement && document.fullScreenElement !== null ) ||
+     (
+     document.mozFullScreen || document.webkitIsFullScreen );
+
+  isInFullScreen ? cancelFullScreen( document ) : requestFullScreen( elem );
+
+  return false;
+
+  // Sub functions
+  function cancelFullScreen( el ) {
+     var requestMethod = el.cancelFullScreen ||
+        el.webkitCancelFullScreen ||
+        el.mozCancelFullScreen ||
+        el.exitFullscreen;
+     if ( requestMethod ) { // cancel full screen.
+        requestMethod.call( el );
+     } else if ( typeof window.ActiveXObject !== "undefined" ) { // Older IE.
+        var wscript = new ActiveXObject( "WScript.Shell" );
+        wscript !== null && wscript.SendKeys( "{F11}" );
+     }
+  }
+
+  function requestFullScreen( el ) {
+     // Supports most browsers and their versions.
+     var requestMethod = el.requestFullScreen ||
+        el.webkitRequestFullScreen ||
+        el.mozRequestFullScreen ||
+        el.msRequestFullScreen;
+
+     if ( requestMethod ) { // Native full screen.
+        requestMethod.call( el );
+     } else if ( typeof window.ActiveXObject !== "undefined" ) { // Older IE.
+        var wscript = new ActiveXObject( "WScript.Shell" );
+        wscript !== null && wscript.SendKeys( "{F11}" );
+     }
+     return false;
+  }
+};

@@ -37,6 +37,7 @@ export class Map_layer extends createjs.Container {
     this.mouseChildren = false;
     this.mouseEnabled = false;
     this.movable = true;
+    this.zoomable = true;
   }
   getCacheEnabled() {
     return this._cacheEnabled;

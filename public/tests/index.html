@@ -2,28 +2,23 @@
 <html>
 <head>
   <meta charset="utf-8">
-
-  <script src="https://code.createjs.com/createjs-2015.05.21.combined.js"></script>
-
-  <!-- ========== OTHER LIBRARIES ========== -->
-  <script src="/assets/lib/loglevel/loglevel.min.js"></script>
-  <script>log.enableAll();</script>
 </head>
 
 <body>
-  <canvas id="mapCanvas" height="600" width="1200">
-    Canvas not supported!
-  </canvas>
-
-  <button>fullscreen</button>
-
-  <dialog id="selectionDialog">
-    <button class="modal_close">close</button>
-    Default text
-  </dialog>
-
-  <!-- include spec files here... -->
-  <script src="/tests/manual/map-spec.js"></script>
-  <script>initMap();</script>
+  <h1>
+    Testing and development
+  </h1>
+  <p>
+    Tests are transpiled with node using command "gulp" in project root. And you can view the results from the links.
+  </p>
+  <ul>
+    <li>
+      <a href="manualTest.html">Manual Map test - ES5</a>
+    </li><li>
+      <a href="manualTest.es6.html">Manual Map test - ES6 (not implemented yet)</a>
+    </li><li>
+      <a href="unitTests.html">Unit tests</a>
+    </li>
+  </ul>
 </body>
 </html>

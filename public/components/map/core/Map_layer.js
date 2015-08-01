@@ -6,7 +6,6 @@
 */
 
 /* ====== Own module imports ====== */
-import { addPrototype as mapFunc_addPrototype } from "./mapFunctions";
 
 /* ===== Constants ===== */
 const TYPES = {
@@ -91,7 +90,6 @@ export class Map_layer extends createjs.Container {
     return TYPES[name];
   }
 }
-Map_layer.prototype.addPrototype = mapFunc_addPrototype;
 
 /* The node-easel, nor minified easeljs doesn't have the SpriteStage (and node doesn't have the extend) */
 /*

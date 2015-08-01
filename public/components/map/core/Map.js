@@ -1,58 +1,34 @@
-'use strict';
-/**
-Map is the main class for constructing 2D map for strategy games
+/** Map is the main class for constructing 2D map for strategy games
+ *
+ * Map is instantiated and then initialized with init-method.
+ *
+ * Plugins can be added with activatePlugins-method by prodiving init(map) method in the plugin. Plugins are always
+ * functions, not objects that are instantiated. Plugins are supposed to extend the map object or anything in it via
+ * it's public methods.
+ *
+ * @require createjs framework in global namespace
+ * @require canvas HTML5-element to work. */
 
-@require createjs framework in global namespace
-@require canvas HTML5-element to work. This is more for node.js
-*/
+'use strict';
 
 /* ====== 3rd party imports ====== */
-
-//var System = require('es6-module-loader').System;
-//import { System } from 'es6-module-loader';
 
 /* ====== Own module imports ====== */
 import { Map_stage } from './Map_stage';
 import { Map_layer } from './Map_layer';
-import { toggleFullScreen } from './utils/utils';
+import { resizeUtils, resizeUtils } from './utils/utils';
+import { map_drag } from "./move/map_drag";
+import { map_zoom } from './zoom/map_zoom';
+import { eventListeners } from './eventlisteners';
 
-/** ===== EXPORT ===== */
-
-/**
- * @param {object} options
- * {
- *  mapSize: {
- *    x: Number,
- *    y: Number
- * }
- *
- * Plugins are provided in an array of plugin functions
-*/
-
-const LISTENER_TYPES = {
-  "mousemove": {
-    element: "canvas",
-    event: "mousemove"
-  },
-  "mouseup": {
-    element: "canvas",
-    event: "mouseup"
-  },
-  "mousedown": {
-    element: "canvas",
-    event: "mousedown"
-  },
-  "mousewheel": {
-    element: "canvas",
-    event: "wheel"
-  },
-  "mouseclick": {
-    element: "canvas",
-    event: "click"
-  },
-};
+var _drawMapOnNextTick = false;
+var eventlisteners;
 
 export class Map {
+  /**
+   * @param {DOM Canvas element} canvas - Canvas used by the map
+   * @param {Object} options - different options for the map to be given.
+   * @return Map instance */
   constructor(canvas, options) {
     if(!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
@@ -63,12 +39,28 @@ export class Map {
     this.mommyLayer = new Map_layer("mommyLayer", options.type, options.subContainers, options.startCoord);
     this._stage.addChild(this.mommyLayer);
     this.plugins = [];
+    this.activatedPlugins = [];
+    /* Activate the map zoom and map drag core plugins */
+    this.pluginsToActivate = [map_zoom, map_drag];
     this.mapSize = options.mapSize || { x:0, y:0 };
     this.activeTickCB = false;
-    this._fullScreenFunction = null;
-    this._eventListeners = _getEmptyEventListenerArray();
-    this._drawMapOnNextTick = false;
+    this.eventCBs = {
+      fullSize: resizeUtils.setToFullSize(canvas.getContext("2d")),
+      fullscreen: resizeUtils.toggleFullScreen,
+      select: null,
+      drag: null,
+      zoom: null
+    };
+    this._fullSizeFunction = null;
+    eventlisteners = eventListeners(this.eventCBs);
   }
+  /** initialization method
+   * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
+   * separately passing them to activatePlugins method
+   * @param {x: ? y:?} coord - Starting coordinates for the map
+   * @param {Function} tickCB - callback function for tick. Tick callback is initiated in every frame. So map draws happen
+   * during ticks
+   * @return the current map instance */
   init(plugins, coord, tickCB) {
     if (plugins) {
       this.activatePlugins(plugins);
@@ -85,16 +77,15 @@ export class Map {
 
     return this;
   }
-
+  /** The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
+   * @return the current map instance */
   drawOnNextTick() {
-    this._drawMapOnNextTick = true;
-  }
-  _drawMap() {
-    this._stage.update();
+    _drawMapOnNextTick = true;
 
     return this;
   }
-
+  /** The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
+   * @return the current map instance */
   getLayersWithAttributes(attribute, value) {
     return this._stage.children[0].children.filter(layer => {
       return layer[attribute] === value;
@@ -108,40 +99,42 @@ export class Map {
   getSize() {
     return this.mapSize;
   }
-
-  setSize(width, height) {
-    this.mapSize = { x:width, y:height };
-
-    return this.mapSize;
-  }
-
-  addLayers(name, type, subContainers, coord) {
+  /** All parameters are passed to Map_layer constructor
+   * @return created Map_layer instance */
+  addLayer(name, type, subContainers, coord) {
     var layer = new Map_layer(name, type, subContainers, coord);
 
     this.mommyLayer.addChild(layer);
 
     return layer;
   }
-
+  /**
+   * @param {Map_layer} layer - the layer object to be removed */
   removeLayer(layer) {
     this.mommyLayer.removeChild(layer);
 
     return layer;
   }
-
+  /** @return layer with the passed layer name */
   getLayerNamed(name) {
     return this.mommyLayer.getChildNamed(name);
   }
+  /**
+   * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
+   * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
+   * @return this map instance */
   moveMap(coordinates) {
     this.mommyLayer.move(coordinates);
-
     this.drawOnNextTick();
-
     this.mapMoved(true);
 
     return this;
   }
-
+  /** Cache the map. This provides significant performance boost, when used correctly. cacheMap iterates through all the
+   * layer on the map and caches the ones that return true from getCacheEnabled-method.
+   * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
+   * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
+   * @return this map instance */
   cacheMap() {
     if(this.mommyLayer.getCacheEnabled()) {
       this.mommyLayer.cache(0, 0, this.mapSize.x, this.mapSize.y);
@@ -155,42 +148,45 @@ export class Map {
 
     return this;
   }
-
-  getObjectsUnderMapPoint(clickCoords) {
+  /** iterates through the map layers and returns matching objects on given coordinates
+   * @param {x: Number, y: Number} coord - The map coordinate under which we want to retrieve all the objects.
+   * @return this map instance */
+  getObjectsUnderMapPoint(coord) {
     let objects = [];
 
-    this.mommyLayer.getObjectsUnderPoint(clickCoords);
+    this.mommyLayer.getObjectsUnderPoint(coord);
 
     return objects;
   }
-
-  activateFullSize() {
-    this._fullScreenFunction = _setToFullSize.bind(this);
-    window.addEventListener("resize", this._fullScreenFunction);
+  /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
+  the eventlistener callback use this.eventCBs */
+  toggleFullSize() {
+    eventlisteners.toggleFullSizeListener();
   }
-
-  deactivateFullSize() {
-    window.removeEventListener("resize", this._fullScreenFunction);
-  }
+  /** Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
+  the eventlistener callback use this.eventCBs */
   toggleFullScreen () {
-    toggleFullScreen();
+    eventlisteners.toggleFullScreen();
   }
-  /* Activate plugins for the map. Must be in array format:
-  [{
-    name: function name,
-    args: [
-      First argument,
-      second argument,
-      ...
-    ]
-  }] */
+  /** Activate plugins for the map. Plugins need .pluginName property and .init-method
+  @param [Array] pluginsArray - Array that consists of the plugin modules */
   activatePlugins(pluginsArray) {
-    pluginsArray.forEach(pluginToUse => {
-      this.plugins[pluginToUse.pluginName] = pluginToUse;
-      this.plugins[pluginToUse.pluginName].init(this);
-    });
-  }
+    var allPlugins = this.pluginsToActivate.concat(pluginsArray);
 
+    allPlugins.forEach(pluginToUse => {
+      if(this.activatedPlugins[pluginToUse.pluginName] !== true) {
+        this.plugins[pluginToUse.pluginName] = pluginToUse;
+        this.plugins[pluginToUse.pluginName].init(this);
+        this.activatedPlugins[pluginToUse.pluginName] = true;
+        this.pluginsToActivate = [];
+      }
+    });
+
+    return this;
+  }
+  /** Custom tick handler that can be given to map. The default tick handler is by default
+  always on and will not be affected
+  @param [Function] tickCB - Callback function to use in tick */
   customTickOn(tickCB) {
     if (this.activeTickCB) {
       throw new Error("there already exists one tick callback. Need to remove it first, before setting up a new one");
@@ -210,51 +206,7 @@ export class Map {
 
     return this;
   }
-  setListener(action, callback) {
-    /* There has been several different mousewheel events before, but now all except opera should support "wheel" */
-    this._eventListeners[action].push(callback);
-    this[LISTENER_TYPES[action].element].addEventListener(LISTENER_TYPES[action].event, callback);
-
-    return this;
-  }
-  removeAllListeners() {
-    var listeners = this._eventListeners;
-
-    Object.keys(listeners).forEach( typeIndex => {
-      listeners[typeIndex].forEach(callback => {
-        this[LISTENER_TYPES[typeIndex].element].removeEventListener(LISTENER_TYPES[typeIndex].event, callback);
-      });
-    });
-    listeners = _getEmptyEventListenerArray();
-
-    return this;
-  }
-  removeListeners(type, origCallback) {
-    var listeners = this._eventListeners;
-
-    if(typeof type === "string" ) {
-      if(origCallback) {
-        this[LISTENER_TYPES[type].element].removeEventListener(LISTENER_TYPES[type].event, origCallback);
-        return;
-      }
-
-      throw new Error("no callback specified! - 1");
-    } else if (type instanceof Array ) {
-      type.forEach(thisType => {
-        if(origCallback) {
-          this[LISTENER_TYPES[thisType].element].removeEventListener(LISTENER_TYPES[thisType].event, origCallback);
-          return;
-        }
-
-        throw new Error("no callback specified! - 2");
-      });
-    }
-
-    listeners = [];
-
-    return this;
-  }
-  /* getter and setter */
+  /* getter and setter for detecting if map is moved and setting the maps status as moved or not moved */
   mapMoved(yesOrNo) {
     if(yesOrNo !== undefined) {
       this.mapInMove = yesOrNo;
@@ -269,31 +221,23 @@ export class Map {
 }
 
 /** ===== Private functions ===== */
-function _setToFullSize() {
-  let ctx = this._stage.getContext("2d");
-
-  ctx.canvas.width = window.innerWidth;
-  ctx.canvas.height = window.innerHeight;
-}
-function _getEmptyEventListenerArray() {
-  var objects = {};
-
-  Object.keys(LISTENER_TYPES).forEach(function(type) {
-    objects[type] = [];
-  });
-
-  return objects;
-}
-/* This should handle the default drawing of the map, so that map always updates when drawOnNextTick === true */
+/* This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
+callback is always set and should not be removed or overruled */
 function _defaultTick(map) {
   createjs.Ticker.addEventListener("tick", _tickFunc);
 
   return _tickFunc;
 
   function _tickFunc() {
-    if(map._drawMapOnNextTick === true) {
-      map._drawMap();
-      map._drawMapOnNextTick = false;
+    if(_drawMapOnNextTick === true) {
+      _drawMap(map);
+      _drawMapOnNextTick = false;
     }
   }
+}
+/* Private function to draw the map */
+function _drawMap(map) {
+  map._stage.update();
+
+  return map;
 }

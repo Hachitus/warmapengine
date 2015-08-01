@@ -1,5 +1,10 @@
 'use strict';
 
+import { eventListeners } from '../eventlisteners';
+
+/* eventlisteners is a singleton, so we might as well declare it here */
+var eventlisteners;
+
 export let map_drag = (function map_drag() {
   var scope = {};
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
@@ -13,8 +18,12 @@ export let map_drag = (function map_drag() {
   /**
    * @param {Map object} mapObj - the Map class object
    */
-  scope.init = function(mapObj) {
-    mapObj.setListener("mousedown", _startDragListener(mapObj));
+  scope.init = function(map) {
+    eventlisteners = eventListeners(map.eventCBs);
+    map.eventCBs.drag = _startDragListener(map);
+
+    //map.setListener("mousedown", _startDragListener(map));
+    eventlisteners.toggleDragListener();
   };
 
   return scope;
@@ -34,16 +43,16 @@ export let map_drag = (function map_drag() {
 
         var moveCallback1 = _dragListener(map);
         var mouseupCallback = _setupMouseupListener(map);
-        map.setListener("mousemove", moveCallback1);
-        map.setListener("mouseup", mouseupCallback);
+        map.canvas.addEventListener("mousemove", moveCallback1);
+        map.canvas.addEventListener("mouseup", mouseupCallback);
       } catch (e) {
         console.log(e);
       }
 
       function _setupMouseupListener(map) {
         return function() {
-          map.removeListeners("mousemove", moveCallback1);
-          map.removeListeners("mouseup", mouseupCallback);
+          map.canvas.removeEventListener("mousemove", moveCallback1);
+          map.canvas.removeEventListener("mouseup", mouseupCallback);
           _mapMoved(map);
         };
       }
@@ -54,8 +63,8 @@ export let map_drag = (function map_drag() {
             map.mapMoved(true);
             /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
             if(e.buttons === 0) {
-              map.removeListeners("mousemove", moveCallback1);
-              map.removeListeners("mouseup", mouseupCallback);
+              map.canvas.removeEventListener("mousemove", moveCallback1);
+              map.canvas.removeEventListener("mouseup", mouseupCallback);
               _mapMoved(map);
             }
 

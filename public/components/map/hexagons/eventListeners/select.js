@@ -1,29 +1,32 @@
 'use strict';
 
 import logger from "../../../logger/log.js";
+import { eventListeners } from '../../core/eventlisteners';
+
+/* eventlisteners is a singleton, so we might as well declare it here */
+var eventlisteners;
 
 export function setupHexagonClick(map, callback) {
-  return onMouseDown(map, callback);
+  eventlisteners = eventListeners(map.eventCBs);
+
+  map.eventCBs.select = mouseDownListener;
+  eventlisteners.toggleSelectListener();
+
+  //return onMouseDown(map, callback);
 
   return false;
-}
-
-function onMouseDown(map, callback) {
-  map.setListener("mousedown", mouseDownListener);
 
   function mouseDownListener() {
     onMouseUp(map, callback);
   }
-
-  return mouseDownListener;
 }
 
 function onMouseUp(map, callback) {
-  map.setListener("mouseup", retrieveClickData);
+  map.canvas.addEventListener("mouseup", retrieveClickData);
 
   function retrieveClickData(e) {
     if( map.mapMoved() ) {
-      map.removeListeners("mouseup", retrieveClickData);
+      map.canvas.removeEventListener("mouseup", retrieveClickData);
       return false;
     }
     var globalCoords =  {x: e.x, y: e.y };
@@ -35,6 +38,6 @@ function onMouseUp(map, callback) {
       callback(objects);
     }
 
-    map.removeListeners("mouseup", retrieveClickData);
+    map.canvas.removeEventListener("mouseup", retrieveClickData);
   }
 }

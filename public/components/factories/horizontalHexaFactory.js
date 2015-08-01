@@ -116,7 +116,7 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
     let thisLayer;
 
     try {
-      thisLayer = map.addLayers( layerData.name, 2, false, layerData.coord );
+      thisLayer = map.addLayer( layerData.name, 2, false, layerData.coord );
     } catch(e) {
       console.log("Problem:", layerData.type, e.stack);
     }

@@ -1,6 +1,10 @@
 'user strict';
 
 import { mouseUtils } from "../utils/utils.js";
+import { eventListeners } from '../eventlisteners';
+
+/* eventlisteners is a singleton, so we might as well declare it here */
+var eventlisteners;
 
 export let map_zoom = (function map_zoom() {
   var scope = {};
@@ -13,7 +17,24 @@ export let map_zoom = (function map_zoom() {
 
   scope.pluginName = map_zoom.name;
 
-  /** ==== Public functions */
+  /**
+  * @param {Map object} mapObj - the Map class object
+  */
+  scope.init = function(map) {
+    map.setPrototype("zoomIn", zoomIn);
+    map.setPrototype("zoomOut", zoomOut);
+    map.setPrototype("setZoomLimits", setZoomLimits);
+    map.setPrototype("setZoomModifier", setZoomModifier);
+
+    map.eventCBs.zoom = _setupZoomEvent(map);
+
+    eventlisteners = eventListeners(map.eventCBs);
+    eventlisteners.toggleZoomListener();
+  };
+
+  return scope;
+
+  /** ==== PROTOTYPE extensions for map */
   function setZoomModifier (amount) {
     zoomModifier = amount;
 
@@ -44,27 +65,6 @@ export let map_zoom = (function map_zoom() {
     });
 
     return this;
-  }
-  /**
-  * @param {Map object} mapObj - the Map class object
-  */
-  scope.init = function(map) {
-    map.setPrototype("zoomIn", zoomIn);
-    map.setPrototype("zoomOut", zoomOut);
-    map.setPrototype("setZoomLimits", setZoomLimits);
-    map.setPrototype("setZoomModifier", setZoomModifier);
-    _startZoomListener(map);
-  };
-
-  return scope;
-
-  function _startZoomListener( map ) {
-    try {
-      /* There has been several different mousewheel events before, but now all except opera should support "wheel" */
-      map.setListener("mousewheel", _setupZoomEvent(map));
-    } catch (e) {
-      console.log(e);
-    }
   }
 
   /* ===== Private functions ===== */

@@ -5,21 +5,7 @@
 @require validator module
 */
 
-import { validatorMod } from "./map_validators";
-import { addPrototype as mapFunc_addPrototype } from "./mapFunctions";
-
-/** ===== Private functions declared ===== */
-let privateFunctions = { };
-
-/** ===== Validators used in this module. Imported from map_validators ===== */
-let validators = {
-  _is_index: validatorMod.isIndex,
-  _is_boolean: validatorMod.isBoolean,
-  _is_coordinates: validatorMod.isCoordinates,
-  _is_SubContainerAmount: validatorMod.isSubContainerAmount,
-  _is_UseOfSubLayers: validatorMod.isUseOfSubLayers,
-  _is_UseOfSubContainers: validatorMod.isUseOfSubContainers
-};
+/* ====== Own module imports ====== */
 
 /** ===== EXPORT ===== */
 export class Map_stage extends createjs.Stage {
@@ -52,8 +38,10 @@ export class Map_stage extends createjs.Stage {
     this.interactive = false;
     //this.drawRect = MAYBE THIS should be the area of the canvas size? So the whole stage isn't drawn only visible part?
   }
+  addPrototype(name, functionToAdd) {
+    super.prototype[name] = functionToAdd;
+  }
   setCacheEnabled(status) {
-    validators._is_boolean(status);
     this._cacheEnabled = status;
 
     return this;
@@ -74,14 +62,11 @@ export class Map_stage extends createjs.Stage {
     return false;
   }
 }
-Map_stage.prototype.addPrototype = mapFunc_addPrototype;
 
 /* The node-easel, nor minified easeljs doesn't have the SpriteStage (and node doesn't have the extend) */
 
 
 /*
-
-
 import extend from '../../../assets/lib/createjs/utils/extend';
 import promote from '../../../assets/lib/createjs/utils/promote';
 import SpriteContainer from '../../../assets/lib/easeljs/SpriteContainer/SpriteContainer';

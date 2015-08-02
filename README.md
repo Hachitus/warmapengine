@@ -11,14 +11,22 @@ If you are interested contact me.
 ###NodeJS backend
 ###Requirements
 Rather install these packages as global
-```npm install -g forever gulp```
+```
+npm install -g forever gulp
+```
 start server
-```npm run start```
+```
+npm run start
+```
 stop server
-```npm run stop```
+```
+npm run stop
+```
 
 ##Tests
-```gulp```
+```
+gulp
+```
 
 #How the Map engine works
 ##Plugins

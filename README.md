@@ -7,6 +7,8 @@ If you are interested contact me.
 #Development data
 ##NodeJS backend
 ##Requirements
+Install node.js and npm
+    apt-get install nodejs npm
 Rather install these packages as global
     npm install -g forever gulp
 start server

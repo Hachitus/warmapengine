@@ -5,28 +5,19 @@ Development from that forward will still continue in the form of a 2D strategy w
 If you are interested contact me.
 
 #Development data
-##Game development environment
-*warMapEngine.level7.fi/tests/*
-
-###NodeJS backend
-###Requirements
+##NodeJS backend
+##Requirements
 Rather install these packages as global
-```
-npm install -g forever gulp
-```
+    npm install -g forever gulp
 start server
-```
-npm run start
-```
+    npm run start
 stop server
-```
-npm run stop
-```
+    npm run stop
 
 ##Tests
-```
-gulp
-```
+compile and transpile to ES5
+    gulp
+compiled code in *warMapEngine.level7.fi/tests/*
 
 #How the Map engine works
 ##Plugins

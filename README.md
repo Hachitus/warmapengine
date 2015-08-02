@@ -23,7 +23,7 @@ compiled code in *warMapEngine.level7.fi/tests/*
 ##Plugins
 Plugins are modules that when imported return an object. The modules work in ES6-format.
 Plugin objects have to have init method, in the format of:
-```json
+```javascript
 {
   init: function(map) {}
 }

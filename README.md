@@ -9,18 +9,24 @@ If you are interested contact me.
 *warMapEngine.level7.fi/tests/*
 
 ###NodeJS backend
-*Requirements*: npm install -g forever, npm install -g browserify, npm install -g babel, npm install -g babelify, npm install -g gulp
-
-*start server* npm run start
-*stop server* npm run stop
+###Requirements
+Rather install these packages as global
+```npm install -g forever gulp```
+start server
+```npm run start```
+stop server
+```npm run stop```
 
 ##Tests
-Command: *gulp*
+```gulp```
 
-#How the module works
+#How the Map engine works
 ##Plugins
-Plugins are modules that return an object. Objects have to have init method. Init methods receive used map class instance
-So the plugin init method is defined as:
+Plugins are modules that when imported return an object. The modules work in ES6-format.
+Plugin objects have to have init method, in the format of:
+```json
 {
   init(map) {}
 }
+```
+

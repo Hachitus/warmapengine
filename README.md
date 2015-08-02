@@ -25,7 +25,9 @@ Plugins are modules that when imported return an object. The modules work in ES6
 Plugin objects have to have init method, in the format of:
 ```javascript
 {
-  init: function(map) {}
+  init: function(map) {
+    // All the functionality e.g. extend map prototype or activate eventListener etc.
+  }
 }
 ```
 

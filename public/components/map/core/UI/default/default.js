@@ -1,12 +1,8 @@
-/**
-  The simplest default UI implementation. Holds:
-  - Selection highlight of object
-  - Selection list of units at the hexagon
-*/
-
-/* ====== 3rd party imports ====== */
-
-/* ====== Own module imports ====== */
+/** The simplest default UI implementation. Implement UI functionalities for:
+ * showSelections
+ * highlightSelectedObject
+ *
+ * @todo Not implemented fully yet and probably need refactoring */
 
 'use strict';
 
@@ -33,6 +29,9 @@ export class UI_default {
       this.modal.show();
       console.log(objects);
     }
+  }
+  highlightSelectedObject(object) {
+    // Not implemented yet
   }
   init() {
     var self = this;

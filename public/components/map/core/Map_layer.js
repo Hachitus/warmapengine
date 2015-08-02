@@ -2,74 +2,66 @@
 
 /**
 @require the createjs framework in global namespace
-@require validator module
 */
 
-/* ====== Own module imports ====== */
+/**
+ * @todo this.preventSelection. This should determine wether this stage holds data that can be selected by the player
+ */
 
-/* ===== Constants ===== */
-const TYPES = {
-  justSubContainers: 1,
-  noSubContainers: 2,
-  imagesInSubContainers: 3
-};
+/**
+ * @todo subContainers. Subcontainers are containers inside layers designed to group up objects to smaller containers. So e.g.
+ * getObjectsUnderPoint is faster. This has not been efficiently tested from performance wise so the feature will be
+ * added after the basic map module works and we can verify the effect well */
 
-/** ===== EXPORT ===== */
+/* ===== EXPORT ===== */
 export class Map_layer extends createjs.Container {
-  constructor(name, type, subContainers, coord) {
+  /**
+   * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
+   * otherwise too!
+   * @param {Object} subContainers To be implemented. The data which we use to divide the container to subContainers
+   * e.g. for more efficient accessibility of objects based on coordinates.
+   * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
+  */
+  constructor(name, subContainers, coord) {
     super();
 
     this.x = coord ? ( coord.x || 0 ) : 0;
     this.y = coord ? ( coord.y || 0 ) : 0;
-    this.superPrototype = this.constructor.prototype;
     this._cacheEnabled = true;
-    this.type = subContainers ? TYPES.imagesInSubContainers : ( type || TYPES.noSubContainers );
-    this.visible = true;
-    this.useSubcontainers = subContainers || false;
+    this.subContainers = subContainers || false;
     this.name = "" + name; // For debugging. Shows up in toString
     this.drawThisChild = true;
-    this.interactive = false;
-
-    /* Controlling and optimizing the engine */
+    this.movable = true;
+    this.zoomable = true;
+    this.preventSelection = false;
+    /* createjs / super properties. Used also for controlling and optimizing the engine */
+    this.visible = true;
     this.tickEnabled = false;
     this.tickChildren = false;
     this.mouseChildren = false;
     this.mouseEnabled = false;
-    this.movable = true;
-    this.zoomable = true;
   }
-  getCacheEnabled() {
-    return this._cacheEnabled;
-  }
-  setCacheEnabled(status) {
-    this._cacheEnabled = status;
-
-    return this;
-  }
-  addPrototype(name, functionToAdd) {
-    super.prototype[name] = functionToAdd;
-  }
-  /* overloaded inherited method */
-  addChildToSubContainer(object, index) {
-    let functionToUse = index ? "_addChildAt" : "_addChild";
-
-    if (!this.useSubcontainers) {
-      /* We add the object to the Container directly. Wether it is Container or Bitmap etc. */
-      this[functionToUse](object, index);
-    } else {
-      /* We add the object to the correct subContainer. For better logic and performance */
-      let correctSubContainer = _getCorrectContainer.call(this, object.x, object.y);
-      correctSubContainer.addChild(object, index);
+  /** setter and getter
+   * @param {Boolean} status If provided sets the caching status otherwise returns the current status */
+  cacheEnabled(status) {
+    if(status !== undefined) {
+      this._cacheEnabled = status;
     }
 
-    return this;
+    return this._cacheEnabled;
   }
+  /** Move layer
+   * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e.
+   { x: 5, y: 0 }
+   @return this layer instance */
   move(coordinates) {
     if (this.movable) {
       this.x += coordinates.x;
       this.y += coordinates.y;
       this.drawThisChild = true;
     }
+
+    return this;
   }
   getChildNamed(name) {
     if (this.children[0] instanceof createjs.Container) {
@@ -82,16 +74,13 @@ export class Map_layer extends createjs.Container {
     return false;
   }
   isUsingSubContainers() {
-    return !!this.useSubcontainers;
-  }
-  isSetVisible() { }
-  setVisible() { }
-  static getType(name) {
-    return TYPES[name];
+    return !!this.subContainers;
   }
 }
 
-/* The node-easel, nor minified easeljs doesn't have the SpriteStage (and node doesn't have the extend) */
+/**
+ * @todo implement spriteContainer! It should be more efficient when using spritesheets. Only issue was that minified
+ * easeljs doesn't have the spriteStage (and spriteContainer?) and neither the node-easel (and node doesn't have the extend) */
 /*
 import extend from '../../../assets/lib/createjs/utils/extend';
 import promote from '../../../assets/lib/createjs/utils/promote';
@@ -99,51 +88,6 @@ import SpriteContainer from '../../../assets/lib/easeljs/SpriteContainer/SpriteC
 
 export class Map_spritesheetLayer extends createjs.SpriteContainer {
   constructor(name, type, subContainers, spritesheet) {
-    super(spritesheet);
-    this.type = subContainers ? TYPES.imagesInSubContainers : type;
-    this.visible = true;
-    this.useSubcontainers = subContainers || false;
-    this.name = "" + name; // For debugging. Shows up in toString
-    this.drawThisChild = true;
-
-    this.tickEnabled = false;
-    this.tickChildren = false;
-    this.mouseChildren = false;
-    this.mouseEnabled = false;
   }
-  addChildToSubContainer(object, index) {
-    let functionToUse = index ? "_addChildAt" : "_addChild";
-
-    if(!this.useSubcontainers) {
-      this[functionToUse](object, index);
-    } else {
-      let correctSubContainer = _getCorrectContainer.call(this, object.x, object.y);
-      correctSubContainer.addChild(object, index);
-    }
-
-    return this;
-  }
-  getChildNamed(name) {
-    if(this.children[0] instanceof createjs.Container) {
-      for(let child of this.children) {
-        if(child.name.toLowerCase() === name.toLowerCase()) {
-          return child;
-        }
-      }
-    }
-    return false;
-  }
-  isUsingSubContainers() {
-    return !!this.useSubcontainers;
-  }
-  isSetVisible() { }
-  setVisible() { }
 }
 */
-
-/** ===== Private functions ===== */
-function _getCorrectContainer(x, y) {
-  let correctSubContainer = this.getObjectUnderPoint(x, y);
-
-  return correctSubContainer;
-}

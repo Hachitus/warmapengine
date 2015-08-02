@@ -1,23 +1,24 @@
 'use strict';
 
-import { eventListeners } from '../eventlisteners';
+/** The core plugin for the 2D map engine. Handles moving the map by dragging the map.
+ * Core plugins can always be overwrote if needed
+ * @todo See if this plugin need refactoring and more documentation */
 
-/* eventlisteners is a singleton, so we might as well declare it here */
-var eventlisteners;
+import { eventListeners } from '../eventlisteners';
 
 export let map_drag = (function map_drag() {
   var scope = {};
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
+  var eventlisteners;
 
   /* ===== For testing ===== */
   scope._startDragListener = _startDragListener;
 
   scope.pluginName = map_drag.name;
 
-  /**
-   * @param {Map object} mapObj - the Map class object
-   */
+  /** Required init functions for the plugin
+  * @param {Map object} mapObj - the Map class object */
   scope.init = function(map) {
     eventlisteners = eventListeners(map.eventCBs);
     map.eventCBs.drag = _startDragListener(map);
@@ -28,7 +29,7 @@ export let map_drag = (function map_drag() {
 
   return scope;
 
-  /**
+  /** Starts the whole functionality of this class
    * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
    * @param {Map} map - The Map class object
    */
@@ -98,6 +99,7 @@ export let map_drag = (function map_drag() {
   }
 
   /* ====== Private functions ====== */
+  /** Function for setting and getting the mouse offset. */
   function _offsetCoords() {
     var scope = {};
     var offsetCoords;

@@ -116,7 +116,7 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
     let thisLayer;
 
     try {
-      thisLayer = map.addLayer( layerData.name, 2, false, layerData.coord );
+      thisLayer = map.addLayer( layerData.name, false, layerData.coord );
     } catch(e) {
       console.log("Problem:", layerData.type, e.stack);
     }
@@ -133,7 +133,7 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
       if(spritesheetType) {
         let spritesheetData = typeData.graphicData[spritesheetType];
 
-        spritesheet = allSpritesheets.addSpritesheet(spritesheetData);
+        spritesheet = allSpritesheets.createSpritesheet(spritesheetData);
       }
 
       objectGroup.objects.forEach( object => {

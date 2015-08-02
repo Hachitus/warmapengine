@@ -36,7 +36,7 @@ export class Map {
     options = options || {};
     this.canvas = canvas;
     this._stage = new Map_stage("daddyStage", canvas);
-    this.mommyLayer = new Map_layer("mommyLayer", options.type, options.subContainers, options.startCoord);
+    this.mommyLayer = new Map_layer("mommyLayer", options.subContainers, options.startCoord);
     this._stage.addChild(this.mommyLayer);
     this.plugins = [];
     this.activatedPlugins = [];
@@ -101,8 +101,8 @@ export class Map {
   }
   /** All parameters are passed to Map_layer constructor
    * @return created Map_layer instance */
-  addLayer(name, type, subContainers, coord) {
-    var layer = new Map_layer(name, type, subContainers, coord);
+  addLayer(name, subContainers, coord) {
+    var layer = new Map_layer(name, subContainers, coord);
 
     this.mommyLayer.addChild(layer);
 
@@ -206,7 +206,7 @@ export class Map {
 
     return this;
   }
-  /* getter and setter for detecting if map is moved and setting the maps status as moved or not moved */
+  /** getter and setter for detecting if map is moved and setting the maps status as moved or not moved */
   mapMoved(yesOrNo) {
     if(yesOrNo !== undefined) {
       this.mapInMove = yesOrNo;

@@ -1,7 +1,19 @@
-'user strict';
+'use strict';
+
+/**
+ * Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for
+ * the eventlistener management. This way all the eventlisteners are in the same object, conveniently. */
 
 var singletonScope;
 
+/* ===== EXPORT ===== */
+/**
+ * eventListeners is a singleton that needs to be initialized with an object, that holds all the callbacks used in this
+ * class. I.e.
+ {
+   select: function() {},
+   zoom: function() {}
+ }*/
 export let eventListeners = function eventListenerModule(mapCBs) {
   if(singletonScope) {
     return singletonScope;

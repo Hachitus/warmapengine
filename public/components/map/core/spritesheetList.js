@@ -1,38 +1,45 @@
+/** We want to put spritesheets to their own module, so they are separated and e.g. we can remove createjs from the
+ * spritesheet if needed */
+
 'use strict';
 
 import hash from 'blueimp-md5';
 
-let allSpritesheets = [];
-let allSpritesheetIDs = [];
+var allSpritesheets = {};
 
 /* Singleton so we don't use class definition */
 export function spritesheetList () {
-  let scope = {};
+  var scope = {};
 
-  scope.addSpritesheet = function (spritesheetData) {
-    let spriteSheet;
+  /** Create new spritesheet (new createjs.SpriteSheet()) and keeps it in object collection. So we don't create acciden-
+   * tally another one and we can safely remove it later.
+   * @param {Object} spritesheetData Object that contains createjs-compatible spritesheetData
+   * @return new spritesheet instance to use. */
+  scope.createSpritesheet = function createSpritesheet(spritesheetData) {
+    var spriteSheet;
+    var ID = scope.getSpritesheetID(spritesheetData);
 
-    if (scope.spritesheetAlreadyExists( _createID( spritesheetData ) ) ) {
-      return false;
+    if ( allSpritesheets[ID] ) {
+      return allSpritesheets[ID];
     }
 
     spriteSheet = new createjs.SpriteSheet(spritesheetData);
-
-    allSpritesheets.push( spriteSheet );
+    allSpritesheets[ID] = spriteSheet;
 
     return spriteSheet;
   };
-  scope.removeSpritesheet = function (spritesheet) {
-
+  /** Generates identifier for keeping track of spritesheets
+   * @param {Object} spritesheetData spritesheetData that is used
+   * @return generated hash identifier for spritesheet */
+  scope.getSpritesheetID = function getSpritesheetID(spritesheetData) {
+    return hash.md5(spritesheetData);
   };
-  scope.getAllSpritesheets = function () {
+  scope.removeSpritesheet = function removeSpritesheet(spritesheetData) {
+    var ID = scope.getSpritesheetID(spritesheetData);
+    delete allSpritesheets[ID];
+  };
+  scope.getAllSpritesheets = function getAllSpritesheets () {
     return allSpritesheets;
-  };
-  scope.spritesheetAlreadyExists = function (spritesheetID) {
-    return ( allSpritesheetIDs.indexOf( spritesheetID ) > -1 );
-  };
-  function _createID (spritesheetData) {
-    return ( spritesheetData.images.toString() );
   };
 
   return scope;

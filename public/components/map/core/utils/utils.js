@@ -1,12 +1,18 @@
+'use strict';
+
+/** The core utils for the 2D map engine. */
+
 export var mouseUtils = ( function mouseUtils() {
   var scope = {};
 
   /** This function is from: http://www.adomas.org/javascript-mouse-wheel/
-    It detects which way the mousewheel has been moved
+    It detects which way the mousewheel has been moved.
+    zero delta = mouse wheel not moved
+    positive delta = scrolled up
+    negative delta = scrolled down
 
     @param {Event} event pass the event to deltaFromWheel
-    @return delta. Positive if wheel was scrolled up, and negative, if wheel was scrolled down.
-    */
+    @return delta. Positive if wheel was scrolled up, and negative, if wheel was scrolled down. */
   scope.deltaFromWheel = function( event ) {
      var delta = 0;
 
@@ -26,7 +32,8 @@ export var mouseUtils = ( function mouseUtils() {
      wheel was scrolled up, and negative, if wheel was scrolled down. */
      if ( delta ) return delta;
   };
-  /** Detect right click */
+  /** Has the mouse click been right mouse button
+   * @param {Event} event The event where the click occured */
   scope.isRightClick = function( event ) {
      var rightclick;
 
@@ -82,6 +89,8 @@ export var resizeUtils = {
        return false;
     }
   },
+  /** Sets canvas size to maximum width and height on the browser, not using fullscreen
+   * @param {DOMElement Canvas context} context */
   setToFullSize: function setToFullSize(context) {
     return function fullSize() {
       context.canvas.width = window.innerWidth;
@@ -90,6 +99,8 @@ export var resizeUtils = {
   }
 };
 
+/** Utils for adding event handlers on the map and keeping track of them.
+ * @todo Go over the module and see if it is really needed or should be changed. Might be legacy and not needed now */
 export var listeners = (function() {
   const LISTENER_TYPES = {
     "mousemove": {

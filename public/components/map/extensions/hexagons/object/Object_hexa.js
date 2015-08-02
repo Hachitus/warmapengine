@@ -1,6 +1,6 @@
 'use strict';
 
-import { Object_sprite } from '../../core/Object';
+import { Object_sprite } from '../../../core/Object';
 import { createHexagon } from '../utils/createHexagon';
 import hexagonMath from '../utils/hexagonMath';
 

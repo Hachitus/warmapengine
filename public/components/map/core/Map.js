@@ -11,8 +11,6 @@
 
 'use strict';
 
-/* ====== 3rd party imports ====== */
-
 /* ====== Own module imports ====== */
 import { Map_stage } from './Map_stage';
 import { Map_layer } from './Map_layer';

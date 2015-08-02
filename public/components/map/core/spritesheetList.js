@@ -2,7 +2,6 @@
  * spritesheet if needed */
 
 'use strict';
-
 import hash from 'blueimp-md5';
 
 var allSpritesheets = {};

@@ -8,7 +8,7 @@ import { createMap } from '../../components/factories/horizontalHexaFactory';
 /* ===== Import plugins ===== */
 import { map_drag } from "../../components/map/core/move/map_drag";
 import { map_zoom } from '../../components/map/core/zoom/map_zoom';
-import { object_select_hexagon } from '../../components/map/hexagons/object_select/object_select_hexagon';
+import { object_select_hexagon } from '../../components/map/extensions/hexagons/object_select/object_select_hexagon';
 
 /* DATA FILES used for testing */
 import { gameData } from '../../tests/data/gameData';

@@ -32,4 +32,9 @@ Plugin objects have to have init method, in the format of:
   }
 }
 ```
+Also the map engine uses it's own interface to use the normal map functionalities like moving the map (default dragging
+the map), selecting units and zooming the map. These are implemented via eventlisteners.js and UI.js core modules.
 
+UI interface is implemented so that map uses the UI.js module to implement API and to that API you pass in the UITheme
+module you want to use in the game. All UIThemes have to implement at least the core functionality API (or overwrite
+the API, which is naturally not encouraged). The UI module can be extended with plugins.

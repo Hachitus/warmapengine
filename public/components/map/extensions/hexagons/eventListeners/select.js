@@ -1,7 +1,7 @@
 'use strict';
 
-import logger from "../../../logger/log.js";
-import { eventListeners } from '../../core/eventlisteners';
+import logger from "../../../../logger/log.js";
+import { eventListeners } from '../../../core/eventlisteners';
 
 /* eventlisteners is a singleton, so we might as well declare it here */
 var eventlisteners;

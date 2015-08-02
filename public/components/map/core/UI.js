@@ -18,7 +18,7 @@
 var scope;
 
 export function UI (givenUITheme, givenMap) {
-  /* This is a singleton class, so if already instantiated return scope */
+  /* SINGLETON MODULE */
   if (scope) {
     return scope;
   }
@@ -35,11 +35,12 @@ export function UI (givenUITheme, givenMap) {
    * For example if there are several objects in one tile on the map and the player needs to be able to select one
    * specific unit on the stack */
   scope.showSelections = function showSelections(objects) {
-    return UITheme.showSelections(objects);
+    return UITheme.showSelections(map, objects);
   };
   /** Resonsible for hignlighting the selected object. For example the unit that is being commanded. The hightlight
    * can mean e.g. bringing the unit on top on the map and showing selection circle around it. */
   scope.highlightSelectedObject = function highlightSelectedObject(object) {
+    return UITheme.highlightSelectedObject(map, object);
   };
 
   return scope;

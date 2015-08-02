@@ -2,7 +2,7 @@
  * showSelections
  * highlightSelectedObject
  *
- * @todo Not implemented fully yet and probably need refactoring */
+ * @todo IN PROGRESS, not implemented well yet. Uses chromes built-in modal support only atm. just for the kicks :)  */
 
 'use strict';
 

@@ -15,8 +15,8 @@ HOW we do the whole organizational stuff?
 
 //import { map_coords_horizontalHex } from '../coordinates/Map_coords_horizontalHex';
 import { setupHexagonClick } from '../eventListeners/select';
-import { UI } from '../../core/UI';
-import { Map_layer } from '../../core/Map_layer';
+import { UI } from '../../../core/UI';
+import { Map_layer } from '../../../core/Map_layer';
 
 export let object_select_hexagon = (function object_select_hexagon() {
   var scope = {};

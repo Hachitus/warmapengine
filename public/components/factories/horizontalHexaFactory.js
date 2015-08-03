@@ -8,16 +8,16 @@
 
 /* ====== Own module imports ====== */
 import { Map } from '../map/core/Map';
-import { Object_terrain_hexa } from '../map/extensions/hexagons/object/Object_terrain_hexa';
-import { Object_unit_hexa } from '../map/extensions/hexagons/object/Object_unit_hexa';
+import { Object_terrain } from '../map/extensions/hexagons/object/Object_terrain_hexa';
+import { Object_unit } from '../map/extensions/hexagons/object/Object_unit_hexa';
 import { spritesheetList } from '../map/core/spritesheetList';
 var allSpritesheets = spritesheetList();
 import { UI } from '../map/core/UI';
 import { UI_default } from "../map/UIs/default/default.js";
 
 var functionsInObj = {
-  Object_terrain: Object_terrain_hexa,
-  Object_unit: Object_unit_hexa
+  Object_terrain,
+  Object_unit
 };
 
 /* ===== EXPORT ===== */

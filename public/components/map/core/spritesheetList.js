@@ -16,7 +16,7 @@ export function spritesheetList () {
    * @return new spritesheet instance to use. */
   scope.createSpritesheet = function createSpritesheet(spritesheetData) {
     var spriteSheet;
-    var ID = scope.getSpritesheetID(spritesheetData);
+    var ID = scope.getSpritesheetID(spritesheetData.images);
 
     if ( allSpritesheets[ID] ) {
       return allSpritesheets[ID];

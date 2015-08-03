@@ -1,37 +1,29 @@
 'use strict';
 
-import { Object_sprite } from '../../../core/Object';
 import { createHexagon } from '../utils/createHexagon';
 import hexagonMath from '../utils/hexagonMath';
 
 var shape;
 
-export class Object_sprite_hexa extends Object_sprite {
-  constructor(coords = {x:0, y:0}, data,  spritesheet, currentFrameNumber, extra = { radius: 0 }) {
-    var shape;
+export var object_sprite_hexa = {
+  build: function calculateHexa(radius) {
+      if (!radius) {
+        throw new Error("Need radius!");
+      }
 
-    const HEIGHT = hexagonMath.calcHeight(extra.radius);
-    const SIDE = hexagonMath.calcSide(extra.radius);
+      const HEIGHT = hexagonMath.calcHeight(radius);
+      const SIDE = hexagonMath.calcSide(radius);
 
-    super(coords, data,  spritesheet, currentFrameNumber);
+      var hexagonSize = hexagonMath.getHexaSize(radius);
+      this.regX = hexagonSize.x / 2;
+      this.regY = hexagonSize.y / 2;
+      this.HEIGHT = HEIGHT;
+      this.SIDE = SIDE;
 
-    var hexagonSize = hexagonMath.getHexaSize(extra.radius);
-    this.regX = hexagonSize.x / 2;
-    this.regY = hexagonSize.y / 2;
-    this.HEIGHT = HEIGHT;
-    this.SIDE = SIDE;
-
-    if (!extra.radius) {
-      throw new Error("Need radius!");
+      /* Draw hexagon to test the hits with hitArea */
+      this.hitArea = setAndGetShape(radius);
     }
-
-    /* Draw hexagon to test the hits with hitArea */
-    this.hitArea = setAndGetShape(extra.radius);
-  }
-  static getShape() {
-    return shape;
-  }
-}
+};
 
 function setAndGetShape(radius) {
   if (!shape) {

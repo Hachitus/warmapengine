@@ -15,7 +15,7 @@ export class UI_default {
 
     this.closingElements = _DOMElementsToArray(this.modal.getElementsByClassName("modal_close"));
   }
-  showSelections(objects) {
+  showSelections(map, objects) {
     if (objects && objects.length > 1) {
       this.modal.innerHTML = "objects:<br>";
       objects.map( object => {
@@ -30,7 +30,7 @@ export class UI_default {
       console.log(objects);
     }
   }
-  highlightSelectedObject(object) {
+  highlightSelectedObject(map, object) {
     // Not implemented yet
   }
   init() {

@@ -2,9 +2,9 @@
 
 import { Object_sprite } from '../Object';
 
-export class Object_unit extends Object_sprite {
-  construct(coords, data, spriteSheet, currFrameNumber) {
-    super.spriteSheet(coords, data, spriteSheet, currFrameNumber);
+export class Object_sprite_unit extends Object_sprite {
+  constructor(coords, data, spriteSheet, currFrameNumber) {
+    super(coords, data, spriteSheet, currFrameNumber);
 
     this.name = "DefaultUnitObjects";
     this.actions = {

@@ -14,6 +14,7 @@ import { spritesheetList } from '../map/core/spritesheetList';
 var allSpritesheets = spritesheetList();
 import { UI } from '../map/core/UI';
 import { UI_default } from "../map/UIs/default/default.js";
+import { eventListeners } from '../map/core/eventlisteners';
 
 var functionsInObj = {
   Object_terrain,
@@ -87,6 +88,10 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
   });
 
   map.moveMap(mapData.startPoint);
+
+  document.getElementById("testFullscreen").addEventListener("click", function() {
+    eventListeners.toggleFullScreen();
+  });
 
   return map;
 }

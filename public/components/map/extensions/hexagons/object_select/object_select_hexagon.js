@@ -35,7 +35,7 @@ export let object_select_hexagon = (function object_select_hexagon() {
   return scope;
 
   function getObjectsForMap(clickCoords) {
-    var objects = this._stage.getObjectsUnderPoint(clickCoords.x, clickCoords.y);
+    var objects = this.getStage().getObjectsUnderPoint(clickCoords.x, clickCoords.y);
 
     return objects;
   }

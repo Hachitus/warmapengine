@@ -32,7 +32,7 @@ export class Map_layer extends createjs.Container {
     this.name = "" + name; // For debugging. Shows up in toString
     this.drawThisChild = true;
     this.movable = true;
-    this.zoomable = true;
+    this.zoomable = false;
     this.preventSelection = false;
     /* createjs / super properties. Used also for controlling and optimizing the engine */
     this.visible = true;
@@ -75,6 +75,15 @@ export class Map_layer extends createjs.Container {
   }
   isUsingSubContainers() {
     return !!this.subContainers;
+  }
+  setScale(amount) {
+    this.scaleX = amount;
+    this.scaleY = amount;
+
+    return amount;
+  }
+  getScale() {
+    return this.scaleX;
   }
 }
 

@@ -7,20 +7,24 @@
  * it's public methods.
  *
  * @require createjs framework in global namespace
- * @require canvas HTML5-element to work. */
+ * @require canvas HTML5-element to work.
+ *
+ * @require Plugins that use eventlistener by default, use pointer events polyfill, such as: https://github.com/jquery/PEP
+ * Plugins and eventlistener can be overriden, but they user pointer events by default (either the browser must support
+ * them or use polyfill) */
 
 'use strict';
 
 /* ====== Own module imports ====== */
 import { Map_stage } from './Map_stage';
 import { Map_layer } from './Map_layer';
-import { resizeUtils, resizeUtils } from './utils/utils';
+import { resizeUtils, resizeUtils, environmentDetection } from './utils/utils';
 import { map_drag } from "./move/map_drag";
 import { map_zoom } from './zoom/map_zoom';
 import { eventListeners } from './eventlisteners';
 
 var _drawMapOnNextTick = false;
-var eventlisteners;
+var eventlisteners, _stage, _staticLayer, _movableLayer;
 
 export class Map {
   /**
@@ -33,9 +37,11 @@ export class Map {
     }
     options = options || {};
     this.canvas = canvas;
-    this._stage = new Map_stage("daddyStage", canvas);
-    this.mommyLayer = new Map_layer("mommyLayer", options.subContainers, options.startCoord);
-    this._stage.addChild(this.mommyLayer);
+    _stage = new Map_stage("mainStage", canvas);
+    _staticLayer = new Map_layer("staticLayer", options.subContainers, options.startCoord);
+    _stage.addChild(_staticLayer);
+    _movableLayer = new Map_layer("movableLayer", options.subContainers, options.startCoord);
+    _staticLayer.addChild(_movableLayer);
     this.plugins = [];
     this.activatedPlugins = [];
     /* Activate the map zoom and map drag core plugins */
@@ -50,7 +56,9 @@ export class Map {
       zoom: null
     };
     this._fullSizeFunction = null;
-    eventlisteners = eventListeners(this.eventCBs);
+    eventlisteners = eventListeners(this, canvas);
+    this.environment = "desktop";
+    this.mapEnvironment(environmentDetection.isMobile() && "mobile");
   }
   /** initialization method
    * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
@@ -65,8 +73,8 @@ export class Map {
     }
 
     if(coord) {
-      this.mommyLayer.x = coord.x;
-      this.mommyLayer.y = coord.y;
+      _movableLayer.x = coord.x;
+      _movableLayer.y = coord.y;
     }
 
     this.drawOnNextTick();
@@ -85,13 +93,13 @@ export class Map {
   /** The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
    * @return the current map instance */
   getLayersWithAttributes(attribute, value) {
-    return this._stage.children[0].children.filter(layer => {
+    return _stage.children[0].children.filter(layer => {
       return layer[attribute] === value;
     });
   }
 
   getStage() {
-    return this._stage;
+    return _stage;
   }
 
   getSize() {
@@ -102,27 +110,31 @@ export class Map {
   addLayer(name, subContainers, coord) {
     var layer = new Map_layer(name, subContainers, coord);
 
-    this.mommyLayer.addChild(layer);
+    _movableLayer.addChild(layer);
 
     return layer;
   }
   /**
    * @param {Map_layer} layer - the layer object to be removed */
   removeLayer(layer) {
-    this.mommyLayer.removeChild(layer);
+    _movableLayer.removeChild(layer);
 
     return layer;
   }
   /** @return layer with the passed layer name */
   getLayerNamed(name) {
-    return this.mommyLayer.getChildNamed(name);
+    return _movableLayer.getChildNamed(name);
   }
   /**
    * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
    * @return this map instance */
   moveMap(coordinates) {
-    this.mommyLayer.move(coordinates);
+    var realCoordinates = {
+      x: coordinates.x / _staticLayer.getScale(),
+      y: coordinates.y / _staticLayer.getScale()
+    };
+    _movableLayer.move(realCoordinates);
     this.drawOnNextTick();
     this.mapMoved(true);
 
@@ -134,10 +146,10 @@ export class Map {
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
    * @return this map instance */
   cacheMap() {
-    if(this.mommyLayer.getCacheEnabled()) {
-      this.mommyLayer.cache(0, 0, this.mapSize.x, this.mapSize.y);
+    if(_movableLayer.getCacheEnabled()) {
+      _movableLayer.cache(0, 0, this.mapSize.x, this.mapSize.y);
     } else {
-      this.mommyLayer.children.forEach(child => {
+      _movableLayer.children.forEach(child => {
         if(child.getCacheEnabled()) {
           child.cache(0, 0, this.mapSize.x, this.mapSize.y);
         }
@@ -152,7 +164,7 @@ export class Map {
   getObjectsUnderMapPoint(coord) {
     let objects = [];
 
-    this.mommyLayer.getObjectsUnderPoint(coord);
+    _movableLayer.getObjectsUnderPoint(coord);
 
     return objects;
   }
@@ -216,6 +228,25 @@ export class Map {
   setPrototype(property, value) {
     this.__proto__[property] = value;
   }
+  /** getter and setter for marking environment as mobile or desktop */
+  mapEnvironment(env) {
+    if(env !== undefined) {
+      this.environment = env;
+      return env;
+    }
+
+    return this.environment;
+  }
+  /** @return { x: Number, y: Number }, current coordinates for the map */
+  getMapPosition() {
+    return {
+      x: _movableLayer.x,
+      y: _movableLayer.y
+    };
+  }
+  getZoomLayers() {
+    return [_staticLayer];
+  }
 }
 
 /** ===== Private functions ===== */
@@ -235,7 +266,7 @@ function _defaultTick(map) {
 }
 /* Private function to draw the map */
 function _drawMap(map) {
-  map._stage.update();
+  map.getStage().update();
 
   return map;
 }

@@ -1,23 +1,41 @@
 'use strict';
 
-import logger from "../../../../logger/log.js";
+/**
+ * @require Browser that support pointer events or Pointer events polyfill, such as: https://github.com/jquery/PEP */
+
 import { eventListeners } from '../../../core/eventlisteners';
 
 /* eventlisteners is a singleton, so we might as well declare it here */
 var eventlisteners;
 
 export function setupHexagonClick(map, callback) {
-  eventlisteners = eventListeners(map.eventCBs);
+  eventlisteners = eventListeners(map);
 
-  map.eventCBs.select = mouseDownListener;
+  if(map.mapEnvironment() === "mobile") {
+    map.eventCBs.select = tapListener;
+  } else {
+    map.eventCBs.select = mouseDownListener;
+  }
   eventlisteners.toggleSelectListener();
-
-  //return onMouseDown(map, callback);
 
   return false;
 
   function mouseDownListener() {
     onMouseUp(map, callback);
+  }
+  function tapListener(e) {
+    var touchCoords = e.center;
+    var globalCoords =  {
+      x: touchCoords.x, y: touchCoords.y
+
+    };
+    var objects;
+
+    objects = map.getObjectsUnderMapPoint(globalCoords);
+
+    if (objects && objects.length > 0) {
+      callback(objects);
+    }
   }
 }
 
@@ -39,5 +57,16 @@ function onMouseUp(map, callback) {
     }
 
     map.canvas.removeEventListener("mouseup", retrieveClickData);
+  }
+}
+
+function tapListener(map, callback) {
+  var globalCoords =  {x: e.x, y: e.y };
+  var objects;
+
+  objects = map.getObjectsUnderMapPoint(globalCoords);
+
+  if (objects && objects.length > 0) {
+    callback(objects);
   }
 }

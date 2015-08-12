@@ -2,6 +2,8 @@
 
 /** The core plugin for the 2D map engine. Handles moving the map by dragging the map.
  * Core plugins can always be overwrote if needed
+ *
+ * @require Browser that support pointer events or Pointer events polyfill, such as: https://github.com/jquery/PEP
  * @todo See if this plugin need refactoring and more documentation */
 
 import { eventListeners } from '../eventlisteners';
@@ -20,10 +22,13 @@ export let map_drag = (function map_drag() {
   /** Required init functions for the plugin
   * @param {Map object} mapObj - the Map class object */
   scope.init = function(map) {
-    eventlisteners = eventListeners(map.eventCBs);
-    map.eventCBs.drag = _startDragListener(map);
+    eventlisteners = eventListeners(map);
+    if(map.mapEnvironment() === "mobile") {
+      map.eventCBs.drag = _startDragListener_mobile(map);
+    } else {
+      map.eventCBs.drag = _startDragListener(map);
+    }
 
-    //map.setListener("mousedown", _startDragListener(map));
     eventlisteners.toggleDragListener();
   };
 
@@ -40,8 +45,8 @@ export let map_drag = (function map_drag() {
           x: e.x,
           y: e.y
         });
-        /* We take all the eventlisteners unbindings to this array, so we can unbind them when the mouse is up */
 
+        /* We take all the eventlisteners unbindings to this array, so we can unbind them when the mouse is up */
         var moveCallback1 = _dragListener(map);
         var mouseupCallback = _setupMouseupListener(map);
         map.canvas.addEventListener("mousemove", moveCallback1);
@@ -51,7 +56,9 @@ export let map_drag = (function map_drag() {
       }
 
       function _setupMouseupListener(map) {
-        return function() {
+        return function(e) {
+          e.preventDefault();
+
           map.canvas.removeEventListener("mousemove", moveCallback1);
           map.canvas.removeEventListener("mouseup", mouseupCallback);
           _mapMoved(map);
@@ -61,6 +68,8 @@ export let map_drag = (function map_drag() {
       function _dragListener(map) {
         try {
           return function dragger(e) {
+            e.preventDefault();
+
             map.mapMoved(true);
             /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
             if(e.buttons === 0) {
@@ -94,6 +103,51 @@ export let map_drag = (function map_drag() {
         } catch (e) {
           console.log(e);
         }
+      }
+    };
+  }
+
+  function _startDragListener_mobile( map ) {
+    var initialized = false;
+
+    return function startDrag(e) {
+      var coords = e.center;
+
+      e.preventDefault();
+
+      try {
+        if(!initialized) {
+          offsetCoords.setOffset({
+            x: coords.x,
+            y: coords.y
+          });
+          initialized = true;
+          map.mapMoved(true);
+
+          return;
+        } else if (e.isFinal === true) {
+          initialized = false;
+          map.mapMoved(false);
+        }
+
+        map.mapMoved(true);
+
+        let offset = offsetCoords.getOffset();
+        let moved = {
+            x: coords.x - offset.x,
+            y: coords.y - offset.y
+          };
+
+        if(moved.x !== 0 || moved.y !== 0) {
+          map.moveMap(moved);
+        }
+
+        offsetCoords.setOffset({
+          x: coords.x,
+          y: coords.y
+        });
+      } catch (e) {
+        console.log(e);
       }
     };
   }

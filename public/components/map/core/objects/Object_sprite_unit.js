@@ -1,5 +1,8 @@
 'use strict';
 
+/** Map unit like infantry or worker, usually something with actions or movable. Normally, but not necessarily, these are
+ * inherited, depending on the map type. For example you might want to add some click area for these */
+
 import { Object_sprite } from '../Object';
 
 export class Object_sprite_unit extends Object_sprite {

@@ -105,15 +105,15 @@ export var listeners = (function() {
   const LISTENER_TYPES = {
     "mousemove": {
       element: "canvas",
-      event: "mousemove"
+      event: "pointermove"
     },
     "mouseup": {
       element: "canvas",
-      event: "mouseup"
+      event: "pointerup"
     },
     "mousedown": {
       element: "canvas",
-      event: "mousedown"
+      event: "pointerdown"
     },
     "mousewheel": {
       element: "canvas",
@@ -169,4 +169,16 @@ export var listeners = (function() {
 
     return objects;
   }
+})();
+export var environmentDetection = (function () {
+  var scope = {};
+
+  scope.isMobile =function() {
+    var screenSize = (screen.width <= 640) || (window.matchMedia && window.matchMedia('only screen and (max-width: 640px)').matches );
+    var features = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
+
+    return features && screenSize;
+  };
+
+  return scope;
 })();

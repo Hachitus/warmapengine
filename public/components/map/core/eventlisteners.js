@@ -1,8 +1,13 @@
 'use strict';
 
+/* global Hammer, createjs */
+
 /**
  * Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for
- * the eventlistener management. This way all the eventlisteners are in the same object, conveniently. */
+ * the eventlistener management. This way all the eventlisteners are in the same object, conveniently.
+ *
+ * @require Browser that support pointer events or Pointer events polyfill, such as: https://github.com/jquery/PEP
+ * @require Hammer.js for touch events*/
 
 var singletonScope;
 
@@ -14,10 +19,15 @@ var singletonScope;
    select: function() {},
    zoom: function() {}
  }*/
-export let eventListeners = function eventListenerModule(mapCBs) {
+export let eventListeners = function eventListenerModule(map, canvasElement) {
   if(singletonScope) {
     return singletonScope;
   }
+  if(!map || !canvasElement) {
+    throw new Error("eventlisteners require map callbacks and canvas element as arguments");
+  }
+
+  var mapCBs = map.eventCBs;
 
   singletonScope = {
     states: {}
@@ -35,14 +45,29 @@ export let eventListeners = function eventListenerModule(mapCBs) {
     return mapCBs.fullSize;
   };
   singletonScope.toggleFullscreen = function toggleFullscreen() {
+    singletonScope.states.fullScreen = mapCBs.fullscreen();
+
     return mapCBs.fullscreen;
   };
   singletonScope.toggleZoomListener = function toggleZoomListener() {
     if(singletonScope.states.zoom !== true) {
-      window.addEventListener("mousewheel", mapCBs.zoom);
+      if(isMobile()) {
+        var hammer    = new Hammer.Manager(canvasElement);
+        var pinch     = new Hammer.Pinch();
+        hammer.add(pinch);
+        hammer.on("pinch", mapCBs.zoom);
+      } else {
+        canvasElement.addEventListener("mousewheel", mapCBs.zoom);
+      }
+
       singletonScope.states.zoom = true;
     } else {
-      window.removeEventListener("mousewheel", mapCBs.zoom);
+      if(isMobile()) {
+        hammer.on("pinch", mapCBs.zoom);
+      } else {
+        canvasElement.removeEventListener("mousewheel", mapCBs.zoom);
+      }
+
       singletonScope.states.zoom = false;
     }
 
@@ -50,10 +75,26 @@ export let eventListeners = function eventListenerModule(mapCBs) {
   };
   singletonScope.toggleDragListener = function toggleDragListener() {
     if(singletonScope.states.drag !== true) {
-      window.addEventListener("mousedown", mapCBs.drag);
+      if(isMobile()) {
+        var hammer = new Hammer.Manager(canvasElement);
+        var pan = new Hammer.Pan({
+          pointers: 1,
+          threshold: 5,
+          direction:	Hammer.DIRECTION_ALL });
+        hammer.add(pan);
+        hammer.on("pan", mapCBs.drag);
+      } else {
+        canvasElement.addEventListener("mousedown", mapCBs.drag);
+      }
+
       singletonScope.states.drag = true;
     } else {
-      window.removeEventListener("mousedown", mapCBs.drag);
+      if(isMobile()) {
+        hammer.off("pan", mapCBs.drag);
+      } else {
+        canvasElement.removeEventListener("mousedown", mapCBs.drag);
+      }
+
       singletonScope.states.drag = false;
     }
 
@@ -61,10 +102,23 @@ export let eventListeners = function eventListenerModule(mapCBs) {
   };
   singletonScope.toggleSelectListener = function toggleSelectListener() {
     if(singletonScope.states.select !== true) {
-      window.addEventListener("mousedown", mapCBs.select);
+      if(isMobile()) {
+        var hammer    = new Hammer.Manager(canvasElement);
+        var tap     = new Hammer.Tap();
+        hammer.add(tap);
+        hammer.on("tap", mapCBs.select);
+      } else {
+        canvasElement.addEventListener("mousedown", mapCBs.select);
+      }
+
       singletonScope.states.select = true;
     } else {
-      window.removeEventListener("mousedown", mapCBs.select);
+      if(isMobile()) {
+        hammer.off("tap", mapCBs.select);
+      } else {
+        canvasElement.removeEventListener("mousedown", mapCBs.select);
+      }
+
       singletonScope.states.select = false;
     }
 
@@ -73,3 +127,7 @@ export let eventListeners = function eventListenerModule(mapCBs) {
 
   return singletonScope;
 };
+
+function isMobile() {
+  return typeof Hammer != 'undefined';
+}

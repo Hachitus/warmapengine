@@ -17,8 +17,8 @@ export let map_cache = (function map_cache() {
 
   /* ===== _createPrototypes ===== */
   function _createPrototypes(mapObj) {
-//    layer.addPrototype("cacheLayer", _cacheLayer);
-//    layer.addPrototype("updateBounds", _updateBounds_layer);
+//    layer.prototype("cacheLayer", _cacheLayer);
+//    layer.prototype("updateBounds", _updateBounds_layer);
   }
 
   function _updateBounds_layer(newChild) {

@@ -6,7 +6,8 @@
  * @require Browser that support pointer events or Pointer events polyfill, such as: https://github.com/jquery/PEP
  * @todo See if this plugin need refactoring and more documentation */
 
-import { eventListeners } from '../eventlisteners';
+import { eventListenerMod } from '../eventlisteners';
+import { mouseUtils } from '../utils/utils';
 
 export let map_drag = (function map_drag() {
   var scope = {};
@@ -17,12 +18,14 @@ export let map_drag = (function map_drag() {
   /* ===== For testing ===== */
   scope._startDragListener = _startDragListener;
 
-  scope.pluginName = map_drag.name;
+  scope.pluginName = "map_drag";
 
   /** Required init functions for the plugin
   * @param {Map object} mapObj - the Map class object */
   scope.init = function(map) {
-    eventlisteners = eventListeners(map);
+    /* Singleton should have been instantiated before, we only retrieve it with 0 params! */
+    eventlisteners = eventListenerMod();
+
     if(map.mapEnvironment() === "mobile") {
       map.eventCBs.drag = _startDragListener_mobile(map);
     } else {
@@ -41,10 +44,7 @@ export let map_drag = (function map_drag() {
   function _startDragListener( map ) {
     return function startDrag(e) {
       try {
-        offsetCoords.setOffset({
-          x: e.x,
-          y: e.y
-        });
+        offsetCoords.setOffset(mouseUtils.getEventCoordsOnPage(e));
 
         /* We take all the eventlisteners unbindings to this array, so we can unbind them when the mouse is up */
         var moveCallback1 = _dragListener(map);
@@ -68,31 +68,34 @@ export let map_drag = (function map_drag() {
       function _dragListener(map) {
         try {
           return function dragger(e) {
+            var eventCoords = mouseUtils.getEventCoordsOnPage(e);
+
             e.preventDefault();
 
             map.mapMoved(true);
-            /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
+
             if(e.buttons === 0) {
               map.canvas.removeEventListener("mousemove", moveCallback1);
               map.canvas.removeEventListener("mouseup", mouseupCallback);
+              /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
               _mapMoved(map);
             }
 
             var offset = offsetCoords.getOffset();
             var moved = {
-              x: e.x - offset.x,
-              y: e.y - offset.y
+              x: eventCoords.x - offset.x,
+              y: eventCoords.y - offset.y
             };
 
-            if(moved.x !== 0 || moved.y !== 0) {
+            if(moved.x > 0 || moved.y > 0 || moved.x < 0 || moved.y < 0) {
               map.moveMap(moved);
             } else {
               map.mapMoved(false);
             }
 
             offsetCoords.setOffset({
-              x: e.x,
-              y: e.y
+              x: eventCoords.x,
+              y: eventCoords.y
             });
 
             /* The mouse has been moved after pressing. This prevent the click

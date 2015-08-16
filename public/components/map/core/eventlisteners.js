@@ -24,7 +24,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
     return singletonScope;
   }
   if(!map || !canvasElement) {
-    throw new Error("eventlisteners require map callbacks and canvas element as arguments");
+    throw new Error("eventlisteners initialization require map callbacks and canvas element as arguments");
   }
 
   var mapCBs = map.eventCBs;
@@ -57,7 +57,8 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
         hammer.add(pinch);
         hammer.on("pinch", mapCBs.zoom);
       } else {
-        canvasElement.addEventListener("mousewheel", mapCBs.zoom);
+        /* Hamster handles wheel events really nicely */
+        Hamster(canvasElement).wheel(mapCBs.zoom);
       }
 
       singletonScope.states.zoom = true;
@@ -65,7 +66,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
       if(isMobile()) {
         hammer.on("pinch", mapCBs.zoom);
       } else {
-        canvasElement.removeEventListener("mousewheel", mapCBs.zoom);
+        Hamster(canvasElement).unwheel(mapCBs.zoom);
       }
 
       singletonScope.states.zoom = false;

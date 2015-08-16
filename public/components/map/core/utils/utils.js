@@ -5,7 +5,7 @@
 export var mouseUtils = ( function mouseUtils() {
   var scope = {};
 
-  /** This function is from: http://www.adomas.org/javascript-mouse-wheel/
+  /** This function is from: http://www.adomas.org/javascript-mouse-wheel/, but modified for todays browsers
     It detects which way the mousewheel has been moved.
     zero delta = mouse wheel not moved
     positive delta = scrolled up
@@ -14,23 +14,19 @@ export var mouseUtils = ( function mouseUtils() {
     @param {Event} event pass the event to deltaFromWheel
     @return delta. Positive if wheel was scrolled up, and negative, if wheel was scrolled down. */
   scope.deltaFromWheel = function( event ) {
-     var delta = 0;
+    var delta = 0;
 
-     event = event ? event : window.event; /* For IE. */
+    event = event ? event : window.event; /* For IE. */
 
-     if ( event.wheelDelta ) { /* IE/Opera. */
-        delta = event.wheelDelta / 120;
-     } else if ( event.detail ) { /** Mozilla case. */
-        /* In Mozilla, sign of delta is different than in IE.
-         * Also, delta is multiple of 3. */
-        delta = -event.detail / 3;
-     }
-     /* Prevent default actions caused by mouse wheel. It might be ugly */
-     event.preventDefault ? event.preventDefault() : event.returnValue = false;
+    if ( event.deltaY > 99 ) { /* IE/Opera. */
+      delta = event.deltaY / 100;
+    } else if ( event.deltaY <= 99 ) {
+      delta = event.deltaY;
+    }
 
-     /* If delta is nonzero, handle it, otherwise scrap it Basically, delta is now positive if
-     wheel was scrolled up, and negative, if wheel was scrolled down. */
-     if ( delta ) return delta;
+    /* If delta is nonzero, handle it, otherwise scrap it Basically, delta is now positive if
+    wheel was scrolled up, and negative, if wheel was scrolled down. */
+    if ( delta ) return delta;
   };
   /** Has the mouse click been right mouse button
    * @param {Event} event The event where the click occured */
@@ -46,6 +42,13 @@ export var mouseUtils = ( function mouseUtils() {
 
      return false;
   };
+  scope.getEventCoordsOnPage = function (e) {
+    return {
+      x: e.pageX,
+      y: e.pageY
+    };
+  };
+
   return scope;
 } )();
 export var resizeUtils = {
@@ -93,83 +96,14 @@ export var resizeUtils = {
    * @param {DOMElement Canvas context} context */
   setToFullSize: function setToFullSize(context) {
     return function fullSize() {
-      context.canvas.width = window.innerWidth;
-      context.canvas.height = window.innerHeight;
+      var size = _getWindowSize();
+
+      context.canvas.width = size.x;
+      context.canvas.height = size.y;
     };
-  }
+  },
+  getWindowSize: _getWindowSize
 };
-
-/** Utils for adding event handlers on the map and keeping track of them.
- * @todo Go over the module and see if it is really needed or should be changed. Might be legacy and not needed now */
-export var listeners = (function() {
-  const LISTENER_TYPES = {
-    "mousemove": {
-      element: "canvas",
-      event: "pointermove"
-    },
-    "mouseup": {
-      element: "canvas",
-      event: "pointerup"
-    },
-    "mousedown": {
-      element: "canvas",
-      event: "pointerdown"
-    },
-    "mousewheel": {
-      element: "canvas",
-      event: "wheel"
-    },
-    "mouseclick": {
-      element: "canvas",
-      event: "click"
-    },
-  };
-  var _eventListeners = _getEmptyEventListenerArray();
-  var scope = {};
-
-  scope.setOne = function setOne(action, callback) {
-    /* There has been several different mousewheel events before, but now all except opera should support "wheel" */
-    _eventListeners[action].push(callback);
-    this[LISTENER_TYPES[action].element].addEventListener(LISTENER_TYPES[action].event, callback);
-
-    return this;
-  };
-  scope.removeOne = function removeOne(type, origCallback) {
-
-    if(typeof type === "string" ) {
-      if(origCallback) {
-        this[LISTENER_TYPES[type].element].removeEventListener(LISTENER_TYPES[type].event, origCallback);
-        return;
-      }
-
-      throw new Error("no callback specified! - 1");
-    } else if (type instanceof Array ) {
-      type.forEach(thisType => {
-        if(origCallback) {
-          this[LISTENER_TYPES[thisType].element].removeEventListener(LISTENER_TYPES[thisType].event, origCallback);
-          return;
-        }
-
-        throw new Error("no callback specified! - 2");
-      });
-    }
-
-    return this;
-  };
-
-  return scope;
-
-  /* PRIVATE functions */
-  function _getEmptyEventListenerArray() {
-    var objects = {};
-
-    Object.keys(LISTENER_TYPES).forEach(function(type) {
-      objects[type] = [];
-    });
-
-    return objects;
-  }
-})();
 export var environmentDetection = (function () {
   var scope = {};
 
@@ -182,3 +116,11 @@ export var environmentDetection = (function () {
 
   return scope;
 })();
+
+/** ===== PRIVATE ===== */
+function _getWindowSize() {
+  return {
+    x: window.innerWidth,
+    y: window.innerHeight
+  };
+}

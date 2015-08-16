@@ -42,10 +42,9 @@ export class Map {
     _stage.addChild(_staticLayer);
     _movableLayer = new Map_layer("movableLayer", options.subContainers, options.startCoord);
     _staticLayer.addChild(_movableLayer);
-    this.plugins = [];
-    this.activatedPlugins = [];
+    this.plugins = new Set();
     /* Activate the map zoom and map drag core plugins */
-    this.pluginsToActivate = [map_zoom, map_drag];
+    this.defaultPlugins = [map_zoom, map_drag];
     this.mapSize = options.mapSize || { x:0, y:0 };
     this.activeTickCB = false;
     this.eventCBs = {
@@ -59,6 +58,7 @@ export class Map {
     eventlisteners = eventListeners(this, canvas);
     this.environment = "desktop";
     this.mapEnvironment(environmentDetection.isMobile() && "mobile");
+    this._mapInMove = false;
   }
   /** initialization method
    * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
@@ -136,7 +136,6 @@ export class Map {
     };
     _movableLayer.move(realCoordinates);
     this.drawOnNextTick();
-    this.mapMoved(true);
 
     return this;
   }
@@ -180,15 +179,10 @@ export class Map {
   }
   /** Activate plugins for the map. Plugins need .pluginName property and .init-method
   @param [Array] pluginsArray - Array that consists of the plugin modules */
-  activatePlugins(pluginsArray) {
-    var allPlugins = this.pluginsToActivate.concat(pluginsArray);
-
-    allPlugins.forEach(pluginToUse => {
-      if(this.activatedPlugins[pluginToUse.pluginName] !== true) {
-        this.plugins[pluginToUse.pluginName] = pluginToUse;
-        this.plugins[pluginToUse.pluginName].init(this);
-        this.activatedPlugins[pluginToUse.pluginName] = true;
-        this.pluginsToActivate = [];
+  activatePlugins(pluginsArray = []) {
+    pluginsArray.forEach(plugin => {
+      if(this.plugins.add(plugin)) {
+        plugin.init(this);
       }
     });
 
@@ -219,14 +213,17 @@ export class Map {
   /** getter and setter for detecting if map is moved and setting the maps status as moved or not moved */
   mapMoved(yesOrNo) {
     if(yesOrNo !== undefined) {
-      this.mapInMove = yesOrNo;
+      this._mapInMove = yesOrNo;
       return yesOrNo;
     }
 
-    return this.mapInMove;
+    return this._mapInMove;
   }
   setPrototype(property, value) {
-    this.__proto__[property] = value;
+    //this.setPrototypeOf(property, value);
+    //this[property] = value;
+    //this.prototype[property] = value;
+    Map.prototype[property] = value;
   }
   /** getter and setter for marking environment as mobile or desktop */
   mapEnvironment(env) {
@@ -246,6 +243,9 @@ export class Map {
   }
   getZoomLayers() {
     return [_staticLayer];
+  }
+  getScale() {
+    return _staticLayer.getScale();
   }
 }
 

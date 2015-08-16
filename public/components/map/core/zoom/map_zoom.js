@@ -5,8 +5,8 @@
 /** @todo Change the map move after zooming to be mouse based or such. Now it is based on the map corners coordinates */
 
 /** ===== OWN imports ===== */
-import { mouseUtils } from "../utils/utils.js";
-import { eventListeners } from '../eventlisteners';
+import { mouseUtils, resizeUtils } from "../utils/utils.js";
+import { eventListeners as eventListenerMod } from '../eventlisteners';
 
 export let map_zoom = (function map_zoom() {
   var scope = {};
@@ -17,8 +17,8 @@ export let map_zoom = (function map_zoom() {
   };
   /* How much one step of zooming affects: */
   var zoomModifier = 0.1;
-  var eventlisteners, lastZoom;
-  scope.pluginName = map_zoom.name;
+  var eventlisteners;
+  scope.pluginName = "map_zoom";
 
   /** Required init functions for the plugin
   * @param {Map object} mapObj - the Map class object */
@@ -35,7 +35,8 @@ export let map_zoom = (function map_zoom() {
       map.eventCBs.zoom = _setupZoomEvent(map);
     }
 
-    eventlisteners = eventListeners(map.eventCBs);
+    /* Singleton should have been instantiated before, we only retrieve it with 0 params! */
+    eventlisteners = eventListenerMod();
     eventlisteners.toggleZoomListener();
   };
 
@@ -64,12 +65,11 @@ export let map_zoom = (function map_zoom() {
   /** Zoom in to the map
    * @param {Number} amount how much map is zoomed in */
   function zoomIn (amount, divider = 1) {
-    lastZoom = "in";
     var newScale;
 
     this.getZoomableLayers().forEach(layer => {
       if( _isOverZoomLimit(layer.scaleX, true) ) {
-        return;
+        return false;
       }
       newScale = layer.scaleY = layer.scaleX += ( amount || zoomModifier ) * divider;
     });
@@ -79,12 +79,11 @@ export let map_zoom = (function map_zoom() {
   /** Zoom out of the map
    * @param {Number} amount how much map is zoomed out */
   function zoomOut (amount, divider = 1) {
-    lastZoom = "out";
     var newScale;
 
     this.getZoomableLayers().forEach(layer => {
       if( _isOverZoomLimit(layer.scaleX) ) {
-        return;
+        return false;
       }
       newScale = layer.scaleY = layer.scaleX -= ( amount || zoomModifier ) * divider;
     });
@@ -97,19 +96,27 @@ export let map_zoom = (function map_zoom() {
 
   /* ===== Initializers ===== */
   function _setupZoomEvent(map) {
-    return function handleZoomEvent(e) {
-      var mouseWheelDelta = mouseUtils.deltaFromWheel(e);
+    return function handleZoomEvent(e, delta, deltaX, deltaY) {
+      var mouseWheelDelta = deltaY;
+      /* We use old scale, since the scale really changes when the map is drawn. So we must make calculations with the
+      old scale now */
+      var oldScale = map.getScale();
+
+      /* No nasty scrolling side-effects */
+      e.preventDefault();
 
       if(mouseWheelDelta > 0) {
-        map.zoomIn();
+        if(map.zoomIn()) {
+          map.moveMap(_calculateCenterMoveCoordinates(oldScale, true));
+        }
       } else if(mouseWheelDelta < 0) {
-        map.zoomOut();
+        if(map.zoomOut()) {
+          map.moveMap(_calculateCenterMoveCoordinates(oldScale));
+        }
       }
 
-      /* let newCoords = _getMoveCoordsForMapCorner(map);
-      map.moveMap(newCoords); */
-
-      map.drawOnNextTick();
+      // no need when we use map.move:
+      //map.drawOnNextTick();
     };
   }
 
@@ -146,17 +153,18 @@ export let map_zoom = (function map_zoom() {
         }
 
         if(difference.x + difference.y < changeX + changeY) {
-          map.zoomIn(undefined, 0.5);
+          if(map.zoomIn(undefined, 0.5)) {
+            map.moveMap(_calculateCenterMoveCoordinates(map.getScale(), true));
+          }
         } else {
+          if(map.zoomIn(undefined, 0.5)) {
+            map.moveMap(_calculateCenterMoveCoordinates(map.getScale()));
+          }
           map.zoomOut(undefined, 0.5);
         }
 
-        /*
-        let newCoords = _getMoveCoordsForMapCorner(map);
-        map.moveMap(newCoords);
-        */
-
-        map.drawOnNextTick();
+        // no need when we use map.move:
+        //map.drawOnNextTick();
 
         difference = {
           x: changeX,
@@ -171,12 +179,23 @@ export let map_zoom = (function map_zoom() {
 
   /* ===== Private functions ===== */
   function _isOverZoomLimit(amount, isZoomIn) {
-    if( (isZoomIn && amount < zoomLimit.farther ) || (!isZoomIn && amount > zoomLimit.closer) ) {
+    if( (isZoomIn && amount > zoomLimit.closer ) || (!isZoomIn && amount < zoomLimit.farther) ) {
       return true;
     }
 
     return false;
   }
-  function _getMoveCoordsForMapCorner(map) {
+  function _calculateCenterMoveCoordinates(scale, isZoomIn) {
+    var windowSize = resizeUtils.getWindowSize();
+    var halfWindowSize = {
+      x: ( windowSize.x / 2 ) / scale,
+      y: ( windowSize.y / 2 ) / scale
+    };
+    var realMovement = {
+      x: ( halfWindowSize.x ) * ( ( isZoomIn ? -zoomModifier : zoomModifier) ),
+      y: ( halfWindowSize.y ) * ( ( isZoomIn ? -zoomModifier : zoomModifier) )
+    };
+
+    return realMovement;
   }
 })();

@@ -2,6 +2,7 @@
 
 /** Creating the createjsQueue-object from spritesheet. This preloads assests.
  * @requires createjs Createjs library / framework object - global object
+ * @requires Q the promise library (can not be added with ES6)
  * @param {string} basePath
  * @todo Make a loader graphics / notifier when loading assets using preloader.
  *
@@ -12,16 +13,13 @@ export class preload extends createjs.LoadQueue {
   }
   /**@return {Promise} Return promise object, that will be resolved when the preloading is finished */
   resolveOnComplete () {
-    var bindedOnComplete = _onComplete.bind(this);
-    let promise = new Promise(bindedOnComplete);
+    var promise = Q.defer();
 
-    return promise;
+    this.on("complete", function() {
+      promise.resolve(true);
+    });
 
-    function _onComplete(resolve) {
-      this.on("complete", function() {
-        resolve(true);
-      });
-    }
+    return promise.promise;
   }
   /** Preload assets. Uses easeljs manifest format */
   loadManifest (...args) {

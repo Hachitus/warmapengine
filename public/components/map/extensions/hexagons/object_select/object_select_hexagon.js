@@ -16,7 +16,6 @@ HOW we do the whole organizational stuff?
 //import { map_coords_horizontalHex } from '../coordinates/Map_coords_horizontalHex';
 import { setupHexagonClick } from '../eventListeners/select';
 import { UI } from '../../../core/UI';
-import { Map_layer } from '../../../core/Map_layer';
 
 export let object_select_hexagon = (function object_select_hexagon() {
   var scope = {};
@@ -56,14 +55,14 @@ export let object_select_hexagon = (function object_select_hexagon() {
    * @param {Map} map - The Map class object
    */
   function _createPrototypes(map) {
-    map.__proto__.getObjectsUnderMapPoint = getObjectsForMap;
-    Map_layer.__proto__.getObjectsUnderPoint = getObjectsForLayer;
+    map.setPrototype("getObjectsUnderMapPoint", getObjectsForMap);
+    map.setPrototype("getObjectsUnderPoint", getObjectsForLayer);
   }
   /**
    * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
    * @param {Map} map - The Map class object
    */
-  function _startClickListener( map, canvas ) {
+  function _startClickListener( map ) {
     var singletonUI = UI();
 
     return setupHexagonClick(map, singletonUI.showSelections);

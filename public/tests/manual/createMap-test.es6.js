@@ -3,6 +3,9 @@
 
 /* ====== Own module imports ====== */
 //var Map = require( '../public/components/map/Map');
+/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol os something missing: http://babeljs.io/docs/usage/polyfill/ */
+require("babel/polyfill");
+
 import { createMap } from '../../components/factories/horizontalHexaFactory';
 
 /* ===== Import plugins ===== */
@@ -34,7 +37,6 @@ window.initMap = function () {
   }]);
   prel.resolveOnComplete()
     .then(function() {
-      console.log("preloading complete? Map should be ready to init?");
       map.init( [ map_zoom, map_drag, object_select_hexagon ], { x: 41, y: 47 }, undefined );
     });
 

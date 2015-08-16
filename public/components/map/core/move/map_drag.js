@@ -10,26 +10,26 @@ import { eventListeners as eventListenerMod } from '../eventlisteners';
 import { mouseUtils } from '../utils/utils';
 
 export let map_drag = (function map_drag() {
-  var scope = {};
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
-  var eventlisteners;
 
+  /* =====================
+     MODULE API (in scope)
+     ===================== */
+  var scope = {};
   scope.pluginName = "map_drag";
 
   /** Required init functions for the plugin
   * @param {Map object} mapObj - the Map class object */
   scope.init = function(map) {
-    /* Singleton should have been instantiated before, we only retrieve it with 0 params! */
-    eventlisteners = eventListenerMod();
-
     if(map.mapEnvironment() === "mobile") {
       map.eventCBs.drag = _startDragListener_mobile(map);
     } else {
       map.eventCBs.drag = _startDragListener(map);
     }
 
-    eventlisteners.toggleDragListener();
+    /* Singleton should have been instantiated before, we only retrieve it with 0 params */
+    eventListenerMod().toggleDragListener();
   };
 
   /* ======================================

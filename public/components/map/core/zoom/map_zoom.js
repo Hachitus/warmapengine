@@ -9,7 +9,6 @@ import { resizeUtils } from "../utils/utils.js";
 import { eventListeners as eventListenerMod } from '../eventlisteners';
 
 export let map_zoom = (function map_zoom() {
-  var scope = {};
   /* Maximum and minimum the player can zoomt he map */
   var zoomLimit = {
     farther: 0.4,
@@ -17,7 +16,11 @@ export let map_zoom = (function map_zoom() {
   };
   /* How much one step of zooming affects: */
   var zoomModifier = 0.1;
-  var eventlisteners;
+
+  /* =====================
+     MODULE API (in scope)
+     ===================== */
+  var scope = {};
   scope.pluginName = "map_zoom";
 
   /** Required init functions for the plugin
@@ -36,14 +39,13 @@ export let map_zoom = (function map_zoom() {
       map.eventCBs.zoom = _setupZoomEvent(map);
     }
 
-    /* Singleton should have been instantiated before, we only retrieve it with 0 params! */
-    eventlisteners = eventListenerMod();
-    eventlisteners.toggleZoomListener();
+    /* Singleton should have been instantiated before, we only retrieve it with 0 params */
+    eventListenerMod().toggleZoomListener();
   };
 
-    /* ======================================
-   private functions revealed for testing
-   ======================================*/
+  /* ======================================
+     private functions revealed for testing
+     ======================================*/
   //scope._setupZoomEvent = _setupZoomEvent;
 
   return scope;

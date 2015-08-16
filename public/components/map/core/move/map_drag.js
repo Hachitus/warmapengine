@@ -15,9 +15,6 @@ export let map_drag = (function map_drag() {
   var offsetCoords = _offsetCoords();
   var eventlisteners;
 
-  /* ===== For testing ===== */
-  scope._startDragListener = _startDragListener;
-
   scope.pluginName = "map_drag";
 
   /** Required init functions for the plugin
@@ -34,6 +31,11 @@ export let map_drag = (function map_drag() {
 
     eventlisteners.toggleDragListener();
   };
+
+  /* ======================================
+   private functions revealed for testing
+   ======================================*/
+  scope._startDragListener = _startDragListener;
 
   return scope;
 

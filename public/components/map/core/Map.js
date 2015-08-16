@@ -252,11 +252,17 @@ export class Map {
       y: _movableLayer.y
     };
   }
-  getZoomLayers() {
+  getZoomLayer() {
     return [_staticLayer];
   }
   getScale() {
     return _staticLayer.getScale();
+  }
+  zoomIn() {
+    throw new Error("Zoom needs to be implemented and actiaved through a plugin");
+  }
+  zoomOut() {
+    throw new Error("Zoom needs to be implemented and actiaved through a plugin");
   }
 }
 

@@ -5,7 +5,7 @@
 /** @todo Change the map move after zooming to be mouse based or such. Now it is based on the map corners coordinates */
 
 /** ===== OWN imports ===== */
-import { mouseUtils, resizeUtils } from "../utils/utils.js";
+import { resizeUtils } from "../utils/utils.js";
 import { eventListeners as eventListenerMod } from '../eventlisteners';
 
 export let map_zoom = (function map_zoom() {
@@ -27,7 +27,6 @@ export let map_zoom = (function map_zoom() {
     map.setPrototype("zoomOut", zoomOut);
     map.setPrototype("setZoomLimits", setZoomLimits);
     map.setPrototype("setZoomModifier", setZoomModifier);
-    map.setPrototype("getZoomableLayers", getZoomableLayers);
 
     if(map.mapEnvironment() === "mobile") {
       map.eventCBs.zoom = _setupZoomEvent_mobile(map);
@@ -39,6 +38,11 @@ export let map_zoom = (function map_zoom() {
     eventlisteners = eventListenerMod();
     eventlisteners.toggleZoomListener();
   };
+
+    /* ======================================
+   private functions revealed for testing
+   ======================================*/
+  //scope._setupZoomEvent = _setupZoomEvent;
 
   return scope;
 
@@ -67,7 +71,7 @@ export let map_zoom = (function map_zoom() {
   function zoomIn (amount) {
     var newScale;
 
-    this.getZoomableLayers().forEach(layer => {
+    this.getZoomLayer().forEach(layer => {
       if( _isOverZoomLimit(layer.scaleX, true) ) {
         return false;
       }
@@ -81,7 +85,7 @@ export let map_zoom = (function map_zoom() {
   function zoomOut (amount) {
     var newScale;
 
-    this.getZoomableLayers().forEach(layer => {
+    this.getZoomLayer().forEach(layer => {
       if( _isOverZoomLimit(layer.scaleX) ) {
         return false;
       }
@@ -89,9 +93,6 @@ export let map_zoom = (function map_zoom() {
     });
 
     return newScale;
-  }
-  function getZoomableLayers() {
-    return this.getZoomLayers();
   }
 
   /* ===== Initializers ===== */

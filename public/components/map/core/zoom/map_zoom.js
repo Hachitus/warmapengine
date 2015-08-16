@@ -64,28 +64,28 @@ export let map_zoom = (function map_zoom() {
   }
   /** Zoom in to the map
    * @param {Number} amount how much map is zoomed in */
-  function zoomIn (amount, divider = 1) {
+  function zoomIn (amount) {
     var newScale;
 
     this.getZoomableLayers().forEach(layer => {
       if( _isOverZoomLimit(layer.scaleX, true) ) {
         return false;
       }
-      newScale = layer.scaleY = layer.scaleX += ( amount || zoomModifier ) * divider;
+      newScale = layer.scaleY = layer.scaleX += ( amount || zoomModifier );
     });
 
     return newScale;
   }
   /** Zoom out of the map
    * @param {Number} amount how much map is zoomed out */
-  function zoomOut (amount, divider = 1) {
+  function zoomOut (amount) {
     var newScale;
 
     this.getZoomableLayers().forEach(layer => {
       if( _isOverZoomLimit(layer.scaleX) ) {
         return false;
       }
-      newScale = layer.scaleY = layer.scaleX -= ( amount || zoomModifier ) * divider;
+      newScale = layer.scaleY = layer.scaleX -= ( amount || zoomModifier );
     });
 
     return newScale;
@@ -121,6 +121,7 @@ export let map_zoom = (function map_zoom() {
   }
 
   function _setupZoomEvent_mobile(map) {
+    zoomModifier = zoomModifier * 0.5;
     var initialized = false;
     var difference = {};
 
@@ -153,14 +154,13 @@ export let map_zoom = (function map_zoom() {
         }
 
         if(difference.x + difference.y < changeX + changeY) {
-          if(map.zoomIn(undefined, 0.5)) {
+          if(map.zoomIn(undefined)) {
             map.moveMap(_calculateCenterMoveCoordinates(map.getScale(), true));
           }
         } else {
-          if(map.zoomIn(undefined, 0.5)) {
+          if(map.zoomOut(undefined)) {
             map.moveMap(_calculateCenterMoveCoordinates(map.getScale()));
           }
-          map.zoomOut(undefined, 0.5);
         }
 
         // no need when we use map.move:

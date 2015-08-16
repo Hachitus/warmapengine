@@ -35,10 +35,10 @@ export class UI_default {
     this.closingElements = _DOMElementsToArray(this.modal.getElementsByClassName("modal_close"));
   }
   showSelections(map, objects) {
-    if(map.isMobileSite()) {
-      _showMobileSelections(objects);
+    if(map.mapEnvironment() === "mobile") {
+      _showMobileSelections(objects, this.modal);
     } else {
-      _showDesktopSelections(objects);
+      _showDesktopSelections(objects, this.modal);
     }
   }
   highlightSelectedObject(map, object) {
@@ -104,15 +104,15 @@ function _get$Element(which) {
 
   return $elements[which];
 }
-function _showDesktopSelections(objects) {
+function _showDesktopSelections(objects, modal) {
   if (objects && objects.length > 1) {
     _get$Element("select").fadeOut(fadeAnimation, () => {
-      this.modal.innerHTML = templates.multiSelection({
+      modal.innerHTML = templates.multiSelection({
         title: "Objects",
         objects
       });
 
-      _showModal(this.modal, cssClasses);
+      _showModal(modal, cssClasses);
 
       console.log(objects);
 
@@ -120,14 +120,14 @@ function _showDesktopSelections(objects) {
     });
   } else {
     _get$Element("select").fadeOut(fadeAnimation, () => {
-      this.modal.innerHTML = templates.singleSelection({
+      modal.innerHTML = templates.singleSelection({
         title: "Selected",
         object: {
           name: objects[0].data.typeData.name
         }
       });
 
-      _showModal(this.modal, cssClasses);
+      _showModal(modal, cssClasses);
 
       console.log(objects);
 
@@ -135,15 +135,15 @@ function _showDesktopSelections(objects) {
     });
   }
 }
-function _showMobileSelections(objects) {
+function _showMobileSelections(objects, modal) {
   if (objects && objects.length > 1) {
     _get$Element("select").fadeOut(fadeAnimation, () => {
-      this.modal.innerHTML = templates.multiSelection({
+      modal.innerHTML = templates.multiSelection({
         title: "Objects",
         objects
       });
 
-      _showModal(this.modal, cssClasses);
+      _showModal(modal, cssClasses);
 
       console.log(objects);
 
@@ -151,14 +151,14 @@ function _showMobileSelections(objects) {
     });
   } else {
     _get$Element("select").fadeOut(fadeAnimation, () => {
-      this.modal.innerHTML = templates.singleSelection({
+      modal.innerHTML = templates.singleSelection({
         title: "Selected",
         object: {
           name: objects[0].data.typeData.name
         }
       });
 
-      _showModal(this.modal, cssClasses);
+      _showModal(modal, cssClasses);
 
       console.log(objects);
 

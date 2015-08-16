@@ -47,67 +47,66 @@ export let map_drag = (function map_drag() {
     return function startDrag(e) {
       try {
         offsetCoords.setOffset(mouseUtils.getEventCoordsOnPage(e));
-
-        /* We take all the eventlisteners unbindings to this array, so we can unbind them when the mouse is up */
-        var moveCallback1 = _dragListener(map);
-        var mouseupCallback = _setupMouseupListener(map);
-        map.canvas.addEventListener("mousemove", moveCallback1);
-        map.canvas.addEventListener("mouseup", mouseupCallback);
+        _addDragListeners();
       } catch (e) {
         console.log(e);
       }
 
-      function _setupMouseupListener(map) {
-        return function(e) {
-          e.preventDefault();
-
-          map.canvas.removeEventListener("mousemove", moveCallback1);
-          map.canvas.removeEventListener("mouseup", mouseupCallback);
-          _mapMoved(map);
-        };
+      /** @requires map objects to be accessible in scope */
+      function _mouseupListener() {
+        e.preventDefault();
+        _removeDragListeners();
+        _mapMoved(map);
       }
-      /* Event listeners are in their separate file; eventListeners.js */
-      function _dragListener(map) {
+        /** @requires map objects to be accessible in scope */
+
+      function _dragListener(e) {
         try {
-          return function dragger(e) {
-            var eventCoords = mouseUtils.getEventCoordsOnPage(e);
+        var eventCoords = mouseUtils.getEventCoordsOnPage(e);
 
-            e.preventDefault();
+        e.preventDefault();
 
-            map.mapMoved(true);
+        map.mapMoved(true);
 
-            if(e.buttons === 0) {
-              map.canvas.removeEventListener("mousemove", moveCallback1);
-              map.canvas.removeEventListener("mouseup", mouseupCallback);
-              /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
-              _mapMoved(map);
-            }
+        if(e.buttons === 0) {
+          _removeDragListeners();
+          /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
+          _mapMoved(map);
+        }
 
-            var offset = offsetCoords.getOffset();
-            var moved = {
-              x: eventCoords.x - offset.x,
-              y: eventCoords.y - offset.y
-            };
+        var offset = offsetCoords.getOffset();
+        var moved = {
+          x: eventCoords.x - offset.x,
+          y: eventCoords.y - offset.y
+        };
 
-            if(moved.x > 0 || moved.y > 0 || moved.x < 0 || moved.y < 0) {
-              map.moveMap(moved);
-            } else {
-              map.mapMoved(false);
-            }
+        if(moved.x > 0 || moved.y > 0 || moved.x < 0 || moved.y < 0) {
+          map.moveMap(moved);
+        } else {
+          map.mapMoved(false);
+        }
 
-            offsetCoords.setOffset({
-              x: eventCoords.x,
-              y: eventCoords.y
-            });
+        offsetCoords.setOffset({
+          x: eventCoords.x,
+          y: eventCoords.y
+        });
 
-            /* The mouse has been moved after pressing. This prevent the click
-              event to fire at the same time with the mouseDown / dragging event
-            */
-            //map.mouseMoved( true );
-          };
+        /* The mouse has been moved after pressing. This prevent the click
+          event to fire at the same time with the mouseDown / dragging event
+        */
+        //map.mouseMoved( true );
         } catch (e) {
           console.log(e);
         }
+      }
+
+      function _addDragListeners() {
+        map.canvas.addEventListener("mousemove", _dragListener);
+        map.canvas.addEventListener("mouseup", _mouseupListener);
+      }
+      function _removeDragListeners() {
+        map.canvas.removeEventListener("mousemove", _dragListener);
+        map.canvas.removeEventListener("mouseup", _mouseupListener);
       }
     };
   }
@@ -157,7 +156,9 @@ export let map_drag = (function map_drag() {
     };
   }
 
-  /* ====== Private functions ====== */
+  /* =================
+     Private functions
+     ================= */
   /** Function for setting and getting the mouse offset. */
   function _offsetCoords() {
     var scope = {};
@@ -172,11 +173,11 @@ export let map_drag = (function map_drag() {
 
     return scope;
   };
-})();
 
-/* Without this, the other eventListeners might fire inappropriate events. */
-function _mapMoved(map) {
-  window.setTimeout(function (){
-    map.mapMoved(false);
-  }, 1);
-}
+  /* Without this, the other eventListeners might fire inappropriate events. */
+  function _mapMoved(map) {
+    window.setTimeout(function (){
+      map.mapMoved(false);
+    }, 1);
+  }
+})();

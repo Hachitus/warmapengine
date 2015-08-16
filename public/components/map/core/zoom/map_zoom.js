@@ -25,6 +25,8 @@ export let map_zoom = (function map_zoom() {
   scope.init = function(map) {
     map.setPrototype("zoomIn", zoomIn);
     map.setPrototype("zoomOut", zoomOut);
+    /* @todo think through should these be in map.prototype? But zoomLimit and modifier need to be setable in creation,
+    init or later with setters */
     map.setPrototype("setZoomLimits", setZoomLimits);
     map.setPrototype("setZoomModifier", setZoomModifier);
 
@@ -46,7 +48,9 @@ export let map_zoom = (function map_zoom() {
 
   return scope;
 
-  /* ==== PROTOTYPE extensions for map */
+  /* ============================
+     PROTOTYPE extensions for map
+     ============================*/
   /** How much one mouse wheel step zooms
    * @param {Number} amount How much one mouse wheel step zooms. Needs to be in between 0 - 0.5 */
   function setZoomModifier (amount) {
@@ -95,7 +99,9 @@ export let map_zoom = (function map_zoom() {
     return newScale;
   }
 
-  /* ===== Initializers ===== */
+  /* ============
+     Initializers
+     ============ */
   function _setupZoomEvent(map) {
     return function handleZoomEvent(e, delta, deltaX, deltaY) {
       var mouseWheelDelta = deltaY;
@@ -178,7 +184,9 @@ export let map_zoom = (function map_zoom() {
     };
   }
 
-  /* ===== Private functions ===== */
+  /* =================
+     Private functions
+     ================= */
   function _isOverZoomLimit(amount, isZoomIn) {
     if( (isZoomIn && amount > zoomLimit.closer ) || (!isZoomIn && amount < zoomLimit.farther) ) {
       return true;

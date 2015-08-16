@@ -180,11 +180,22 @@ export class Map {
   /** Activate plugins for the map. Plugins need .pluginName property and .init-method
   @param [Array] pluginsArray - Array that consists of the plugin modules */
   activatePlugins(pluginsArray = []) {
-    pluginsArray.forEach(plugin => {
-      if(this.plugins.add(plugin)) {
-        plugin.init(this);
-      }
-    });
+    var currentPluginNameForErrors;
+
+    try {
+      pluginsArray.forEach(plugin => {
+        if(!plugin || !plugin.pluginName) {
+          throw new Error("plugin or plugin.pluginName missing");
+        }
+        currentPluginNameForErrors = plugin.name;
+
+        if(this.plugins.add(plugin)) {
+          plugin.init(this);
+        }
+      });
+    } catch(e) {
+      console.log("An error initializing plugin " + currentPluginNameForErrors, e);
+    }
 
     return this;
   }

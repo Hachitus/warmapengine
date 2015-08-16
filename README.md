@@ -1,6 +1,6 @@
 #Introduction
 2D strategy game engine for browsers. Project will move forward at its own phase. Rough estimation for the engine ~half a year.
-Development from that forward will still continue in the form of a 2D strategy war game.
+Development from that forward will still continue in the form of a 2D strategy game.
 
 If you are interested contact me.
 

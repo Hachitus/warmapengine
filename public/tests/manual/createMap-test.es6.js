@@ -19,6 +19,11 @@ import { typeData } from '../../tests/data/typeData';
 import { mapData } from '../../tests/data/mapData';
 import { preload } from '../../components/preloading/preloading';
 
+import { environmentDetection } from '../../components/map/core/utils/utils';
+if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgent()) {
+  alert("You seem to be using mobile device, I suggest you use mobile site for tests, since this won't work for you");
+}
+
 window.initMap = function () {
   var canvasElement = document.getElementById("mapCanvas");
   var map;

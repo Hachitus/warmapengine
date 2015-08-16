@@ -6,7 +6,7 @@
  * @require Browser that support pointer events or Pointer events polyfill, such as: https://github.com/jquery/PEP
  * @todo See if this plugin need refactoring and more documentation */
 
-import { eventListenerMod } from '../eventlisteners';
+import { eventListeners as eventListenerMod } from '../eventlisteners';
 import { mouseUtils } from '../utils/utils';
 
 export let map_drag = (function map_drag() {

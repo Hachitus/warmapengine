@@ -51,7 +51,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
   };
   singletonScope.toggleZoomListener = function toggleZoomListener() {
     if(singletonScope.states.zoom !== true) {
-      if(isMobile()) {
+      if(isMobileSite()) {
         var hammer    = new Hammer.Manager(canvasElement);
         var pinch     = new Hammer.Pinch();
         hammer.add(pinch);
@@ -63,7 +63,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
 
       singletonScope.states.zoom = true;
     } else {
-      if(isMobile()) {
+      if(isMobileSite()) {
         hammer.on("pinch", mapCBs.zoom);
       } else {
         Hamster(canvasElement).unwheel(mapCBs.zoom);
@@ -76,7 +76,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
   };
   singletonScope.toggleDragListener = function toggleDragListener() {
     if(singletonScope.states.drag !== true) {
-      if(isMobile()) {
+      if(isMobileSite()) {
         var hammer = new Hammer.Manager(canvasElement);
         var pan = new Hammer.Pan({
           pointers: 1,
@@ -90,7 +90,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
 
       singletonScope.states.drag = true;
     } else {
-      if(isMobile()) {
+      if(isMobileSite()) {
         hammer.off("pan", mapCBs.drag);
       } else {
         canvasElement.removeEventListener("mousedown", mapCBs.drag);
@@ -103,7 +103,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
   };
   singletonScope.toggleSelectListener = function toggleSelectListener() {
     if(singletonScope.states.select !== true) {
-      if(isMobile()) {
+      if(isMobileSite()) {
         var hammer    = new Hammer.Manager(canvasElement);
         var tap     = new Hammer.Tap();
         hammer.add(tap);
@@ -114,7 +114,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
 
       singletonScope.states.select = true;
     } else {
-      if(isMobile()) {
+      if(isMobileSite()) {
         hammer.off("tap", mapCBs.select);
       } else {
         canvasElement.removeEventListener("mousedown", mapCBs.select);
@@ -129,6 +129,6 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
   return singletonScope;
 };
 
-function isMobile() {
+function isMobileSite() {
   return typeof Hammer != 'undefined';
 }

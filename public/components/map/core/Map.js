@@ -187,7 +187,7 @@ export class Map {
         if(!plugin || !plugin.pluginName) {
           throw new Error("plugin or plugin.pluginName missing");
         }
-        currentPluginNameForErrors = plugin.name;
+        currentPluginNameForErrors = plugin.pluginName;
 
         if(this.plugins.add(plugin)) {
           plugin.init(this);

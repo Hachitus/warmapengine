@@ -6,9 +6,12 @@
 import { Object_sprite } from '../Object';
 
 export class Object_sprite_terrain extends Object_sprite {
-  constructor(coords, data, spriteSheet, currFrameNumber) {
-    super(coords, data, spriteSheet, currFrameNumber);
+  constructor(coords, data, spriteSheet, currFrameNumber, throwShadowOptions) {
+    super(coords, data, spriteSheet, currFrameNumber, throwShadowOptions);
 
     this.name = "DefaultTerrainObject";
+    this.type = "terrain";
+    this.highlightable = false;
+    this.selectable = false;
   }
 }

@@ -16,7 +16,7 @@
 var _UIObjects = [];
 
 /* ===== EXPORT ===== */
-export class Map_layer extends createjs.Container {
+export class Map_layer extends PIXI.DisplayObjectContainer {
   /**
    * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
@@ -79,13 +79,10 @@ export class Map_layer extends createjs.Container {
     return !!this.subContainers;
   }
   setScale(amount) {
-    this.scaleX = amount;
-    this.scaleY = amount;
-
-    return amount;
+    return this.scale.x = this.scale.y = amount;
   }
   getScale() {
-    return this.scaleX;
+    return this.scale.x;
   }
   getUIObjects() {
     return _UIObjects;
@@ -110,17 +107,3 @@ export class Map_layer extends createjs.Container {
     return _UIObjects;
   }
 }
-
-/**
- * @todo implement spriteContainer! It should be more efficient when using spritesheets. Only issue was that minified
- * easeljs doesn't have the spriteStage (and spriteContainer?) and neither the node-easel (and node doesn't have the extend) */
-/*
-import extend from '../../../assets/lib/createjs/utils/extend';
-import promote from '../../../assets/lib/createjs/utils/promote';
-import SpriteContainer from '../../../assets/lib/easeljs/SpriteContainer/SpriteContainer';
-
-export class Map_spritesheetLayer extends createjs.SpriteContainer {
-  constructor(name, type, subContainers, spritesheet) {
-  }
-}
-*/

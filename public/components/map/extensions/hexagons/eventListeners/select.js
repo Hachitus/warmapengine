@@ -39,7 +39,7 @@ export function setupHexagonClick(map, callback) {
       if (objects && objects.length > 0) {
         callback(objects);
       }
-    }
+    };
   }
 }
 

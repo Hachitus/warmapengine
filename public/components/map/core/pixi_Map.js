@@ -16,12 +16,12 @@
 'use strict';
 
 /* ====== Own module imports ====== */
-import { Map_stage } from './Map_stage';
-import { Map_layer } from './Map_layer';
+import { Map_stage } from './pixi_Map_stage';
+import { Map_layer } from './pixi_Map_layer';
 import { resizeUtils, resizeUtils, environmentDetection } from './utils/utils';
-import { map_drag } from "./move/map_drag";
-import { map_zoom } from './zoom/map_zoom';
-import { eventListeners } from './eventlisteners';
+//import { map_drag } from "./move/map_drag";
+//import { map_zoom } from './zoom/map_zoom';
+import { eventListeners } from './pixi_eventlisteners';
 
 var _drawMapOnNextTick = false;
 var eventlisteners, _stage, _staticLayer, _movableLayer;
@@ -44,7 +44,7 @@ export class Map {
     _staticLayer.addChild(_movableLayer);
     this.plugins = new Set();
     /* Activate the map zoom and map drag core plugins */
-    this.defaultPlugins = [map_zoom, map_drag];
+    this.defaultPlugins = [];
     this.mapSize = options.mapSize || { x:0, y:0 };
     this.activeTickCB = false;
     this.eventCBs = {

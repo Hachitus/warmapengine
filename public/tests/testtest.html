@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.7/pixi.min.js"></script>
+  <script src="/assets/lib/jquery/jquery-css-ajax-effects.min.js"></script>
+  <script src="/assets/lib/q/q.js"></script>
+  <script src="/assets/lib/hamsterjs/hamster.js"></script>
+  <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+</head>
+
+<body>
+  <canvas id="mapCanvas" height="600" width="1200">
+    Canvas not supported!
+  </canvas>
+
+  <button id="testFullscreen">
+    fullscreen
+  </button>
+
+  <div id="dialog_select" style="display:none;">
+    MODAL WINDOW
+  </div>
+
+  <!-- include spec files here... -->
+  <script>
+ // create an new instance of a pixi stage
+    var stage = new PIXI.Stage(0x66FF99);
+    var bunny;
+
+    // create a renderer instance.
+    var renderer = PIXI.autoDetectRenderer(400, 300);
+
+    // add the renderer view element to the DOM
+    document.body.appendChild(renderer.view);
+
+    // create a texture from an image path
+    var loader = PIXI.loader;
+
+    loader.add("/assets/img/map/testHexagons/pixi_testHexagonSpritesheet.json");
+
+    loader.once('complete',onComplete);
+
+    loader.load();
+
+    function onComplete() {
+      var texture = PIXI.Texture.fromFrame("terrain_blueHexagon.png");
+      // create a new Sprite using the texture
+      bunny = new PIXI.Sprite(texture);
+
+      // center the sprites anchor point
+      bunny.anchor.x = 0.5;
+      bunny.anchor.y = 0.5;
+
+      // move the sprite t the center of the screen
+      bunny.position.x = 200;
+      bunny.position.y = 150;
+
+      stage.addChild(bunny);
+
+      //requestAnimationFrame(animate);
+      PIXI.ticker.shared.add(function (time) {
+        bunny.rotation += 0.1;
+        renderer.render(stage);
+      });
+    }
+    /*function animate() {
+
+        requestAnimationFrame( animate );
+
+        // just for fun, lets rotate mr rabbit a little
+        bunny.rotation += 0.1;
+
+        // render the stage
+        renderer.render(stage);
+    }*/
+
+  </script>
+</body>
+</html>

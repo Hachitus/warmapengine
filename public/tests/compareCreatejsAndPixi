@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/3.0.7/pixi.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <script src="script.js"></script>
+  </head>
+
+  <body>
+    <script>
+   // create an new instance of a pixi stage
+      var stage = new PIXI.Stage(0x66FF99);
+      var bunny, im;
+      var pixiCircle, pixiCircle2;
+
+      // create a renderer instance.
+      var renderer = PIXI.autoDetectRenderer(400, 300);
+
+      // add the renderer view element to the DOM
+      document.body.appendChild(renderer.view);
+
+      for(i = 0; i < 2; i++) {
+        pixiCircle = new PIXI.Graphics();
+        pixiCircle.interactive = true;
+        pixiCircle.on('mousedown', onDown);
+
+        pixiCircle.beginFill("#999999");
+        pixiCircle.lineStyle(2, 0xFF00FF);  //(thickness, color)
+        pixiCircle.drawRect(0, 0, 80, 80);   //(x,y,radius)
+        pixiCircle.endFill();
+        stage.addChild(pixiCircle);
+      }
+      stage.interactive = true;
+      //stage.on("mousedown", onDown2);
+      //im = new PIXI.interaction.InteractionManager(renderer);
+      //stage.onMouseDown = onDown2;
+      //im.addEvents();
+
+      //requestAnimationFrame(animate);
+      PIXI.ticker.shared.add(function (time) {
+        //pixiCircle.rotation += 0.1;
+        renderer.render(stage);
+      });
+
+      function onDown() {
+        console.log("hei", arguments)
+      }
+      function onDown2() {
+        console.log("hei2", arguments)
+      }
+    </script>
+  </body>
+
+</html>

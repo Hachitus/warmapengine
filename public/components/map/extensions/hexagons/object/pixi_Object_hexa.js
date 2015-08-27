@@ -1,6 +1,6 @@
 'use strict';
 
-import { createHexagon } from '../utils/createHexagon';
+import { createHexagon } from '../utils/pixi_createHexagon';
 import hexagonMath from '../utils/hexagonMath';
 
 var shape;
@@ -14,9 +14,7 @@ export var object_sprite_hexa = {
       const HEIGHT = hexagonMath.calcHeight(radius);
       const SIDE = hexagonMath.calcSide(radius);
 
-      var hexagonSize = hexagonMath.getHexaSize(radius);
-      this.anchor.x = hexagonSize.x / 2;
-      this.anchor.y = hexagonSize.y / 2;
+      this.anchor.set(0.5, 0.5);
       this.HEIGHT = HEIGHT;
       this.SIDE = SIDE;
 
@@ -29,7 +27,11 @@ function setAndGetShape(radius) {
   if (!shape) {
     let hexagonSize = hexagonMath.getHexaSize(radius);
     /* x and y are reversed, since this is horizontal hexagon and calculations are for vertical */
-    shape = createHexagon({ x: hexagonSize.y / 2, y: hexagonSize.x / 2 }, radius);
+    shape = createHexagon({
+      x: hexagonSize.y / 2,
+      y: hexagonSize.x / 2 },
+      radius
+    );
   }
 
   return shape;

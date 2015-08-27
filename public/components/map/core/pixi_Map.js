@@ -24,20 +24,32 @@ import { resizeUtils, resizeUtils, environmentDetection } from './utils/utils';
 import { eventListeners } from './pixi_eventlisteners';
 
 var _drawMapOnNextTick = false;
-var eventlisteners, _stage, _staticLayer, _movableLayer;
+var eventlisteners, _stage, _staticLayer, _movableLayer, _renderer;
 
 export class Map {
   /**
    * @param {DOM Canvas element} canvas - Canvas used by the map
    * @param {Object} options - different options for the map to be given.
-   * @return Map instance */
+   * @return Map instance
+
+   @todo, set default values for given and required options */
   constructor(canvas, options) {
     if(!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }
-    options = options || {};
-    this.canvas = canvas;
-    _stage = new Map_stage("mainStage", canvas);
+    if(typeof canvas === "string") {
+      this.canvas = document.querySelector(canvas);
+    } else {
+      this.canvas = canvas;
+    }
+
+    _renderer = PIXI.autoDetectRenderer(options.bounds.width, options.bounds.height, options.renderer);
+    document.body.replaceChild(_renderer.view, canvas);
+    window.addEventListener("resize", function(event){
+      setFullsizedMap(_renderer);
+    });
+
+    _stage = new Map_stage("mainStage", canvas, _renderer);
     _staticLayer = new Map_layer("staticLayer", options.subContainers, options.startCoord);
     _stage.addChild(_staticLayer);
     _movableLayer = new Map_layer("movableLayer", options.subContainers, options.startCoord);
@@ -78,7 +90,7 @@ export class Map {
     }
 
     this.drawOnNextTick();
-    _defaultTick(this);
+    _defaultTick(this, PIXI.ticker.shared);
     tickCB && this.customTickOn(tickCB);
 
     return this;
@@ -98,6 +110,9 @@ export class Map {
     });
   }
 
+  getStages() {
+    return [_stage];
+  }
   getStage() {
     return _stage;
   }
@@ -146,11 +161,11 @@ export class Map {
    * @return this map instance */
   cacheMap() {
     if(_movableLayer.getCacheEnabled()) {
-      _movableLayer.cache(0, 0, this.mapSize.x, this.mapSize.y);
+      _movableLayer.cacheAsBitmap = true;
     } else {
       _movableLayer.children.forEach(child => {
         if(child.getCacheEnabled()) {
-          child.cache(0, 0, this.mapSize.x, this.mapSize.y);
+          child.cacheAsBitmap = true;
         }
       });
     }
@@ -196,28 +211,6 @@ export class Map {
     } catch(e) {
       console.log("An error initializing plugin " + currentPluginNameForErrors, e);
     }
-
-    return this;
-  }
-  /** Custom tick handler that can be given to map. The default tick handler is by default
-  always on and will not be affected
-  @param [Function] tickCB - Callback function to use in tick */
-  customTickOn(tickCB) {
-    if (this.activeTickCB) {
-      throw new Error("there already exists one tick callback. Need to remove it first, before setting up a new one");
-    }
-
-    this.activeTickCB = tickCB || function() {};
-
-    createjs.Ticker.addEventListener("tick", this.activeTickCB);
-
-    return this;
-  }
-
-  customTickOff() {
-    createjs.Ticker.removeEventListener("tick", this.activeTickCB);
-
-    this.activeTickCB = undefined;
 
     return this;
   }
@@ -275,21 +268,18 @@ export class Map {
 /** ===== Private functions ===== */
 /* This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
 callback is always set and should not be removed or overruled */
-function _defaultTick(map) {
-  createjs.Ticker.addEventListener("tick", _tickFunc);
-
-  return _tickFunc;
-
-  function _tickFunc() {
+function _defaultTick(map, ticker) {
+  ticker.add(function (time) {
     if(_drawMapOnNextTick === true) {
-      _drawMap(map);
-      _drawMapOnNextTick = false;
+      _renderer.render(_stage);
     }
-  }
+    _drawMapOnNextTick = false;
+  });
 }
-/* Private function to draw the map */
-function _drawMap(map) {
-  map.getStage().update();
 
-  return map;
+function setFullsizedMap(renderer) {
+  renderer.view.style.position = "absolute"
+  renderer.view.style.display = "block";
+  renderer.autoResize = true;
+  renderer.resize(window.innerWidth, window.innerHeight);
 }

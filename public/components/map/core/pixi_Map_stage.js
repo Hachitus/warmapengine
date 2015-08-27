@@ -12,18 +12,19 @@ export class Map_stage extends PIXI.Stage {
    * @param {DOM Canvas element} canvas REQUIRED! Canvas element used by the map
    * @param {x: Number, y: Number} stageBounds Set stage bounds based on these coordinates
   */
-  constructor(name, canvas, stageBounds = { width: 200, height: 200 } ) {
+  constructor(name, canvas, renderer ) {
     if(!canvas) {
       throw new Error(Map_stage.constructor.name + " needs canvas!");
     }
 
-    super();
+    super("#FFFFFF");
 
     if(typeof canvas === "string") {
-      canvas = document.querySelector(canvas);
+      this.canvas = document.querySelector(canvas);
+    } else {
+      this.canvas = canvas;
     }
-    let renderer = PIXI.autoDetectRenderer(stageBounds.width, stageBounds.height);
-    document.body.replaceChild(renderer.view, canvas);
+    this.renderer = renderer;
 
     this._cacheEnabled = true;
     this.name = "" + name; // For debugging AND getting children by name. Shows up in toString

@@ -4,7 +4,7 @@ export let mapData = {
   startPoint: { x: 0, y: 0 },
   element: "#mapCanvas",
   layers: [{
-    type: "Map_layer",
+    type: "Map_subLayer",
     coord: { x: 0, y: 0 },
     name: "terrainBaseLayer",
     specials: [{

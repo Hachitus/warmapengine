@@ -1,9 +1,8 @@
 'use strict';
 
 export class Object_sprite extends PIXI.Sprite {
-  constructor(coords, data,  spritesheet, currentFrame, throwShadowOptions) {
-    super(spritesheet);
-
+  constructor(coords, data, currentFrame, throwShadowOptions) {
+    super(currentFrame);
     this.name = "Objects_sprite_" + this.id;
     this.type = "None";
     this.highlightable = true;
@@ -12,7 +11,8 @@ export class Object_sprite extends PIXI.Sprite {
     this.data = data || {};
     this.currentFrame = currentFrame;
     /* Execute initial draw function */
-    this.innerDraw(coords.x, coords.y);
+    //this.innerDraw(coords.x, coords.y);
+    this.position.set(coords.x,  coords.y);
     /* createjs / super properties. Used also for controlling and optimizing the engine */
     this.setupShadow(throwShadowOptions);
 
@@ -24,7 +24,7 @@ export class Object_sprite extends PIXI.Sprite {
    * @param {Number} y coordinate y
    * @return this object instance */
   innerDraw(x, y) {
-    this.fromFrame ( this.currentFrameName );
+    this.fromFrame ( this.currentFrame );
     this.x = x;
     this.y = y;
 

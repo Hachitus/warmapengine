@@ -57,6 +57,18 @@ gulp.task('compile_manualTestMap', function() {
     .pipe(gulp.dest('./public/tests/manual'));
 });
 
+gulp.task('compile_manualTestMap_pixi', function() {
+  return browserify({
+      entries: './public/tests/manual/pixi_createMap-test.es6.js',
+      debug: true
+    })
+    .transform(babelify)
+    .bundle()
+    .on("error", function (err) { console.log("Error : " + err.message); })
+    .pipe(source('pixi_map-spec.js'))
+    .pipe(gulp.dest('./public/tests/manual'));
+});
+
 gulp.task('jscs', function () {
   return gulp.src('public/components/**/*.js')
     .pipe(jscs({

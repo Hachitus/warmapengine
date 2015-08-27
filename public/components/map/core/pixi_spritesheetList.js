@@ -12,16 +12,21 @@ export function spritesheetList () {
    * @param {Object} spritesheetData Object that contains createjs-compatible spritesheetData
    * @return new spritesheet instance to use. */
   scope.createSpritesheet = function createSpritesheet(spritesheetData) {
-    var loader = new PIXI.AssetLoader(spritesheetData);
     var promise = Q.defer();
+    var loader = PIXI.loader;
 
-    loader.onComplete = function() {
-      promise.resolve(true);
-    };
+    loader.add("/assets/img/map/testHexagons/pixi_testHexagonSpritesheet.json");
+
+    loader.once('complete',onComplete);
+
     loader.load();
 
     return promise.promise;
-  }
+
+    function onComplete() {
+      promise.resolve(true);
+    }
+  };
 
   return scope;
 }

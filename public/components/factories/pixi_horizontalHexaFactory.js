@@ -17,7 +17,7 @@ import { resizeUtils } from '../map/core/utils/utils';
 var allSpritesheets = spritesheetList();
 //import { UI } from '../map/core/UI';
 //import { UI_default } from "../map/UIs/default/default.js";
-import { eventListeners } from '../map/core/pixi_eventlisteners';
+import { eventListeners } from '../map/core/eventlisteners';
 
 var functionsInObj = {
   Object_terrain,
@@ -42,8 +42,8 @@ export function createMap(canvasElement, datas) {
   var mapOptions = {
     mapSize: gameData.mapSize,
     bounds: {
-      width: 200,
-      height: 200
+      width: windowSize.width,
+      height: windowSize.height
     },
     renderer: {
       autoResize: true,
@@ -72,7 +72,6 @@ export function createMap(canvasElement, datas) {
     }
 
     layerData.objectGroups.forEach( objectGroup => {
-      let spritesheet;
       let spritesheetType = objectGroup.typeImageData;
 
       if(!spritesheetType) {

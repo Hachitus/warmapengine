@@ -78,8 +78,8 @@ export let map_zoom = (function map_zoom() {
     var newScale;
     var zoomLayer = this.getZoomLayer();
 
-    if( !_isOverZoomLimit(zoomLayer.scaleX, true) ) {
-      newScale = zoomLayer.scaleY = zoomLayer.scaleX += ( amount || zoomModifier );
+    if( !_isOverZoomLimit(this.getScale(), true) ) {
+      newScale = zoomLayer.scale.y = zoomLayer.scale.x += ( amount || zoomModifier );
     }
 
     return newScale;
@@ -90,8 +90,8 @@ export let map_zoom = (function map_zoom() {
     var newScale;
     var zoomLayer = this.getZoomLayer();
 
-    if( !_isOverZoomLimit(zoomLayer.scaleX) ) {
-      newScale = zoomLayer.scaleY = zoomLayer.scaleX -= ( amount || zoomModifier );
+    if( !_isOverZoomLimit(this.getScale()) ) {
+      newScale = zoomLayer.scale.y = zoomLayer.scale.x -= ( amount || zoomModifier );
     }
 
     return newScale;

@@ -16,15 +16,16 @@
 'use strict';
 
 /* ====== Own module imports ====== */
+import { resizeUtils, resizeUtils, environmentDetection } from './utils/utils';
+import { Quadtree } from './utils/Quadtree';
 import { Map_stage } from './Map_stage';
 import { Map_layer } from './Map_layer';
-import { resizeUtils, resizeUtils, environmentDetection } from './utils/utils';
 import { map_drag } from "./move/map_drag";
 import { map_zoom } from './zoom/map_zoom';
 import { eventListeners } from './eventlisteners';
 
 var _drawMapOnNextTick = false;
-var eventlisteners, _stage, _staticLayer, _movableLayer;
+var quadtree, eventlisteners, _stage, _staticLayer, _movableLayer;
 
 export class Map {
   /**
@@ -59,6 +60,8 @@ export class Map {
     this.environment = "desktop";
     this.mapEnvironment(environmentDetection.isMobile() ? "mobile" : "desktop");
     this._mapInMove = false;
+    /* Initialize Quadtree for hit detection */
+    quadtree = new Quadtree();
   }
   /** initialization method
    * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
@@ -270,6 +273,11 @@ export class Map {
   getMovableLayer() {
     return _movableLayer;
   }
+  /* For more efficient / smart selection - Interface / API. By default uses quadtree */
+  addObjectsForSelection(coordinates, type, object) { return "notImplementedYet"; }
+  removeObjectsForSelection(coordinates, type, object) { return "notImplementedYet"; }
+  getObjectsUnderPoint(coordinates, type) { return "notImplementedYet"; /* Implemented with a plugin */ }
+  getObjectsUnderShape(coordinates, shape, type) { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
 }
 
 /** ===== Private functions ===== */

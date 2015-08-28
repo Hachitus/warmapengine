@@ -5,7 +5,7 @@
 */
 
 /* ===== EXPORT ===== */
-export class Map_stage extends PIXI.Stage {
+export class Map_stage extends PIXI.Container {
   /**
    * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
@@ -17,7 +17,7 @@ export class Map_stage extends PIXI.Stage {
       throw new Error(Map_stage.constructor.name + " needs canvas!");
     }
 
-    super("#FFFFFF");
+    super();
 
     if(typeof canvas === "string") {
       this.canvas = document.querySelector(canvas);

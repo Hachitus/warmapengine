@@ -1,8 +1,7 @@
 /** @require Quadtree-js. Though this base library can be changed easily */
 
-import { Quadtree } from "../../../../assets/lib/quadtree-js/quadtree-js-hitman"
+import { Quadtree } from "../../../../assets/lib/quadtree-js/quadtree-js-hitman";
 var QuadMod = Quadtree;
-var objects;
 
 export class Quadtree {
   Constructor(options, max) {
@@ -18,7 +17,7 @@ export class Quadtree {
   Remove(coords, size, data, refresh) {
     var objToRemove = _creteQuadtreeObject(coords, size, data);
 
-    QuadMod.removeObject(objToRemove)
+    QuadMod.removeObject(objToRemove);
     refresh && QuadMod.Refresh();
   }
   retrieve(coords, size) {
@@ -44,10 +43,9 @@ export class Quadtree {
       foundObject.x = to.x;
       foundObject.y = to.y;
       QuadMod.Insert(foundObject);
+      this.RefreshAll();
       return true;
     }
-
-
 
     return false;
   }
@@ -63,9 +61,6 @@ export class Quadtree {
   }
 }
 
-function _refreshAll() {
-
-}
 function _creteQuadtreeObject(coords = {x:undefined, y:undefined}, size = {width:0, height:0}, data) {
   var objToInsert = coords;
 

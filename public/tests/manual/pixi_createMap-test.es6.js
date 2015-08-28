@@ -9,9 +9,9 @@ require("babel/polyfill");
 import { createMap } from '../../components/factories/pixi_horizontalHexaFactory';
 
 /* ===== Import plugins ===== */
-//import { map_drag } from "../../components/map/core/move/map_drag";
-//import { map_zoom } from '../../components/map/core/zoom/map_zoom';
-//import { object_select_hexagon } from '../../components/map/extensions/hexagons/object_select/object_select_hexagon';
+import { map_drag } from "../../components/map/core/move/map_drag";
+import { map_zoom } from '../../components/map/core/zoom/pixi_map_zoom';
+import { object_select_hexagon } from '../../components/map/extensions/hexagons/object_select/object_select_hexagon';
 
 /* DATA FILES used for testing */
 import { gameData } from '../../tests/data/gameData';
@@ -40,7 +40,7 @@ window.initMap = function () {
 
   function onComplete() {
     map = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
-    map.init( [  ], { x: 41, y: 47 }, undefined );
+    map.init( [ map_zoom, map_drag ], { x: 41, y: 47 }, undefined );
   }
 
   return map;

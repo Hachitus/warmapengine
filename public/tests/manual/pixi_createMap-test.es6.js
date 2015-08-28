@@ -40,7 +40,7 @@ window.initMap = function () {
 
   function onComplete() {
     map = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
-    map.init( [ map_zoom, map_drag ], { x: 41, y: 47 }, undefined );
+    map.init( [ map_zoom, map_drag, object_select_hexagon ], { x: 41, y: 47 }, undefined );
   }
 
   return map;

@@ -3,7 +3,8 @@
  * highlightSelectedObject
  *
  * @require Handlebars
- * @todo IN PROGRESS, not implemented well yet. Uses chromes built-in modal support only atm. just for the kicks :)  */
+ * @todo IN PROGRESS, not implemented well yet. Uses chromes built-in modal support only atm. just for the kicks :)
+    NEED to at least remove the framework specific things out of this module! */
 
 'use strict';
 
@@ -16,6 +17,7 @@ var cssClasses = {
 };
 var $elements = {};
 var fadeAnimation = "slow";
+var createHighlight;
 
 export class UI_default {
   constructor(modal, styles) {
@@ -35,6 +37,8 @@ export class UI_default {
     this.closingElements = _DOMElementsToArray(this.modal.getElementsByClassName("modal_close"));
   }
   showSelections(map, objects) {
+    createHighlight = setupCreateHighlight(map);
+
     if(map.mapEnvironment() === "mobile") {
       _showMobileSelections(objects, this.modal, map.drawOnNextTick.bind(map), map.getMovableLayer());
     } else {
@@ -42,6 +46,8 @@ export class UI_default {
     }
   }
   highlightSelectedObject(map, object) {
+    createHighlight = setupCreateHighlight(map);
+
     if(object.highlightable) {
       return _highlightSelectedObject(object, map.getMovableLayer());
     }
@@ -106,7 +112,7 @@ function _get$Element(which) {
 
   return $elements[which];
 }
-function _showDesktopSelections(objects, modal, updateCB, UILayer) {
+function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
   var hightlightableObjects = _selectionsInit(UILayer, objects);
 
   if (objects && hightlightableObjects.length > 1) {
@@ -132,7 +138,7 @@ function _showDesktopSelections(objects, modal, updateCB, UILayer) {
       });
 
       _showModal(modal, cssClasses);
-      _highlightSelectedObject(hightlightableObjects[0], UILayer);
+      _highlightSelectedObject(hightlightableObjects[0], UILayer, map);
       updateCB();
 
       console.log(hightlightableObjects);
@@ -169,7 +175,7 @@ function _showMobileSelections(objects, modal, updateCB, UILayer) {
       });
 
       _showModal(modal, cssClasses);
-      _highlightSelectedObject(hightlightableObjects[0], UILayer);
+      _highlightSelectedObject(hightlightableObjects[0], UILayer, map);
       updateCB();
 
       console.log(hightlightableObjects);
@@ -178,32 +184,16 @@ function _showMobileSelections(objects, modal, updateCB, UILayer) {
     });
   }
 }
-function _highlightSelectedObject(object, movableLayer) {
+function _highlightSelectedObject(object, movableLayer, map) {
   var highlightCircle;
   var positionOnMovable = object.localToLocal(0,0, movableLayer);
   var clonedObject = object.clone();
-  var container = new createjs.Container();
-  var g = new createjs.Graphics();
-  var circleCoords = {
-    x: Number( positionOnMovable.x + object.regX ),
-    y: Number( positionOnMovable.y + object.regY )
-  };
 
-  g.setStrokeStyle(1);
-  g.beginStroke(createjs.Graphics.getRGB(0,0,0));
-  g.beginFill(createjs.Graphics.getRGB(255,200,200, 0.2));
-  g.drawCircle( circleCoords.x, circleCoords.y, 50 );
+  createHighlight(clonedObject, movableLayer, positionOnMovable);
 
-  highlightCircle = new createjs.Shape(g);
-
-  container.x = 0;
-  container.y = 0;
-  container.addChild(highlightCircle, clonedObject);
-
-  movableLayer.addUIObjects(container);
 }
 function _filterObjectsForHighlighting(objects) {
-  var newObjects = [];
+  var newObjects = objects;
 
   if (objects && objects.length > 1) {
     newObjects = objects.filter(obj => {
@@ -216,8 +206,54 @@ function _filterObjectsForHighlighting(objects) {
 function _selectionsInit(UILayer, objects) {
   var highlightObjects = _filterObjectsForHighlighting(objects);
 
+  if(highlightObjects.length < 1) {
+    return false;
+  }
+
   UILayer.emptyUIObjects();
   UILayer.addUIObjects(highlightObjects);
 
   return highlightObjects;
+}
+
+/* @todo This whole damn system and logic needs to be changed and moved elsewhere, stupid stupid stupid atm. */
+function setupCreateHighlight(map) {
+  return function createHighlight(object, movableLayer, positionOnMovable) {
+    var container = new PIXI.Container();
+    var circle = createPixiCircle(positionOnMovable, object);
+
+    container.addChild(circle);
+
+    movableLayer.addUIObjects(container);
+  }
+}
+
+function createPixiCircle(positionOnMovable, object) {
+  var circle = new PIXI.Graphics();
+  circle.lineStyle(2, 0xFF00FF);  //(thickness, color)
+  circle.drawCircle(0, 0, 10);   //(x,y,radius)
+  circle.endFill();
+
+  circle.x = Number( positionOnMovable.x + object.anchor.x );
+  circle.y = Number( positionOnMovable.y + object.anchor.y )
+
+  return circle;
+}
+
+function createEaseljsCircle(positionOnMovable) {
+  var g = new createjs.Graphics();
+  var highlightCircle;
+  var circleCoords = {
+    x: Number( positionOnMovable.y + object.regX ),
+    y: Number( positionOnMovable.y + object.regY ),
+  };
+
+  g.setStrokeStyle(1);
+  g.beginStroke(createjs.Graphics.getRGB(0,0,0));
+  g.beginFill(createjs.Graphics.getRGB(255,200,200, 0.2));
+  g.drawCircle( circleCoords.x, circleCoords.y, 50 );
+
+  highlightCircle = new createjs.Shape(g);
+
+  return highlightCircle;
 }

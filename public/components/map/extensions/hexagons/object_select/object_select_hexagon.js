@@ -33,19 +33,26 @@ export let object_select_hexagon = (function object_select_hexagon() {
 
   return scope;
 
-  function getObjectsForMap(clickCoords) {
-    var objects = this.getStage().getObjectsUnderPoint(clickCoords.x, clickCoords.y);
+  function getObjectsForMap(clickCoords, group) {
+    /* Filter objects based on quadtree and then based on possible group provided */
+    var objects = {};
+
+     Object.keys(this.objectSelections).forEach(layerName => {
+       /* If the given group is not the one we want, we skip */
+      if(group && group !== layerName) {
+        return undefined;
+      }
+      objects = objects || {};
+
+      let quadtreeLayer = this.objectSelections[layerName];
+      let quadtreeObjects = quadtreeLayer.retrieve(clickCoords);
+
+      objects[layerName] = quadtreeObjects.filter(object => {
+        return object.hitTest(clickCoords);
+      });
+    });
 
     return objects;
-  }
-  function getObjectsForLayer(clickCoords) {
-    return this.children.filter(function(child) {
-      if (child.x === clickCoords.x && child.y === clickCoords.y) {
-        return true;
-      }
-
-      return false;
-    });
   }
   /* ====== Private functions ====== */
   /**
@@ -55,8 +62,7 @@ export let object_select_hexagon = (function object_select_hexagon() {
    * @param {Map} map - The Map class object
    */
   function _createPrototypes(map) {
-    map.setPrototype("getObjectsUnderMapPoint", getObjectsForMap);
-    map.setPrototype("getObjectsUnderPoint", getObjectsForLayer);
+    map.setPrototype("getObjectsUnderPoint", getObjectsForMap);
   }
   /**
    * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).

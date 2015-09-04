@@ -45,4 +45,31 @@ export class Object_sprite extends PIXI.Sprite {
       console.warn("NO SHADOW FUNCTION SET!")
     }
   }
+  localToLocal(x, y, target) {
+    var globalCoords = this.toGlobal( { x, y } );
+    var targetLocalCoords = target.toLocal( { x: globalCoords.x, y: globalCoords.y } );
+
+    return targetLocalCoords;
+  }
+  clone() {
+    var newSprite = new PIXI.Sprite();
+    var firstParent = _findFirstParent(this);
+    var renderer = firstParent.renderer;
+
+    newSprite.texture = this.generateTexture(renderer);
+
+    return newSprite;
+  }
+}
+
+function _findFirstParent(thisObj) {
+  let parentObj = {};
+
+  if(thisObj.parent) {
+    parentObj = _findFirstParent(thisObj.parent);
+  } else {
+    return thisObj;
+  }
+
+  return parentObj;
 }

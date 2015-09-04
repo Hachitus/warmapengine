@@ -61,7 +61,6 @@ export class Map {
     /* Activate the map zoom and map drag core plugins */
     this.defaultPlugins = [map_zoom, map_drag];
     this.mapSize = options.mapSize || { x:0, y:0 };
-    this.activeTickCB = false;
     this.eventCBs = {
       fullSize: resizeUtils.setToFullSize(this.canvas.getContext("2d")),
       fullscreen: resizeUtils.toggleFullScreen,
@@ -74,6 +73,7 @@ export class Map {
     this.environment = "desktop";
     this.mapEnvironment(environmentDetection.isMobile() ? "mobile" : "desktop");
     this._mapInMove = false;
+    this.objectSelections = {}; // Fill this with quadtrees or such
   }
   /** initialization method
    * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
@@ -265,6 +265,9 @@ export class Map {
   }
   getMovableLayer() {
     return _movableLayer;
+  }
+  getRenderer() {
+    return _renderer;
   }
   /* For more efficient / smart selection - Interface / API. By default uses quadtree */
   addObjectsForSelection(coordinates, type, object) { return "notImplementedYet"; }

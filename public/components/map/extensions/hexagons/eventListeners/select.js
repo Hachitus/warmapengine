@@ -34,7 +34,7 @@ export function setupHexagonClick(map, callback) {
       };
       var objects;
 
-      objects = map.getObjectsUnderMapPoint(globalCoords);
+      objects = map.getObjectsUnderPoint(globalCoords, "units");
 
       if (objects && objects.length > 0) {
         callback(objects);
@@ -53,12 +53,17 @@ function onMouseUp(map, callback) {
     }
 
     var globalCoords = mouseUtils.getEventCoordsOnPage(e);
-    var objects;
+    var objects, leveledObjects;
 
-    objects = map.getObjectsUnderMapPoint(globalCoords);
+    objects = map.getObjectsUnderPoint(globalCoords, "units");
 
-    if (objects && objects.length > 0) {
-      callback(objects);
+    leveledObjects = Object.keys(objects).map(objGroup => {
+      return objects[objGroup];
+    });
+    if (leveledObjects && leveledObjects.length > 0) {
+      let merged = [];
+
+      callback(merged.concat.apply(merged, leveledObjects));
     }
 
     map.canvas.removeEventListener("mouseup", retrieveClickData);

@@ -6,7 +6,8 @@ export let mapData = {
   layers: [{
     type: "Map_layer",
     coord: { x: 0, y: 0 },
-    name: "terrainBaseLayer",
+    name: "terrainLayer",
+    group: "terrain", // For quadTrees
     specials: [{
       "interactive": false
     }],
@@ -15,7 +16,7 @@ export let mapData = {
     },
     objectGroups: [{
       type: "Object_terrain",
-      name: "TerrainBase", // I guess only for debugging?
+      name: "Terrain", // For quadTrees and debugging
       typeImageData: "terrainBase",
       objects: [{
          "objType":0,
@@ -59,6 +60,33 @@ export let mapData = {
          },
          "data": {},
          "lastSeenTurn":"1"
+      }]
+    }]
+  },{
+    type: "Map_layer",
+    coord: {
+        "x": "0",
+        "y": "0"
+    },
+    "name": "unitLayer",
+    group: "units", // For quadTrees
+    "options": {
+      "cache": "false"
+    },
+    objectGroups: [{
+      "type": "Object_unit",
+      "name": "Unit", // I guess only for debugging?
+      "typeImageData": "unit",
+      objects: [{
+        "objType":0,
+        "name": "Tank you",
+        "coord": {
+          "x": "41", "y": "70"
+        },
+        "data": {
+          "someCustomData": "true"
+        },
+        "lastSeenTurn":"1"
       }]
     }]
   }]

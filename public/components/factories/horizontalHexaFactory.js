@@ -11,10 +11,12 @@ import { Map } from '../map/core/Map';
 import { Object_terrain } from '../map/extensions/hexagons/object/Object_terrain_hexa';
 import { Object_unit } from '../map/extensions/hexagons/object/Object_unit_hexa';
 import { spritesheetList } from '../map/core/spritesheetList';
+
 var allSpritesheets = spritesheetList();
 import { UI } from '../map/core/UI';
 import { UI_default } from "../map/UIs/default/default.js";
 import { eventListeners } from '../map/core/eventlisteners';
+import { Quadtree } from '../map/core/utils/Quadtree';
 
 var functionsInObj = {
   Object_terrain,
@@ -45,10 +47,19 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
 
   /* We iterate through the given map data and create objects accordingly */
   mapData.layers.forEach( layerData => {
-    let thisLayer;
+    let thisLayer, thisQuadTree;
 
     try {
       thisLayer = map.addLayer( layerData.name, false, layerData.coord );
+      thisQuadTree = map.objectSelections[layerData.group] = new Quadtree({
+        x: 0,
+        y: 0,
+        width: map.mapSize.x,
+        height: map.mapSize.y
+      }, {
+        objects: 10,
+        levels: 6
+      });
     } catch(e) {
       console.log("Problem:", layerData.type, e.stack);
     }
@@ -82,6 +93,15 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
           activeData: object.data
         };
         let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, spritesheet, currentFrameNumber, { radius: 42 } );
+        thisQuadTree.add({
+            x: newObject.x,
+            y: newObject.y
+          },{
+            width: newObject.width,
+            height: newObject.height
+          },
+            newObject
+        );
         thisLayer.addChild( newObject );
       });
     });

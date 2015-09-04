@@ -11,7 +11,7 @@ import { createMap } from '../../components/factories/pixi_horizontalHexaFactory
 /* ===== Import plugins ===== */
 import { map_drag } from "../../components/map/core/move/map_drag";
 import { map_zoom } from '../../components/map/core/zoom/pixi_map_zoom';
-import { object_select_hexagon } from '../../components/map/extensions/hexagons/object_select/object_select_hexagon';
+import { object_select_hexagon } from '../../components/map/extensions/hexagons/object_select/pixi_object_select_hexagon';
 
 /* DATA FILES used for testing */
 import { gameData } from '../../tests/data/gameData';
@@ -31,7 +31,9 @@ window.initMap = function () {
   /** @todo MOVE the preloader to it's destined file: preloader. */
   var loader = PIXI.loader;
 
-  loader.add("/assets/img/map/testHexagons/pixi_testHexagonSpritesheet.json");
+  loader.baseUrl = "/assets/img/map/";
+  loader.add("testHexagons/pixi_testHexagonSpritesheet.json");
+  loader.add("units/testHexagonUnits.json");
 
   loader.once('complete',onComplete);
 

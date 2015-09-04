@@ -13,11 +13,10 @@ import { Object_terrain } from '../map/extensions/hexagons/object/pixi_Object_te
 import { Object_unit } from '../map/extensions/hexagons/object/pixi_Object_unit_hexa';
 import { spritesheetList } from '../map/core/pixi_spritesheetList';
 import { resizeUtils } from '../map/core/utils/utils';
-
-var allSpritesheets = spritesheetList();
-//import { UI } from '../map/core/UI';
-//import { UI_default } from "../map/UIs/default/default.js";
+import { UI } from '../map/core/UI';
+import { UI_default } from "../map/UIs/default/default.js";
 import { eventListeners } from '../map/core/eventlisteners';
+import { Quadtree } from '../map/core/utils/Quadtree';
 
 var functionsInObj = {
   Object_terrain,
@@ -53,20 +52,29 @@ export function createMap(canvasElement, datas) {
     }
   };
   var map = new Map(canvasElement, mapOptions ) ;
-  //var dialog_selection = document.getElementById("selectionDialog");
-  //var defaultUI = new UI_default(dialog_selection);
-  //defaultUI.init();
+  var dialog_selection = document.getElementById("selectionDialog");
+  var defaultUI = new UI_default(dialog_selection);
+  defaultUI.init();
 
   /* Initialize UI as singleton */
-  //UI(defaultUI, map);
+  UI(defaultUI, map);
 
   /* We iterate through the given map data and create objects accordingly */
   //for(let ia = 0; ia < 100; ia++) {
   mapData.layers.forEach( layerData => {
-    let thisLayer;
+    let thisLayer, thisQuadTree;
 
     try {
       thisLayer = map.addLayer( layerData.name, false, layerData.coord );
+      thisQuadTree = map.objectSelections[layerData.group] = new Quadtree({
+        x: 0,
+        y: 0,
+        width: map.mapSize.x,
+        height: map.mapSize.y
+      }, {
+        objects: 10,
+        levels: 6
+      });
     } catch(e) {
       console.log("Problem:", layerData.type, e.stack);
     }
@@ -93,6 +101,15 @@ export function createMap(canvasElement, datas) {
           activeData: object.data
         };
         let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, currentFrame, { radius: 42 } );
+        thisQuadTree.add({
+            x: newObject.x,
+            y: newObject.y
+          },{
+            width: newObject.width,
+            height: newObject.height
+          },
+            newObject
+        );
 
         thisLayer.addChild( newObject );
       });

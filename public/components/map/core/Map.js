@@ -60,8 +60,9 @@ export class Map {
     this.environment = "desktop";
     this.mapEnvironment(environmentDetection.isMobile() ? "mobile" : "desktop");
     this._mapInMove = false;
-    /* Initialize Quadtree for hit detection */
-    quadtree = new Quadtree();
+    this.objectSelections = {}; // Fill this with quadtrees or such
+    /* Set the correct timing mode for ticker, as in requestAnimationFrame */
+    createjs.Ticker.timingMode = createjs.Ticker.RAF;
   }
   /** initialization method
    * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of

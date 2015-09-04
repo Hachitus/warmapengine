@@ -2,7 +2,7 @@
 2D strategy game engine for browsers. Project will move forward at its own phase. Rough estimation for the engine ~half a year.
 Development from that forward will still continue in the form of a 2D strategy game.
 
-If you are interested contact me.
+If you are interested contact me (http://hyytia.level7.fi/)
 
 #Development data
 ##NodeJS backend

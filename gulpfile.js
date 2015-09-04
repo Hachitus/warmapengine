@@ -45,6 +45,18 @@ gulp.task('compile_unitTests', function(done) {
   });
 });
 
+gulp.task('compile_utilsTest', function() {
+  return browserify({
+      entries: './public/tests/es6/utils-spec.es6.js',
+      debug: true
+    })
+    .transform(babelify)
+    .bundle()
+    .on("error", function (err) { console.log("Error : " + err.message); })
+    .pipe(source('utils-spec.js'))
+    .pipe(gulp.dest('./public/tests/spec'));
+});
+
 gulp.task('compile_manualTestMap', function() {
   return browserify({
       entries: './public/tests/manual/createMap-test.es6.js',

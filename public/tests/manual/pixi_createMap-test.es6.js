@@ -25,7 +25,7 @@ if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgen
 }
 
 window.initMap = function () {
-  var canvasElement = document.getElementById("mapCanvas");
+  var canvasElement = document.getElementById("mainStage");
   var map;
 
   /** @todo MOVE the preloader to it's destined file: preloader. */

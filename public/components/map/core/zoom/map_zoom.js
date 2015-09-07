@@ -33,7 +33,7 @@ export let map_zoom = (function map_zoom() {
     map.setPrototype("setZoomLimits", setZoomLimits);
     map.setPrototype("setZoomModifier", setZoomModifier);
 
-    if(map.mapEnvironment() === "mobile") {
+    if(map.getEnvironment() === "mobile") {
       map.eventCBs.zoom = _setupZoomEvent_mobile(map);
     } else {
       map.eventCBs.zoom = _setupZoomEvent(map);

@@ -1,3 +1,5 @@
+/* jshint ignore:createjs */
+
 /** The simplest default UI implementation. Implement UI functionalities for:
  * showSelections
  * highlightSelectedObject
@@ -39,7 +41,7 @@ export class UI_default {
   showSelections(map, objects) {
     createHighlight = setupCreateHighlight(map);
 
-    if(map.mapEnvironment() === "mobile") {
+    if(map.getEnvironment() === "mobile") {
       _showMobileSelections(objects, this.modal, map.drawOnNextTick.bind(map), map.getMovableLayer());
     } else {
       _showDesktopSelections(objects, this.modal, map.drawOnNextTick.bind(map), map.getMovableLayer());
@@ -185,7 +187,6 @@ function _showMobileSelections(objects, modal, updateCB, UILayer) {
   }
 }
 function _highlightSelectedObject(object, movableLayer, map) {
-  var highlightCircle;
   var positionOnMovable = object.localToLocal(0,0, movableLayer);
   var clonedObject = object.clone();
 
@@ -219,8 +220,14 @@ function _selectionsInit(UILayer, objects) {
 /* @todo This whole damn system and logic needs to be changed and moved elsewhere, stupid stupid stupid atm. */
 function setupCreateHighlight(map) {
   return function createHighlight(object, movableLayer, positionOnMovable) {
-    var container = new PIXI.Container();
-    var circle = createPixiCircle(positionOnMovable, object);
+    var container = new map.createLayer();
+    var circle;
+
+    if(typeof createjs != 'undefined') {
+      circle = createEaseljsCircle(positionOnMovable, object);
+    } else {
+      circle = createPixiCircle(positionOnMovable, object);
+    }
 
     container.addChild(circle);
 
@@ -240,7 +247,7 @@ function createPixiCircle(positionOnMovable, object) {
   return circle;
 }
 
-function createEaseljsCircle(positionOnMovable) {
+function createEaseljsCircle(positionOnMovable, object) {
   var g = new createjs.Graphics();
   var highlightCircle;
   var circleCoords = {

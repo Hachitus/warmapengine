@@ -19,12 +19,14 @@ import { UI } from '../../../core/UI';
 
 export let object_select_hexagon = (function object_select_hexagon() {
   var scope = {};
+  var map = {};
   scope.pluginName = "object_select";
 
   /**
    * @param {Map object} mapObj - the Map class object
    */
   scope.init = function(mapObj) {
+    map = mapObj;
     /* We take the top-most stage on the map and add the listener to it */
     _createPrototypes(mapObj);
 
@@ -34,25 +36,9 @@ export let object_select_hexagon = (function object_select_hexagon() {
   return scope;
 
   function getObjectsForMap(clickCoords, group) {
-    /* Filter objects based on quadtree and then based on possible group provided */
     var objects = {};
 
-     Object.keys(this.objectSelections).forEach(layerName => {
-       /* If the given group is not the one we want, we skip */
-      if(group && group !== layerName) {
-        return undefined;
-      }
-      objects = objects || {};
-
-      let quadtreeLayer = this.objectSelections[layerName];
-      let quadtreeObjects = quadtreeLayer.retrieve(clickCoords);
-
-      objects[layerName] = quadtreeObjects.filter(object => {
-        var localCoords = object.toLocal(new PIXI.Point(clickCoords.x, clickCoords.y));
-        return object.hitArea.contains(localCoords.x, localCoords.y)
-        //return object.containsPoint(clickCoords);
-      });
-    });
+    objects[group] = map.objectManager.retrieve(group, clickCoords)
 
     return objects;
   }

@@ -13,7 +13,7 @@ export function setupHexagonClick(map, callback) {
   /* Singleton should have been instantiated before, we only retrieve it with 0 params! */
   eventlisteners = eventListenerMod();
 
-  if(map.mapEnvironment() === "mobile") {
+  if(map.getEnvironment() === "mobile") {
     map.eventCBs.select = setupTapListener(map, callback);
   } else {
     map.eventCBs.select = mouseDownListener;

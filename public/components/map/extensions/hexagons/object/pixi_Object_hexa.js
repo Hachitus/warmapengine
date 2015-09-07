@@ -17,9 +17,9 @@ export var object_sprite_hexa = {
       this.anchor.set(0.5, 0.5);
       this.HEIGHT = HEIGHT;
       this.SIDE = SIDE;
-      this.interactive = true;
+
       /* Draw hexagon to test the hits with hitArea */
-      this.children = setAndGetShape(radius);
+      this.hitArea = setAndGetShape(radius);
     }
 };
 

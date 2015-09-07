@@ -44,9 +44,32 @@ export var mouseUtils = ( function mouseUtils() {
   };
   scope.getEventCoordsOnPage = function (e) {
     return {
-      x: e.pageX,
-      y: e.pageY
+      x: e.offsetX,
+      y: e.offsetY
     };
+  };
+  scope.eventMouseCoords = function(e) {
+  	var pos = {
+  	  x:0,
+  	  y:0
+  	};
+
+  	if (!e) {
+  	  e = window.event;
+  	}
+  	if (e.pageX || e.pageY) 	{
+  		pos.x = e.pageX;
+  		pos.y = e.pageY;
+  	}
+  	else if (e.clientX || e.clientY) 	{
+  		pos.x = e.clientX + document.body.scrollLeft
+  			+ document.documentElement.scrollLeft;
+  		pos.y = e.clientY + document.body.scrollTop
+  			+ document.documentElement.scrollTop;
+  	}
+  	// posx and posy contain the mouse position relative to the document
+  	// Do something with this information
+    return pos;
   };
 
   return scope;

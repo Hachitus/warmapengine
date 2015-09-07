@@ -17,26 +17,26 @@
 
 /* ====== Own module imports ====== */
 import { resizeUtils, resizeUtils, environmentDetection } from './utils/utils';
-import { Quadtree } from './utils/Quadtree';
 import { Map_stage } from './Map_stage';
 import { Map_layer } from './Map_layer';
 import { map_drag } from "./move/map_drag";
 import { map_zoom } from './zoom/map_zoom';
 import { eventListeners } from './eventlisteners';
+import { ObjectManager } from './ObjectManager';
 
 var _drawMapOnNextTick = false;
-var quadtree, eventlisteners, _stage, _staticLayer, _movableLayer;
+var eventlisteners, _stage, _staticLayer, _movableLayer;
 
 export class Map {
   /**
-   * @param {DOM Canvas element} canvas - Canvas used by the map
+   * @param {DOM Canvas element} canvas - Canvas used by the map. This will be replaced by PIXI, so don't rely on element
+   * identifiers staying the same (like class and ID).
    * @param {Object} options - different options for the map to be given.
    * @return Map instance */
-  constructor(canvas, options) {
+  constructor(canvas, options = {}) {
     if(!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }
-    options = options || {};
     this.canvas = canvas;
     _stage = new Map_stage("mainStage", canvas);
     _staticLayer = new Map_layer("staticLayer", options.subContainers, options.startCoord);
@@ -58,9 +58,9 @@ export class Map {
     this._fullSizeFunction = null;
     eventlisteners = eventListeners(this, canvas);
     this.environment = "desktop";
-    this.mapEnvironment(environmentDetection.isMobile() ? "mobile" : "desktop");
+    this.setEnvironment(environmentDetection.isMobile() ? "mobile" : "desktop");
     this._mapInMove = false;
-    this.objectSelections = {}; // Fill this with quadtrees or such
+    this.objectManager = new ObjectManager(); // Fill this with quadtrees or such
     /* Set the correct timing mode for ticker, as in requestAnimationFrame */
     createjs.Ticker.timingMode = createjs.Ticker.RAF;
   }
@@ -101,13 +101,10 @@ export class Map {
       return layer[attribute] === value;
     });
   }
+  createLayer(name, subContainers, coord) {
+    var layer = new Map_layer(name, subContainers, coord);
 
-  getStage() {
-    return _stage;
-  }
-
-  getSize() {
-    return this.mapSize;
+    return layer;
   }
   /** All parameters are passed to Map_layer constructor
    * @return created Map_layer instance */
@@ -160,16 +157,6 @@ export class Map {
     }
 
     return this;
-  }
-  /** iterates through the map layers and returns matching objects on given coordinates
-   * @param {x: Number, y: Number} coord - The map coordinate under which we want to retrieve all the objects.
-   * @return this map instance */
-  getObjectsUnderMapPoint(coord) {
-    let objects = [];
-
-    _movableLayer.getObjectsUnderPoint(coord);
-
-    return objects;
   }
   /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
   the eventlistener callback use this.eventCBs */
@@ -240,14 +227,8 @@ export class Map {
     //this.prototype[property] = value;
     Map.prototype[property] = value;
   }
-  /** getter and setter for marking environment as mobile or desktop */
-  mapEnvironment(env) {
-    if(env !== undefined) {
-      this.environment = env;
-      return env;
-    }
-
-    return this.environment;
+  setEnvironment(env) {
+    this.environment = env;
   }
   /** @return { x: Number, y: Number }, current coordinates for the map */
   getMapPosition() {
@@ -256,17 +237,14 @@ export class Map {
       y: _movableLayer.y
     };
   }
+  getEnvironment() {
+    return this.environment;
+  }
   getZoomLayer() {
-    return [_staticLayer];
+    return _staticLayer;
   }
   getScale() {
     return _staticLayer.getScale();
-  }
-  zoomIn() {
-    throw new Error("Zoom needs to be implemented and actiaved through a plugin");
-  }
-  zoomOut() {
-    throw new Error("Zoom needs to be implemented and actiaved through a plugin");
   }
   getUILayer() {
     return _staticLayer;
@@ -274,11 +252,25 @@ export class Map {
   getMovableLayer() {
     return _movableLayer;
   }
-  /* For more efficient / smart selection - Interface / API. By default uses quadtree */
-  addObjectsForSelection(coordinates, type, object) { return "notImplementedYet"; }
-  removeObjectsForSelection(coordinates, type, object) { return "notImplementedYet"; }
-  getObjectsUnderPoint(coordinates, type) { return "notImplementedYet"; /* Implemented with a plugin */ }
-  getObjectsUnderShape(coordinates, shape, type) { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
+  getStage() {
+    return _stage;
+  }
+  getSize() {
+    return this.mapSize;
+  }
+  /*************************************
+   ******* APIS THROUGH PLUGINS ********
+   ************************************/
+  zoomIn() { return "notImplementedYet. Activate with plugin"; }
+  zoomOut() { return "notImplementedYet. Activate with plugin"; }
+  /** Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
+   * Default uses quadtree
+   * @param { x: Number, y: Number } coordinates to search from
+   * @param { String } type type of the objects to search for */
+  addObjectsForSelection(coordinates, type, object) { return "notImplementedYet. Activate with plugin"; }
+  removeObjectsForSelection(coordinates, type, object) { return "notImplementedYet. Activate with plugin"; }
+  getObjectsUnderPoint(coordinates, type) { return "notImplementedYet. Activate with plugin"; /* Implemented with a plugin */ }
+  getObjectsUnderShape(coordinates, shape, type) { return "notImplementedYet. Activate with plugin"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
 }
 
 /** ===== Private functions ===== */

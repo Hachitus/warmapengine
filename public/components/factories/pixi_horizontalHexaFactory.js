@@ -11,12 +11,10 @@ import { Map } from '../map/core/pixi_Map';
 
 import { Object_terrain } from '../map/extensions/hexagons/object/pixi_Object_terrain_hexa';
 import { Object_unit } from '../map/extensions/hexagons/object/pixi_Object_unit_hexa';
-import { spritesheetList } from '../map/core/pixi_spritesheetList';
 import { resizeUtils } from '../map/core/utils/utils';
 import { UI } from '../map/core/UI';
 import { UI_default } from "../map/UIs/default/default.js";
 import { eventListeners } from '../map/core/eventlisteners';
-import { Quadtree } from '../map/core/utils/Quadtree';
 
 var functionsInObj = {
   Object_terrain,
@@ -62,11 +60,13 @@ export function createMap(canvasElement, datas) {
   /* We iterate through the given map data and create objects accordingly */
   //for(let ia = 0; ia < 100; ia++) {
   mapData.layers.forEach( layerData => {
-    let thisLayer, thisQuadTree;
+    var layerGroup = layerData.group;
+    var objManager = map.objectManager;
+    var thisLayer;
 
     try {
       thisLayer = map.addLayer( layerData.name, false, layerData.coord );
-      thisQuadTree = map.objectSelections[layerData.group] = new Quadtree({
+      objManager.addLayer(layerGroup, {
         x: 0,
         y: 0,
         width: map.mapSize.x,
@@ -100,11 +100,12 @@ export function createMap(canvasElement, datas) {
           typeData: objTypeData,
           activeData: object.data
         };
-        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, currentFrame, { radius: 42 } );
-        thisQuadTree.add({
+        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, currentFrame, { radius: 47 } );
+        objManager.addObject(
+          layerGroup,
+          {
             x: newObject.x,
-            y: newObject.y
-          },{
+            y: newObject.y,
             width: newObject.width,
             height: newObject.height
           },

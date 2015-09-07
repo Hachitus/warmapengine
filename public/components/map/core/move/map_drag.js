@@ -22,7 +22,7 @@ export let map_drag = (function map_drag() {
   /** Required init functions for the plugin
   * @param {Map object} mapObj - the Map class object */
   scope.init = function(map) {
-    if(map.mapEnvironment() === "mobile") {
+    if(map.getEnvironment() === "mobile") {
       map.eventCBs.drag = _startDragListener_mobile(map);
     } else {
       map.eventCBs.drag = _startDragListener(map);

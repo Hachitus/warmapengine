@@ -19,10 +19,6 @@ export class Map_stage extends createjs.Stage {
 
     super(canvas);
 
-    if(stageBounds) {
-      this.setBounds(0, 0, stageBounds.x, stageBounds.y);
-    }
-
     this._cacheEnabled = true;
     this.name = "" + name; // For debugging AND getting children by name. Shows up in toString
     /* createjs / super properties. Used also for controlling and optimizing the engine */

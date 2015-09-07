@@ -16,50 +16,42 @@
 'use strict';
 
 /* ====== Own module imports ====== */
-import { Map_stage } from './pixi_Map_stage';
 import { Map_layer } from './pixi_Map_layer';
-import { resizeUtils, resizeUtils, environmentDetection } from './utils/utils';
-import { map_drag } from "./move/map_drag";
-import { map_zoom } from './zoom/pixi_map_zoom';
+import { resizeUtils, environmentDetection } from './utils/utils';
 import { eventListeners } from './eventlisteners';
+import { ObjectManager } from './pixi_ObjectManager';
 
 var _drawMapOnNextTick = false;
-var eventlisteners, _stage, _staticLayer, _movableLayer, _renderer;
+var eventlisteners, _staticLayer, _movableLayer, _renderer;
 
 export class Map {
   /**
    * @param {DOM Canvas element} canvas - Canvas used by the map
-   * @param {Object} options - different options for the map to be given.
+   * @param {Object} options - different options for the map to be given. Format:
+   * { bounds: { width: Number, height: Number}, renderer: {} }
    * @return Map instance
 
    @todo, set default values for given and required options */
-  constructor(canvasParent, options) {
-    if(!canvasParent) {
-      throw new Error(this.constructor.name + " needs canvasParent!");
+  constructor(canvas, options = { bounds: {}, renderer: {} }) {
+    if(!canvas) {
+      throw new Error(this.constructor.name + " needs canvas!");
     }
     if(typeof canvas === "string") {
-      canvasParent = document.querySelector(canvasParent);
+      canvas = document.querySelector(canvas);
     } else {
-      canvasParent = canvasParent;
+      canvas = canvas;
     }
 
     _renderer = PIXI.autoDetectRenderer(options.bounds.width, options.bounds.height, options.renderer);
     /* We handle all the events ourselves through addEventListeners-method on canvas, so destroy pixi native method */
     _renderer.plugins.interaction.destroy();
-    canvasParent.replaceChild(_renderer.view, canvasParent.getElementsByTagName("canvas")[0]);
+    canvas.parentElement.replaceChild(_renderer.view, canvas);
     this.canvas = _renderer.view;
-    window.addEventListener("resize", function(event){
-      setFullsizedMap(_renderer);
-    });
 
-    _stage = new Map_stage("mainStage", this.canvas, _renderer);
-    _staticLayer = new Map_layer("staticLayer", options.subContainers, options.startCoord);
-    _stage.addChild(_staticLayer);
+    _staticLayer = new Map_layer("staticLayer", options.subContainers, options.startCoord, _renderer);
     _movableLayer = new Map_layer("movableLayer", options.subContainers, options.startCoord);
     _staticLayer.addChild(_movableLayer);
     this.plugins = new Set();
-    /* Activate the map zoom and map drag core plugins */
-    this.defaultPlugins = [map_zoom, map_drag];
     this.mapSize = options.mapSize || { x:0, y:0 };
     this.eventCBs = {
       fullSize: resizeUtils.setToFullSize(this.canvas.getContext("2d")),
@@ -68,12 +60,11 @@ export class Map {
       drag: null,
       zoom: null
     };
-    this._fullSizeFunction = null;
-    eventlisteners = eventListeners(this, this.canvas);
-    this.environment = "desktop";
-    this.mapEnvironment(environmentDetection.isMobile() ? "mobile" : "desktop");
+    this.isFullsize = false;
     this._mapInMove = false;
-    this.objectSelections = {}; // Fill this with quadtrees or such
+    this.objectManager = new ObjectManager(_renderer); // Fill this with quadtrees or such
+
+    this.environment = environmentDetection.isMobile() ? "mobile" : "desktop";
   }
   /** initialization method
    * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
@@ -83,6 +74,10 @@ export class Map {
    * during ticks
    * @return the current map instance */
   init(plugins, coord, tickCB) {
+    this.setFullsize();
+
+    eventlisteners = eventListeners(this, this.canvas);
+
     if (plugins) {
       this.activatePlugins(plugins);
     }
@@ -108,20 +103,14 @@ export class Map {
   /** The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
    * @return the current map instance */
   getLayersWithAttributes(attribute, value) {
-    return _stage.children[0].children.filter(layer => {
+    return _staticLayer.children[0].children.filter(layer => {
       return layer[attribute] === value;
     });
   }
+  createLayer(name, subContainers, coord) {
+    var layer = new Map_layer(name, subContainers, coord);
 
-  getStages() {
-    return [_stage];
-  }
-  getStage() {
-    return _stage;
-  }
-
-  getSize() {
-    return this.mapSize;
+    return layer;
   }
   /** All parameters are passed to Map_layer constructor
    * @return created Map_layer instance */
@@ -175,16 +164,6 @@ export class Map {
 
     return this;
   }
-  /** iterates through the map layers and returns matching objects on given coordinates
-   * @param {x: Number, y: Number} coord - The map coordinate under which we want to retrieve all the objects.
-   * @return this map instance */
-  getObjectsUnderMapPoint(coord) {
-    let objects = [];
-
-    _movableLayer.getObjectsUnderPoint(coord);
-
-    return objects;
-  }
   /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
   the eventlistener callback use this.eventCBs */
   toggleFullSize() {
@@ -232,14 +211,19 @@ export class Map {
     //this.prototype[property] = value;
     Map.prototype[property] = value;
   }
-  /** getter and setter for marking environment as mobile or desktop */
-  mapEnvironment(env) {
-    if(env !== undefined) {
-      this.environment = env;
-      return env;
+  setFullsize() {
+    if(this.isFullsize) {
+      setFullsizedMap(_renderer);
+
+      window.addEventListener("resize", function(){
+        setFullsizedMap(_renderer);
+      });
     }
 
-    return this.environment;
+    this.isFullsize = true;
+  }
+  setEnvironment(env) {
+    this.environment = env;
   }
   /** @return { x: Number, y: Number }, current coordinates for the map */
   getMapPosition() {
@@ -248,17 +232,14 @@ export class Map {
       y: _movableLayer.y
     };
   }
+  getEnvironment() {
+    return this.environment;
+  }
   getZoomLayer() {
     return _staticLayer;
   }
   getScale() {
     return _staticLayer.getScale();
-  }
-  zoomIn() {
-    throw new Error("Zoom needs to be implemented and actiaved through a plugin");
-  }
-  zoomOut() {
-    throw new Error("Zoom needs to be implemented and actiaved through a plugin");
   }
   getUILayer() {
     return _staticLayer;
@@ -269,7 +250,21 @@ export class Map {
   getRenderer() {
     return _renderer;
   }
-  /* For more efficient / smart selection - Interface / API. By default uses quadtree */
+  getStage() {
+    return _staticLayer;
+  }
+  getSize() {
+    return this.mapSize;
+  }
+  /*************************************
+   ******* APIS THROUGH PLUGINS ********
+   ************************************/
+  zoomIn() { return "notImplementedYet. Activate with plugin"; }
+  zoomOut() { return "notImplementedYet. Activate with plugin"; }
+  /** Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
+   * Default uses quadtree
+   * @param { x: Number, y: Number } coordinates to search from
+   * @param { String } type type of the objects to search for */
   addObjectsForSelection(coordinates, type, object) { return "notImplementedYet"; }
   removeObjectsForSelection(coordinates, type, object) { return "notImplementedYet"; }
   getObjectsUnderPoint(coordinates, type) { return "notImplementedYet"; /* Implemented with a plugin */ }
@@ -282,7 +277,7 @@ callback is always set and should not be removed or overruled */
 function _defaultTick(map, ticker) {
   ticker.add(function (time) {
     if(_drawMapOnNextTick === true) {
-      _renderer.render(_stage);
+      _renderer.render(_staticLayer);
     }
     _drawMapOnNextTick = false;
   });

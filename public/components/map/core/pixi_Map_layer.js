@@ -27,11 +27,12 @@ export class Map_layer extends PIXI.Container {
    * e.g. for more efficient accessibility of objects based on coordinates.
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
-  constructor(name, subContainers, coord) {
+  constructor(name, subContainers, coord, renderer) {
     super();
 
     this.x = coord ? ( coord.x || 0 ) : 0;
     this.y = coord ? ( coord.y || 0 ) : 0;
+    this.renderer = renderer;
     this._cacheEnabled = true;
     this.subContainers = subContainers || false; // These should probably be particleContainers
     this.name = "" + name; // For debugging. Shows up in toString

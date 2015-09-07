@@ -9,7 +9,7 @@ export class ObjectManager {
     this.hitDetector = new PIXI.interaction.InteractionManager(hitDetector);
   }
   retrieve(type, coords, size) {
-    var quadtreeObjs, foundObjs;
+    var quadtreeObjs, foundObjs, isHit;
 
     quadtreeObjs = this.quadtrees[type].retrieve(coords, size);
     foundObjs = quadtreeObjs.filter(obj => {

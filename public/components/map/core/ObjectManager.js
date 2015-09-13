@@ -8,15 +8,10 @@ export class ObjectManager {
   retrieve(type, coords, size) {
     var quadtreeObjs, foundObjs;
 
-    quadtreeObjs = this.quadtree[type].retrieve(coords, size);
-// THESE MIGHT WORK, but we still need the actual hexagon hit detection
-//let x = Number(objects.units[0].x);
-  //    let y = Number(objects.units[0].y);
-      //let { regX, regY } = objects.units[0];
+    quadtreeObjs = this.quadtrees[type].retrieve(coords, size);
 
-      //let globalCoords = objects.units[0].localToGlobal(x + regX, y + regY);
-    foundObjs = quadtreeObjs.filter(obj => {
-      return obj.data.hitTest(coords);
+    foundObjs = quadtreeObjs.filter(obj => {      
+      return this.hitTest(obj, coords);
     });
 
     return foundObjs;
@@ -57,4 +52,5 @@ export class ObjectManager {
       };
     });
   }
+  hitTest(obj, coordinates, offsetCoords) { return "need to be implemented by another module"; }
 }

@@ -1,6 +1,7 @@
 var source = require('vinyl-source-stream');
 var gulp = require("gulp");
 var babelify = require('babelify');
+require("babel/polyfill");
 var browserify = require('browserify');
 var glob = require('glob');
 var q = require('q');

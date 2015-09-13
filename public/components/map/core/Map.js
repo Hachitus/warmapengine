@@ -16,7 +16,7 @@
 'use strict';
 
 /* ====== Own module imports ====== */
-import { resizeUtils, resizeUtils, environmentDetection } from './utils/utils';
+import { resizeUtils, environmentDetection } from './utils/utils';
 import { Map_stage } from './Map_stage';
 import { Map_layer } from './Map_layer';
 import { map_drag } from "./move/map_drag";

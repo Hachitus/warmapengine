@@ -12,6 +12,7 @@
 
 import { templates } from './layout/templates';
 import { createCSSRules } from './layout/CSSRules';
+import { createVisibleHexagon } from '../../extensions/hexagons/utils/createHexagon';
 
 var _styleSheet = {};
 var cssClasses = {
@@ -24,12 +25,12 @@ var createHighlight;
 export class UI_default {
   constructor(modal, styles) {
     var createdCSS;
-  	// Add a media (and/or media query) here if you'd like!
-	  // style.setAttribute("media", "screen")
-	  // style.setAttribute("media", "only screen and (max-width : 1024px)")
-	  _styleSheet = _addStyleElement();
-	  createdCSS = createCSSRules(cssClasses);
-	  _addCSSRulesToScriptTag(_styleSheet, createdCSS);
+    // Add a media (and/or media query) here if you'd like!
+    // style.setAttribute("media", "screen")
+    // style.setAttribute("media", "only screen and (max-width : 1024px)")
+    _styleSheet = _addStyleElement();
+    createdCSS = createCSSRules(cssClasses);
+    _addCSSRulesToScriptTag(_styleSheet, createdCSS);
 
     this.modal = modal || document.getElementById("dialog_select");
     this.styles = styles || {
@@ -89,7 +90,7 @@ function _DOMElementsToArray(elements) {
   return elementArray;
 }
 function _addCSSRulesToScriptTag(sheet, rules) {
-	sheet.insertRule(rules, 0);
+  sheet.insertRule(rules, 0);
 }
 function _addStyleElement() {
     var _styleElement = document.createElement("style");
@@ -148,7 +149,11 @@ function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
       _get$Element("select").fadeIn(fadeAnimation);
     });
   } else {
-    console.log("Error occured selecting the objects on this coordinates! Nothing found");
+    _get$Element("select").fadeOut(fadeAnimation, () => {
+      UILayer.emptyUIObjects();
+      updateCB();
+      console.log("Error occured selecting the objects on this coordinates! Nothing found");
+    });    
   }
 }
 function _showMobileSelections(objects, modal, updateCB, UILayer) {
@@ -167,7 +172,7 @@ function _showMobileSelections(objects, modal, updateCB, UILayer) {
 
       _get$Element("select").fadeIn(fadeAnimation);
     });
-  } else {
+  } else if (hightlightableObjects.length === 1) {
     _get$Element("select").fadeOut(fadeAnimation, () => {
       modal.innerHTML = templates.singleSelection({
         title: "Selected",
@@ -184,13 +189,18 @@ function _showMobileSelections(objects, modal, updateCB, UILayer) {
 
       _get$Element("select").fadeIn(fadeAnimation);
     });
+  } else {
+    _get$Element("select").fadeOut(fadeAnimation, () => {
+      UILayer.emptyUIObjects();
+      updateCB();
+      console.log("Error occured selecting the objects on this coordinates! Nothing found");
+    });    
   }
 }
 function _highlightSelectedObject(object, movableLayer, map) {
-  var positionOnMovable = object.localToLocal(0,0, movableLayer);
   var clonedObject = object.clone();
 
-  createHighlight(clonedObject, movableLayer, positionOnMovable);
+  createHighlight(clonedObject, movableLayer);
 
 }
 function _filterObjectsForHighlighting(objects) {
@@ -219,26 +229,36 @@ function _selectionsInit(UILayer, objects) {
 
 /* @todo This whole damn system and logic needs to be changed and moved elsewhere, stupid stupid stupid atm. */
 function setupCreateHighlight(map) {
-  return function createHighlight(object, movableLayer, positionOnMovable) {
+  return function createHighlight(object, movableLayer) {
+    var radius = 47;
     var container = new map.createLayer();
     var circle;
+    var easelCircleCoords = {
+      x: Number(object.x),
+      y: Number(object.y),
+    };
 
     if(typeof createjs != 'undefined') {
-      circle = createEaseljsCircle(positionOnMovable, object);
+      circle = createVisibleHexagon({ x:0, y:0 }, radius, "#F0F0F0");
+      circle.x = easelCircleCoords.x - 1;
+      circle.y = easelCircleCoords.y + 12;
     } else {
-      circle = createPixiCircle(positionOnMovable, object);
+      //let positionOnMovable = object.toLocal(new PIXI.Point(0,0), movableLayer);
+      let positionOnMovable = new PIXI.Point(0,0);
+      circle = createPixiCircle(object, radius, positionOnMovable);
     }
 
-    container.addChild(circle);
+    circle.alpha = 0.5;
+    container.addChild(circle, object);
 
     movableLayer.addUIObjects(container);
   }
 }
 
-function createPixiCircle(positionOnMovable, object) {
+function createPixiCircle(object, radius, positionOnMovable) {
   var circle = new PIXI.Graphics();
   circle.lineStyle(2, 0xFF00FF);  //(thickness, color)
-  circle.drawCircle(0, 0, 10);   //(x,y,radius)
+  circle.drawCircle(0, 0, radius);   //(x,y,radius)
   circle.endFill();
 
   circle.x = Number( positionOnMovable.x + object.anchor.x );
@@ -247,18 +267,14 @@ function createPixiCircle(positionOnMovable, object) {
   return circle;
 }
 
-function createEaseljsCircle(positionOnMovable, object) {
+function createEaseljsCircle(object, radius) {
   var g = new createjs.Graphics();
   var highlightCircle;
-  var circleCoords = {
-    x: Number( positionOnMovable.y + object.regX ),
-    y: Number( positionOnMovable.y + object.regY ),
-  };
 
   g.setStrokeStyle(1);
   g.beginStroke(createjs.Graphics.getRGB(0,0,0));
   g.beginFill(createjs.Graphics.getRGB(255,200,200, 0.2));
-  g.drawCircle( circleCoords.x, circleCoords.y, 50 );
+  g.drawCircle( 0, 0, radius );
 
   highlightCircle = new createjs.Shape(g);
 

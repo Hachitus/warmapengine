@@ -102,7 +102,7 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
           typeData: objTypeData,
           activeData: object.data
         };
-        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, spritesheet, currentFrameNumber, { radius: 42 } );
+        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, spritesheet, currentFrameNumber, { radius: gameData.hexagonRadius } );
         objManager.addObject(
           layerGroup,
           {

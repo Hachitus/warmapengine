@@ -29,7 +29,7 @@ function setAndGetShape(radius) {
   if (!shape) {
     let hexagonSize = hexagonMath.getHexaSize(radius);
     /* x and y are reversed, since this is horizontal hexagon and calculations are for vertical */
-    shape = createHexagon({ x: hexagonSize.y / 2, y: hexagonSize.x / 2 }, radius);
+    shape = createHexagon(radius);
   }
 
   return shape;

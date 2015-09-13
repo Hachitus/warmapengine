@@ -16,6 +16,7 @@ HOW we do the whole organizational stuff?
 //import { map_coords_horizontalHex } from '../coordinates/Map_coords_horizontalHex';
 import { setupHexagonClick } from '../eventListeners/select';
 import { UI } from '../../../core/UI';
+import { hexaHitTest } from '../utils/hexagonMath';
 
 export let object_select_hexagon = (function object_select_hexagon() {
   var scope = {};
@@ -39,7 +40,7 @@ export let object_select_hexagon = (function object_select_hexagon() {
     /* Filter objects based on quadtree and then based on possible group provided */
     var objects = {};
 
-    objects[group] = map.objectManager.retrieve(group, clickCoords)
+    objects[group] = map.objectManager.retrieve(group, clickCoords);
 
     return objects;
   }
@@ -51,6 +52,7 @@ export let object_select_hexagon = (function object_select_hexagon() {
    * @param {Map} map - The Map class object
    */
   function _createPrototypes(map) {
+    map.objectManager.hitTest = hitTest;
     map.setPrototype("getObjectsUnderPoint", getObjectsForMap);
   }
   /**
@@ -61,5 +63,8 @@ export let object_select_hexagon = (function object_select_hexagon() {
     var singletonUI = UI();
 
     return setupHexagonClick(map, singletonUI.showSelections);
+  }
+  function hitTest(obj, coords) {
+    return obj.contains(coords.x, coords.y);
   }
 })();

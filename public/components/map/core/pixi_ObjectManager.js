@@ -13,16 +13,7 @@ export class ObjectManager {
 
     quadtreeObjs = this.quadtrees[type].retrieve(coords, size);
     foundObjs = quadtreeObjs.filter(obj => {
-      isHit = this.hitDetector.processInteractive(
-        new PIXI.Point(coords.x, coords.y),
-        obj,
-        function(parent, hits) {
-          console.log("Shouldn't get here, the object should be non-interactive");
-        },
-        true,
-        true);
-
-      return isHit;
+      return this.hitTest(obj, coords);
     });
 
     return foundObjs;
@@ -63,4 +54,5 @@ export class ObjectManager {
       };
     });
   }
+  hitTest(obj, coordinates, offsetCoords) { return "need to be implemented by another module"; }
 }

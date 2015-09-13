@@ -38,7 +38,7 @@ export let object_select_hexagon = (function object_select_hexagon() {
   function getObjectsForMap(clickCoords, group) {
     var objects = {};
 
-    objects[group] = map.objectManager.retrieve(group, clickCoords)
+    objects[group] = map.objectManager.retrieve(group, clickCoords);
 
     return objects;
   }
@@ -50,6 +50,7 @@ export let object_select_hexagon = (function object_select_hexagon() {
    * @param {Map} map - The Map class object
    */
   function _createPrototypes(map) {
+    map.objectManager.hitTest = hitTest;
     map.setPrototype("getObjectsUnderPoint", getObjectsForMap);
   }
   /**
@@ -60,5 +61,17 @@ export let object_select_hexagon = (function object_select_hexagon() {
     var singletonUI = UI();
 
     return setupHexagonClick(map, singletonUI.showSelections);
+  }
+  function hitTest(obj, coords) {
+    var isHit = this.hitDetector.processInteractive(
+      new PIXI.Point(coords.x, coords.y),
+      obj,
+      function(parent, hits) {
+        console.log("Shouldn't get here, the object should be non-interactive");
+      },
+      true,
+      true);
+
+    return isHit;
   }
 })();

@@ -81,7 +81,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
         var pan = new Hammer.Pan({
           pointers: 1,
           threshold: 5,
-          direction:	Hammer.DIRECTION_ALL });
+          direction:  Hammer.DIRECTION_ALL });
         hammer.add(pan);
         hammer.on("pan", mapCBs.drag);
       } else {

@@ -100,7 +100,7 @@ export function createMap(canvasElement, datas) {
           typeData: objTypeData,
           activeData: object.data
         };
-        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, currentFrame, { radius: 47 } );
+        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, currentFrame, { radius: gameData.hexagonRadius } );
         objManager.addObject(
           layerGroup,
           {
@@ -116,7 +116,8 @@ export function createMap(canvasElement, datas) {
       });
     });
   });
-  //}
+  
+
 
   map.moveMap(mapData.startPoint);
 

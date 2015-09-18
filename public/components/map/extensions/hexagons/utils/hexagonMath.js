@@ -73,9 +73,53 @@ export function getHexagonPoints(radius, options = { isFlatTop: false, precision
 
 	return points;
 }
-	
+
+export function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) {
+  var realPolygonPoints = points.map(point => {
+    return {
+      x: point.x + offsetCoords.x,
+      y: point.y + offsetCoords.y
+    };
+  });
+
+  return _pointInPolygon(hitCoords, realPolygonPoints);
+}
+
+/**************************
+********* PRIVATE *********
+**************************/
+/* credits to: https://github.com/substack/point-in-polygon */
+function _pointInPolygon(point, vs) {
+  var x = point.x, y = point.y;
+    
+  var inside = false;
+  for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+      var xi = vs[i].x, yi = vs[i].y;
+      var xj = vs[j].x, yj = vs[j].y;
+      var intersect = ((yi > y) !== (yj > y)) &&
+          (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+      if (intersect) {
+				inside = !inside;
+			}
+  }
+  
+  return inside;
+}
+
+export default {
+  calcShortDiagonal: calcShortDiagonal,
+	calcLongDiagonal: calcLongDiagonal,
+	calcSide: calcSide,
+  getHexagonPoints: getHexagonPoints,
+	hexaHitTest: hexaHitTest
+};
+
+/************************************
+********** NOT IN USE ATM ***********
+************************************/
 /* Modified From java example: http://blog.ruslans.com/2011/02/hexagonal-grid-math.html
-   This is supposed to calculate the correct hexagonal index, that represents the hexagon the player clicked */
+ * This is supposed to calculate the correct hexagonal index, that represents the hexagon the player clicked. */
 export function setCellByPoint(radius, x, y) {
   var HEIGHT = radius * Math.sqrt(3);
   var SIDE = radius * 3 / 2;
@@ -100,6 +144,7 @@ export function setCellByPoint(radius, x, y) {
   }
 }
 
+/* From the x,y-coordinates calculates the closest hexagons center coordinates */
 export function toHexaCenterCoord(hexRadius, x, y) {
   var hexaSize = getHexaSize(hexRadius);
   var radius = hexaSize.radius;
@@ -129,45 +174,4 @@ export function toHexaCenterCoord(hexRadius, x, y) {
 			y: radius * Math.sqrt(3)
 		};
 	}
-};
-
-export function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) {
-  var realPolygonPoints = points.map(point => {
-    return {
-      x: point.x + offsetCoords.x,
-      y: point.y + offsetCoords.y
-    };
-  });
-
-  return _pointInPolygon(hitCoords, realPolygonPoints);
-}
-
-export default {
-  calcShortDiagonal: calcShortDiagonal,
-	calcLongDiagonal: calcLongDiagonal,
-	calcSide: calcSide,
-  getHexagonPoints: getHexagonPoints,
-	hexaHitTest: hexaHitTest
-};
-
-/**************************
-********* PRIVATE *********
-**************************/
-/* credits to: https://github.com/substack/point-in-polygon */
-function _pointInPolygon(point, vs) {
-  var x = point.x, y = point.y;
-    
-  var inside = false;
-  for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-      var xi = vs[i].x, yi = vs[i].y;
-      var xj = vs[j].x, yj = vs[j].y;
-      var intersect = ((yi > y) !== (yj > y)) &&
-          (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-
-      if (intersect) {
-				inside = !inside;
-			}
-  }
-  
-  return inside;
 }

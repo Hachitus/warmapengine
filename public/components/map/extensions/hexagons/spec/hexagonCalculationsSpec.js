@@ -1,4 +1,4 @@
-/* global describe, it, expect */
+/* global describe, it, expect, beforeEach, hexagonMath */
 'use strict';
 
 import * as hexagonMath from "../utils/hexagonMath.js";
@@ -49,13 +49,59 @@ describe("testing hexagonMath", function() {
         return ( Math.abs(x) - Math.abs(y) ) < 0.01;
     }
 	});
-	it("setCellByPoint", function() {
+	describe("hexaHitTests => ", function() {
+		var points = hexagonMath.getHexagonPoints(20);
+		var hitCoords = {
+			x: 20,
+			y: 10
+		};
+		var offsetCoords = {
+			x: 10,
+			y: 20
+		};
+		var isHit;
 		
-	});
-	it("getHexaSize", function() {
+		beforeEach(function() {
+			points = hexagonMath.getHexagonPoints(20);
+			hitCoords = {
+				x: 20,
+				y: 10
+			};
+			offsetCoords = {
+				x: 10,
+				y: 20
+			};
+			isHit = false;
+		});		
 		
-	});
-	it("toHexaCenterCoord", function() {
-		
+		it("test1 => ", function(done) {
+			isHit = hexagonMath.hexaHitTest(points, hitCoords, offsetCoords);
+
+			expect(isHit).toEqual(true, "not hit! with:", offsetCoords, hitCoords);
+			
+			done();
+		});
+		it("test2 => ", function(done) {
+			offsetCoords = {
+				x: 100,
+				y: 20
+			};
+			isHit = hexagonMath.hexaHitTest(points, hitCoords, offsetCoords);
+
+			expect(isHit).toEqual(false, "not hit! with:", offsetCoords, hitCoords);
+			
+			done();
+		});
+		it("test3 => ", function(done) {
+			hitCoords = {
+				x: 100,
+				y: 20
+			};
+			isHit = hexagonMath.hexaHitTest(points, hitCoords, offsetCoords);
+
+			expect(isHit).toEqual(false, "not hit! with:", offsetCoords, hitCoords);
+			
+			done();
+		});
 	});
 });

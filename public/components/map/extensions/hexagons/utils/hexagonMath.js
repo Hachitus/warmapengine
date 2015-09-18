@@ -1,6 +1,15 @@
 'use strict';
+/** Calculates the hexagons:
+ * innerDiameter
+ * - Vertical / Flat hexagons height
+ * - Horizontal / pointy hexagons width
+ * @param {float} value - Usually the radius of the hexagon
+ * @param {string} type - If you provide something else than radius, where the calculation is based from
+ * @param {integer} precision - How many decimals to round
+ */
 export function calcShortDiagonal(value, type = "radius", precision = 3) {
 	var answer;
+	precision = Math.round(precision);
 	
 	if(type === "radius") {
 		answer = value * Math.sqrt(3);
@@ -8,6 +17,14 @@ export function calcShortDiagonal(value, type = "radius", precision = 3) {
 	
 	return answer.toFixed(precision);
 }
+/** Calculates the hexagons:
+ * outerDiameter
+ * - Vertical / Flat hexagons width
+ * - Horizontal / pointy hexagons height
+ * @param {float} value					Usually the radius of the hexagon
+ * @param {string} type					If you provide something else than radius, where the calculation is based from
+ * @param {integer} precision 	How many decimals to round
+ */
 export function calcLongDiagonal(value, type = "radius", precision = 3) {
 	var answer;
 	
@@ -17,6 +34,7 @@ export function calcLongDiagonal(value, type = "radius", precision = 3) {
 	
 	return answer.toFixed(precision);
 }
+/** This is used, but might be considered for scrap, unless we want to calculate side from some other value */
 export function calcSide(value, type = "radius", precision = 3) {
 	var answer;
 	
@@ -26,20 +44,24 @@ export function calcSide(value, type = "radius", precision = 3) {
 	
 	return answer.toFixed(precision);
 }
+/**
+ * @param {Float} radius			radius of the hexagon
+ * @param {object} options		extra options, like generating horizontal hexagon points and 
+ * how many decimals to round
+*/
 export function getHexagonPoints(radius, options = { isFlatTop: false, precision: 3 }) {	
-	var i = 0,
-			offset = options.isFlatTop ? 0 : 0.5,
-			angle = 2 * Math.PI / 6 * offset,
-			center = {
+	var i = 0;
+	var offset = options.isFlatTop ? 0 : 0.5;
+	var angle = 2 * Math.PI / 6 * offset;
+	var center = {
 				x: radius,
 				y: radius
-			},
-			x = center.x * Math.cos(angle),
-			y = center.y * Math.sin(angle),
-			points = [];
-console.log("HEI", center.x, center.y, radius, x, y);
+			};
+	var x = center.x * Math.cos(angle);
+	var y = center.y * Math.sin(angle);
+	var points = [];
+	
 	points.push({x, y});
-	console.log("HEI2", points);
 
 	for (i = 1; i < 7; i++) {
 			angle = 2 * Math.PI / 6 * (i + offset);
@@ -110,14 +132,14 @@ export function toHexaCenterCoord(hexRadius, x, y) {
 };
 
 export function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) {
-  var offsetPoints = points.map(point => {
+  var realPolygonPoints = points.map(point => {
     return {
       x: point.x + offsetCoords.x,
       y: point.y + offsetCoords.y
     };
   });
 
-  return _pointInPolygon(hitCoords, offsetPoints);
+  return _pointInPolygon(hitCoords, realPolygonPoints);
 }
 
 export default {
@@ -125,8 +147,6 @@ export default {
 	calcLongDiagonal: calcLongDiagonal,
 	calcSide: calcSide,
   getHexagonPoints: getHexagonPoints,
-  setCellByPoint: setCellByPoint,
-  toHexaCenterCoord: toHexaCenterCoord,
 	hexaHitTest: hexaHitTest
 };
 

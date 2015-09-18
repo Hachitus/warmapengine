@@ -14,11 +14,12 @@ export class Object_unit extends Object_sprite_unit {
     object_sprite_hexa.build.call(this, extra.radius);
   }
   contains(x, y) {
-    var offsetCoords = {
-      x: Number(this.x) + Number(this.regX),
-      y: Number(this.y) + Number(this.regY)
-    };
     var hitCoords = { x, y };
+		var currentObjCoords = this.localToGlobal(0,0);
+    var offsetCoords = {
+      x: Number(currentObjCoords.x) + Number(this.regX),
+      y: Number(currentObjCoords.y) + Number(this.regY)
+    };
 
     return hexaHitTest(this.customHitArea, hitCoords, offsetCoords);
   }

@@ -36,7 +36,7 @@ export class Object_sprite extends createjs.Sprite {
    * @param {Number} y coordinate y
    * @return this object instance */
   innerDraw(x, y) {
-    this.gotoAndStop( this.currFrameNumber );
+    this.gotoAndStop( Number( this.currFrameNumber ) );
     this.x = x;
     this.y = y;
 

@@ -1,6 +1,7 @@
-'use strict'
+/* global createjs */
+'use strict';
 
-import { calcHeight, getHexagonPoints } from './hexagonMath';
+import { getHexagonPoints } from './hexagonMath';
 
 export function createHexagon(radius) {
   return getHexagonPoints(radius);

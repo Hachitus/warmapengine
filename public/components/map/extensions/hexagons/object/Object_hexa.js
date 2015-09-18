@@ -11,24 +11,25 @@ export var object_sprite_hexa = {
         throw new Error("Need radius!");
       }
 
-      const HEIGHT = hexagonMath.calcHeight(radius);
+      const HEIGHT = hexagonMath.calcLongDiagonal(radius);
+			const WIDTH = hexagonMath.calcShortDiagonal(radius);
       const SIDE = hexagonMath.calcSide(radius);
 
-      var hexagonSize = hexagonMath.getHexaSize(radius);
-      this.regX = hexagonSize.x / 2;
-      this.regY = hexagonSize.y / 2;
+      this.regX = WIDTH / 2;
+      this.regY = HEIGHT / 2;
       this.HEIGHT = HEIGHT;
+			this.WIDTH = WIDTH;
       this.SIDE = SIDE;
 
       /* Draw hexagon to test the hits with hitArea */
       this.hitArea = setAndGetShape(radius);
+			this.hitArea.x -= this.regX;
+			this.hitArea.y -= this.regY;
     }
 };
 
 function setAndGetShape(radius) {
   if (!shape) {
-    let hexagonSize = hexagonMath.getHexaSize(radius);
-    /* x and y are reversed, since this is horizontal hexagon and calculations are for vertical */
     shape = createHexagon(radius);
   }
 

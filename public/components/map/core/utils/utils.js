@@ -145,7 +145,16 @@ export var environmentDetection = (function () {
 
   return scope;
 })();
-
+export var general = (function () {
+	var scope = {};
+	var PIXEL_EPSILON = 0.01;
+	
+	scope.pixelEpsilonEquality = function epsilonEquality(x, y) {
+		return ( Math.abs(x) - Math.abs(y) ) < PIXEL_EPSILON;
+	};
+	
+	return scope;
+})();
 /** ===== PRIVATE ===== */
 function _getWindowSize() {
   return {

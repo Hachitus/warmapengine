@@ -11,11 +11,13 @@ export var object_sprite_hexa = {
         throw new Error("Need radius!");
       }
 
-      const HEIGHT = hexagonMath.calcHeight(radius);
+      const HEIGHT = hexagonMath.calcLongDiagonal(radius);
+			const WIDTH = hexagonMath.calcShortDiagonal(radius);
       const SIDE = hexagonMath.calcSide(radius);
 
       this.anchor.set(0.5, 0.5);
       this.HEIGHT = HEIGHT;
+			this.WIDTH = WIDTH;
       this.SIDE = SIDE;
 
       /* Draw hexagon to test the hits with hitArea */

@@ -1,50 +1,57 @@
 'use strict';
-/* NOTE: These calculations are for vertical hexagons */
-
-export function calcHeight(radius) {
-  //return radius;
-  return radius * Math.sqrt(3);
+export function calcShortDiagonal(value, type = "radius", precision = 3) {
+	var answer;
+	
+	if(type === "radius") {
+		answer = value * Math.sqrt(3);
+	}
+	
+	return answer.toFixed(precision);
 }
-export function calcWidth(radius) {
-  return radius * Math.sqrt(3);
+export function calcLongDiagonal(value, type = "radius", precision = 3) {
+	var answer;
+	
+	if(type === "radius") {
+		answer = value * 2;
+	}
+	
+	return answer.toFixed(precision);
 }
-export function calcSide(radius) {
-  return radius * 3 / 2;
+export function calcSide(value, type = "radius", precision = 3) {
+	var answer;
+	
+	if(type === "radius") {
+		answer = value;
+	}
+	
+	return answer.toFixed(precision);
 }
+export function getHexagonPoints(radius, options = { isFlatTop: false, precision: 3 }) {	
+	var i = 0,
+			offset = options.isFlatTop ? 0 : 0.5,
+			angle = 2 * Math.PI / 6 * offset,
+			center = {
+				x: radius,
+				y: radius
+			},
+			x = center.x * Math.cos(angle),
+			y = center.y * Math.sin(angle),
+			points = [];
+console.log("HEI", center.x, center.y, radius, x, y);
+	points.push({x, y});
+	console.log("HEI2", points);
 
-export function getHexagonPoints(radius, x = 0, y = 0, isFlatTop = false) {
-  var i = 0,
-    offset = isFlatTop ? 0 : 0.5,
-    angle = 2 * Math.PI / 6 * offset,
-    hexagonSize = {
-      x: calcWidth(radius) / 2,
-      y: radius
-    },
-    x = ( hexagonSize.x * Math.cos(angle) ) + x,
-    y = ( hexagonSize.y * Math.sin(angle) ) + y,
-    points = [];
+	for (i = 1; i < 7; i++) {
+			angle = 2 * Math.PI / 6 * (i + offset);
+			x = center.x * Math.cos(angle);
+			y = center.y * Math.sin(angle);
 
-  y = y - hexagonSize.y / 2;
+			points.push({x, y});
+	}
 
-  points.push({
-    x,
-    y
-  });
-
-  for (i = 1; i < 7; i++) {
-    angle = 2 * Math.PI / 6 * (i + offset);
-    x = ( hexagonSize.x * Math.cos(angle) ) + x;
-    y = ( hexagonSize.y * Math.sin(angle) ) + y;
-
-    points.push({
-      x,
-      y
-    });
-  }
-
-  return points;
+	return points;
 }
-
+	
 /* Modified From java example: http://blog.ruslans.com/2011/02/hexagonal-grid-math.html
    This is supposed to calculate the correct hexagonal index, that represents the hexagon the player clicked */
 export function setCellByPoint(radius, x, y) {
@@ -71,14 +78,6 @@ export function setCellByPoint(radius, x, y) {
   }
 }
 
-export function getHexaSize(radius) {
-  return {
-    radius: radius,
-    x: radius * 2,
-    y: radius * Math.sqrt(3)
-  };
-}
-
 export function toHexaCenterCoord(hexRadius, x, y) {
   var hexaSize = getHexaSize(hexRadius);
   var radius = hexaSize.radius;
@@ -100,6 +99,14 @@ export function toHexaCenterCoord(hexRadius, x, y) {
   };
 
   return centerCoords;
+	
+	function getHexaSize(radius) {
+		return {
+			radius: radius,
+			x: radius * 2,
+			y: radius * Math.sqrt(3)
+		};
+	}
 };
 
 export function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) {
@@ -110,29 +117,36 @@ export function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0,
     };
   });
 
-  return pointInPolygon(hitCoords, offsetPoints);
+  return _pointInPolygon(hitCoords, offsetPoints);
 }
 
 export default {
-  calcHeight: calcHeight,
-  calcSide: calcSide,
+  calcShortDiagonal: calcShortDiagonal,
+	calcLongDiagonal: calcLongDiagonal,
+	calcSide: calcSide,
+  getHexagonPoints: getHexagonPoints,
   setCellByPoint: setCellByPoint,
-  getHexaSize: getHexaSize,
-  toHexaCenterCoord: toHexaCenterCoord
+  toHexaCenterCoord: toHexaCenterCoord,
+	hexaHitTest: hexaHitTest
 };
 
+/**************************
+********* PRIVATE *********
+**************************/
 /* credits to: https://github.com/substack/point-in-polygon */
-function pointInPolygon(point, vs) {
+function _pointInPolygon(point, vs) {
   var x = point.x, y = point.y;
     
   var inside = false;
   for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
       var xi = vs[i].x, yi = vs[i].y;
       var xj = vs[j].x, yj = vs[j].y;
-      
-      var intersect = ((yi > y) != (yj > y))
-          && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
-      if (intersect) inside = !inside;
+      var intersect = ((yi > y) !== (yj > y)) &&
+          (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+      if (intersect) {
+				inside = !inside;
+			}
   }
   
   return inside;

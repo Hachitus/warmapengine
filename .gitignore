@@ -1,5 +1,6 @@
 node_modules
 npm-debug.log
 public/assets/img
+public/jspm_packages
 webcomponents
 bu

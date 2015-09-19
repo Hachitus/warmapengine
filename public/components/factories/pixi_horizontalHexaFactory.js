@@ -6,9 +6,11 @@
  * @require canvas HTML5-element to work. This is more for node.js
  * @todo Add documentation and refactor (maybe modularize / functionalize) the actual logic */
 
+/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol or something missing: http://babeljs.io/docs/usage/polyfill/ */
+//require("babel/polyfill");
+
 /* ====== Own module imports ====== */
 import { Map } from '../map/core/pixi_Map';
-
 import { Object_terrain } from '../map/extensions/hexagons/object/pixi_Object_terrain_hexa';
 import { Object_unit } from '../map/extensions/hexagons/object/pixi_Object_unit_hexa';
 import { resizeUtils } from '../map/core/utils/utils';

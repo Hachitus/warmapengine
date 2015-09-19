@@ -18,10 +18,14 @@ import { setupHexagonClick } from '../eventListeners/select';
 import { UI } from '../../../core/UI';
 import { hexaHitTest } from '../utils/hexagonMath';
 
-export let object_select_hexagon = (function object_select_hexagon() {
+var _pluginName = "object_select";
+
+export var pluginName = _pluginName;
+
+export let object_select = (function object_select_hexagon() {
   var scope = {};
   var map = {};
-  scope.pluginName = "object_select";
+  scope.pluginName = _pluginName;
 
   /**
    * @param {Map object} mapObj - the Map class object

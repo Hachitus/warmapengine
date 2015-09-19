@@ -1,17 +1,14 @@
+/* global PIXI, System */
+
 'use strict';
 /* ====== Library imports ====== */
 
 /* ====== Own module imports ====== */
 //var Map = require( '../public/components/map/Map');
-/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol os something missing: http://babeljs.io/docs/usage/polyfill/ */
-require("babel/polyfill");
+/* THIS POLYFILL IS NEEDED FOR IE11 - when using babel, maybe Symbol or something missing: http://babeljs.io/docs/usage/polyfill/ */
+//require("babel/polyfill");
 
 import { createMap } from '../../components/factories/horizontalHexaFactory';
-
-/* ===== Import plugins ===== */
-import { map_drag } from "../../components/map/core/move/map_drag";
-import { map_zoom } from '../../components/map/core/zoom/map_zoom';
-import { object_select_hexagon } from '../../components/map/extensions/hexagons/object_select/object_select_hexagon';
 
 /* DATA FILES used for testing */
 import { gameData } from '../../tests/data/gameData';
@@ -42,7 +39,16 @@ window.initMap = function () {
   }]);
   prel.resolveOnComplete()
     .then(function() {
-      map.init( [ map_zoom, map_drag, object_select_hexagon ], { x: 41, y: 47 }, undefined );
+			var promises = [];
+
+			gameData.pluginsToActivate.map.map(plugin => {
+				promises.push(System.import(plugin));
+			});
+			console.log("1", promises);
+			Promise.all(promises).then(activetablePlugins => {
+				console.log("2",activetablePlugins);
+      	map.init( activetablePlugins, gameData.mapSize, undefined );
+			});
     });
 
   return map;

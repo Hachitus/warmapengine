@@ -30,10 +30,27 @@
     "validator": "^2.0.0"
   },
   "devDependencies": {
-    "jscs": "^1.13.1",
     "gulp-jscs": "^2.0.0",
     "jasmine": "^2.3.1",
+    "jscs": "^1.13.1",
+    "jspm": "^0.16.5",
     "longjohn": "^0.2.7",
     "vinyl-source-stream": "^1.1.0"
+  },
+  "jspm": {
+    "directories": {
+      "baseURL": "public"
+    },
+    "dependencies": {
+      "blueimp-md5": "npm:blueimp-md5@^1.1.1",
+      "css": "github:systemjs/plugin-css@^0.1.17",
+      "json": "github:systemjs/plugin-json@^0.1.0",
+      "text": "github:systemjs/plugin-text@^0.0.2"
+    },
+    "devDependencies": {
+      "babel": "npm:babel-core@^5.8.24",
+      "babel-runtime": "npm:babel-runtime@^5.8.24",
+      "core-js": "npm:core-js@^1.1.4"
+    }
   }
 }

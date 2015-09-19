@@ -175,13 +175,14 @@ export class Map {
 
     try {
       pluginsArray.forEach(plugin => {
+				currentPluginNameForErrors = "undefined";
         if(!plugin || !plugin.pluginName) {
           throw new Error("plugin or plugin.pluginName missing");
         }
         currentPluginNameForErrors = plugin.pluginName;
 
-        if(this.plugins.add(plugin)) {
-          plugin.init(this);
+        if(this.plugins.add(plugin[plugin.pluginName])) {
+          plugin[plugin.pluginName].init(this);
         }
       });
     } catch(e) {

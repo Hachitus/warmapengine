@@ -1,4 +1,4 @@
-'user strict';
+'use strict';
 
 /** The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed */
 
@@ -7,6 +7,10 @@
 /** ===== OWN imports ===== */
 import { resizeUtils } from "../utils/utils.js";
 import { eventListeners as eventListenerMod } from '../eventlisteners';
+
+var _pluginName = "map_zoom";
+
+export var pluginName = _pluginName;
 
 export let map_zoom = (function map_zoom() {
   /* Maximum and minimum the player can zoomt he map */
@@ -21,7 +25,7 @@ export let map_zoom = (function map_zoom() {
      MODULE API (in scope)
      ===================== */
   var scope = {};
-  scope.pluginName = "map_zoom";
+  scope.pluginName = _pluginName;
 
   /** Required init functions for the plugin
   * @param {Map object} mapObj - the Map class object */

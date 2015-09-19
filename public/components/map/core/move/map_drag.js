@@ -9,6 +9,10 @@
 import { eventListeners as eventListenerMod } from '../eventlisteners';
 import { mouseUtils } from '../utils/utils';
 
+var _pluginName = "map_drag";
+
+export var pluginName = _pluginName;
+
 export let map_drag = (function map_drag() {
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
@@ -17,7 +21,7 @@ export let map_drag = (function map_drag() {
      MODULE API (in scope)
      ===================== */
   var scope = {};
-  scope.pluginName = "map_drag";
+  scope.pluginName = _pluginName;
 
   /** Required init functions for the plugin
   * @param {Map object} mapObj - the Map class object */

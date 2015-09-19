@@ -1,5 +1,6 @@
 #Introduction
-2D strategy game engine for browsers. Project will move forward at its own phase. Rough estimation for the engine ~half a year.
+2D strategy game engine for browsers. Project will move forward at its own phase. Rough estimation for the bare functionality 
+of the engine is during 2015.
 Development from that forward will still continue in the form of a 2D strategy game.
 
 If you are interested contact me (http://hyytia.level7.fi/)
@@ -10,16 +11,16 @@ If you are interested contact me (http://hyytia.level7.fi/)
 Install node.js and npm
     apt-get install nodejs npm
 Rather install these packages as global
-    npm install -g forever gulp
+    npm install -g forever gulp jspm
+Install jspm packages
+		jspm install text css json
 start server
     npm run start
 stop server
     npm run stop
 
 ##Tests
-compile and transpile to ES5
-    gulp
-compiled code in *warMapEngine.level7.fi/tests/*
+Tests in *warMapEngine.level7.fi/tests/*
 
 #How the Map engine works
 ##Plugins

@@ -4,9 +4,8 @@
   "description": "Game engine for 2D strategy games in browsers",
   "private": true,
   "scripts": {
-    "start": "forever start -w startGame.js --uid FlaTWorld",
-    "stop": "forever stop -w startGame.js FlaTWorld",
-    "test": "gulp compileTest"
+    "start": "forever start startGame.js --uid FlaTWorld",
+    "stop": "forever stop startGame.js FlaTWorld"
   },
   "dependencies": {
     "babelify": "^6.1.1",

@@ -11,7 +11,7 @@
 import { createMap } from '../../components/factories/pixi_horizontalHexaFactory';
 
 /* DATA FILES used for testing */
-import { gameData } from '../../tests/data/gameData';
+import { gameData } from '../../tests/data/pixi_gameData';
 import { typeData } from '../../tests/data/pixi_typeData';
 import { mapData } from '../../tests/data/pixi_mapData';
 //import { preload } from '../../components/preloading/preloading';

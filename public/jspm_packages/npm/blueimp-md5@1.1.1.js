@@ -1,0 +1,1 @@
+module.exports = require("npm:blueimp-md5@1.1.1/js/md5");

@@ -1,3 +1,5 @@
+/* global PIXI */
+
 /** Map is the main class for constructing 2D map for strategy games
  *
  * Map is instantiated and then initialized with init-method.
@@ -285,7 +287,7 @@ function _defaultTick(map, ticker) {
 }
 
 function setFullsizedMap(renderer) {
-  renderer.view.style.position = "absolute"
+  renderer.view.style.position = "absolute";
   renderer.view.style.display = "block";
   renderer.autoResize = true;
   renderer.resize(window.innerWidth, window.innerHeight);

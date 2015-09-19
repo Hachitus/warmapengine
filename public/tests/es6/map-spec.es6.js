@@ -128,7 +128,6 @@ window.testMap = function() {
 
     it("unit properties ok", function(done){
       try {
-        debugger;
         map.init( [ map_zoom, map_drag, object_select_hexagon ], tickDoneFunc );
 
         function tickDoneFunc(tickDone) {

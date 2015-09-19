@@ -1,4 +1,4 @@
-'user strict';
+'use strict';
 
 /** The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed */
 
@@ -79,26 +79,19 @@ export let map_zoom = (function map_zoom() {
   /** Zoom in to the map
    * @param {Number} amount how much map is zoomed in */
   function zoomIn (amount) {
-    var newScale;
-    var zoomLayer = this.getZoomLayer();
-
-    if( !_isOverZoomLimit(zoomLayer.scaleX, true) ) {
-      newScale = zoomLayer.scaleY = zoomLayer.scaleX += ( amount || zoomModifier );
-    }
-
-    return newScale;
+		var zoomLayer = this.getZoomLayer();
+		var presentScale = zoomLayer.getScale();
+		
+		return _zoom(zoomLayer, presentScale, Math.abs(amount) || zoomModifier);
   }
   /** Zoom out of the map
    * @param {Number} amount how much map is zoomed out */
   function zoomOut (amount) {
-    var newScale;
-    var zoomLayer = this.getZoomLayer();
-
-    if( !_isOverZoomLimit(zoomLayer.scaleX) ) {
-      newScale = zoomLayer.scaleY = zoomLayer.scaleX -= ( amount || zoomModifier );
-    }
-
-    return newScale;
+		var zoomLayer = this.getZoomLayer();
+		var presentScale = zoomLayer.getScale();
+		amount = amount < 0 ? amount : -amount;
+		
+		return _zoom(zoomLayer, presentScale, amount || -zoomModifier);
   }
 
   /* ============
@@ -209,4 +202,13 @@ export let map_zoom = (function map_zoom() {
 
     return realMovement;
   }
+	function _zoom(zoomLayer, presentScale, amount) {
+		var newScale;
+
+    if( !_isOverZoomLimit(presentScale, true) ) {
+      newScale = zoomLayer.setScale( amount ? presentScale + amount : presentScale + zoomModifier );
+    }
+
+    return newScale;
+	}
 })();

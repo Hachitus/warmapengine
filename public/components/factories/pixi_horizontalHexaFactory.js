@@ -11,6 +11,7 @@
 
 /* ====== Own module imports ====== */
 import { Map } from '../map/core/pixi_Map';
+import { Map_layer, Map_spriteLayer } from '/components/map/core/pixi_Map_layer';
 import { Object_terrain } from '../map/extensions/hexagons/object/pixi_Object_terrain_hexa';
 import { Object_unit } from '../map/extensions/hexagons/object/pixi_Object_unit_hexa';
 import { resizeUtils } from '../map/core/utils/utils';
@@ -21,6 +22,10 @@ import { eventListeners } from '../map/core/eventlisteners';
 var functionsInObj = {
   Object_terrain,
   Object_unit
+};
+var layers = {
+  Map_layer,
+  Map_spriteLayer
 };
 
 /* ===== EXPORT ===== */
@@ -67,7 +72,8 @@ export function createMap(canvasElement, datas) {
     var thisLayer;
 
     try {
-      thisLayer = map.addLayer( layerData.name, false, layerData.coord );
+			thisLayer = new layers[layerData.type](layerData.name, false, layerData.coord);
+			map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
         x: 0,
         y: 0,

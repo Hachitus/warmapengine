@@ -18,7 +18,7 @@
 'use strict';
 
 /* ====== Own module imports ====== */
-import { Map_layer } from './pixi_Map_layer';
+import { Map_layer } from '/components/map/core/pixi_Map_layer';
 import { resizeUtils, environmentDetection } from './utils/utils';
 import { eventListeners } from './eventlisteners';
 import { ObjectManager } from './pixi_ObjectManager';
@@ -116,9 +116,7 @@ export class Map {
   }
   /** All parameters are passed to Map_layer constructor
    * @return created Map_layer instance */
-  addLayer(name, subContainers, coord) {
-    var layer = new Map_layer(name, subContainers, coord);
-
+  addLayer(layer) {
     _movableLayer.addChild(layer);
 
     return layer;

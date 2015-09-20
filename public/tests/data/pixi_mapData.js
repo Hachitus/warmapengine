@@ -4,7 +4,7 @@ export let mapData = {
   startPoint: { x: 0, y: 0 },
   element: "#mapCanvas",
   layers: [{
-    type: "Map_layer",
+    type: "Map_spriteLayer",
     coord: { x: 0, y: 0 },
     name: "terrainLayer",
     group: "terrain", // For quadTrees
@@ -63,7 +63,7 @@ export let mapData = {
       }]
     }]
   },{
-    type: "Map_layer",
+    type: "Map_spriteLayer",
     coord: {
         "x": "0",
         "y": "0"
@@ -73,11 +73,11 @@ export let mapData = {
     "options": {
       "cache": "false"
     },
-    objectGroups: [{
+    "objectGroups": [{
       "type": "Object_unit",
       "name": "Unit", // I guess only for debugging?
       "typeImageData": "unit",
-      objects: [{
+      "objects": [{
         "objType":0,
         "name": "Tank you",
         "coord": {

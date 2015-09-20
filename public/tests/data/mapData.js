@@ -4,7 +4,7 @@ export let mapData = {
   startPoint: { x: 0, y: 0 },
   element: "#mapCanvas",
   layers: [{
-    type: "Map_subLayer",
+    type: "Map_layer",
     coord: { x: 0, y: 0 },
     name: "terrainLayer",
     group: "terrain", // For quadTrees
@@ -63,8 +63,11 @@ export let mapData = {
       }]
     }]
   },{
-    "type": "Map_layer",
-    "coord": { "x": "0", "y": "0" },
+    type: "Map_layer",
+    coord: {
+        "x": "0",
+        "y": "0"
+    },
     "name": "unitLayer",
     group: "units", // For quadTrees
     "options": {
@@ -76,7 +79,7 @@ export let mapData = {
       "typeImageData": "unit",
       "objects": [{
         "objType":0,
-        "name": "Horsey the wild",
+        "name": "Tank you",
         "coord": {
           "x": "41", "y": "70"
         },

@@ -1,3 +1,4 @@
+/* global PIXI */
 'use strict';
 
 /**
@@ -112,7 +113,7 @@ export class Map_layer extends PIXI.Container {
   }
 }
 
-export class Map_subLayer extends PIXI.ParticleContainer {
+export class Map_spriteLayer extends PIXI.ParticleContainer {
   /**
    * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
@@ -120,11 +121,12 @@ export class Map_subLayer extends PIXI.ParticleContainer {
    * e.g. for more efficient accessibility of objects based on coordinates.
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
-  constructor(name, subContainers, coord) {
+  constructor(name, subContainers, coord, renderer) {
     super();
 
     this.x = coord ? ( coord.x || 0 ) : 0;
     this.y = coord ? ( coord.y || 0 ) : 0;
+    this.renderer = renderer;
     this._cacheEnabled = true;
     this.subContainers = subContainers || false; // These should probably be particleContainers
     this.name = "" + name; // For debugging. Shows up in toString
@@ -202,4 +204,18 @@ export class Map_subLayer extends PIXI.ParticleContainer {
 
     return _UIObjects;
   }
+	/* If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
+	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
+	updateTransform() {
+		if (!this.visible)
+		{
+				return;
+		}
+
+		this.displayObjectUpdateTransform();
+		for (var i = 0, j = this.children.length; i < j; ++i)
+		{
+				this.children[i].updateTransform();
+		}
+	}
 }

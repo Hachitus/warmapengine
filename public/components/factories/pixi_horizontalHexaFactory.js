@@ -19,6 +19,7 @@ import { UI } from '../map/core/UI';
 import { UI_default } from "../map/UIs/default/default.js";
 import { eventListeners } from '../map/core/eventlisteners';
 
+/***** CONFIG. Set correct classes to use *****/
 var functionsInObj = {
   Object_terrain,
   Object_unit

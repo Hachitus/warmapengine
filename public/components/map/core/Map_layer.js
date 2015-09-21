@@ -36,70 +36,8 @@ export class Map_layer extends createjs.Container {
     this.mouseChildren = false;
     this.mouseEnabled = false;
   }
-  /** setter and getter
-   * @param {Boolean} status If provided sets the caching status otherwise returns the current status */
-  cacheEnabled(status) {
-    if(status !== undefined) {
-      this._cacheEnabled = status;
-    }
-
-    return this._cacheEnabled;
-  }
-  /** Move layer
-   * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e.
-   { x: 5, y: 0 }
-   @return this layer instance */
-  move(coordinates) {
-    if (this.movable) {
-      this.x += coordinates.x;
-      this.y += coordinates.y;
-      this.drawThisChild = true;
-    }
-
-    return this;
-  }
-  getChildNamed(name) {
-    if (this.children[0] instanceof createjs.Container) {
-      for (let child of this.children) {
-        if (child.name.toLowerCase() === name.toLowerCase()) {
-          return child;
-        }
-      }
-    }
-    return false;
-  }
-  setScale(amount) {
-    this.scaleX = amount;
-    this.scaleY = amount;
-
-    return amount;
-  }
-  getScale() {
-    return this.scaleX;
-  }
-  getUIObjects() {
-    return _UIObjects;
-  }
-  emptyUIObjects() {
-    _UIObjects.map(obj => {
-      this.removeChild(obj);
-      obj = null;
-    });
-
-    return _UIObjects;
-  }
-  addUIObjects(objects) {
-    _UIObjects = _UIObjects || [];
-    if(Array.isArray(objects)) {
-      this.addChild.apply(this, objects);
-    } else {
-      this.addChild( objects );
-    }
-    _UIObjects.push( objects );
-
-    return _UIObjects;
-  }
 }
+Object.assign(Map_layer.prototype, _getBaseContainerClass());
 
 /**
  * @todo implement spriteContainer! It should be more efficient when using spritesheets. Only issue was that minified
@@ -113,7 +51,7 @@ import extend from '../../../assets/lib/createjs/utils/extend';
 import promote from '../../../assets/lib/createjs/utils/promote';
 import SpriteContainer from '../../../assets/lib/easeljs/SpriteContainer/SpriteContainer';
 
-export class Map_spiteLayer extends createjs.SpriteContainer {
+export class Map_spriteLayer extends createjs.SpriteContainer {
   /**
    * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
@@ -137,67 +75,76 @@ export class Map_spiteLayer extends createjs.SpriteContainer {
     this.mouseChildren = false;
     this.mouseEnabled = false;
   }
-  /** setter and getter
-   * @param {Boolean} status If provided sets the caching status otherwise returns the current status */
-  cacheEnabled(status) {
-    if(status !== undefined) {
-      this._cacheEnabled = status;
-    }
+}
 
-    return this._cacheEnabled;
-  }
-  /** Move layer
-   * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e.
-   { x: 5, y: 0 }
-   @return this layer instance */
-  move(coordinates) {
-    if (this.movable) {
-      this.x += coordinates.x;
-      this.y += coordinates.y;
-      this.drawThisChild = true;
-    }
+Object.assign(Map_spriteLayer.prototype, _getBaseContainerClass());
 
-    return this;
-  }
-  getChildNamed(name) {
-    if (this.children[0] instanceof createjs.Container) {
-      for (let child of this.children) {
-        if (child.name.toLowerCase() === name.toLowerCase()) {
-          return child;
-        }
-      }
-    }
-    return false;
-  }
-  setScale(amount) {
-    this.scaleX = amount;
-    this.scaleY = amount;
+function _getBaseContainerClass() {
+	return {
+		setCache(status) {
+			if(status) {
+				this._cacheEnabled = true;
+			} else {
+				this._cacheEnabled = false;
+			}
 
-    return amount;
-  }
-  getScale() {
-    return this.scaleX;
-  }
-  getUIObjects() {
-    return _UIObjects;
-  }
-  emptyUIObjects() {
-    _UIObjects.map(obj => {
-      this.removeChild(obj);
-      obj = null;
-    });
+			return this._cacheEnabled;
+		},
+		getCache(status) {
+			return this._cacheEnabled;
+		},
+		/** Move layer
+     * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
+   	 @return this layer instance */
+		move(coordinates) {
+			if (this.movable) {
+				this.x += coordinates.x;
+				this.y += coordinates.y;
+				this.drawThisChild = true;
+			}
 
-    return _UIObjects;
-  }
-  addUIObjects(objects) {
-    _UIObjects = _UIObjects || [];
-    if(Array.isArray(objects)) {
-      this.addChild.apply(this, objects);
-    } else {
-      this.addChild( objects );
-    }
-    _UIObjects.push( objects );
+			return this;
+		},
+		getChildNamed(name) {
+			if (this.children[0] instanceof createjs.Container) {
+				for (let child of this.children) {
+					if (child.name.toLowerCase() === name.toLowerCase()) {
+						return child;
+					}
+				}
+			}
+			return false;
+		},
+		setScale(amount) {
+			this.scaleX = amount;
+			this.scaleY = amount;
 
-    return _UIObjects;
-  }
+			return amount;
+		},
+		getScale() {
+			return this.scaleX;
+		},
+		getUIObjects() {
+			return _UIObjects;
+		},
+		emptyUIObjects() {
+			_UIObjects.map(obj => {
+				this.removeChild(obj);
+				obj = null;
+			});
+
+			return _UIObjects;
+		},
+		addUIObjects(objects) {
+			_UIObjects = _UIObjects || [];
+			if(Array.isArray(objects)) {
+				this.addChild.apply(this, objects);
+			} else {
+				this.addChild( objects );
+			}
+			_UIObjects.push( objects );
+
+			return _UIObjects;
+		}
+	};
 }

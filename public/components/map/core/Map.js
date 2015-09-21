@@ -108,9 +108,7 @@ export class Map {
   }
   /** All parameters are passed to Map_layer constructor
    * @return created Map_layer instance */
-  addLayer(name, subContainers, coord) {
-    var layer = new Map_layer(name, subContainers, coord);
-
+  addLayer(layer) {
     _movableLayer.addChild(layer);
 
     return layer;

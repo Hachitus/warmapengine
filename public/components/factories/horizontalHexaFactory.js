@@ -8,6 +8,7 @@
 
 /* ====== Own module imports ====== */
 import { Map } from '../map/core/Map';
+import { Map_layer, Map_spriteLayer } from '/components/map/core/Map_layer';
 import { Object_terrain } from '../map/extensions/hexagons/object/Object_terrain_hexa';
 import { Object_unit } from '../map/extensions/hexagons/object/Object_unit_hexa';
 import { spritesheetList } from '../map/core/spritesheetList';
@@ -17,9 +18,14 @@ import { UI } from '../map/core/UI';
 import { UI_default } from "../map/UIs/default/default.js";
 import { eventListeners } from '../map/core/eventlisteners';
 
+/***** CONFIG. Set correct classes to use *****/
 var functionsInObj = {
   Object_terrain,
   Object_unit
+};
+var layers = {
+  Map_layer,
+  Map_spriteLayer
 };
 
 /* ===== EXPORT ===== */
@@ -51,7 +57,8 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
     var thisLayer;
 
     try {
-      thisLayer = map.addLayer( layerData.name, layerData.coord );
+			thisLayer = new layers[layerData.type](layerData.name, layerData.coord);
+			map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
         x: 0,
         y: 0,

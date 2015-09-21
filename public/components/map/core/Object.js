@@ -16,7 +16,9 @@ export class Object_sprite extends createjs.Sprite {
   constructor(coords, data,  spritesheet, currentFrameNumber, throwShadowOptions) {
     super(spritesheet);
 
-    this.name = "Objects_sprite_" + this.id;
+    /* This seems not to be set as true in this version of easeljs. So we set it manually. Not sure does it introduce some bugs */
+		this._spritestage_compatibility = true;
+		this.name = "Objects_sprite_" + this.id;
     this.type = "None";
     this.highlightable = true;
     this.selectable = true;

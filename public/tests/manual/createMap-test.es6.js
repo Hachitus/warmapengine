@@ -44,9 +44,8 @@ window.initMap = function () {
 			gameData.pluginsToActivate.map.map(plugin => {
 				promises.push(System.import(plugin));
 			});
-			console.log("1", promises);
+		
 			Promise.all(promises).then(activetablePlugins => {
-				console.log("2",activetablePlugins);
       	map.init( activetablePlugins, gameData.mapSize, undefined );
 			});
     });

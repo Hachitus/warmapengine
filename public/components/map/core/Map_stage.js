@@ -15,10 +15,13 @@ export class Map_stage extends createjs.Stage {
   constructor(name, canvas, stageBounds) {
     if(!canvas) {
       throw new Error(Map_stage.constructor.name + " needs canvas!");
+    } else if(typeof canvas === "string") {
+      canvas = document.querySelector(canvas);
     }
 
     super(canvas);
 
+		/* this.canvas = canvas; // Provided by the parent module */
     this._cacheEnabled = true;
     this.name = "" + name; // For debugging AND getting children by name. Shows up in toString
     /* createjs / super properties. Used also for controlling and optimizing the engine */

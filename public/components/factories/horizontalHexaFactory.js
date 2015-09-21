@@ -51,16 +51,7 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
     var thisLayer;
 
     try {
-      thisLayer = map.addLayer( layerData.name, false, layerData.coord );
-      /* OLD map.objectSelections[layerData.group] = new Quadtree({
-        x: 0,
-        y: 0,
-        width: map.mapSize.x,
-        height: map.mapSize.y
-      }, {
-        objects: 10,
-        levels: 6
-      }); */
+      thisLayer = map.addLayer( layerData.name, layerData.coord );
       objManager.addLayer(layerGroup, {
         x: 0,
         y: 0,

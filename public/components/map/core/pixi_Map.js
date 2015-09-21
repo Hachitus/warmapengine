@@ -50,8 +50,8 @@ export class Map {
     canvas.parentElement.replaceChild(_renderer.view, canvas);
     this.canvas = _renderer.view;
 
-    _staticLayer = new Map_layer("staticLayer", options.subContainers, options.startCoord, _renderer);
-    _movableLayer = new Map_layer("movableLayer", options.subContainers, options.startCoord);
+    _staticLayer = new Map_layer("staticLayer", options.startCoord, _renderer);
+    _movableLayer = new Map_layer("movableLayer", options.startCoord);
     _staticLayer.addChild(_movableLayer);
     this.plugins = new Set();
     this.mapSize = options.mapSize || { x:0, y:0 };
@@ -109,8 +109,8 @@ export class Map {
       return layer[attribute] === value;
     });
   }
-  createLayer(name, subContainers, coord) {
-    var layer = new Map_layer(name, subContainers, coord);
+  createLayer(name, coord) {
+    var layer = new Map_layer(name, coord);
 
     return layer;
   }

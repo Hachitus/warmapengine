@@ -72,7 +72,7 @@ export function createMap(canvasElement, datas) {
     var thisLayer;
 
     try {
-			thisLayer = new layers[layerData.type](layerData.name, false, layerData.coord);
+			thisLayer = new layers[layerData.type](layerData.name, layerData.coord);
 			map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
         x: 0,

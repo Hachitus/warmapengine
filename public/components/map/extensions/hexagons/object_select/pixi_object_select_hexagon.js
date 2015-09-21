@@ -1,4 +1,4 @@
-/*Calculate the coordinates of the center hexagon always and get objects based on the coordinates. For example with
+/* Calculate the coordinates of the center hexagon always and get objects based on the coordinates. For example with
   some method like getAllObjectsInHexagon.
 SO:
 We create a function for layers, like "map_utils_hexagon? -> getHexagonCoordsFromClick(x,y), getObjectsInHexagon(hexagon?)"

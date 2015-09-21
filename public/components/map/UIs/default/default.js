@@ -1,4 +1,4 @@
-/* jshint ignore:createjs */
+/* global createjs, PIXI */
 
 /** The simplest default UI implementation. Implement UI functionalities for:
  * showSelections
@@ -13,6 +13,8 @@
 import { templates } from './layout/templates';
 import { createCSSRules } from './layout/CSSRules';
 import { createVisibleHexagon } from '../../extensions/hexagons/utils/createHexagon';
+
+import { calcShortDiagonal, calcLongDiagonal } from '/components/map/extensions/hexagons/utils/hexagonMath';
 
 var _styleSheet = {};
 var cssClasses = {
@@ -231,7 +233,7 @@ function _selectionsInit(UILayer, objects) {
 function setupCreateHighlight(map) {
   return function createHighlight(object, movableLayer) {
     var radius = 47;
-    var container = new map.createLayer();
+    var container = new map.createLayer("UILayer");
     var circle;
     var easelCircleCoords = {
       x: Number(object.x),
@@ -246,8 +248,10 @@ function setupCreateHighlight(map) {
       //let positionOnMovable = object.toLocal(new PIXI.Point(0,0), movableLayer);
       let positionOnMovable = new PIXI.Point(0,0);
       circle = createPixiCircle(object, radius, positionOnMovable);
+			circle.x = calcShortDiagonal(radius) / 2;
+			circle.y = ( calcLongDiagonal(radius) / 2 ) + ( calcLongDiagonal(radius) / 4 );
     }
-
+		
     circle.alpha = 0.5;
     container.addChild(circle, object);
 

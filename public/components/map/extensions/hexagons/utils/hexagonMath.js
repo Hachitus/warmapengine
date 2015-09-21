@@ -15,7 +15,7 @@ export function calcShortDiagonal(value, type = "radius", precision = 3) {
 		answer = value * Math.sqrt(3);
 	}
 	
-	return answer.toFixed(precision);
+	return Number( answer.toFixed(precision) );
 }
 /** Calculates the hexagons:
  * outerDiameter
@@ -32,7 +32,7 @@ export function calcLongDiagonal(value, type = "radius", precision = 3) {
 		answer = value * 2;
 	}
 	
-	return answer.toFixed(precision);
+	return Number( answer.toFixed(precision) );
 }
 /** This is used, but might be considered for scrap, unless we want to calculate side from some other value */
 export function calcSide(value, type = "radius", precision = 3) {

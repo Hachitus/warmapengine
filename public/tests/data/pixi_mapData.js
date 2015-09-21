@@ -4,7 +4,7 @@ export let mapData = {
   startPoint: { x: 0, y: 0 },
   element: "#mapCanvas",
   layers: [{
-    type: "Map_spriteLayer",
+    type: "Map_layer",
     coord: { x: 0, y: 0 },
     name: "terrainLayer",
     group: "terrain", // For quadTrees
@@ -63,7 +63,7 @@ export let mapData = {
       }]
     }]
   },{
-    type: "Map_spriteLayer",
+    type: "Map_layer",
     coord: {
         "x": "0",
         "y": "0"

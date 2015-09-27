@@ -37,11 +37,11 @@ var layers = {
  * @param {Object} typeDataArg typeData. More specific data in data-folders test-datas.
 */
 
-export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
-  console.log("============================================")
-  var mapData = (typeof mapDataArg === "string") ? JSON.parse(mapDataArg) : mapDataArg;
-  var typeData = (typeof typeDataArg === "string") ? JSON.parse(typeDataArg) : typeDataArg;
-  var gameData = (typeof gameDataArg === "string") ? JSON.parse(gameDataArg) : gameDataArg;
+export function createMap(canvasElement, datas) {
+  console.log("============================================");
+  var mapData = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
+  var typeData = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
+  var gameData = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
   var map = new Map(canvasElement, { mapSize: gameData.mapSize });
   var dialog_selection = document.getElementById("selectionDialog");
   var defaultUI = new UI_default(dialog_selection);
@@ -95,12 +95,16 @@ export function createMap(canvasElement, gameDataArg, mapDataArg, typeDataArg) {
           throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
         }
 
-        let currentFrameNumber = objTypeData.image;
         let objData = {
           typeData: objTypeData,
           activeData: object.data
         };
-        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, spritesheet, currentFrameNumber, { radius: gameData.hexagonRadius } );
+				let objectOptions = {
+						spritesheet,
+						currentFrame: objTypeData.image,
+						radius: gameData.hexagonRadius
+					};
+        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
         objManager.addObject(
           layerGroup,
           {

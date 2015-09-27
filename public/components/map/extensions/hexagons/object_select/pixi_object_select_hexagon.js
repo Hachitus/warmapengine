@@ -1,3 +1,5 @@
+/* global PIXI */
+
 /* Calculate the coordinates of the center hexagon always and get objects based on the coordinates. For example with
   some method like getAllObjectsInHexagon.
 SO:
@@ -13,7 +15,6 @@ HOW we do the whole organizational stuff?
 
 'use strict';
 
-//import { map_coords_horizontalHex } from '../coordinates/Map_coords_horizontalHex';
 import { setupHexagonClick } from '../eventListeners/select';
 import { UI } from '../../../core/UI';
 
@@ -39,7 +40,8 @@ export let object_select = (function object_select_hexagon() {
 
   return scope;
 
-  function getObjectsForMap(clickCoords, group) {
+  function getObjectsForMap(clickCoords = { x: 0, y: 0 }, group) {
+		/* Filter objects based on quadtree and then based on possible group provided */
     var objects = {};
 
     objects[group] = map.objectManager.retrieve(group, clickCoords);
@@ -61,7 +63,7 @@ export let object_select = (function object_select_hexagon() {
    * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
    * @param {Map} map - The Map class object
    */
-  function _startClickListener( map ) {
+  function _startClickListener(map) {
     var singletonUI = UI();
 
     return setupHexagonClick(map, singletonUI.showSelections);

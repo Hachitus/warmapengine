@@ -1,4 +1,4 @@
-/* global PIXI, System */
+/* global PIXI, System, alert */
 
 'use strict';
 /* ====== Library imports ====== */
@@ -14,7 +14,7 @@ import { createMap } from '../../components/factories/horizontalHexaFactory';
 import { gameData } from '../../tests/data/gameData';
 import { typeData } from '../../tests/data/typeData';
 import { mapData } from '../../tests/data/mapData';
-import { preload } from '../../components/preloading/preloading';
+import { Preload } from '../../components/preloading/preloading';
 
 import { environmentDetection } from '../../components/map/core/utils/utils';
 if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgent()) {
@@ -23,36 +23,39 @@ if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgen
 
 window.initMap = function () {
   var canvasElement = document.getElementById("mapCanvas");
-  var map;
+  var map = {};
+	var preload;
 
-  map = createMap(canvasElement, gameData, mapData, typeData);
+  preload = new Preload( "/assets/img/map/", { crossOrigin: false } );
+  preload.add("testHexagons/pixi_testHexagonSpritesheet.json");
+  preload.add("units/testHexagonUnits.json");
 
-  let prel = new preload( false );
-  prel.setErrorHandler( preloadErrorHandler );
-    //.setProgressHandler( progressHandler )
-  prel.loadManifest([ {
-    id: "terrain_spritesheet",
-    src:"http://warmapengine.level7.fi/assets/img/map/testHexagons/testHexagonSpritesheet.png"
-  },{
-    id: "unit_spritesheet",
-    src:"http://warmapengine.level7.fi/assets/img/map/amplio2/units.png"
-  }]);
-  prel.resolveOnComplete()
-    .then(function() {
-			var promises = [];
+	preload.setErrorHandler(function(e) {
+		console.log("preloader error:", e);
+	});
+	preload.setProgressHandler(function(progress) {
+		console.log("progressing" + progress);
+	});
+	
+	preload.resolveOnComplete().then(onComplete);
 
-			gameData.pluginsToActivate.map.map(plugin => {
-				promises.push(System.import(plugin));
-			});
+  function onComplete() {
+		var promises = [];
 		
-			Promise.all(promises).then(activetablePlugins => {
-      	map.init( activetablePlugins, gameData.mapSize, undefined );
-			});
-    });
+    map = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
+		
+		gameData.pluginsToActivate.map.map(plugin => {
+			promises.push(System.import(plugin));
+		});
+		
+		Promise.all(promises).then(activetablePlugins => {
+			map.init( activetablePlugins, gameData.mapSize, undefined );
+		});
+  }
 
   return map;
-
-    /* ====== private functions, or to be moved elsewhere ====== */
+	
+	/* ====== private functions, or to be moved elsewhere ====== */
   function preloadErrorHandler(err) {
     console.log("PRELOADER ERROR", err );
   }

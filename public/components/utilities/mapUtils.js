@@ -1,14 +1,10 @@
 'use strict';
 
 export var drawShapes = (function() {
-  var scope = {};
-
-  scope.drawArrow = {
+  return {
     normal: drawArrow,
     arced: drawArcedArrow
   };
-
-  return scope;
 
   /** =============== Functions for drawing arrows ================ */
 
@@ -243,7 +239,7 @@ export var drawShapes = (function() {
         }
         drawArrow( graphics, sx, sy, destx, desty, style, 2, angle, d );
      }
-  };
+  }
   /* =============================== */
 })();
 

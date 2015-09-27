@@ -1,3 +1,4 @@
+/* global PIXI */
 'use strict';
 
 /** Factory where we construct a horizontal hexagon map for test and development purposes
@@ -39,7 +40,7 @@ var layers = {
 */
 
 export function createMap(canvasElement, datas) {
-  console.log("============================================")
+  console.log("============================================");
   var mapData = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
   var typeData = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
   var gameData = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
@@ -109,7 +110,11 @@ export function createMap(canvasElement, datas) {
           typeData: objTypeData,
           activeData: object.data
         };
-        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, currentFrame, { radius: gameData.hexagonRadius } );
+				let objectOptions = {
+						currentFrame,
+						radius: gameData.hexagonRadius
+					};
+        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
         objManager.addObject(
           layerGroup,
           {

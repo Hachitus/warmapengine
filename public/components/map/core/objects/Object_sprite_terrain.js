@@ -6,8 +6,12 @@
 import { Object_sprite } from '../Object';
 
 export class Object_sprite_terrain extends Object_sprite {
-  constructor(coords, data, spriteSheet, currFrameNumber, throwShadowOptions) {
-    super(coords, data, spriteSheet, currFrameNumber, throwShadowOptions);
+	/**
+	 * @param {x: Number, y: Number} coords Coordinates for the object relative to it's parent
+	 * @param {object} data This units data
+	 * @param {object} options other specific options for constructing this terrain */
+  constructor(coords, data, options) {
+    super(coords, data, options);
 
     this.name = "DefaultTerrainObject";
     this.type = "terrain";

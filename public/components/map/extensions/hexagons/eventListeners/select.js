@@ -10,6 +10,11 @@ import { mouseUtils } from '../../../core/utils/utils';
 var eventlisteners;
 
 export function setupHexagonClick(map, callback) {
+	/********** Required **********/
+  if(!map || !callback) {
+    throw new Error("eventlisteners initialization require map callbacks and callback as arguments");
+  }
+
   /* Singleton should have been instantiated before, we only retrieve it with 0 params! */
   eventlisteners = eventListenerMod();
 

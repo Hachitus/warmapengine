@@ -1,6 +1,6 @@
 'use strict';
 
-/* global Hammer, createjs */
+/* global Hammer, Hamster, createjs */
 
 /**
  * Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for
@@ -19,15 +19,21 @@ var singletonScope;
    select: function() {},
    zoom: function() {}
  }*/
-export let eventListeners = function eventListenerModule(map, canvasElement) {
+export let eventListeners = function eventListenerModule(map, canvasElement = document.getElementsByTagName("canvas")[0]) {
   if(singletonScope) {
     return singletonScope;
   }
+	/********** Required **********/
   if(!map || !canvasElement) {
     throw new Error("eventlisteners initialization require map callbacks and canvas element as arguments");
   }
-
+	
   var mapCBs = map.eventCBs;
+	var hammer;
+	
+	if(isMobileSite()) {
+  	hammer = new Hammer.Manager(canvasElement);
+	}
 
   singletonScope = {
     states: {}
@@ -49,11 +55,11 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
 
     return mapCBs.fullscreen;
   };
-  singletonScope.toggleZoomListener = function toggleZoomListener() {
+  singletonScope.toggleZoomListener = function toggleZoomListener() {		
     if(singletonScope.states.zoom !== true) {
       if(isMobileSite()) {
-        var hammer    = new Hammer.Manager(canvasElement);
-        var pinch     = new Hammer.Pinch();
+        hammer = new Hammer.Manager(canvasElement);
+        var pinch = new Hammer.Pinch();
         hammer.add(pinch);
         hammer.on("pinch", mapCBs.zoom);
       } else {
@@ -77,7 +83,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
   singletonScope.toggleDragListener = function toggleDragListener() {
     if(singletonScope.states.drag !== true) {
       if(isMobileSite()) {
-        var hammer = new Hammer.Manager(canvasElement);
+        hammer = new Hammer.Manager(canvasElement);
         var pan = new Hammer.Pan({
           pointers: 1,
           threshold: 5,
@@ -104,8 +110,8 @@ export let eventListeners = function eventListenerModule(map, canvasElement) {
   singletonScope.toggleSelectListener = function toggleSelectListener() {
     if(singletonScope.states.select !== true) {
       if(isMobileSite()) {
-        var hammer    = new Hammer.Manager(canvasElement);
-        var tap     = new Hammer.Tap();
+        hammer = new Hammer.Manager(canvasElement);
+        var tap = new Hammer.Tap();
         hammer.add(tap);
         hammer.on("tap", mapCBs.select);
       } else {

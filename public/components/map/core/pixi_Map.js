@@ -21,7 +21,7 @@
 import { Map_layer } from '/components/map/core/pixi_Map_layer';
 import { resizeUtils, environmentDetection } from './utils/utils';
 import { eventListeners } from './eventlisteners';
-import { ObjectManager } from './pixi_ObjectManager';
+import { ObjectManager } from './ObjectManager';
 
 var _drawMapOnNextTick = false;
 var eventlisteners, _staticLayer, _movableLayer, _renderer;
@@ -34,27 +34,32 @@ export class Map {
    * @return Map instance
 
    @todo, set default values for given and required options */
-  constructor(canvas, options = { bounds: {}, renderer: {} }) {
+  constructor(canvas, options = {mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, renderer: {} }) {		
     if(!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }
+		
+		var { mapSize, startCoord, bounds, renderer } = options;
+		
     if(typeof canvas === "string") {
       canvas = document.querySelector(canvas);
     } else {
       canvas = canvas;
     }
 
-    _renderer = PIXI.autoDetectRenderer(options.bounds.width, options.bounds.height, options.renderer);
+    _renderer = PIXI.autoDetectRenderer(bounds.width, bounds.height, renderer);
     /* We handle all the events ourselves through addEventListeners-method on canvas, so destroy pixi native method */
     _renderer.plugins.interaction.destroy();
     canvas.parentElement.replaceChild(_renderer.view, canvas);
     this.canvas = _renderer.view;
 
-    _staticLayer = new Map_layer("staticLayer", options.startCoord, _renderer);
-    _movableLayer = new Map_layer("movableLayer", options.startCoord);
+    _staticLayer = new Map_layer("staticLayer", { x: 0, y: 0 }, _renderer);
+    _movableLayer = new Map_layer("movableLayer", startCoord);
     _staticLayer.addChild(_movableLayer);
     this.plugins = new Set();
-    this.mapSize = options.mapSize || { x:0, y:0 };
+    this.mapSize = mapSize;
+    /* Define event callback here!
+		 * @todo I think this should be organized another way? */
     this.eventCBs = {
       fullSize: resizeUtils.setToFullSize(this.canvas.getContext("2d")),
       fullscreen: resizeUtils.toggleFullScreen,
@@ -64,7 +69,8 @@ export class Map {
     };
     this.isFullsize = false;
     this._mapInMove = false;
-    this.objectManager = new ObjectManager(_renderer); // Fill this with quadtrees or such
+		let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
+    this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
 
     this.environment = environmentDetection.isMobile() ? "mobile" : "desktop";
   }
@@ -75,12 +81,12 @@ export class Map {
    * @param {Function} tickCB - callback function for tick. Tick callback is initiated in every frame. So map draws happen
    * during ticks
    * @return the current map instance */
-  init(plugins, coord, tickCB) {
+  init(plugins = [], coord = { x: 0, y: 0 }, tickCB) {
     this.setFullsize();
 
     eventlisteners = eventListeners(this, this.canvas);
 
-    if (plugins) {
+    if (plugins.length) {
       this.activatePlugins(plugins);
     }
 
@@ -109,7 +115,7 @@ export class Map {
       return layer[attribute] === value;
     });
   }
-  createLayer(name, coord) {
+  createLayer(name = "", coord = { x: 0, y: 0 }) {
     var layer = new Map_layer(name, coord);
 
     return layer;
@@ -136,10 +142,10 @@ export class Map {
    * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
    * @return this map instance */
-  moveMap(coordinates) {
+  moveMap(coord = { x: 0, y: 0 }) {
     var realCoordinates = {
-      x: coordinates.x / _staticLayer.getScale(),
-      y: coordinates.y / _staticLayer.getScale()
+      x: coord.x / _staticLayer.getScale(),
+      y: coord.y / _staticLayer.getScale()
     };
     _movableLayer.move(realCoordinates);
     this.drawOnNextTick();
@@ -223,7 +229,7 @@ export class Map {
 
     this.isFullsize = true;
   }
-  setEnvironment(env) {
+  setEnvironment(env = "desktop") {
     this.environment = env;
   }
   /** @return { x: Number, y: Number }, current coordinates for the map */
@@ -266,10 +272,10 @@ export class Map {
    * Default uses quadtree
    * @param { x: Number, y: Number } coordinates to search from
    * @param { String } type type of the objects to search for */
-  addObjectsForSelection(coordinates, type, object) { return "notImplementedYet"; }
-  removeObjectsForSelection(coordinates, type, object) { return "notImplementedYet"; }
-  getObjectsUnderPoint(coordinates, type) { return "notImplementedYet"; /* Implemented with a plugin */ }
-  getObjectsUnderShape(coordinates, shape, type) { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
+  addObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet"; }
+  removeObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet"; }
+  getObjectsUnderPoint(coord = { x: 0, y: 0 }, type) { return "notImplementedYet"; /* Implemented with a plugin */ }
+  getObjectsUnderShape(coord = { x: 0, y: 0 }, shape, type) { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
 }
 
 /** ===== Private functions ===== */

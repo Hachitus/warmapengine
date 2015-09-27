@@ -15,8 +15,8 @@
   <!-- ========== JASMINE LIBRARY END ========== -->
 
   <!-- ========== OTHER LIBRARIES ========== -->
-  <script src="/assets/lib/es6-module-loader/es6-module-loader.js"></script>
-  <script src="/assets/lib/webcomponents/webcomponents.min.js"></script>
+	<script src="/jspm_packages/system.js"></script>
+	<script src="/config.js"></script>
 
   <!-- include source files here... -->
 
@@ -33,7 +33,10 @@
   </dialog>
 
   <!-- include spec files here... -->
-  <script src="/tests/spec/map-spec.js"></script>
-  <script>testMap();</script>
+  <script src="/tests/unitTests/mapSpec.js">
+		System.import('/tests/manual/createMap-test.es6').then(function() {
+			window.testMap();
+		});
+	</script>
 </body>
 </html>

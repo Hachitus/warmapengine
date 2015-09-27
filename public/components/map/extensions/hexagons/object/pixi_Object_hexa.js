@@ -27,7 +27,6 @@ export var object_sprite_hexa = {
 
 function setAndGetShape(radius) {
   if (!shape) {
-    /* x and y are reversed, since this is horizontal hexagon and calculations are for vertical */
     shape = createHexagon(radius);
   }
 

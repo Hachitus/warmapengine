@@ -1,11 +1,13 @@
+/* global createjs */
+
 'use strict';
 
 /** The actual objects used on the map (suchs as terrain and units), under stages and containers.
-@param {createjs.Point} coords - the coordinate where the object is located at
-@param {} data - objects data, that will be used in the game. It will not actually be mainly used in graphical
+@param {x: Number, y: Number} coords - the coordinate where the object is located at, relative to it's parent
+@param {Object} data - objects data, that will be used in the game. It will not actually be mainly used in graphical
 but rather things like unit-data and city-data presentations etc.
 @param {createjs.SpriteSheet} spriteSheet
-@param {Int] currFrameNumber - the current frames number. This is basically the initial image, we can change it later
+@param {Integer} currentFrame - the current frames number. This is basically the initial image, we can change it later
 for animation or such
 
 All of the objects need to have same argumentAPI for creating objects: coords, data, imageData */
@@ -13,8 +15,8 @@ All of the objects need to have same argumentAPI for creating objects: coords, d
 var extensions = [];
 
 export class Object_sprite extends createjs.Sprite {
-  constructor(coords, data,  spritesheet, currentFrameNumber, throwShadowOptions) {
-    super(spritesheet);
+  constructor(coords, data, options) {
+    super(options.spritesheet);
 
     /* This seems not to be set as true in this version of easeljs. So we set it manually. Not sure does it introduce some bugs */
 		this._spritestage_compatibility = true;
@@ -24,11 +26,11 @@ export class Object_sprite extends createjs.Sprite {
     this.selectable = true;
     /* Set data for the object next */
     this.data = data || {};
-    this.currFrameNumber = currentFrameNumber;
+    this.currFrameNumber = options.currentFrame;
     /* Execute initial draw function */
     this.innerDraw(coords.x, coords.y);
     /* createjs / super properties. Used also for controlling and optimizing the engine */
-    this.setupShadow(throwShadowOptions);
+    this.setupShadow(options.throwShadowOptions);
 
     this.tickEnabled = false;
     this.mouseEnabled = false;

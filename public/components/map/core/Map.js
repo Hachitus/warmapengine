@@ -1,3 +1,7 @@
+/* global createjs */
+
+'use strict';
+
 /** Map is the main class for constructing 2D map for strategy games
  *
  * Map is instantiated and then initialized with init-method.
@@ -12,8 +16,6 @@
  * @require Plugins that use eventlistener by default, use pointer events polyfill, such as: https://github.com/jquery/PEP
  * Plugins and eventlistener can be overriden, but they user pointer events by default (either the browser must support
  * them or use polyfill) */
-
-'use strict';
 
 /* ====== Own module imports ====== */
 import { resizeUtils, environmentDetection } from './utils/utils';
@@ -33,22 +35,27 @@ export class Map {
    * identifiers staying the same (like class and ID).
    * @param {Object} options - different options for the map to be given.
    * @return Map instance */
-  constructor(canvas, options = {}) {
+  constructor( canvas, options = {mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }} ) {
     if(!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }
-    this.canvas = canvas;
+		
+		var { mapSize, startCoord } = options;
+    this.canvas = canvas;		
+		
     _stage = new Map_stage("mainStage", canvas);
-    _staticLayer = new Map_layer("staticLayer", options.subContainers, options.startCoord);
+    _staticLayer = new Map_layer("staticLayer");
     _stage.addChild(_staticLayer);
-    _movableLayer = new Map_layer("movableLayer", options.subContainers, options.startCoord);
+    _movableLayer = new Map_layer("movableLayer", startCoord);
     _staticLayer.addChild(_movableLayer);
     this.plugins = new Set();
     /* Activate the map zoom and map drag core plugins */
     this.defaultPlugins = [map_zoom, map_drag];
-    this.mapSize = options.mapSize || { x:0, y:0 };
+    this.mapSize = mapSize;
     this.activeTickCB = false;
-    this.eventCBs = {
+    /* Define event callback here!
+		 * @todo I think this should be organized another way? */
+		this.eventCBs = {
       fullSize: resizeUtils.setToFullSize(canvas.getContext("2d")),
       fullscreen: resizeUtils.toggleFullScreen,
       select: null,
@@ -71,8 +78,8 @@ export class Map {
    * @param {Function} tickCB - callback function for tick. Tick callback is initiated in every frame. So map draws happen
    * during ticks
    * @return the current map instance */
-  init(plugins, coord, tickCB) {
-    if (plugins) {
+  init(plugins = [], coord = { x: 0, y: 0 }, tickCB = undefined) {
+    if (plugins.length) {
       this.activatePlugins(plugins);
     }
 
@@ -101,8 +108,8 @@ export class Map {
       return layer[attribute] === value;
     });
   }
-  createLayer(name, subContainers, coord) {
-    var layer = new Map_layer(name, subContainers, coord);
+  createLayer(name = "", coord = { x: 0, y: 0 } ) {
+    var layer = new Map_layer(name, coord);
 
     return layer;
   }
@@ -128,11 +135,12 @@ export class Map {
    * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
    * @return this map instance */
-  moveMap(coordinates) {
+  moveMap(coord = { x: 0, y: 0 }) {
     var realCoordinates = {
-      x: coordinates.x / _staticLayer.getScale(),
-      y: coordinates.y / _staticLayer.getScale()
+      x: coord.x / _staticLayer.getScale(),
+      y: coord.y / _staticLayer.getScale()
     };
+		
     _movableLayer.move(realCoordinates);
     this.drawOnNextTick();
 
@@ -226,7 +234,7 @@ export class Map {
     //this.prototype[property] = value;
     Map.prototype[property] = value;
   }
-  setEnvironment(env) {
+  setEnvironment(env = "desktop" /* or mobile */) {
     this.environment = env;
   }
   /** @return { x: Number, y: Number }, current coordinates for the map */
@@ -266,10 +274,10 @@ export class Map {
    * Default uses quadtree
    * @param { x: Number, y: Number } coordinates to search from
    * @param { String } type type of the objects to search for */
-  addObjectsForSelection(coordinates, type, object) { return "notImplementedYet. Activate with plugin"; }
-  removeObjectsForSelection(coordinates, type, object) { return "notImplementedYet. Activate with plugin"; }
-  getObjectsUnderPoint(coordinates, type) { return "notImplementedYet. Activate with plugin"; /* Implemented with a plugin */ }
-  getObjectsUnderShape(coordinates, shape, type) { return "notImplementedYet. Activate with plugin"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
+  addObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet. Activate with plugin"; }
+  removeObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet. Activate with plugin"; }
+  getObjectsUnderPoint(coord = { x: 0, y: 0 }, type) { return "notImplementedYet. Activate with plugin"; /* Implemented with a plugin */ }
+  getObjectsUnderShape(coord = { x: 0, y: 0 }, shape, type) { return "notImplementedYet. Activate with plugin"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
 }
 
 /** ===== Private functions ===== */

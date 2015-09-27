@@ -120,7 +120,7 @@ export default {
 ************************************/
 /* Modified From java example: http://blog.ruslans.com/2011/02/hexagonal-grid-math.html
  * This is supposed to calculate the correct hexagonal index, that represents the hexagon the player clicked. */
-export function setCellByPoint(radius, x, y) {
+export function setCellByPoint(radius, x = 0, y = 0) {
   var HEIGHT = radius * Math.sqrt(3);
   var SIDE = radius * 3 / 2;
 
@@ -145,7 +145,7 @@ export function setCellByPoint(radius, x, y) {
 }
 
 /* From the x,y-coordinates calculates the closest hexagons center coordinates */
-export function toHexaCenterCoord(hexRadius, x, y) {
+export function toHexaCenterCoord(hexRadius, x = 0, y = 0) {
   var hexaSize = getHexaSize(hexRadius);
   var radius = hexaSize.radius;
   var halfHexaSize = {

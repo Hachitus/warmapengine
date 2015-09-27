@@ -82,7 +82,7 @@ export let map_zoom = (function map_zoom() {
 		var zoomLayer = this.getZoomLayer();
 		var presentScale = zoomLayer.getScale();
 		
-		return _zoom(zoomLayer, presentScale, Math.abs(amount) || zoomModifier);
+		return _zoom(zoomLayer, presentScale, Math.abs(amount) || zoomModifier, true);
   }
   /** Zoom out of the map
    * @param {Number} amount how much map is zoomed out */
@@ -202,10 +202,10 @@ export let map_zoom = (function map_zoom() {
 
     return realMovement;
   }
-	function _zoom(zoomLayer, presentScale, amount) {
+	function _zoom(zoomLayer, presentScale, amount, isZoomIn) {
 		var newScale;
 
-    if( !_isOverZoomLimit(presentScale, true) ) {
+    if( !_isOverZoomLimit(presentScale, isZoomIn) ) {
       newScale = zoomLayer.setScale( amount ? presentScale + amount : presentScale + zoomModifier );
     }
 

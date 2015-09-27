@@ -1,4 +1,4 @@
-/* global PIXI, System */
+/* global PIXI, System, alert */
 
 'use strict';
 /* ====== Library imports ====== */
@@ -14,7 +14,7 @@ import { createMap } from '../../components/factories/pixi_horizontalHexaFactory
 import { gameData } from '../../tests/data/pixi_gameData';
 import { typeData } from '../../tests/data/pixi_typeData';
 import { mapData } from '../../tests/data/pixi_mapData';
-//import { preload } from '../../components/preloading/preloading';
+import { Preload } from '../../components/preloading/preloading';
 
 import { environmentDetection } from '../../components/map/core/utils/utils';
 if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgent()) {
@@ -23,19 +23,21 @@ if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgen
 
 window.initMap = function () {
   var canvasElement = document.getElementById("mapCanvas");
-  var map;
+  var map = {};
+	var preload;
 
-  /** @todo MOVE the preloader to it's destined file: preloader. */
-  var loader = PIXI.loader;
+  preload = new Preload( "/assets/img/map/", { crossOrigin: false } );
+  preload.add("testHexagons/pixi_testHexagonSpritesheet.json");
+  preload.add("units/testHexagonUnits.json");
 
-  loader.baseUrl = "/assets/img/map/";
-  loader.add("testHexagons/pixi_testHexagonSpritesheet.json");
-  loader.add("units/testHexagonUnits.json");
-
-  loader.once('complete',onComplete);
-
-  loader.load();
-  //PIXI.loader.on("progress", loadProgressHandler);
+	preload.setErrorHandler(function(e) {
+		console.log("preloader error:", e);
+	});
+	preload.setProgressHandler(function(progress) {
+		console.log("progressing" + progress);
+	});
+	
+	preload.resolveOnComplete().then(onComplete);
 
   function onComplete() {
 		var promises = [];
@@ -52,4 +54,9 @@ window.initMap = function () {
   }
 
   return map;
+	
+	/* ====== private functions, or to be moved elsewhere ====== */
+  function preloadErrorHandler(err) {
+    console.log("PRELOADER ERROR", err );
+  }
 };

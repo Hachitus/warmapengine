@@ -1,4 +1,4 @@
-/*Calculate the coordinates of the center hexagon always and get objects based on the coordinates. For example with
+/* Calculate the coordinates of the center hexagon always and get objects based on the coordinates. For example with
   some method like getAllObjectsInHexagon.
 SO:
 We create a function for layers, like "map_utils_hexagon? -> getHexagonCoordsFromClick(x,y), getObjectsInHexagon(hexagon?)"
@@ -13,10 +13,8 @@ HOW we do the whole organizational stuff?
 
 'use strict';
 
-//import { map_coords_horizontalHex } from '../coordinates/Map_coords_horizontalHex';
 import { setupHexagonClick } from '../eventListeners/select';
 import { UI } from '../../../core/UI';
-import { hexaHitTest } from '../utils/hexagonMath';
 
 var _pluginName = "object_select";
 
@@ -40,7 +38,7 @@ export let object_select = (function object_select_hexagon() {
 
   return scope;
 
-  function getObjectsForMap(clickCoords, group) {
+  function getObjectsForMap(clickCoords = { x: 0, y: 0 }, group) {
     /* Filter objects based on quadtree and then based on possible group provided */
     var objects = {};
 

@@ -1,4 +1,4 @@
-[![GPLv3 Affero License](https://img.shields.io/github/license/Hachitus/warmapengine/apistatus.svg)]
+[![GPLv3 Affero License](http://img.shields.io/badge/license-LGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl.html)
 
 #Introduction
 2D strategy game engine for browsers. Project will move forward at its own phase. Rough estimation for the bare functionality 

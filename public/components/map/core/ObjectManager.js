@@ -13,13 +13,13 @@ export class ObjectManager {
 	 * @param {x:Number, y:Number} coords the coordinates which we want to hitTest
 	 * @param {x:Number, y:Number} size If we want to test rectangle, instead of just coordinates
 	 * @todo This should support collision testing better. Now it basically really works only with coordinates and rectangles */
-  retrieve(type, coords, size) {
+  retrieve(type, coord, size) {
     var quadtreeObjs, foundObjs;
 
-    quadtreeObjs = this.quadtrees[type].retrieve(coords, size);
+    quadtreeObjs = this.quadtrees[type].retrieve(coord, size);
 
     foundObjs = quadtreeObjs.filter(obj => {      
-      return this.hitTest ? this.hitTest(obj, coords) : true;
+      return this.hitTest ? this.hitTest(obj, coord) : true;
     });
 
     return foundObjs;
@@ -71,5 +71,5 @@ export class ObjectManager {
   }
 	/** hitTest is usually very important to have, but it needs to be implemented elsewhere (like in hexagon game, you have your own select 
 	 * module for it, that understands how the hit is detected from hexagons) */
-  hitTest(obj, coordinates, offsetCoords) { return "need to be implemented by another module"; }
+  hitTest(obj, coord, offsetCoords) { return "need to be implemented by another module"; }
 }

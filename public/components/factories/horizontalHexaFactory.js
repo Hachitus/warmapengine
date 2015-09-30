@@ -88,34 +88,42 @@ export function createMap(canvasElement, datas) {
       }
 
       objectGroup.objects.forEach( object => {
-        let objTypeData = typeData.objectData[spritesheetType][object.objType];
-
-        if(!objTypeData) {
+				var objTypeData, objData, objectOptions, currentFrame, newObject;
+				
+				objTypeData = typeData.objectData[spritesheetType][object.objType];
+				if(!objTypeData) {
           console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
           throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
         }
-
-        let objData = {
-          typeData: objTypeData,
-          activeData: object.data
-        };
-				let objectOptions = {
+				
+        try {				
+					objData = {
+						typeData: objTypeData,
+						activeData: object.data
+					};
+					objectOptions = {
 						spritesheet,
 						currentFrame: objTypeData.image,
 						radius: gameData.hexagonRadius
 					};
-        let newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
-        objManager.addObject(
-          layerGroup,
-          {
-            x: newObject.x,
-            y: newObject.y,
-            width: newObject.width,
-            height: newObject.height
-          },
-            newObject
-        );
-        thisLayer.addChild( newObject );
+
+					newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
+
+	        objManager.addObject(
+						layerGroup,
+						{
+							x: newObject.x,
+							y: newObject.y,
+							width: newObject.width,
+							height: newObject.height
+						},
+							newObject
+					);
+					
+					thisLayer.addChild( newObject );
+				} catch (e) {
+					console.log(e);
+				}
       });
     });
   });

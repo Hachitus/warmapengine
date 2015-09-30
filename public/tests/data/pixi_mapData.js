@@ -84,7 +84,8 @@ export let mapData = {
           "x": "41", "y": "70"
         },
         "data": {
-          "someCustomData": "true"
+          "playerID": 0,
+					"hp": 10
         },
         "lastSeenTurn":"1"
       }]

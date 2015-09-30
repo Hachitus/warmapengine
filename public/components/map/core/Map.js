@@ -84,8 +84,7 @@ export class Map {
     }
 
     if(coord) {
-      _movableLayer.x = coord.x;
-      _movableLayer.y = coord.y;
+      Object.assign(_movableLayer, coord);
     }
 
     this.drawOnNextTick();

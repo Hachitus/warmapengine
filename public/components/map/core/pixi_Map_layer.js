@@ -42,11 +42,10 @@ export class Map_spriteLayer extends PIXI.ParticleContainer {
    * otherwise too!
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
-  constructor(name, coord, renderer) {
+  constructor(name, coord = { x: 0, y: 0 }, renderer) {
     super();
 
-    this.x = coord ? ( coord.x || 0 ) : 0;
-    this.y = coord ? ( coord.y || 0 ) : 0;
+    Object.assign(this, coord);
     this.renderer = renderer;
     this._cacheEnabled = true;
     this.name = "" + name; // For debugging. Shows up in toString
@@ -91,10 +90,10 @@ function _getBaseContainerClass() {
 		/** Move layer
      * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
    	 * @return this layer instance */
-		move(coordinates) {
+		move(coord) {
 			if (this.movable) {
-				this.x += coordinates.x;
-				this.y += coordinates.y;
+				this.x += coord.x;
+				this.y += coord.y;
 				this.drawThisChild = true;
 			}
 

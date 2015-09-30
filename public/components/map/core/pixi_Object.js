@@ -12,9 +12,9 @@ for animation or such
 All of the objects need to have same argumentAPI for creating objects: coords, data, imageData */
 
 export class Object_sprite extends PIXI.Sprite {
-  constructor(coords = { x: 0, y: 0 }, data = {}, options = { currentFrame: {}, throwShadowOptions: false }) {
+  constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {}, throwShadowOptions: false }) {
 		var { currentFrame, throwShadowOptions } = options;
-		
+
     super(currentFrame);		
 		
     this.name = "Objects_sprite_" + this.id;
@@ -25,8 +25,8 @@ export class Object_sprite extends PIXI.Sprite {
     this.data = data;
     this.currentFrame = currentFrame;
     /* Execute initial draw function */
-    //this.innerDraw(coords.x, coords.y);
-    this.position.set(coords.x,  coords.y);
+    //this.innerDraw(coord.x, coord.y);
+    this.position.set(coord.x,  coord.y);
     /* createjs / super properties. Used also for controlling and optimizing the engine */
     this.setupShadow(throwShadowOptions);
 
@@ -61,7 +61,7 @@ export class Object_sprite extends PIXI.Sprite {
   }
   localToLocal(x, y, target) {
     var globalCoords = this.toGlobal( { x, y } );
-    var targetLocalCoords = target.toLocal( { x: globalCoords.x, y: globalCoords.y } );
+    var targetLocalCoords = target.toLocal( globalCoords );
 
     return targetLocalCoords;
   }

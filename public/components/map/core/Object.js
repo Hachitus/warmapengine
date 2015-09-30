@@ -15,7 +15,7 @@ All of the objects need to have same argumentAPI for creating objects: coords, d
 var extensions = [];
 
 export class Object_sprite extends createjs.Sprite {
-  constructor(coords, data, options) {
+  constructor(coord = { x: 0, y: 0 }, data, options) {
     super(options.spritesheet);
 
     /* This seems not to be set as true in this version of easeljs. So we set it manually. Not sure does it introduce some bugs */
@@ -28,7 +28,7 @@ export class Object_sprite extends createjs.Sprite {
     this.data = data || {};
     this.currFrameNumber = options.currentFrame;
     /* Execute initial draw function */
-    this.innerDraw(coords.x, coords.y);
+    this.innerDraw(coord.x, coord.y);
     /* createjs / super properties. Used also for controlling and optimizing the engine */
     this.setupShadow(options.throwShadowOptions);
 

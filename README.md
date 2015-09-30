@@ -1,3 +1,5 @@
+[![GPLv3 Affero License](https://img.shields.io/github/license/Hachitus/warmapengine/apistatus.svg)]
+
 #Introduction
 2D strategy game engine for browsers. Project will move forward at its own phase. Rough estimation for the bare functionality 
 of the engine is during 2015.

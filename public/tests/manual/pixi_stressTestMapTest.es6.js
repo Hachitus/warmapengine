@@ -32,8 +32,8 @@ var mapData = (function() {
 		layers: []
 	};
 	const MAPSIZE = {
-		x: 2000,
-		y: 3000
+		x: 20000,
+		y: 30000
 	};
 	const HEXASIZE = {
 		x: 41,
@@ -44,7 +44,7 @@ var mapData = (function() {
 		x: 82,
 		y: 94 * 0.75
 	};
-	var unitCount = 1000;
+	var unitCount = 10000;
 	var terrainTypeCount = 4;
 	var unitTypeCount = 56;
 	var objGroup, layerData;

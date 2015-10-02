@@ -76,16 +76,10 @@ function _getBaseContainerClass() {
 		/** layer caching. Not implemented yet
 		 * @todo Implement */
 		setCache(status) {
-			if(status) {
-				this._cacheEnabled = true;
-			} else {
-				this._cacheEnabled = false;
-			}
-
-			return this._cacheEnabled;
+			return this.cacheAsBitmap = status ? true : false;
 		},
 		getCache(status) {
-			return this._cacheEnabled;
+			return this.cacheAsBitmap;
 		},
 		/** Move layer
      * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }

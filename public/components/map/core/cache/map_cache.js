@@ -6,30 +6,26 @@
  * http://www.createjs.com/docs/easeljs/files/easeljs_display_DisplayObject.js.html#l1152
  */
 
+var _pluginName = "map_cache";
+
+export var pluginName = _pluginName;
+
 export let map_cache = (function map_cache() {
+  var cacheStatus = false;
   var scope = {};
 
   scope.init = function(map) {
-    return map;
+    map.setPrototype("setCache", setCacheMap);
+    map.setPrototype("getCache", getCacheMap);
   };
 
   return scope;
 
   /* ===== _createPrototypes ===== */
-  function _createPrototypes(mapObj) {
-//    layer.prototype("cacheLayer", _cacheLayer);
-//    layer.prototype("updateBounds", _updateBounds_layer);
+  function setCacheMap(status) {
+    return this.getMovableLayer().setCache(status ? true : false);
   }
-
-  function _updateBounds_layer(newChild) {
-    this.setBounds(newBounds);
-  }
-  function _cacheLayer() {
-    this.getBounds();
-    this.cache();
-  }
-  function _cacheStage() {
-    this.getBounds();
-    this.cache();
+  function getCacheMap() {
+    return this.getMovableLayer().getCache();
   }
 })();

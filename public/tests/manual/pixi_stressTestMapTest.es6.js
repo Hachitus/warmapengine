@@ -185,6 +185,9 @@ window.initMap = function () {
 		
 		Promise.all(promises).then(activetablePlugins => {
 			map.init( activetablePlugins, gameData.mapSize, undefined );
+			if(map.setCache) {
+				map.setCache(true);
+			}
 		});
   }
 

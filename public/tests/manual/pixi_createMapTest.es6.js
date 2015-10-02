@@ -50,6 +50,7 @@ window.initMap = function () {
 		
 		Promise.all(promises).then(activetablePlugins => {
 			map.init( activetablePlugins, gameData.mapSize, undefined );
+			map.setCache(true);
 		});
   }
 

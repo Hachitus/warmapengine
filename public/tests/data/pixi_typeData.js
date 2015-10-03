@@ -1,10 +1,10 @@
 export let typeData = {
   "graphicData": {
     "terrainBase":{
-      "json": "/assets/img/map/testHexagons/pixi_testHexagonSpritesheet.json"
+      "json": "/tests/testAssets/images/testHexagons/pixi_testHexagonSpritesheet.json"
     },
     "unit":{
-      "json": "/assets/img/map/units/testHexagonUnits.json"
+      "json": "/tests/testAssets/images/units/testHexagonUnits.json"
     }
   },
   "objectData": {

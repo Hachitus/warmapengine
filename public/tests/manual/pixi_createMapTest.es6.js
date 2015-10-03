@@ -26,9 +26,9 @@ window.initMap = function () {
   var map = {};
 	var preload;
 
-  preload = new Preload( "/assets/img/map/", { crossOrigin: false } );
-  preload.add("testHexagons/pixi_testHexagonSpritesheet.json");
-  preload.add("units/testHexagonUnits.json");
+  preload = new Preload( "", { crossOrigin: false } );
+  preload.add( typeData.graphicData.terrainBase.json );
+  preload.add( typeData.graphicData.unit.json );
 
 	preload.setErrorHandler(function(e) {
 		console.log("preloader error:", e);

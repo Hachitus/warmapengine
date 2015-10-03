@@ -31,9 +31,10 @@ var mapData = (function() {
 		element: "#mapCanvas",
 		layers: []
 	};
+	// If either is even 1 pixel bigger than this, gets all black
 	const MAPSIZE = {
-		x: 20000,
-		y: 30000
+		x: 8118,
+		y: 8107
 	};
 	const HEXASIZE = {
 		x: 41,
@@ -161,9 +162,9 @@ window.initMap = function () {
   var map = {};
 	var preload;
 
-  preload = new Preload( "/assets/img/map/", { crossOrigin: false } );
-  preload.add("testHexagons/pixi_testHexagonSpritesheet.json");
-  preload.add("units/testHexagonUnits.json");
+  preload = new Preload( "", { crossOrigin: false } );
+  preload.add( typeData.graphicData.terrainBase.json );
+  preload.add( typeData.graphicData.unit.json );
 
 	preload.setErrorHandler(function(e) {
 		console.log("preloader error:", e);

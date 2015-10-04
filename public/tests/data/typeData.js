@@ -8,11 +8,12 @@ export let typeData = {
     },
     "terrainBase":{
       "images":
-      ["/assets/img/map/testHexagons/testHexagonSpritesheet.png"],
+      ["/tests/testAssets/images/testHexagons/testHexagonSpritesheet.png"],
       "frames":[
         [0,0,82,94],[82,0,82,94],[164,0,82,94],[246,0,82,94]
       ],
-      "imageSize":[82,94]
+      "imageSize":[82,94],
+      "json": "/tests/testAssets/images/testHexagons/pixi_testHexagonSpritesheet.json"
     },
     "terrain":{
       "images":["/assets/img/map/amplio2/terrain1.png"],
@@ -52,8 +53,9 @@ export let typeData = {
       ]
     },
     "unit":{
-      "images":["/assets/img/map/units/testHexagonUnits.png"],
-      "frames":{"width":65,"height":52}
+      "images":["/tests/testAssets/images/units/units.png"],
+      "frames":{"width":65,"height":52},
+      "json": "/tests/testAssets/images/units/testHexagonUnits.json"
     }
   },
   "objectData": {

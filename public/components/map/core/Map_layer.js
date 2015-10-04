@@ -60,7 +60,7 @@ export class Map_spriteLayer extends createjs.SpriteContainer {
     super();
 
     Object.assign(this, coord);
-    this._cacheEnabled = true;
+    this._cacheEnabled = false;
     this.name = "" + name; // Used otherwise too, but good for debugging. Shows up in toString
     this.drawThisChild = true;
     this.movable = true;
@@ -83,8 +83,11 @@ function _getBaseContainerClass() {
 		 * @todo Implement */
 		setCache(status) {
 			if(status) {
+				let bounds = this.getBounds();
+				this.cache(bounds.x, bounds.y, bounds.width, bounds.height);
 				this._cacheEnabled = true;
 			} else {
+				this.uncache();
 				this._cacheEnabled = false;
 			}
 

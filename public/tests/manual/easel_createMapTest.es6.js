@@ -24,11 +24,14 @@ if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgen
 window.initMap = function () {
   var canvasElement = document.getElementById("mapCanvas");
   var map = {};
-	var preload;
+  var globalMap = {
+  	data: {}
+  };
+  var preload;
 
-  preload = new Preload( "/assets/img/map/", { crossOrigin: false } );
-  preload.add("testHexagons/pixi_testHexagonSpritesheet.json");
-  preload.add("units/testHexagonUnits.json");
+  preload = new Preload( "", { crossOrigin: false } );
+  preload.add( typeData.graphicData.terrainBase.json );
+  preload.add( typeData.graphicData.unit.json );
 
 	preload.setErrorHandler(function(e) {
 		console.log("preloader error:", e);
@@ -42,7 +45,7 @@ window.initMap = function () {
   function onComplete() {
 		var promises = [];
 		
-    map = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
+    map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
 		
 		gameData.pluginsToActivate.map.map(plugin => {
 			promises.push(System.import(plugin));
@@ -50,10 +53,13 @@ window.initMap = function () {
 		
 		Promise.all(promises).then(activetablePlugins => {
 			map.init( activetablePlugins, gameData.mapSize, undefined );
+			if(map.setCache) {
+				map.setCache(true);
+			}
 		});
   }
 
-  return map;
+  return globalMap;
 	
 	/* ====== private functions, or to be moved elsewhere ====== */
   function preloadErrorHandler(err) {

@@ -23,7 +23,7 @@ export class Map_layer extends PIXI.Container {
 
 	this.position = new PIXI.Point(coord.x, coord.y);
     this.renderer = renderer;
-    //this._cacheEnabled = true;
+    this._cacheEnabled = true;
     this.name = "" + name; // Used otherwise too, but good for debugging. Shows up in toString
     this.drawThisChild = true;
     this.movable = true;
@@ -73,13 +73,13 @@ Object.assign(Map_spriteLayer.prototype, _baseContainerClass);
 
 function _getBaseContainerClass() {
 	return {
-		/** layer caching. Not implemented yet
-		 * @todo Implement */
+		
 		setCache(status) {
-			return this.cacheAsBitmap = status ? true : false;
+			this._cacheEnabled = status ? true : false;
+			return this.cacheAsBitmap = this._cacheEnabled;
 		},
 		getCache(status) {
-			return this.cacheAsBitmap;
+			return this._cacheEnabled;
 		},
 		/** Move layer
      * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }

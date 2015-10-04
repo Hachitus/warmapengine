@@ -24,7 +24,10 @@ if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgen
 window.initMap = function () {
   var canvasElement = document.getElementById("mapCanvas");
   var map = {};
-	var preload;
+  var globalMap = {
+  	data: {}
+  };
+  var preload;
 
   preload = new Preload( "", { crossOrigin: false } );
   preload.add( typeData.graphicData.terrainBase.json );
@@ -42,7 +45,7 @@ window.initMap = function () {
   function onComplete() {
 		var promises = [];
 		
-    map = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
+    map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
 		
 		gameData.pluginsToActivate.map.map(plugin => {
 			promises.push(System.import(plugin));
@@ -50,11 +53,15 @@ window.initMap = function () {
 		
 		Promise.all(promises).then(activetablePlugins => {
 			map.init( activetablePlugins, gameData.mapSize, undefined );
-			map.setCache(true);
+			if(map.setCache) {
+				// There is an issue with cache. About worldTransform. If cache is on selecting units will not work atm. because
+				// world transform does not take coordinates, achors etc. into account correctly
+				//map.setCache(true);
+			}
 		});
   }
 
-  return map;
+  return globalMap;
 	
 	/* ====== private functions, or to be moved elsewhere ====== */
   function preloadErrorHandler(err) {

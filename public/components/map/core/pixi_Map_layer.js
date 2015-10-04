@@ -21,9 +21,9 @@ export class Map_layer extends PIXI.Container {
   constructor(name = "", coord = { x: 0, y: 0 }, renderer) {
     super();
 
-		this.position = new PIXI.Point(coord.x, coord.y);
+	this.position = new PIXI.Point(coord.x, coord.y);
     this.renderer = renderer;
-    this._cacheEnabled = true;
+    //this._cacheEnabled = true;
     this.name = "" + name; // Used otherwise too, but good for debugging. Shows up in toString
     this.drawThisChild = true;
     this.movable = true;
@@ -47,7 +47,7 @@ export class Map_spriteLayer extends PIXI.ParticleContainer {
 
     Object.assign(this, coord);
     this.renderer = renderer;
-    this._cacheEnabled = true;
+    //this._cacheEnabled = true;
     this.name = "" + name; // For debugging. Shows up in toString
     this.drawThisChild = true;
     this.movable = true;

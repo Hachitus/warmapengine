@@ -32,8 +32,11 @@ var mapData = (function() {
 		layers: []
 	};
 	// If either is even 1 pixel bigger than this, gets all black
+	/* works with:
+	x: 8118,
+	y: 8107*/
 	const MAPSIZE = {
-		x: 8118,
+		x: 8119,
 		y: 8107
 	};
 	const HEXASIZE = {

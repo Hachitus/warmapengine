@@ -39,7 +39,7 @@ export function setupHexagonClick(map, callback) {
       };
       var objects;
 
-      objects = map.getObjectsUnderPoint(globalCoords, "units");
+      objects = map.getObjectsUnderPoint(globalCoords, "unit");
 
       if (objects && objects.length > 0) {
         callback(objects);
@@ -60,7 +60,7 @@ function onMouseUp(map, callback) {
     var globalCoords = mouseUtils.getEventCoordsOnPage(e);
     var objects, leveledObjects;
 
-    objects = map.getObjectsUnderPoint(globalCoords, "units");
+    objects = map.getObjectsUnderPoint(globalCoords, "unit");
 
     leveledObjects = Object.keys(objects).map(objGroup => {
       return objects[objGroup];

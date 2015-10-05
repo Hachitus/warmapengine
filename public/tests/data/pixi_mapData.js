@@ -69,7 +69,7 @@ export let mapData = {
         "y": "0"
     },
     "name": "unitLayer",
-    group: "units", // For quadTrees
+    group: "unit", // For quadTrees
     "options": {
       "cache": "false"
     },

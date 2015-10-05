@@ -8,15 +8,15 @@
 /* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol os something missing: http://babeljs.io/docs/usage/polyfill/ */
 //require("babel/polyfill");
 
-import { createMap } from '../../components/factories/pixi_horizontalHexaFactory';
+import { createMap } from '/components/factories/pixi_horizontalHexaFactory';
 
 /* DATA FILES used for testing */
-import { gameData } from '../../tests/data/pixi_gameData';
-import { typeData } from '../../tests/data/pixi_typeData';
-import { mapData } from '../../tests/data/pixi_mapData';
-import { Preload } from '../../components/preloading/preloading';
+import { gameData } from '/tests/data/pixi_gameData';
+import { typeData } from '/tests/data/pixi_typeData';
+import { mapData } from '/tests/data/pixi_mapData';
+import { Preload } from '/components/preloading/preloading';
 
-import { environmentDetection } from '../../components/map/core/utils/utils';
+import { environmentDetection } from '/components/map/core/utils/utils';
 if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgent()) {
   alert("You seem to be using mobile device, I suggest you use mobile site for tests, since this won't work for you");
 }

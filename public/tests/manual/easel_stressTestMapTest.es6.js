@@ -172,7 +172,7 @@ function populateTerrainLayer(size, typeCount) {
 }
 
 function populateUnitLayer(amount, size, typeCount) {
-	let layerData = addBase_spriteLayerData("terrainLayer", "terrain");
+	let layerData = addBase_spriteLayerData("unitLayer", "unit");
 
 	for (let i = 0; i < amount; i++ ) {
 		layerData.objectGroups.push({

@@ -28,7 +28,7 @@ const MAPSIZE = {
 };
 const HEXASIZE = {
 	x: 41,
-	y: 47
+	y: 70.5
 };
 
 /* Do the map: */
@@ -186,8 +186,11 @@ function populateTerrainLayer(size, typeCount) {
 
 function populateUnitLayer(amount, size, typeCount) {
 	let layerData = addBase_spriteLayerData("unitLayer", "unit");
+	var randomCoords;
 
 	for (let i = 0; i < amount; i++ ) {
+		randomCoords = calculateRandomUnitCoord( HEXASIZE );
+
 		layerData.objectGroups.push({
 				type: "Object_unit",
 				name: "Unit", // For quadTrees and debugging
@@ -197,8 +200,8 @@ function populateUnitLayer(amount, size, typeCount) {
 					"name": "random_" + Math.random(),
 					"_id": Math.random(),
 					 "coord":{
-							"x": calculateRandomHexaCoord( HEXASIZE.x ),
-							"y": calculateRandomHexaCoord( HEXASIZE.y )
+							"x": randomCoords.x,
+							"y": randomCoords.y
 					 },
 					"data": {
 						"playerID": Math.floor(Math.random() * 10),
@@ -218,6 +221,13 @@ function populateUnitLayer(amount, size, typeCount) {
 	return layerData;
 }
 
-function calculateRandomHexaCoord(hexaSize) {
-	return ( Math.floor( hexaSize * ( Math.random() * MAPSIZE.x / hexaSize ) ) );
+function calculateRandomUnitCoord(hexaSize) {
+	var maxX = Math.floor( MAPSIZE.x / hexaSize.x );
+	var maxY = Math.floor( MAPSIZE.y / hexaSize.y );
+	var randomCoords = {
+		x: Math.floor( ( maxX ) * Math.random() * hexaSize.x ) - 41,
+		y: Math.floor( ( maxY ) * Math.random() * hexaSize.y ) - 47
+	};
+
+	return randomCoords;
 }

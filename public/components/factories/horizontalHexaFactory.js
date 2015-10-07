@@ -52,12 +52,19 @@ export function createMap(canvasElement, datas) {
 
   /* We iterate through the given map data and create objects accordingly */
   mapData.layers.forEach( layerData => {
+    if(typeof layerData !== "object") {
+      console.log("Problem in horizontalHexaFactory, with layerData:", layerData);
+      throw new Error("Problem in horizontalHexaFactory, with layerData:", layerData);
+    }
+    
     var layerGroup = layerData.group;
     var objManager = map.objectManager;
+    var layerConstructor = layers[layerData.type];
+    var layerOptions = { name: layerData.name, coord: layerData.coord };
     var thisLayer;
 
     try {
-			thisLayer = new layers[layerData.type](layerData.name, layerData.coord);
+			thisLayer = new layerConstructor(layerOptions);
 			map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
         x: 0,

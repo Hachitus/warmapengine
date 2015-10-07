@@ -18,11 +18,11 @@ export class Map_layer extends createjs.Container {
    * otherwise too!
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
-  constructor(name = "", coord = { x: 0, y: 0 }) {
+  constructor(options = { name: "", coord: { x: 0, y: 0 } }) {
     super();
 
-    this.name = "" + name; // For debugging. Shows up in toString
-		Object.assign(this, coord);
+    this.name = "" + options.name; // For debugging. Shows up in toString
+		Object.assign(this, options.coord);
     this._cacheEnabled = true;    
     this.drawThisChild = true;
     this.movable = true;

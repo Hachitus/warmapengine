@@ -59,28 +59,34 @@ export function createMap(canvasElement, datas) {
     }
   };
   var map = new Map(canvasElement, mapOptions ) ;
+  //map.mapSize = {x:0, y:0}
   var dialog_selection = document.getElementById("selectionDialog");
   var defaultUI = new UI_default(dialog_selection);
   defaultUI.init();
-
   /* Initialize UI as singleton */
   UI(defaultUI, map);
-
   /* We iterate through the given map data and create objects accordingly */
   //for(let ia = 0; ia < 100; ia++) {
   mapData.layers.forEach( layerData => {
+    if(typeof layerData !== "object") {
+      console.log("Problem in horizontalHexaFactory, with layerData:", layerData);
+      throw new Error("Problem in horizontalHexaFactory, with layerData:", layerData);
+    }
+    
     var layerGroup = layerData.group;
     var objManager = map.objectManager;
+    var layerConstructor = layers[layerData.type];
+    var layerOptions = { name: layerData.name, coord: layerData.coord, subContainerConfig: { size: 4096 } };
     var thisLayer;
 
     try {
-			thisLayer = new layers[layerData.type](layerData.name, layerData.coord);
+			thisLayer = new layerConstructor(layerOptions);
 			map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
         x: 0,
         y: 0,
-        width: map.mapSize.x,
-        height: map.mapSize.y
+        width: map.getSize().x,
+        height: map.getSize().y
       }, {
         objects: 10,
         levels: 6
@@ -88,6 +94,7 @@ export function createMap(canvasElement, datas) {
     } catch(e) {
       console.log("Problem:", layerData.type, e.stack);
     }
+
 
     layerData.objectGroups.forEach( objectGroup => {
       let spritesheetType = objectGroup.typeImageData;
@@ -137,8 +144,6 @@ export function createMap(canvasElement, datas) {
       });
     });
   });
-  
-
 
   map.moveMap(mapData.startPoint);
 

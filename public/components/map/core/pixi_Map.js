@@ -34,12 +34,10 @@ export class Map {
    * @return Map instance
 
    @todo, set default values for given and required options */
-  constructor(canvas, options = {mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, renderer: {} }) {		
+  constructor(canvas, { mapSize = { x: 0, y: 0 }, startCoord = { x: 0, y: 0 }, bounds = { width: 0, height: 0 }, renderer = {} }) {		
     if(!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }
-		
-		var { mapSize, startCoord, bounds, renderer } = options;
 		
     if(typeof canvas === "string") {
       canvas = document.querySelector(canvas);
@@ -53,8 +51,8 @@ export class Map {
     canvas.parentElement.replaceChild(_renderer.view, canvas);
     this.canvas = _renderer.view;
 
-    _staticLayer = new Map_layer("staticLayer", { x: 0, y: 0 }, _renderer);
-    _movableLayer = new Map_layer("movableLayer", startCoord);
+    _staticLayer = new Map_layer({ name:"staticLayer", coord: { x: 0, y: 0 }, renderer: _renderer });
+    _movableLayer = new Map_layer({ name:"movableLayer", coord: startCoord, movable: true });
     _staticLayer.addChild(_movableLayer);
     this.plugins = new Set();
     this.mapSize = mapSize;

@@ -52,7 +52,7 @@ window.initMap = function () {
 		});
 		
 		Promise.all(promises).then(activetablePlugins => {
-			map.init( activetablePlugins, gameData.mapSize, undefined );
+			map.init( activetablePlugins, mapData.startPoint, undefined );
 			if(map.setCache) {
 				// There is an issue with cache. About worldTransform. If cache is on selecting units will not work atm. because
 				// world transform does not take coordinates, achors etc. into account correctly

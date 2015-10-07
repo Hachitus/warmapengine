@@ -5,7 +5,7 @@ export let gameData = {
   turn: 1,
 	maxTurns: 150,
 	maxPlayers: 10,
-  mapSize: { x: 41, y: 47 },
+  mapSize: { x: 0, y: 0 },
 	players: [10],
 	skippedTurns: [],
   hexagonRadius: 47,

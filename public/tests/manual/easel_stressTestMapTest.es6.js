@@ -23,12 +23,17 @@ if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgen
 /** ===== CONFIGS ===== */
 /* Determines how much stuff we show on screen for stress testing */
 const MAPSIZE = {
-	x: 8119,
-	y: 8107
+	x: 20000,
+	y: 20000
 };
 const HEXASIZE = {
 	x: 41,
 	y: 47
+};
+/* Note the y is 3/4 of the actual height */
+const HEXAGON_DISTANCES = {
+	x: 82,
+	y: 94 * 0.75
 };
 
 /* Do the map: */
@@ -120,7 +125,7 @@ function addBase_spriteLayerData(name, group, options = { interactive: true, cac
 	var { interactive, cache } = options;
 
 	return {
-		type: "Map_spriteLayer",
+		type: "Map_bigSpriteLayer",
 		coord: { x: 0, y: 0 },
 		name: name,
 		group: group, // For quadTrees
@@ -173,9 +178,19 @@ function populateTerrainLayer(size, typeCount) {
 
 function populateUnitLayer(amount, size, typeCount) {
 	let layerData = addBase_spriteLayerData("unitLayer", "unit");
+	var randomCoords;
 
-	for (let i = 0; i < amount; i++ ) {
-		layerData.objectGroups.push({
+	for (let y = 0; y < MAPSIZE.y; y += size.y ) {
+		let x = 0;
+		
+		if(y / size.y % 2 === 0) {
+			x += size.x / 2;
+		}
+		
+		while( x < MAPSIZE.x ) {
+			let realX = x;
+			
+			layerData.objectGroups.push({
 				type: "Object_unit",
 				name: "Unit", // For quadTrees and debugging
 				typeImageData: "unit",
@@ -184,27 +199,26 @@ function populateUnitLayer(amount, size, typeCount) {
 					"name": "random_" + Math.random(),
 					"_id": Math.random(),
 					 "coord":{
-							"x": calculateRandomHexaCoord( HEXASIZE.x ),
-							"y": calculateRandomHexaCoord( HEXASIZE.y )
+							"x": realX,
+							"y": y
 					 },
 					"data": {
 						"playerID": Math.floor(Math.random() * 10),
 						"hp": Math.floor(Math.random() * 100),
-						"someStuff": "jalajajajajaja",
-						"someStuff2": "jalajajajajaja",
-						"someStuff3": "jalajajajajaja",
-						"someStuff4": "jalajajajajaja",
-						"someStuff5": "jalajajajajaja",
-						"someStuff6": "jalajajajajaja".repeat(30)
+						"someStuff": "jalajajajajaja" + Math.random(),
+						"someStuff2": "jalajajajajaja" + Math.random(),
+						"someStuff3": "jalajajajajaja" + Math.random(),
+						"someStuff4": "jalajajajajaja" + Math.random(),
+						"someStuff5": "jalajajajajaja" + Math.random(),
+						"someStuff6": ("jalajajajajaja" + Math.random()).repeat(30)
 					},
 					"lastSeenTurn":Math.floor(Math.random() * 10)
 				}]
-		});
+			});
+			
+			x += size.x;
+		}
 	}
 	
 	return layerData;
-}
-
-function calculateRandomHexaCoord(hexaSize) {
-	return ( Math.floor( hexaSize * ( Math.random() * MAPSIZE.x / hexaSize ) ) );
 }

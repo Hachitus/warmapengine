@@ -50,6 +50,45 @@ export class Map_spriteLayer extends PIXI.Container {
    * otherwise too!
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
+  	constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, movable = false }) {
+	    super();
+
+	    Object.assign(this, coord);
+	    this.renderer = renderer;
+	    this._cacheEnabled = false;
+	    this.name = "" + name; // For debugging. Shows up in toString
+	    this.drawThisChild = true;
+	    this.movable = movable;
+	    this.zoomable = false;
+	    this.preventSelection = false;
+	    this.oldAddChild = super.addChild.bind(this);
+  	}
+	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
+	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
+	updateTransform() {
+		if (!this.visible)
+		{
+			return false;
+		}
+
+		this.displayObjectUpdateTransform();
+		for (var i = 0, j = this.children.length; i < j; ++i)
+		{
+			this.children[i].updateTransform();
+		}
+	}
+}
+Object.assign(Map_spriteLayer.prototype, _baseContainerClass);
+
+/* REMEMBER! PIXI.ParticleContainer has limited support for features (like filters etc.), at some point you have to use
+normal container too, but since this one is optimized for performance we use it here first */
+
+export class Map_bigSpriteLayer extends PIXI.Container {
+  /**
+   * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
+   * otherwise too!
+   * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
+  */
   	constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, subContainerConfig = { size: 0 }, movable = false }) {
 	    super();
 
@@ -103,7 +142,7 @@ function _getBaseContainerClass() {
 	 * @param {PIXI.DisplayObject} displayObject
 	 */
 	function hasSubcontainers() {
-		return !!this.subContainerConfig.size;
+		return (this.subContainerConfig && this.subContainerConfig.size);
 	}
 	function addChild(displayObject) {
 		if(this.hasSubcontainers()) {

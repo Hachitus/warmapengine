@@ -22,13 +22,22 @@ if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgen
 
 /** ===== CONFIGS ===== */
 /* Determines how much stuff we show on screen for stress testing */
+// If either is even 1 pixel bigger than this, gets all black
+/* works with:
+x: 8118,
+y: 8107*/
 const MAPSIZE = {
-	x: 8118,
-	y: 8107
+	x: 20000,
+	y: 20000
 };
 const HEXASIZE = {
 	x: 41,
-	y: 70.5
+	y: 47
+};
+/* Note the y is 3/4 of the actual height */
+const HEXAGON_DISTANCES = {
+	x: 82,
+	y: 94 * 0.75
 };
 
 /* Do the map: */
@@ -46,23 +55,6 @@ function getMapData() {
 		element: "#mapCanvas",
 		layers: []
 	};
-	// If either is even 1 pixel bigger than this, gets all black
-	/* works with:
-	x: 8118,
-	y: 8107*/
-	const MAPSIZE = {
-		x: 8119,
-		y: 8107
-	};
-	const HEXASIZE = {
-		x: 41,
-		y: 47
-	};
-	/* Note the y is 3/4 of the actual height */
-	var hexagonSizes = {
-		x: 82,
-		y: 94 * 0.75
-	};
 	var unitCount = 10000;
 	var terrainTypeCount = 4;
 	var unitTypeCount = 56;
@@ -74,23 +66,23 @@ function getMapData() {
 		startPoint: { x: 0, y: 0 },
 		element: "#mapCanvas",
 		layers: [
-			populateTerrainLayer(hexagonSizes, terrainTypeCount),
-			populateUnitLayer(unitCount, hexagonSizes, unitTypeCount)
+			populateTerrainLayer(HEXAGON_DISTANCES, terrainTypeCount),
+			populateUnitLayer(unitCount, HEXAGON_DISTANCES, unitTypeCount)
 		]
 	};
 }
 
 function initMap() {
-  var canvasElement = document.getElementById("mapCanvas");
-  var map = {};
-  var globalMap = {
-  	data: {}
-  };
-  var preload;
+	var canvasElement = document.getElementById("mapCanvas");
+	var map = {};
+	var globalMap = {
+		data: {}
+	};
+	var preload;
 
-  preload = new Preload( "", { crossOrigin: false } );
-  preload.add( typeData.graphicData.terrainBase.json );
-  preload.add( typeData.graphicData.unit.json );
+	preload = new Preload( "", { crossOrigin: false } );
+	preload.add( typeData.graphicData.terrainBase.json );
+	preload.add( typeData.graphicData.unit.json );
 
 	preload.setErrorHandler(function(e) {
 		console.log("preloader error:", e);
@@ -98,28 +90,28 @@ function initMap() {
 	preload.setProgressHandler(function(progress) {
 		console.log("progressing" + progress);
 	});
-	
+
 	preload.resolveOnComplete().then(onComplete);
 
-  function onComplete() {
-		var promises = [];
+	function onComplete() {
+	var promises = [];
 
-		gameData.mapSize = MAPSIZE;
-		
-    map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
-		
-		gameData.pluginsToActivate.map.map(plugin => {
-			promises.push(System.import(plugin));
-		});
-		
-		Promise.all(promises).then(activetablePlugins => {
-			map.init( activetablePlugins, HEXASIZE );
-			if(map.setCache) {
-				// There is an issue with cache. About worldTransform. If cache is on selecting units will not work atm. because
-				// world transform does not take coordinates, achors etc. into account correctly
-				//map.setCache(true);
-			}
-		});
+	gameData.mapSize = MAPSIZE;
+
+	map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
+
+	gameData.pluginsToActivate.map.map(plugin => {
+		promises.push(System.import(plugin));
+	});
+
+	Promise.all(promises).then(activetablePlugins => {
+		map.init( activetablePlugins, HEXASIZE );
+		if(map.setCache) {
+			// There is an issue with cache. About worldTransform. If cache is on selecting units will not work atm. because
+			// world transform does not take coordinates, achors etc. into account correctly
+			//map.setCache(true);
+		}
+	});
   }
 
   return globalMap;
@@ -135,7 +127,7 @@ function addBase_spriteLayerData(name, group, options = { interactive: true, cac
 	var { interactive, cache } = options;
 
 	return {
-		type: "Map_spriteLayer",
+		type: "Map_bigSpriteLayer",
 		coord: { x: 0, y: 0 },
 		name: name,
 		group: group, // For quadTrees
@@ -190,10 +182,17 @@ function populateUnitLayer(amount, size, typeCount) {
 	let layerData = addBase_spriteLayerData("unitLayer", "unit");
 	var randomCoords;
 
-	for (let i = 0; i < amount; i++ ) {
-		randomCoords = calculateRandomUnitCoord( HEXASIZE );
-
-		layerData.objectGroups.push({
+	for (let y = 0; y < MAPSIZE.y; y += size.y ) {
+		let x = 0;
+		
+		if(y / size.y % 2 === 0) {
+			x += size.x / 2;
+		}
+		
+		while( x < MAPSIZE.x ) {
+			let realX = x;
+			
+			layerData.objectGroups.push({
 				type: "Object_unit",
 				name: "Unit", // For quadTrees and debugging
 				typeImageData: "unit",
@@ -202,8 +201,8 @@ function populateUnitLayer(amount, size, typeCount) {
 					"name": "random_" + Math.random(),
 					"_id": Math.random(),
 					 "coord":{
-							"x": randomCoords.x,
-							"y": randomCoords.y
+							"x": realX,
+							"y": y
 					 },
 					"data": {
 						"playerID": Math.floor(Math.random() * 10),
@@ -217,19 +216,11 @@ function populateUnitLayer(amount, size, typeCount) {
 					},
 					"lastSeenTurn":Math.floor(Math.random() * 10)
 				}]
-		});
+			});
+			
+			x += size.x;
+		}
 	}
 	
 	return layerData;
-}
-
-function calculateRandomUnitCoord(hexaSize) {
-	var maxX = Math.floor( MAPSIZE.x / hexaSize.x );
-	var maxY = Math.floor( MAPSIZE.y / hexaSize.y );
-	var randomCoords = {
-		x: Math.floor( ( maxX ) * Math.random() * hexaSize.x ) - 41,
-		y: Math.floor( ( maxY ) * Math.random() * hexaSize.y ) - 47
-	};
-
-	return randomCoords;
 }

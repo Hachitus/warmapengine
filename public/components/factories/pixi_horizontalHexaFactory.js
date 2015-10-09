@@ -12,7 +12,7 @@
 
 /* ====== Own module imports ====== */
 import { Map } from '../map/core/pixi_Map';
-import { Map_layer, Map_spriteLayer } from '/components/map/core/pixi_Map_layer';
+import { Map_layer, Map_spriteLayer, Map_bigSpriteLayer } from '/components/map/core/pixi_Map_layer';
 import { Object_terrain } from '../map/extensions/hexagons/object/pixi_Object_terrain_hexa';
 import { Object_unit } from '../map/extensions/hexagons/object/pixi_Object_unit_hexa';
 import { resizeUtils } from '../map/core/utils/utils';
@@ -27,7 +27,8 @@ var functionsInObj = {
 };
 var layers = {
   Map_layer,
-  Map_spriteLayer
+  Map_spriteLayer,
+  Map_bigSpriteLayer
 };
 
 /* ===== EXPORT ===== */
@@ -90,58 +91,57 @@ export function createMap(canvasElement, datas) {
         objects: 10,
         levels: 6
       });
+
+      layerData.objectGroups.forEach( objectGroup => {
+        let spritesheetType = objectGroup.typeImageData;
+
+        if(!spritesheetType) {
+          console.log("Error with spritesheetType-data");
+          return;
+        }
+
+        objectGroup.objects.forEach( object => {
+  				var objTypeData, objData, objectOptions, currentFrame, newObject;
+  				
+  				objTypeData = typeData.objectData[spritesheetType][object.objType];
+  				if(!objTypeData) {
+            console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
+            throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
+          }
+  				
+  				try {
+  					objData = {
+  						typeData: objTypeData,
+  						activeData: object.data
+  					};
+  					currentFrame = PIXI.utils.TextureCache[objTypeData.image];
+  					objectOptions = {
+  						currentFrame,
+  						radius: gameData.hexagonRadius
+  					};
+
+  					newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
+  				
+  					objManager.addObject(
+  						layerGroup,
+  						{
+  							x: newObject.x,
+  							y: newObject.y,
+  							width: newObject.width,
+  							height: newObject.height
+  						},
+  							newObject
+  					);
+
+  					thisLayer.addChild( newObject );
+  				} catch (e) {
+  					console.log(e);
+  				}
+        });
+      });
     } catch(e) {
       console.log("Problem:", layerData.type, e.stack);
     }
-
-
-    layerData.objectGroups.forEach( objectGroup => {
-      let spritesheetType = objectGroup.typeImageData;
-
-      if(!spritesheetType) {
-        console.log("Error with spritesheetType-data");
-        return;
-      }
-
-      objectGroup.objects.forEach( object => {
-				var objTypeData, objData, objectOptions, currentFrame, newObject;
-				
-				objTypeData = typeData.objectData[spritesheetType][object.objType];
-				if(!objTypeData) {
-          console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
-          throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
-        }
-				
-				try {
-					objData = {
-						typeData: objTypeData,
-						activeData: object.data
-					};
-					currentFrame = PIXI.utils.TextureCache[objTypeData.image];
-					objectOptions = {
-						currentFrame,
-						radius: gameData.hexagonRadius
-					};
-
-					newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
-				
-					objManager.addObject(
-						layerGroup,
-						{
-							x: newObject.x,
-							y: newObject.y,
-							width: newObject.width,
-							height: newObject.height
-						},
-							newObject
-					);
-
-					thisLayer.addChild( newObject );
-				} catch (e) {
-					console.log(e);
-				}
-      });
-    });
   });
 
   map.moveMap(mapData.startPoint);

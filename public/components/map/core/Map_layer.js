@@ -1,6 +1,10 @@
 /* global createjs, PIXI */
 'use strict';
 
+import extend from '../../../assets/lib/createjs/utils/extend';
+import promote from '../../../assets/lib/createjs/utils/promote';
+import SpriteContainer from '../../../assets/lib/easeljs/SpriteContainer/SpriteContainer';
+
 /**
 @require the createjs framework in global namespace
 @todo I don't think this class should be done in the new class-word, since it is much more efficient with normal
@@ -41,15 +45,6 @@ Object.assign(Map_layer.prototype, _baseContainerClass);
 /**
  * @todo implement spriteContainer! It should be more efficient when using spritesheets. Only issue was that minified
  * easeljs doesn't have the spriteStage (and spriteContainer?) and neither the node-easel (and node doesn't have the extend) */
-/*
-import extend from '../../../assets/lib/createjs/utils/extend';
-import promote from '../../../assets/lib/createjs/utils/promote';
-import SpriteContainer from '../../../assets/lib/easeljs/SpriteContainer/SpriteContainer';
-*/
-import extend from '../../../assets/lib/createjs/utils/extend';
-import promote from '../../../assets/lib/createjs/utils/promote';
-import SpriteContainer from '../../../assets/lib/easeljs/SpriteContainer/SpriteContainer';
-
 export class Map_spriteLayer extends createjs.SpriteContainer {
   /**
    * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
@@ -74,7 +69,6 @@ export class Map_spriteLayer extends createjs.SpriteContainer {
     this.mouseEnabled = false;
   }
 }
-
 Object.assign(Map_spriteLayer.prototype, _baseContainerClass);
 
 function _getBaseContainerClass() {

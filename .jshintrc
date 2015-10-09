@@ -1,3 +1,15 @@
 {
-    next": true
+  "bitwise": "true",
+  "strict": true,
+  "globalstrict": true,
+  "curly": "true",
+  "undef": "true",
+  "unused": "true",
+  "nonew": "true",
+  "eqeqeq": "true",
+  "forin": "true",
+  "browser": "true",
+  "loopfunc": "false",
+  "latedef": "true",
+  "esnext" : "true"
 }

@@ -35,7 +35,7 @@ export class Map {
    * identifiers staying the same (like class and ID).
    * @param {Object} options - different options for the map to be given.
    * @return Map instance */
-  constructor( canvas, { mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 } } ) {
+  constructor( canvas, { mapSize = { x: 0, y: 0 }, startCoord = { x: 0, y: 0 } } ) {
     if(!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }

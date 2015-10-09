@@ -26,5 +26,5 @@
   "disallowTrailingWhitespace": true,
   "disallowTrailingComma": true,
   "disallowKeywords": [ "with" ],
-    "disallowKeywordsOnNewLine": ["else"]
+  "disallowKeywordsOnNewLine": ["else"]
 }

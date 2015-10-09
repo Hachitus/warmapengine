@@ -59,7 +59,6 @@ export function createMap(canvasElement, datas) {
     }
   };
   var map = new Map(canvasElement, mapOptions ) ;
-  //map.mapSize = {x:0, y:0}
   var dialog_selection = document.getElementById("selectionDialog");
   var defaultUI = new UI_default(dialog_selection);
   defaultUI.init();

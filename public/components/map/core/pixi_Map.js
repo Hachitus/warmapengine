@@ -155,15 +155,11 @@ export class Map {
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
    * @return this map instance */
   cacheMap() {
-    if(_movableLayer.getCacheEnabled()) {
-      _movableLayer.cacheAsBitmap = true;
-    } else {
-      _movableLayer.children.forEach(child => {
-        if(child.getCacheEnabled()) {
-          child.cacheAsBitmap = true;
-        }
-      });
-    }
+    _movableLayer.children.forEach(child => {
+      if(child.getCacheEnabled()) {
+        child.setCache();
+      }
+    });
 
     return this;
   }

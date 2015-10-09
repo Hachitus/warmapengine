@@ -27,8 +27,9 @@ export class Map_layer extends PIXI.Container {
     super();
 
 	Object.assign(this, coord);
+	this.subcontainerType = PIXI.Container.bind(PIXI);
     this.renderer = renderer;
-    this._cacheEnabled = true;
+    this._cacheEnabled = false;
     this.name = "" + name; // Used otherwise too, but good for debugging. Shows up in toString
     this.drawThisChild = true;
     this.movable = movable;
@@ -36,13 +37,6 @@ export class Map_layer extends PIXI.Container {
     this.preventSelection = false;
     this.subContainerConfig = subContainerConfig;
     this.oldAddChild = super.addChild.bind(this);
-
-    if(this.subContainerConfig.size) {
-    	this.subContainers = _setSubContainers(this.getBounds(), this.subContainerConfig.size);
-    	this.subContainers.forEach(sub => {
-    		super.addChild(sub);
-    	});    	
-	}
   }
 }
 Object.assign(Map_layer.prototype, _baseContainerClass);
@@ -50,7 +44,7 @@ Object.assign(Map_layer.prototype, _baseContainerClass);
 /* REMEMBER! PIXI.ParticleContainer has limited support for features (like filters etc.), at some point you have to use
 normal container too, but since this one is optimized for performance we use it here first */
 
-export class Map_spriteLayer extends PIXI.ParticleContainer {
+export class Map_spriteLayer extends PIXI.Container {
   /**
    * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
@@ -60,8 +54,9 @@ export class Map_spriteLayer extends PIXI.ParticleContainer {
 	    super();
 
 	    Object.assign(this, coord);
+	    this.subcontainerType = PIXI.ParticleContainer.bind(PIXI);
 	    this.renderer = renderer;
-	    //this._cacheEnabled = true;
+	    this._cacheEnabled = false;
 	    this.name = "" + name; // For debugging. Shows up in toString
 	    this.drawThisChild = true;
 	    this.movable = movable;
@@ -69,13 +64,6 @@ export class Map_spriteLayer extends PIXI.ParticleContainer {
 	    this.preventSelection = false;
 	    this.subContainerConfig = subContainerConfig;
 	    this.oldAddChild = super.addChild.bind(this);
-
-	    if(this.subContainerConfig.size) {
-	    	this.subContainers = _setSubContainers(this.getBounds(), this.subContainerConfig.size);
-	    	this.subContainers.forEach(sub => {
-	    		super.addChild(sub);
-	    	});
-		}
   	}
 	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
 	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
@@ -96,120 +84,172 @@ Object.assign(Map_spriteLayer.prototype, _baseContainerClass);
 
 function _getBaseContainerClass() {
 	return {
-		/**
-		 * @param {PIXI.DisplayObject} displayObject
-		 */
-		hasSubcontainers() {
-			return !!this.subContainerConfig.size && this.subContainers.length > 0;
-		},
-		addChild(displayObject) {
-			if(this.hasSubcontainers()) {
-				let {x, y} = displayObject.position;
-				let correctSubContainer = getCorrectSubcontainer({ x, y });
-
-				function getCorrectSubcontainer(coord) {
-					return this.subContainers[0];
-				}
-
-				correctSubContainer.addChild(displayObject);
-			} else {
-				this.oldAddChild(displayObject);
-			}
-		},
-		setCache(status) {
-			this._cacheEnabled = status ? true : false;
-
-			if(this.hasSubcontainers()) {
-				this.subContainers.each(sub => {
-					sub.cacheAsBitmap = this._cacheEnabled;
-				});
-			} else {
-				this.cacheAsBitmap = this._cacheEnabled;
-			}
-
-			return this._cacheEnabled;
-		},
-		getCache(status) {
-			return this._cacheEnabled;
-		},
-		/** Move layer
-     * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
-   	 * @return this layer instance */
-		move(coord) {
-			if (this.movable) {
-				this.x += coord.x;
-				this.y += coord.y;
-				this.drawThisChild = true;
-			}
-
-			return this;
-		},
-		/** gets child (layer or object - sprite etc.) from this layer
-		 * @param {string} name searches for a layer that has this name-property
-		 * @return the first layer that was found or false if nothing was found */
-		getChildNamed(name) {
-			if (this.children[0] instanceof PIXI.DisplayObjectContainer ) {
-				for (let child of this.children) {
-					if (child.name.toLowerCase() === name.toLowerCase()) {
-						return child;
-					}
-				}
-			}
-			return false;
-		},
-		/** set layer scale
-		 * @param {Number} amount The amount that you want the layer to scale.
-		 * @amount that was given */
-		setScale(amount) {
-			return this.scale.x = this.scale.y = amount;
-		},
-		/** get layer scale
-		 * @return current amount of scale */
-		getScale() {
-			return this.scale.x;
-		},
-		/** get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
-		 * @return current UIObjects */
-		getUIObjects() {
-			return _UIObjects;
-		},
-		/** Remove all the UIObjects from this layer
-		 * @return empty UIObjects array */
-		emptyUIObjects() {
-			_UIObjects.map(obj => {
-				this.removeChild(obj);
-				obj = null;
-			});
-
-			return _UIObjects;
-		},
-		/** Add UIObjects to this layer
-		 * @param {Object || Array} objects Objects can be an object containing one object to add or an Array of objects to add.
-		 * @return All the UIObjects currently on this layer */
-		addUIObjects(objects) {
-			_UIObjects = _UIObjects || [];
-			if(Array.isArray(objects)) {
-				this.addChild.apply(this, objects);
-			} else {
-				this.addChild( objects );
-			}
-			_UIObjects.push( objects );
-
-			return _UIObjects;
-		}
+		hasSubcontainers,
+		addChild,
+		setCache,
+		getCache,
+		move,
+		getChildNamed,
+		setScale,
+		getScale,
+		getUIObjects,
+		emptyUIObjects,
+		addUIObjects,
+		createNewSubcontainer,
+		getCorrectSubcontainer
 	};
+
+	/**
+	 * @param {PIXI.DisplayObject} displayObject
+	 */
+	function hasSubcontainers() {
+		return !!this.subContainerConfig.size;
+	}
+	function addChild(displayObject) {
+		if(this.hasSubcontainers()) {
+			let {x, y} = displayObject.position;
+			let correctSubContainer = this.getCorrectSubcontainer({ x, y });
+
+			if(!correctSubContainer) {
+				throw new Error("getCorrectSubcontainer did not find correct subcontainer!");
+			}
+
+			correctSubContainer.addChild(displayObject);
+		} else {
+			this.oldAddChild(displayObject);
+		}
+
+		return displayObject;
+	}
+	function setCache(status) {
+		this._cacheEnabled = status ? true : false;
+
+		if(this.hasSubcontainers()) {
+			this.subContainers.each(sub => {
+				sub.cacheAsBitmap = this._cacheEnabled;
+			});
+		} else {
+			this.cacheAsBitmap = this._cacheEnabled;
+		}
+
+		return this._cacheEnabled;
+	}
+	function getCache(status) {
+		return this._cacheEnabled;
+	}
+	/** Move layer
+ * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
+	 * @return this layer instance */
+	function move(coord) {
+		if (this.movable) {
+			this.x += coord.x;
+			this.y += coord.y;
+			this.drawThisChild = true;
+		}
+
+		return this;
+	}
+	/** gets child (layer or object - sprite etc.) from this layer
+	 * @param {string} name searches for a layer that has this name-property
+	 * @return the first layer that was found or false if nothing was found */
+	function getChildNamed(name) {
+		if (this.children[0] instanceof PIXI.DisplayObjectContainer ) {
+			for (let child of this.children) {
+				if (child.name.toLowerCase() === name.toLowerCase()) {
+					return child;
+				}
+			}
+		}
+		return false;
+	}
+	/** set layer scale
+	 * @param {Number} amount The amount that you want the layer to scale.
+	 * @amount that was given */
+	function setScale(amount) {
+		return this.scale.x = this.scale.y = amount;
+	}
+	/** get layer scale
+	 * @return current amount of scale */
+	function getScale() {
+		return this.scale.x;
+	}
+	/** get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
+	 * @return current UIObjects */
+	function getUIObjects() {
+		return _UIObjects;
+	}
+	/** Remove all the UIObjects from this layer
+	 * @return empty UIObjects array */
+	function emptyUIObjects() {
+		_UIObjects.map(obj => {
+			this.removeChild(obj);
+			obj = null;
+		});
+
+		return _UIObjects;
+	}
+	/** Add UIObjects to this layer
+	 * @param {Object || Array} objects Objects can be an object containing one object to add or an Array of objects to add.
+	 * @return All the UIObjects currently on this layer */
+	function addUIObjects(objects) {
+		_UIObjects = _UIObjects || [];
+		if(Array.isArray(objects)) {
+			this.addChild.apply(this, objects);
+		} else {
+			this.addChild( objects );
+		}
+		_UIObjects.push( objects );
+
+		return _UIObjects;
+	}
+
+	function createNewSubcontainer(coord = {x: 0, y: 0}) {
+		let newSubcontainer;
+
+		newSubcontainer = new this.subcontainerType();
+		newSubcontainer.x = this.subContainerConfig.size * Math.floor(coord.x / this.subContainerConfig.size);
+		newSubcontainer.y = this.subContainerConfig.size * Math.floor(coord.y / this.subContainerConfig.size);
+
+		this.oldAddChild(newSubcontainer);
+
+		return newSubcontainer;
+	}
+	function getCorrectSubcontainer(coord) {
+		var foundContainer = [];
+		this.subContainers = this.subContainers || [];
+
+		foundContainer = this.subContainers.find(sub => {
+			if(sub.x <= coord.x &&
+					sub.y <= coord.y &&
+					sub.x + this.subContainerConfig.size > coord.x &&
+					sub.y + this.subContainerConfig.size > coord.y) {
+				return sub;
+			}
+		});
+
+		if(!foundContainer) {
+			foundContainer = this.createNewSubcontainer(coord);
+			this.subContainers.push(foundContainer);
+		}
+
+		return foundContainer;
+	}
 }
 
-function _setSubContainers(bounds, size) {
-	console.log("JATKA TÄSTÄ. pixi_map_layer:204");
-	throw "JATKA TÄSTÄ. pixi_map_layer:204";
-	var bounds = bounds;
-	var counts = bounds / size;
+function _setSubContainers(parentSize, subsize) {
+	var counts = {
+		x: Math.floor(parentSize.x / subsize),
+		y: Math.floor(parentSize.y / subsize)
+	};
 	var subContainers = [];
 
-	for(let i = 0; counts < i; i++) {
-		let newContainer = new PIXI.ParticleContainer();
-		subContainers.push(newContainer);
+	for(let x = 0; counts.x < x; x++) {
+		for(let y = 0; counts.y < y; y++) {
+			let newContainer = new PIXI.ParticleContainer();
+			newContainer.x = x;
+			newContainer.y = y;
+			subContainers.push(newContainer);
+		}
 	}
 
 	return subContainers;

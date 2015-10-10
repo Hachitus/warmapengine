@@ -24,7 +24,7 @@ import { eventListeners } from './eventlisteners';
 import { ObjectManager } from './ObjectManager';
 
 var _drawMapOnNextTick = false;
-var eventlisteners, _staticLayer, _movableLayer, _renderer;
+var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, boundUnResizer;
 
 export class Map {
   /**
@@ -59,15 +59,8 @@ export class Map {
     /* Define event callback here!
 		 * @todo I think this should be organized another way? */
     this.eventCBs = {
-      fullSize: function() {
-        let windowSize = resizeUtils.getWindowSize();
-        //_renderer.autoResize = true;
-        _renderer.view.style.width = windowSize.x + "px";
-        _renderer.view.style.height = windowSize.y + "px";
-        _renderer.resize(windowSize.x, windowSize.y);
-        setFullsizedMap();
-      },
-      fullscreen: resizeUtils.toggleFullScreen,
+      fullSize: boundResizer,
+      fullscreen: setFullScreen.bind(this),
       select: null,
       drag: null,
       zoom: null
@@ -77,7 +70,17 @@ export class Map {
 		let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
     this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
 
+    boundResizer = _resizeCanvas.bind(this);
+
     this.environment = environmentDetection.isMobile() ? "mobile" : "desktop";
+
+    /* needed for fullsize canvas in PIXI */
+    _renderer.view.style.position = "absolute";
+    _renderer.view.style.display = "block";
+    /* stop scrollbars of showing */
+    document.getElementsByTagName("body")[0].style.overflow = "hidden";
+    _renderer.view.style.left = "0px";
+    _renderer.view.style.top = "0px";
   }
   /** initialization method
    * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
@@ -86,8 +89,10 @@ export class Map {
    * @param {Function} tickCB - callback function for tick. Tick callback is initiated in every frame. So map draws happen
    * during ticks
    * @return the current map instance */
-  init(plugins = [], coord = { x: 0, y: 0 }, tickCB) {
-    this.toggleFullsize();
+  init(plugins = [], coord = { x: 0, y: 0 }, tickCB, options = { fullsize: true }) {
+    if(options.fullsize) {
+      this.toggleFullsize();
+    }    
 
     eventlisteners = eventListeners(this, this.canvas);
 
@@ -203,36 +208,24 @@ export class Map {
     return this._mapInMove;
   }
   setPrototype(property, value) {
-    //this.setPrototypeOf(property, value);
-    //this[property] = value;
-    //this.prototype[property] = value;
-    Map.prototype[property] = value;
+    var thisPrototype = Object.getPrototypeOf(this);
+
+    thisPrototype[property] = value;
   }
   /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
   the eventlistener callback use this.eventCBs */
   toggleFullsize() {
     if(!this.isFullsize) {
-      var ctx = this.canvas.context;
-
-      this.eventCBs.fullSize();
-
-      window.addEventListener("resize", setupResizeCB(map));
-      setFullsizedMap();
+      _setResizeCanvas();
+      this.isFullsize = true;
     } else {
-      window.removeEventListener("resize", setupResizeCB(map));
-      unSetFullsizedMap();
+      _removeResizeCanvas();
+      this.isFullsize = false;
     }
 
-    return this.isFullsize = !this.isFullsize;
+    return this.isFullsize;
 
     /** ===== PRIVATE ===== */
-    function setupResizeCB(map) {
-      map;
-
-      return function resizeCB() {
-        map.eventCBs.fullSize();
-      }
-    }
   }
     /** Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
   the eventlistener callback use this.eventCBs */
@@ -288,7 +281,7 @@ export class Map {
   getObjectsUnderShape(coord = { x: 0, y: 0 }, shape, type) { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
 }
 
-/** ===== Private functions ===== */
+/** ===== PRIVATE ===== */
 /* This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
 callback is always set and should not be removed or overruled */
 function _defaultTick(map, ticker) {
@@ -300,12 +293,22 @@ function _defaultTick(map, ticker) {
   });
 }
 
-function setFullsizedMap() {
-  _renderer.view.style.position = "absolute";
-  _renderer.view.style.display = "block";
+function _resizeCanvas() {
+  let windowSize = resizeUtils.getWindowSize();
+
   _renderer.autoResize = true;
-  _renderer.resize(window.innerWidth, window.innerHeight);
+  _renderer.resize(windowSize.x, windowSize.y);
+  this.drawOnNextTick();
 }
-function unSetFullsizedMap() {
+function _setResizeCanvas() {
+  window.addEventListener("resize", boundResizer);
+  boundResizer();
+}
+function _removeResizeCanvas() {
   _renderer.autoResize = false;
+  window.removeEventListener("resize", boundResizer);
+}
+function setFullScreen() {
+  resizeUtils.toggleFullScreen();
+  _resizeCanvas.call(this);
 }

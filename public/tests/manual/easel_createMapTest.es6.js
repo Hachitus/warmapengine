@@ -22,16 +22,16 @@ if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgen
 }
 
 window.initMap = function () {
-  var canvasElement = document.getElementById("mapCanvas");
-  var map = {};
-  var globalMap = {
-  	data: {}
-  };
-  var preload;
+	var canvasElement = document.getElementById("mapCanvas");
+	var map = {};
+	var globalMap = {
+		data: {}
+	};
+	var preload;
 
-  preload = new Preload( "", { crossOrigin: false } );
-  preload.add( typeData.graphicData.terrainBase.json );
-  preload.add( typeData.graphicData.unit.json );
+	preload = new Preload( "", { crossOrigin: false } );
+	preload.add( typeData.graphicData.terrainBase.json );
+	preload.add( typeData.graphicData.unit.json );
 
 	preload.setErrorHandler(function(e) {
 		console.log("preloader error:", e);
@@ -42,27 +42,30 @@ window.initMap = function () {
 	
 	preload.resolveOnComplete().then(onComplete);
 
-  function onComplete() {
+	function onComplete() {
 		var promises = [];
 		
-    map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
-		
+		map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
+
 		gameData.pluginsToActivate.map.map(plugin => {
 			promises.push(System.import(plugin));
 		});
 		
 		Promise.all(promises).then(activetablePlugins => {
-			map.init( activetablePlugins, gameData.mapSize, undefined );
+			map.init( activetablePlugins, mapData.startPoint, undefined );
+
+			document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
+
 			if(map.setCache) {
 				map.setCache(true);
 			}
 		});
-  }
+	}
 
-  return globalMap;
-	
+	return globalMap;
+
 	/* ====== private functions, or to be moved elsewhere ====== */
-  function preloadErrorHandler(err) {
-    console.log("PRELOADER ERROR", err );
-  }
+	function preloadErrorHandler(err) {
+		console.log("PRELOADER ERROR", err );
+	}
 };

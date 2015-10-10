@@ -34,7 +34,7 @@ export class Map {
    * @return Map instance
 
    @todo, set default values for given and required options */
-  constructor(canvas, { mapSize = { x: 0, y: 0 }, startCoord = { x: 0, y: 0 }, bounds = { width: 0, height: 0 }, renderer = {} }) {		
+  constructor(canvas, { mapSize = { x: 0, y: 0 }, startCoord = { x: 0, y: 0 }, bounds = { width: 0, height: 0 }, options = {} }) {		
     if(!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }
@@ -45,7 +45,7 @@ export class Map {
       canvas = canvas;
     }
 
-    _renderer = PIXI.autoDetectRenderer(bounds.width, bounds.height, renderer);
+    _renderer = PIXI.autoDetectRenderer(bounds.width, bounds.height, options);
     /* We handle all the events ourselves through addEventListeners-method on canvas, so destroy pixi native method */
     _renderer.plugins.interaction.destroy();
     canvas.parentElement.replaceChild(_renderer.view, canvas);
@@ -59,7 +59,14 @@ export class Map {
     /* Define event callback here!
 		 * @todo I think this should be organized another way? */
     this.eventCBs = {
-      fullSize: resizeUtils.setToFullSize(this.canvas.getContext("2d")),
+      fullSize: function() {
+        let windowSize = resizeUtils.getWindowSize();
+        //_renderer.autoResize = true;
+        _renderer.view.style.width = windowSize.x + "px";
+        _renderer.view.style.height = windowSize.y + "px";
+        _renderer.resize(windowSize.x, windowSize.y);
+        setFullsizedMap();
+      },
       fullscreen: resizeUtils.toggleFullScreen,
       select: null,
       drag: null,
@@ -80,7 +87,7 @@ export class Map {
    * during ticks
    * @return the current map instance */
   init(plugins = [], coord = { x: 0, y: 0 }, tickCB) {
-    this.setFullsize();
+    this.toggleFullsize();
 
     eventlisteners = eventListeners(this, this.canvas);
 
@@ -163,16 +170,6 @@ export class Map {
 
     return this;
   }
-  /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
-  the eventlistener callback use this.eventCBs */
-  toggleFullSize() {
-    eventlisteners.toggleFullSizeListener();
-  }
-  /** Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
-  the eventlistener callback use this.eventCBs */
-  toggleFullScreen () {
-    eventlisteners.toggleFullScreen();
-  }
   /** Activate plugins for the map. Plugins need .pluginName property and .init-method
   @param [Array] pluginsArray - Array that consists of the plugin modules */
   activatePlugins(pluginsArray = []) {
@@ -211,16 +208,36 @@ export class Map {
     //this.prototype[property] = value;
     Map.prototype[property] = value;
   }
-  setFullsize() {
-    if(this.isFullsize) {
-      setFullsizedMap(_renderer);
+  /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
+  the eventlistener callback use this.eventCBs */
+  toggleFullsize() {
+    if(!this.isFullsize) {
+      var ctx = this.canvas.context;
 
-      window.addEventListener("resize", function(){
-        setFullsizedMap(_renderer);
-      });
+      this.eventCBs.fullSize();
+
+      window.addEventListener("resize", setupResizeCB(map));
+      setFullsizedMap();
+    } else {
+      window.removeEventListener("resize", setupResizeCB(map));
+      unSetFullsizedMap();
     }
 
-    this.isFullsize = true;
+    return this.isFullsize = !this.isFullsize;
+
+    /** ===== PRIVATE ===== */
+    function setupResizeCB(map) {
+      map;
+
+      return function resizeCB() {
+        map.eventCBs.fullSize();
+      }
+    }
+  }
+    /** Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
+  the eventlistener callback use this.eventCBs */
+  toggleFullScreen () {
+    resizeUtils.toggleFullScreen();
   }
   setEnvironment(env = "desktop") {
     this.environment = env;
@@ -283,9 +300,12 @@ function _defaultTick(map, ticker) {
   });
 }
 
-function setFullsizedMap(renderer) {
-  renderer.view.style.position = "absolute";
-  renderer.view.style.display = "block";
-  renderer.autoResize = true;
-  renderer.resize(window.innerWidth, window.innerHeight);
+function setFullsizedMap() {
+  _renderer.view.style.position = "absolute";
+  _renderer.view.style.display = "block";
+  _renderer.autoResize = true;
+  _renderer.resize(window.innerWidth, window.innerHeight);
+}
+function unSetFullsizedMap() {
+  _renderer.autoResize = false;
 }

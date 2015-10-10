@@ -46,13 +46,26 @@ export function createMap(canvasElement, datas) {
   var typeData = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
   var gameData = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
   var windowSize = resizeUtils.getWindowSize();
+  var pixelRatio = (function () {
+      var ctx = canvasElement.getContext("2d"),
+      dpr = window.devicePixelRatio || 1,
+      bsr = ctx.webkitBackingStorePixelRatio ||
+      ctx.mozBackingStorePixelRatio ||
+      ctx.msBackingStorePixelRatio ||
+      ctx.oBackingStorePixelRatio ||
+      ctx.backingStorePixelRatio || 1;
+
+      return dpr / bsr;
+    })()
+    
   var mapOptions = {
     mapSize: gameData.mapSize,
     bounds: {
       width: windowSize.width,
       height: windowSize.height
     },
-    renderer: {
+    options: {
+      resolution: pixelRatio,
       autoResize: true,
       transparent: true,
       antialias: false // TEST. Only should work in chrome atm.?
@@ -145,10 +158,6 @@ export function createMap(canvasElement, datas) {
   });
 
   map.moveMap(mapData.startPoint);
-
-  document.getElementById("testFullscreen").addEventListener("click", function() {
-    eventListeners.toggleFullScreen();
-  });
 
   window.map = map;
 

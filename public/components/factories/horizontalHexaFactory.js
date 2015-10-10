@@ -137,9 +137,5 @@ export function createMap(canvasElement, datas) {
 
   map.moveMap(mapData.startPoint);
 
-  document.getElementById("testFullscreen").addEventListener("click", function() {
-    eventListeners.toggleFullScreen();
-  });
-
   return map;
 }

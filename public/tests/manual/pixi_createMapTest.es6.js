@@ -22,16 +22,16 @@ if(typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgen
 }
 
 window.initMap = function () {
-  var canvasElement = document.getElementById("mapCanvas");
-  var map = {};
-  var globalMap = {
-  	data: {}
-  };
-  var preload;
+	var canvasElement = document.getElementById("mapCanvas");
+	var map = {};
+	var globalMap = {
+		data: {}
+	};
+	var preload;
 
-  preload = new Preload( "", { crossOrigin: false } );
-  preload.add( typeData.graphicData.terrainBase.json );
-  preload.add( typeData.graphicData.unit.json );
+	preload = new Preload( "", { crossOrigin: false } );
+	preload.add( typeData.graphicData.terrainBase.json );
+	preload.add( typeData.graphicData.unit.json );
 
 	preload.setErrorHandler(function(e) {
 		console.log("preloader error:", e);
@@ -39,13 +39,13 @@ window.initMap = function () {
 	preload.setProgressHandler(function(progress) {
 		console.log("progressing" + progress);
 	});
-	
+
 	preload.resolveOnComplete().then(onComplete);
 
-  function onComplete() {
+	function onComplete() {
 		var promises = [];
 		
-    map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
+		map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
 		
 		gameData.pluginsToActivate.map.map(plugin => {
 			promises.push(System.import(plugin));
@@ -53,18 +53,21 @@ window.initMap = function () {
 		
 		Promise.all(promises).then(activetablePlugins => {
 			map.init( activetablePlugins, mapData.startPoint, undefined );
+
+			document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
+
 			if(map.setCache) {
 				// There is an issue with cache. About worldTransform. If cache is on selecting units will not work atm. because
 				// world transform does not take coordinates, achors etc. into account correctly
 				//map.setCache(true);
 			}
 		});
-  }
+	}
 
-  return globalMap;
-	
+	return globalMap;
+
 	/* ====== private functions, or to be moved elsewhere ====== */
-  function preloadErrorHandler(err) {
-    console.log("PRELOADER ERROR", err );
-  }
+	function preloadErrorHandler(err) {
+		console.log("PRELOADER ERROR", err );
+	}
 };

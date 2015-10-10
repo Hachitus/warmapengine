@@ -162,16 +162,7 @@ export class Map {
 
     return this;
   }
-  /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
-  the eventlistener callback use this.eventCBs */
-  toggleFullSize() {
-    eventlisteners.toggleFullSizeListener();
-  }
-  /** Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
-  the eventlistener callback use this.eventCBs */
-  toggleFullScreen () {
-    eventlisteners.toggleFullScreen();
-  }
+
   /** Activate plugins for the map. Plugins need .pluginName property and .init-method
   @param [Array] pluginsArray - Array that consists of the plugin modules */
   activatePlugins(pluginsArray = []) {
@@ -231,6 +222,31 @@ export class Map {
     //this[property] = value;
     //this.prototype[property] = value;
     Map.prototype[property] = value;
+  }
+    /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
+  the eventlistener callback use this.eventCBs */
+  toggleFullsize() {
+    if(!this.isFullsize) {
+      var ctx = this.canvas.context;
+
+      resizeUtils.setToFullSize(ctx);
+
+      window.addEventListener("resize", resizeCB);
+    } else {
+      window.removeEventListener("resize", resizeCB);
+    }
+
+    return this.isFullsize = !this.isFullsize;
+
+    /** ===== PRIVATE ===== */
+    function resizeCB() {
+      resizeUtils.setToFullSize(ctx);
+    }
+  }
+    /** Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
+  the eventlistener callback use this.eventCBs */
+  toggleFullScreen () {
+    resizeUtils.toggleFullScreen();
   }
   setEnvironment(env = "desktop" /* or mobile */) {
     this.environment = env;

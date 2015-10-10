@@ -22,9 +22,20 @@
     Canvas not supported!
   </canvas>
 
-  <button id="testFullscreen" style="position:fixed; bottom:0px; left:0px;">
-    fullscreen
-  </button>
+  <div style="position:fixed; bottom:0px; left:0px;">
+    <div style="display: inline-block;">
+      <button id="testFullscreen">
+        fullscreen
+      </button>
+    </div>
+    <div style="display: inline-block;background-color: white;margin-left:2em;">
+      amount of hexagon-tiles:
+      <input id="hexaTiles" value="8000" type="text">
+      <button id="changeValues">
+        change!
+      </button>
+    </div>
+  </div>
 
   <div id="dialog_select" style="display:none;">
     MODAL WINDOW
@@ -33,7 +44,15 @@
   <!-- include spec files here... -->
   <script>
 		System.import('/tests/manual/pixi_stressTestMapTest.es6').then(function() {
-			window.map = window.initMap();
+      var valueElement = document.getElementById("hexaTiles");
+      var currentValue = valueElement.value;
+
+      document.getElementById("changeValues").addEventListener("click", function() {
+        currentValue = valueElement.value;
+        window.map = window.initMap({
+          hexaTiles: currentValue
+        });
+      });			
 		});
 	</script>
 </body>

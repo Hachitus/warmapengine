@@ -72,7 +72,7 @@ function getMapData() {
   };
 }
 
-function initMap() {
+function initMap(options) {
   var canvasElement = document.getElementById("mapCanvas");
   var map = {};
   var globalMap = {

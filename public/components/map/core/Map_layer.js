@@ -95,8 +95,8 @@ function _getBaseContainerClass() {
    	 * @return this layer instance */
 		move(coord) {
 			if (this.movable) {
-				this.x += coord.x;
-				this.y += coord.y;
+				this.x = ~~this.x + ~~coord.x;
+				this.y = ~~this.y + ~~coord.y;
 				this.drawThisChild = true;
 			}
 

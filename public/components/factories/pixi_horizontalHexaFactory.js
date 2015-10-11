@@ -159,7 +159,5 @@ export function createMap(canvasElement, datas) {
 
   map.moveMap(mapData.startPoint);
 
-  window.map = map;
-
   return map;
 }

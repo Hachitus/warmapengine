@@ -21,15 +21,6 @@ if (typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAge
 }
 
 /** ===== CONFIGS ===== */
-/* Determines how much stuff we show on screen for stress testing */
-// If either is even 1 pixel bigger than this, gets all black
-/* works with:
-x: 8118,
-y: 8107*/
-const MAPSIZE = {
-  x: 20000,
-  y: 20000
-};
 const HEXASIZE = {
   x: 41,
   y: 47
@@ -41,13 +32,14 @@ const HEXAGON_DISTANCES = {
 };
 
 /* Do the map: */
-var mapData = getMapData();
+var mapsize;
+window.getMapData = getMapData;
 window.initMap = initMap;
 
 /**************************************
 ****** GENERATE RANDOM MAP DATA *******
 **************************************/
-function getMapData() {
+function getMapData(mapsize) {
   var data = {
     gameID: "53837d47976fed3b24000005",
     turn: 1,
@@ -59,6 +51,10 @@ function getMapData() {
   var terrainTypeCount = 4;
   var unitTypeCount = 56;
   var objGroup, layerData;
+  var coordMapsize = {
+    x: mapsize,
+    y: mapsize
+  }
 
   return {
     gameID: "53837d47976fed3b24000005",
@@ -66,19 +62,29 @@ function getMapData() {
     startPoint: { x: 0, y: 0 },
     element: "#mapCanvas",
     layers: [
-    populateTerrainLayer(HEXAGON_DISTANCES, terrainTypeCount),
-    populateUnitLayer(unitCount, HEXAGON_DISTANCES, unitTypeCount)
+    populateTerrainLayer(HEXAGON_DISTANCES, terrainTypeCount, coordMapsize),
+    populateUnitLayer(HEXAGON_DISTANCES, unitTypeCount, coordMapsize)
     ]
   };
 }
 
-function initMap(options) {
+function initMap(mapData, options) {
   var canvasElement = document.getElementById("mapCanvas");
   var map = {};
   var globalMap = {
     data: {}
   };
   var preload;
+  
+  /* Determines how much stuff we show on screen for stress testing */
+  // If either is even 1 pixel bigger than this, gets all black
+  /* works with:
+  x: 8118,
+  y: 8107*/
+  mapsize = {
+    x: options.mapsize || 1000,
+    y: options.mapsize || 1000
+  }
 
   preload = new Preload( "", { crossOrigin: false } );
   preload.add( typeData.graphicData.terrainBase.json );
@@ -96,7 +102,7 @@ function initMap(options) {
   function onComplete() {
     var promises = [];
 
-    gameData.mapSize = MAPSIZE;
+    gameData.mapSize = mapsize;
 
     map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
 
@@ -106,10 +112,10 @@ function initMap(options) {
 
     Promise.all(promises).then(activetablePlugins => {
       map.init( activetablePlugins, HEXASIZE );
-      if (map.setCache) {
+      if (options.cache) {
         // There is an issue with cache. About worldTransform. If cache is on selecting units will not work atm. because
         // world transform does not take coordinates, achors etc. into account correctly
-        //map.setCache(true);
+        map.setCache(true);
       }
     });
   }
@@ -141,17 +147,17 @@ function addBase_spriteLayerData(name, group, options = { interactive: true, cac
   };
 }
 
-function populateTerrainLayer(size, typeCount) {
+function populateTerrainLayer(size, typeCount, mapsize) {
   let layerData = addBase_spriteLayerData("terrainLayer", "terrain");
 
-  for (let y = 0; y < MAPSIZE.y; y += size.y ) {
+  for (let y = 0; y < mapsize.y; y += size.y ) {
     let x = 0;
 
     if (y / size.y % 2 === 0) {
       x += size.x / 2;
     }
 
-    while ( x < MAPSIZE.x ) {
+    while ( x < mapsize.x ) {
       let realX = x;
 
       layerData.objectGroups.push({
@@ -178,18 +184,18 @@ function populateTerrainLayer(size, typeCount) {
   return layerData;
 }
 
-function populateUnitLayer(amount, size, typeCount) {
+function populateUnitLayer(size, typeCount, mapsize) {
   let layerData = addBase_spriteLayerData("unitLayer", "unit");
   var randomCoords;
 
-  for (let y = 0; y < MAPSIZE.y; y += size.y ) {
+  for (let y = 0; y < mapsize.y; y += size.y ) {
     let x = 0;
 
     if (y / size.y % 2 === 0) {
       x += size.x / 2;
     }
 
-    while ( x < MAPSIZE.x ) {
+    while ( x < mapsize.x ) {
       let realX = x;
 
       layerData.objectGroups.push({

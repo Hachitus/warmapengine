@@ -15,15 +15,20 @@ export let map_cache = (function map_cache() {
   var scope = {};
 
   scope.init = function(map) {
-    map.setPrototype("setCache", setCacheMap);
-    map.setPrototype("getCache", getCacheMap);
+    //map.setPrototype("setCache", setCacheMap);
+    //map.setPrototype("getCache", getCacheMap);
   };
 
   return scope;
 
   /* ===== _createPrototypes ===== */
   function setCacheMap(status) {
-    return this.getMovableLayer().setCache(status ? true : false);
+    this.getMovableLayer().children.forEach(child => {
+      if(child.getCacheEnabled()) {
+        child.setCache();
+      }
+    });
+    return this.cache().setCache(status ? true : false);
   }
   function getCacheMap() {
     return this.getMovableLayer().getCache();

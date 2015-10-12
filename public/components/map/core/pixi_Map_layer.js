@@ -272,6 +272,9 @@ function _getBaseContainerClass() {
 
     return foundContainer;
   }
+  function getCacheEnabled() {
+    return _cacheEnabled;
+  }
 }
 
 function _setSubContainers(parentSize, subsize) {

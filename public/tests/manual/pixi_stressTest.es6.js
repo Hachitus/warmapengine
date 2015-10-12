@@ -115,7 +115,7 @@ function initMap(mapData, options) {
       if (options.cache) {
         // There is an issue with cache. About worldTransform. If cache is on selecting units will not work atm. because
         // world transform does not take coordinates, achors etc. into account correctly
-        map.setCache(true);
+        map.cacheMap(true);
       }
     });
   }

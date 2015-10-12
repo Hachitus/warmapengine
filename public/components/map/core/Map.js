@@ -27,7 +27,7 @@ import { eventListeners } from './eventlisteners';
 import { ObjectManager } from './ObjectManager';
 
 var _drawMapOnNextTick = false;
-var eventlisteners, _stage, _staticLayer, _movableLayer;
+var eventlisteners, _stage, _staticLayer, _movableLayer, fullSizer;
 
 export class Map {
   /**
@@ -40,7 +40,8 @@ export class Map {
       throw new Error(this.constructor.name + " needs canvas!");
     }
 		
-    this.canvas = canvas;		
+    this.canvas = canvas;
+    fullSizer = resizeUtils.setToFullSize(this.canvas.getContext("2d"));
 		
     _stage = new Map_stage("mainStage", canvas);
     _staticLayer = new Map_layer("staticLayer");
@@ -69,6 +70,13 @@ export class Map {
     this.objectManager = new ObjectManager(); // Fill this with quadtrees or such
     /* Set the correct timing mode for ticker, as in requestAnimationFrame */
     createjs.Ticker.timingMode = createjs.Ticker.RAF;
+
+    this.canvas.style.position = "absolute";
+    this.canvas.style.display = "block";
+    /* stop scrollbars of showing */
+    document.getElementsByTagName("body")[0].style.overflow = "hidden";
+    this.canvas.style.left = "0px";
+    this.canvas.style.top = "0px";
   }
   /** initialization method
    * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
@@ -77,7 +85,11 @@ export class Map {
    * @param {Function} tickCB - callback function for tick. Tick callback is initiated in every frame. So map draws happen
    * during ticks
    * @return the current map instance */
-  init(plugins = [], coord = { x: 0, y: 0 }, tickCB = undefined) {
+  init(plugins = [], coord = { x: 0, y: 0 }, tickCB = undefined, options = { fullsize: true }) {
+    if (options.fullsize) {
+      this.toggleFullsize();
+    }
+
     if (plugins.length) {
       this.activatePlugins(plugins);
     }
@@ -227,21 +239,16 @@ export class Map {
   the eventlistener callback use this.eventCBs */
   toggleFullsize() {
     if(!this.isFullsize) {
-      var ctx = this.canvas.context;
+      fullSizer();
 
-      resizeUtils.setToFullSize(ctx);
-
-      window.addEventListener("resize", resizeCB);
+      window.addEventListener("resize", fullSizer);
+      this.isFullsize = true;
     } else {
-      window.removeEventListener("resize", resizeCB);
+      window.removeEventListener("resize", fullSizer);
+      this.isFullsize = false;
     }
 
-    return this.isFullsize = !this.isFullsize;
-
-    /** ===== PRIVATE ===== */
-    function resizeCB() {
-      resizeUtils.setToFullSize(ctx);
-    }
+    return this.isFullsize;
   }
     /** Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
   the eventlistener callback use this.eventCBs */

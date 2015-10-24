@@ -174,6 +174,19 @@ export class Map {
 
     return this;
   }
+  unCacheMap() {
+    if(_movableLayer.getCacheEnabled()) {
+      _movableLayer.unCache(0, 0, this.mapSize.x, this.mapSize.y);
+    } else {
+      _movableLayer.children.forEach(child => {
+        if(child.getCacheEnabled()) {
+          child.unCache(0, 0, this.mapSize.x, this.mapSize.y);
+        }
+      });
+    }
+
+    return this;
+  }
 
   /** Activate plugins for the map. Plugins need .pluginName property and .init-method
   @param [Array] pluginsArray - Array that consists of the plugin modules */

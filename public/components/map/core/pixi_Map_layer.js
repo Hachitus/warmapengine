@@ -28,7 +28,7 @@ export class Map_layer extends PIXI.Container {
     Object.assign(this, coord);
     this.subcontainerType = PIXI.Container.bind(PIXI);
     this.renderer = renderer;
-    this._cacheEnabled = false;
+    this._cacheEnabled = true;
     this.name = "" + name; // Used otherwise too, but good for debugging. Shows up in toString
     this.drawThisChild = true;
     this.movable = movable;
@@ -54,7 +54,7 @@ export class Map_spriteLayer extends PIXI.Container {
 
 	    Object.assign(this, coord);
 	    this.renderer = renderer;
-	    this._cacheEnabled = false;
+	    this._cacheEnabled = true;
 	    this.name = "" + name; // For debugging. Shows up in toString
 	    this.drawThisChild = true;
 	    this.movable = movable;
@@ -94,7 +94,7 @@ export class Map_bigSpriteLayer extends PIXI.Container {
 	    Object.assign(this, coord);
 	    this.subcontainerType = PIXI.ParticleContainer.bind(PIXI);
 	    this.renderer = renderer;
-	    this._cacheEnabled = false;
+	    this._cacheEnabled = true;
 	    this.name = "" + name; // For debugging. Shows up in toString
 	    this.drawThisChild = true;
 	    this.movable = movable;
@@ -118,14 +118,15 @@ export class Map_bigSpriteLayer extends PIXI.Container {
 		}
 	}
 }
-Object.assign(Map_spriteLayer.prototype, _baseContainerClass);
+Object.assign(Map_bigSpriteLayer.prototype, _baseContainerClass);
 
 function _getBaseContainerClass() {
   return {
     hasSubcontainers,
     addChild,
     setCache,
-    getCache,
+    getCurrentCache,
+    getCacheEnabled,
     move,
     getChildNamed,
     setScale,
@@ -160,20 +161,20 @@ function _getBaseContainerClass() {
     return displayObject;
   }
   function setCache(status) {
-    this._cacheEnabled = status ? true : false;
+    var toCacheStatus = status ? true : false;
 
     if (this.hasSubcontainers()) {
-      this.subContainers.each(sub => {
-        sub.cacheAsBitmap = this._cacheEnabled;
+      this.subContainers.forEach(sub => {
+        sub.cacheAsBitmap = toCacheStatus
       });
     } else {
-      this.cacheAsBitmap = this._cacheEnabled;
+      this.cacheAsBitmap = toCacheStatus;
     }
 
-    return this._cacheEnabled;
+    return toCacheStatus;
   }
-  function getCache(status) {
-    return this._cacheEnabled;
+  function getCurrentCache(status) {
+    return this.cacheAsBitmap;
   }
   /** Move layer
    * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
@@ -273,7 +274,7 @@ function _getBaseContainerClass() {
     return foundContainer;
   }
   function getCacheEnabled() {
-    return _cacheEnabled;
+    return this._cacheEnabled;
   }
 }
 

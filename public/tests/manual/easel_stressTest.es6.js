@@ -108,9 +108,9 @@ function initMap(mapData, options) {
     });
 
     Promise.all(promises).then(activetablePlugins => {
-      map.init( activetablePlugins, gameData.mapSize, undefined );
+      map.init( activetablePlugins );
       if (options.cache) {
-        map.setCache(true);
+        map.cacheMap(true);
       }
     });
   }

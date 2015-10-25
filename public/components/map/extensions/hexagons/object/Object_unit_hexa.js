@@ -20,9 +20,12 @@ export class Object_unit extends Object_sprite_unit {
 			x: this.parent.parent.getScale(),
 			y: this.parent.parent.getScale()
 		};
+    /* Object coordinates + the graphical offset given for the object (regX and regY) + scaling of the 
+     * map. Without regX and Y the coordinate we test for would be for the images left upper corner 
+     * not it's center. Scaling is also needed as it distorts the proportions */
     var offsetCoords = {
-      x: Number(currentObjCoords.x) + Number(this.regX) + this.WIDTH / 3 * currentScale.x,
-      y: Number(currentObjCoords.y) + Number(this.regY) + this.HEIGHT / 3 * currentScale.y
+      x: Number(currentObjCoords.x) + Number(this.regX) + currentScale.x,
+      y: Number(currentObjCoords.y) + Number(this.regY) + currentScale.y
     };
 		var scaledHitArea;
 		

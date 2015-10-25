@@ -107,7 +107,7 @@ export let typeData = {
 							"modifiers":{
 								"morale":"suffers morale drop"
 			}}]}}},{
-				"name":"mortar",
+				"name":"oldCannon",
 				"desc":"wiuuuuu",
 				"image":"mortar.png",
 				"att":"1",
@@ -485,7 +485,7 @@ export let typeData = {
 							"modifiers":{
 								"morale":"suffers morale drop"
 			}}]}}},{
-				"name":"some",
+				"name":"someArcticSoldier?",
 				"desc":"wiuuuuu",
 				"image":"some.png",
 				"att":"1",
@@ -665,7 +665,7 @@ export let typeData = {
 							"modifiers":{
 								"morale":"suffers morale drop"
 			}}]}}},{
-				"name":"pioneer",
+				"name":"donkeyAndMan?",
 				"desc":"wiuuuuu",
 				"image":"pioneer.png",
 				"att":"1",
@@ -755,7 +755,7 @@ export let typeData = {
 							"modifiers":{
 								"morale":"suffers morale drop"
 			}}]}}},{
-				"name":"nomad",
+				"name":"nomadOrMissile?",
 				"desc":"wiuuuuu",
 				"image":"nomad.png",
 				"att":"1",
@@ -773,7 +773,7 @@ export let typeData = {
 							"modifiers":{
 								"morale":"suffers morale drop"
 			}}]}}},{
-				"name":"knight2",
+				"name":"knight2OrSomeShip?",
 				"desc":"wiuuuuu",
 				"image":"knight2.png",
 				"att":"1",
@@ -827,7 +827,7 @@ export let typeData = {
 							"modifiers":{
 								"morale":"suffers morale drop"
 			}}]}}},{
-				"name":"oldman",
+				"name":"oldmanOrOSTruck?",
 				"desc":"wiuuuuu",
 				"image":"oldman.png",
 				"att":"1",
@@ -863,7 +863,7 @@ export let typeData = {
 							"modifiers":{
 								"morale":"suffers morale drop"
 			}}]}}},{
-				"name":"blackie",
+				"name":"blackieOrGreenNinja?",
 				"desc":"wiuuuuu",
 				"image":"blackie.png",
 				"att":"1",
@@ -1007,7 +1007,7 @@ export let typeData = {
 							"modifiers":{
 								"morale":"suffers morale drop"
 			}}]}}},{
-				"name":"rider",
+				"name":"riderOrGreenNinja?",
 				"desc":"wiuuuuu",
 				"image":"rider.png",
 				"att":"1",

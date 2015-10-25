@@ -10,6 +10,6 @@ export let gameData = {
 	skippedTurns: [],
   hexagonRadius: 47,
   pluginsToActivate: {
-    map: ["components/map/core/cache/map_cache", "components/map/core/zoom/map_zoom", "components/map/core/move/map_drag", "components/map/extensions/hexagons/object_select/object_select_hexagon"]
+    map: ["components/map/core/zoom/map_zoom", "components/map/core/move/map_drag", "components/map/extensions/hexagons/object_select/object_select_hexagon"]
   }
 };

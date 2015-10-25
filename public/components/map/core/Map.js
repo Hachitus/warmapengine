@@ -172,6 +172,8 @@ export class Map {
       });
     }
 
+    this.drawOnNextTick();
+
     return this;
   }
   unCacheMap() {
@@ -184,6 +186,8 @@ export class Map {
         }
       });
     }
+
+    this.drawOnNextTick();
 
     return this;
   }

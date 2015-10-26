@@ -26,7 +26,7 @@ export class Map_layer extends PIXI.Container {
     super();
 
     Object.assign(this, coord);
-    this.subcontainerType = PIXI.Container.bind(PIXI);
+    this.subcontainerTypeConstructor = PIXI.Container.bind(PIXI);
     this.renderer = renderer;
     this._cacheEnabled = true;
     this.name = "" + name; // Used otherwise too, but good for debugging. Shows up in toString
@@ -92,7 +92,7 @@ export class Map_bigSpriteLayer extends PIXI.Container {
 	    super();
 
 	    Object.assign(this, coord);
-	    this.subcontainerType = PIXI.ParticleContainer.bind(PIXI);
+	    this.subcontainerTypeConstructor = PIXI.ParticleContainer.bind(PIXI);
 	    this.renderer = renderer;
 	    this._cacheEnabled = true;
 	    this.name = "" + name; // For debugging. Shows up in toString
@@ -245,7 +245,7 @@ function _getBaseContainerClass() {
   function createNewSubcontainer(coord = {x: 0, y: 0}) {
     let newSubcontainer;
 
-    newSubcontainer = new this.subcontainerType();
+    newSubcontainer = new this.subcontainerTypeConstructor();
     newSubcontainer.x = this.subContainerConfig.size * Math.floor(coord.x / this.subContainerConfig.size);
     newSubcontainer.y = this.subContainerConfig.size * Math.floor(coord.y / this.subContainerConfig.size);
 

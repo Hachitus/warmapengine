@@ -52,7 +52,7 @@ window.initMap = function () {
 		});
 		
 		Promise.all(promises).then(activetablePlugins => {
-			map.init( activetablePlugins, mapData.startPoint, undefined );
+			map.init( activetablePlugins, mapData.startPoint );
 
 			document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
 

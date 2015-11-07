@@ -27,5 +27,5 @@
   "disallowTrailingComma": true,
   "disallowKeywords": [ "with" ],
   "disallowKeywordsOnNewLine": ["else"],
-  "excludeFiles": ["public/jspm_packages/**", "node_modules/**", "webcomponents/**"]
+  "excludeFiles": ["public/jspm_packages/**", "node_modules/**", "webcomponents/**", "public/assets/lib/**", "public/tests/lib/**"]
 }

@@ -251,7 +251,11 @@ function setupCreateHighlight(map) {
     }
 
     circle.alpha = 0.5;
-    container.addChild(circle, object);
+
+    /* We add the children first to subContainer, since it's much easier to handle the x and y in it, rather than
+     * handle graphics x and y */
+    container.addChild(circle);
+    container.addChild(object);
 
     movableLayer.addUIObjects(container);
   }

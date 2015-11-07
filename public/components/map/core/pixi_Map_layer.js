@@ -3,6 +3,8 @@
 
 'use strict';
 
+import { general } from './utils/utils';
+
 /**
  * @require the PIXI framework in global namespace
  * @todo I don't think this class should be done in the new class-word, since it is much more efficient with normal
@@ -91,20 +93,20 @@ export class Map_bigSpriteLayer extends PIXI.Container {
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
 	constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, subContainerConfig = { size: 0 }, movable = false }) {
-  super();
+	    super();
 
-  Object.assign(this, coord);
-  this.subcontainerTypeConstructor = PIXI.ParticleContainer.bind(PIXI);
-  this.renderer = renderer;
-  this._cacheEnabled = true;
-  this.name = "" + name; // For debugging. Shows up in toString
-  this.drawThisChild = true;
-  this.movable = movable;
-  this.zoomable = false;
-  this.preventSelection = false;
-  this.subContainerConfig = subContainerConfig;
-  this.oldAddChild = super.addChild.bind(this);
-	}
+	    Object.assign(this, coord);
+	    this.subcontainerTypeConstructor = PIXI.Container.bind(PIXI);
+	    this.renderer = renderer;
+	    this._cacheEnabled = true;
+	    this.name = "" + name; // For debugging. Shows up in toString
+	    this.drawThisChild = true;
+	    this.movable = movable;
+	    this.zoomable = false;
+	    this.preventSelection = false;
+	    this.subContainerConfig = subContainerConfig;
+	    this.oldAddChild = super.addChild.bind(this);
+  	}
 	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
 	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
 	updateTransform() {
@@ -165,13 +167,7 @@ function _getBaseContainerClass() {
   function setCache(status) {
     var toCacheStatus = status ? true : false;
 
-    if (this.hasSubcontainers()) {
-      this.subContainers.forEach(sub => {
-        sub.cacheAsBitmap = toCacheStatus
-      });
-    } else {
-      this.cacheAsBitmap = toCacheStatus;
-    }
+    this.cacheAsBitmap = toCacheStatus;
 
     return toCacheStatus;
   }
@@ -244,7 +240,10 @@ function _getBaseContainerClass() {
         //this.addChild(newObj);
       })
     } else {
-      this.addChild( objects );
+      //let newObj = general.deepCopy(objects);
+      let newObj = objects;
+
+      this.addChild( newObj );
     }
     _UIObjects.push( objects );
 
@@ -296,7 +295,7 @@ function _setSubContainers(parentSize, subsize) {
 
   for (let x = 0; counts.x < x; x++) {
     for (let y = 0; counts.y < y; y++) {
-      let newContainer = new PIXI.ParticleContainer();
+      let newContainer = new PIXI.Container();
       newContainer.x = x;
       newContainer.y = y;
       subContainers.push(newContainer);

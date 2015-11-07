@@ -37,7 +37,7 @@ export let map_zoom = (function map_zoom() {
     map.setPrototype("setZoomLimits", setZoomLimits);
     map.setPrototype("setZoomModifier", setZoomModifier);
 
-    if(map.getEnvironment() === "mobile") {
+    if (map.getEnvironment() === "mobile") {
       map.eventCBs.zoom = _setupZoomEvent_mobile(map);
     } else {
       map.eventCBs.zoom = _setupZoomEvent(map);
@@ -60,7 +60,7 @@ export let map_zoom = (function map_zoom() {
   /** How much one mouse wheel step zooms
    * @param {Number} amount How much one mouse wheel step zooms. Needs to be in between 0 - 0.5 */
   function setZoomModifier (amount) {
-    if(! (amount > 0 || amount <= 0.5) ) {
+    if (! (amount > 0 || amount <= 0.5) ) {
       throw new Error("Wrong zoom modifier! (needs to be >0 and <=0.5, given:" + amount);
     }
     zoomModifier = amount;
@@ -79,19 +79,19 @@ export let map_zoom = (function map_zoom() {
   /** Zoom in to the map
    * @param {Number} amount how much map is zoomed in */
   function zoomIn (amount) {
-		var zoomLayer = this.getZoomLayer();
-		var presentScale = zoomLayer.getScale();
-		
-		return _zoom(zoomLayer, presentScale, Math.abs(amount) || zoomModifier, true);
+    var zoomLayer = this.getZoomLayer();
+    var presentScale = zoomLayer.getScale();
+
+    return _zoom(zoomLayer, presentScale, Math.abs(amount) || zoomModifier, true);
   }
   /** Zoom out of the map
    * @param {Number} amount how much map is zoomed out */
   function zoomOut (amount) {
-		var zoomLayer = this.getZoomLayer();
-		var presentScale = zoomLayer.getScale();
-		amount = amount < 0 ? amount : -amount;
-		
-		return _zoom(zoomLayer, presentScale, amount || -zoomModifier);
+    var zoomLayer = this.getZoomLayer();
+    var presentScale = zoomLayer.getScale();
+    amount = amount < 0 ? amount : -amount;
+
+    return _zoom(zoomLayer, presentScale, amount || -zoomModifier);
   }
 
   /* ============
@@ -107,12 +107,12 @@ export let map_zoom = (function map_zoom() {
       /* No nasty scrolling side-effects */
       e.preventDefault();
 
-      if(mouseWheelDelta > 0) {
-        if(map.zoomIn()) {
+      if (mouseWheelDelta > 0) {
+        if (map.zoomIn()) {
           map.moveMap(_calculateCenterMoveCoordinates(oldScale, true));
         }
-      } else if(mouseWheelDelta < 0) {
-        if(map.zoomOut()) {
+      } else if (mouseWheelDelta < 0) {
+        if (map.zoomOut()) {
           map.moveMap(_calculateCenterMoveCoordinates(oldScale));
         }
       }
@@ -135,14 +135,14 @@ export let map_zoom = (function map_zoom() {
         },{
           x: pointers[1].pageX,
           y: pointers[1].pageY
-      }];
+        }];
       var changeX = Math.abs( coords[0].x - coords[1].x );
       var changeY = Math.abs( coords[0].y - coords[1].y );
 
       e.preventDefault();
 
       try {
-        if(!initialized) {
+        if (!initialized) {
           difference = {
             x: changeX,
             y: changeY
@@ -155,12 +155,12 @@ export let map_zoom = (function map_zoom() {
           initialized = false;
         }
 
-        if(difference.x + difference.y < changeX + changeY) {
-          if(map.zoomIn(undefined)) {
+        if (difference.x + difference.y < changeX + changeY) {
+          if (map.zoomIn(undefined)) {
             map.moveMap(_calculateCenterMoveCoordinates(map.getScale(), true));
           }
         } else {
-          if(map.zoomOut(undefined)) {
+          if (map.zoomOut(undefined)) {
             map.moveMap(_calculateCenterMoveCoordinates(map.getScale()));
           }
         }
@@ -183,7 +183,7 @@ export let map_zoom = (function map_zoom() {
      Private functions
      ================= */
   function _isOverZoomLimit(amount, isZoomIn) {
-    if( (isZoomIn && amount > zoomLimit.closer ) || (!isZoomIn && amount < zoomLimit.farther) ) {
+    if ( (isZoomIn && amount > zoomLimit.closer ) || (!isZoomIn && amount < zoomLimit.farther) ) {
       return true;
     }
 
@@ -202,13 +202,13 @@ export let map_zoom = (function map_zoom() {
 
     return realMovement;
   }
-	function _zoom(zoomLayer, presentScale, amount, isZoomIn) {
-		var newScale;
+  function _zoom(zoomLayer, presentScale, amount, isZoomIn) {
+    var newScale;
 
-    if( !_isOverZoomLimit(presentScale, isZoomIn) ) {
+    if ( !_isOverZoomLimit(presentScale, isZoomIn) ) {
       newScale = zoomLayer.setScale( amount ? presentScale + amount : presentScale + zoomModifier );
     }
 
     return newScale;
-	}
+  }
 })();

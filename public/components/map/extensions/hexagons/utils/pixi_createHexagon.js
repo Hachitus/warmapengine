@@ -7,7 +7,7 @@ import { calcHeight, getHexagonPoints } from './hexagonMath';
 export function createHexagon(radius, isFlatTop = false) {
   var points = [];
 
-    points = getHexagonPoints(radius).map(function(point) {
+  points = getHexagonPoints(radius).map(function(point) {
       return new PIXI.Point(point.x, point.y);
     })
 

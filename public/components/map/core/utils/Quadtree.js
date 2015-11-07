@@ -32,12 +32,12 @@ export class Quadtree {
       return object.data;
     });
 
-     return objects;
+    return objects;
   }
   move(coords, size, data, to) {
     var foundObject = this.findObject(coords, size, data);
 
-    if(foundObject) {
+    if (foundObject) {
       this.quadtree.removeObject(foundObject);
       foundObject.x = to.x;
       foundObject.y = to.y;
@@ -63,7 +63,7 @@ export class Quadtree {
 function _creteQuadtreeObject(coords = {x:undefined, y:undefined}, size = {width:0, height:0}, data) {
   var objToAdd = coords;
 
-  if(coords.x === undefined && coords.y === undefined) {
+  if (coords.x === undefined && coords.y === undefined) {
     throw new Error("_createQuadtreeObject requires x and y coordinates as parameters");
   }
   objToAdd.width = size.width;

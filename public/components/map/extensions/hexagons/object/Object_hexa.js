@@ -12,19 +12,19 @@ export var object_sprite_hexa = {
       }
 
       const HEIGHT = hexagonMath.calcLongDiagonal(radius);
-			const WIDTH = hexagonMath.calcShortDiagonal(radius);
+      const WIDTH = hexagonMath.calcShortDiagonal(radius);
       const SIDE = hexagonMath.calcSide(radius);
 
       this.regX = WIDTH / 2;
       this.regY = HEIGHT / 2;
       this.HEIGHT = HEIGHT;
-			this.WIDTH = WIDTH;
+      this.WIDTH = WIDTH;
       this.SIDE = SIDE;
 
       /* Draw hexagon to test the hits with hitArea */
       this.hitArea = setAndGetShape(radius);
-			this.hitArea.x -= this.regX;
-			this.hitArea.y -= this.regY;
+      this.hitArea.x -= this.regX;
+      this.hitArea.y -= this.regY;
     }
 };
 

@@ -5,8 +5,8 @@ import { Object_sprite_terrain } from '../../../core/objects/pixi_Object_sprite_
 
 export class Object_terrain extends Object_sprite_terrain {
   constructor(coords = {x:0, y:0}, data, options) {
-		var { radius } = options;
-		
+    var { radius } = options;
+
     super(coords, data, options);
 
     this.name = "DefaultTerrainObject_hexa";

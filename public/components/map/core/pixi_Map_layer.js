@@ -95,21 +95,21 @@ export class Map_bigSpriteLayer extends PIXI.Container {
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
 	constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, subContainerConfig = { size: 0 }, movable = false }) {
-	    super();
+  super();
 
-	    Object.assign(this, coord);
-	    this.subcontainerTypeConstructor = PIXI.Container.bind(PIXI);
-	    this.renderer = renderer;
-	    this._cacheEnabled = true;
-	    this.name = "" + name; // For debugging. Shows up in toString
-	    this.drawThisChild = true;
-	    this.movable = movable;
-	    this.zoomable = false;
-	    this.preventSelection = false;
-	    this.subContainerConfig = subContainerConfig;
-	    this.oldAddChild = super.addChild.bind(this);
-      this.subContainersCached = null;
-  	}
+  Object.assign(this, coord);
+  this.subcontainerTypeConstructor = PIXI.Container.bind(PIXI);
+  this.renderer = renderer;
+  this._cacheEnabled = true;
+  this.name = "" + name; // For debugging. Shows up in toString
+  this.drawThisChild = true;
+  this.movable = movable;
+  this.zoomable = false;
+  this.preventSelection = false;
+  this.subContainerConfig = subContainerConfig;
+  this.oldAddChild = super.addChild.bind(this);
+  this.subContainersCached = null;
+}
 	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
 	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
 	updateTransform() {

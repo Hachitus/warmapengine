@@ -11,6 +11,7 @@
 import { templates } from './layout/templates';
 import { createCSSRules } from './layout/CSSRules';
 import { createVisibleHexagon } from '../../extensions/hexagons/utils/createHexagon';
+import { pixi_createVisibleHexagon } from '../../extensions/hexagons/utils/pixi_createHexagon';
 
 import { calcShortDiagonal, calcLongDiagonal } from '/components/map/extensions/hexagons/utils/hexagonMath';
 
@@ -198,9 +199,17 @@ function _showMobileSelections(objects, modal, updateCB, UILayer) {
   }
 }
 function _highlightSelectedObject(object, movableLayer, map) {
-  var clonedObject = object.clone();
+  var clonedObject, correctCoords;
 
-  createHighlight(clonedObject, movableLayer);
+  clonedObject = object.clone();
+
+  var jee = object.toGlobal(new PIXI.Point(0,0));
+  jee = movableLayer.toLocal(jee);
+
+  jee.x -= object.width * object.anchor.x;
+  jee.y -= object.height * object.anchor.y;
+
+  createHighlight(clonedObject, movableLayer, { coords: jee });
 
 }
 function _filterObjectsForHighlighting(objects) {
@@ -229,36 +238,42 @@ function _selectionsInit(UILayer, objects) {
 
 /* @todo This whole damn system and logic needs to be changed and moved elsewhere, stupid stupid stupid atm. */
 function setupCreateHighlight(map) {
-  return function createHighlight(object, movableLayer) {
+  return function createHighlight(object, movableLayer, options = { coords: new PIXI.Point(0, 0) }) {
     var radius = 47;
     var container = new map.createLayer("UILayer");
-    var circle;
-    var easelCircleCoords = {
+    var easelObjCoords = {
       x: Number(object.x),
       y: Number(object.y)
     };
+    var highlighterObject;
 
     if (typeof createjs != 'undefined') {
-      circle = createVisibleHexagon({ x:0, y:0 }, radius, "#F0F0F0");
-      circle.x = easelCircleCoords.x - 1;
-      circle.y = easelCircleCoords.y + 12;
+      highlighterObject = createVisibleHexagon({ x:0, y:0 }, radius, "#F0F0F0");
+      highlighterObject.x = easelObjCoords.x - 1;
+      highlighterObject.y = easelObjCoords.y + 12;
     } else {
       //let positionOnMovable = object.toLocal(new PIXI.Point(0,0), movableLayer);
-      let positionOnMovable = new PIXI.Point(0,0);
+      highlighterObject = pixi_createVisibleHexagon(radius, { color: "#F0F0F0" });
+      //highlighterObject = new PIXI.Sprite(highlighterObject.generateTexture(false));
+      highlighterObject.x = easelObjCoords.x + 32;
+      highlighterObject.y = easelObjCoords.y + 27;
+      /*let positionOnMovable = new PIXI.Point(0,0);
       circle = createPixiCircle(object, radius, positionOnMovable);
       circle.x = calcShortDiagonal(radius) / 2;
-      circle.y = ( calcLongDiagonal(radius) / 2 ) + ( calcLongDiagonal(radius) / 4 );
+      circle.y = ( calcLongDiagonal(radius) / 2 ) + ( calcLongDiagonal(radius) / 4 );*/
     }
 
-    circle.alpha = 0.5;
+    highlighterObject.alpha = 0.5;
 
     /* We add the children first to subContainer, since it's much easier to handle the x and y in it, rather than
      * handle graphics x and y */
-    container.addChild(circle);
+    container.addChild(highlighterObject);
     container.addChild(object);
 
+    container.position = options.coords;
+
     movableLayer.addUIObjects(container);
-  }
+  };
 }
 
 function createPixiCircle(object, radius, positionOnMovable) {
@@ -267,8 +282,7 @@ function createPixiCircle(object, radius, positionOnMovable) {
   circle.drawCircle(0, 0, radius);   //(x,y,radius)
   circle.endFill();
 
-  circle.x = Number( positionOnMovable.x + object.anchor.x );
-  circle.y = Number( positionOnMovable.y + object.anchor.y )
+  circle.position = Object.assign({}, positionOnMovable);
 
   return circle;
 }

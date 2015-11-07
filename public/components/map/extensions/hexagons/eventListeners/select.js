@@ -4,22 +4,24 @@
  * @require Browser that support pointer events or Pointer events polyfill, such as: https://github.com/jquery/PEP */
 
 import { eventListeners as eventListenerMod } from '../../../core/eventlisteners';
+import { UI } from '../../../core/UI';
 import { mouseUtils } from '../../../core/utils/utils';
 
 /* eventlisteners is a singleton, so we might as well declare it here */
-var eventlisteners;
+var eventlisteners, ui;
 
-export function setupHexagonClick(map, callback) {
+export function setupHexagonClick(map) {
   /********** Required **********/
-  if (!map || !callback) {
-    throw new Error("eventlisteners initialization require map callbacks and callback as arguments");
+  if (!map) {
+    throw new Error("eventlisteners initialization require map arguments");
   }
 
   /* Singleton should have been instantiated before, we only retrieve it with 0 params! */
   eventlisteners = eventListenerMod();
+  ui = UI();
 
   if (map.getEnvironment() === "mobile") {
-    map.eventCBs.select = setupTapListener(map, callback);
+    map.eventCBs.select = setupTapListener(map);
   } else {
     map.eventCBs.select = mouseDownListener;
   }
@@ -28,9 +30,9 @@ export function setupHexagonClick(map, callback) {
   return false;
 
   function mouseDownListener() {
-    onMouseUp(map, callback);
+    onMouseUp(map);
   }
-  function setupTapListener(map, callback) {
+  function setupTapListener(map) {
     return function tapListener(e) {
       var touchCoords = mouseUtils.eventData.getHAMMERPointerCoords(e);
       var globalCoords =  {
@@ -42,13 +44,13 @@ export function setupHexagonClick(map, callback) {
       objects = map.getObjectsUnderPoint(globalCoords, "unit");
 
       if (objects && objects.length > 0) {
-        callback(objects);
+        ui.showSelections(objects);
       }
     };
   }
 }
 
-function onMouseUp(map, callback) {
+function onMouseUp(map) {
   map.canvas.addEventListener("mouseup", retrieveClickData);
 
   function retrieveClickData(e) {
@@ -68,7 +70,7 @@ function onMouseUp(map, callback) {
     if (leveledObjects && leveledObjects.length > 0) {
       let merged = [];
 
-      callback(merged.concat.apply(merged, leveledObjects));
+      ui.showSelections(merged.concat.apply(merged, leveledObjects));
     }
 
     map.canvas.removeEventListener("mouseup", retrieveClickData);

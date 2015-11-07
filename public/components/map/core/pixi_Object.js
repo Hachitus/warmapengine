@@ -68,12 +68,19 @@ export class Object_sprite extends PIXI.Sprite {
 
     return targetLocalCoords;
   }
-  clone() {
+  clone(options = { position: false, anchor: false }) {
     var newSprite = new PIXI.Sprite();
     var firstParent = _findFirstParent(this);
     var renderer = firstParent.renderer;
 
     newSprite.texture = this.generateTexture(renderer);
+
+    if (options.anchor) {
+      newSprite.anchor = Object.assign({}, this.anchor);
+    }
+    if (options.position) {
+      newSprite.position = Object.assign({}, this.position);
+    }
 
     return newSprite;
   }

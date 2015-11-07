@@ -7,9 +7,24 @@ import { calcHeight, getHexagonPoints } from './hexagonMath';
 export function createHexagon(radius, isFlatTop = false) {
   var points = [];
 
-  points = getHexagonPoints(radius).map(function(point) {
-      return new PIXI.Point(point.x, point.y);
-    })
+  points = coordsToPixiPoints(radius);
 
   return new PIXI.Polygon(points);
+}
+export function pixi_createVisibleHexagon(radius, options = { color: "#000000", isFlatTop: false }) {
+  var graphics = new PIXI.Graphics();
+  var points = coordsToPixiPoints(radius);
+
+  graphics.beginFill(options.color, 1);
+  graphics.drawPolygon(points);
+  graphics.endFill();
+
+  return graphics;
+}
+
+/******* PRIVATE *******/
+function coordsToPixiPoints(radius) {
+  return getHexagonPoints(radius).map(function(point) {
+    return new PIXI.Point(point.x, point.y);
+  });
 }

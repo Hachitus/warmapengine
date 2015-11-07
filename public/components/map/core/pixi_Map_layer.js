@@ -40,6 +40,7 @@ export class Map_layer extends PIXI.Container {
     this.preventSelection = false;
     this.subContainerConfig = subContainerConfig;
     this.oldAddChild = super.addChild.bind(this);
+    this.subContainersCached = null;
   }
 }
 Object.assign(Map_layer.prototype, _baseContainerClass);
@@ -65,6 +66,7 @@ export class Map_spriteLayer extends PIXI.Container {
   this.zoomable = false;
   this.preventSelection = false;
   this.oldAddChild = super.addChild.bind(this);
+  this.subContainersCached = null;
 	}
 	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
 	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
@@ -106,6 +108,7 @@ export class Map_bigSpriteLayer extends PIXI.Container {
 	    this.preventSelection = false;
 	    this.subContainerConfig = subContainerConfig;
 	    this.oldAddChild = super.addChild.bind(this);
+      this.subContainersCached = null;
   	}
 	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
 	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
@@ -167,7 +170,15 @@ function _getBaseContainerClass() {
   function setCache(status) {
     var toCacheStatus = status ? true : false;
 
-    this.cacheAsBitmap = toCacheStatus;
+    if (this.hasSubcontainers()) {
+      this.subContainers.forEach(sub => {
+        sub.cacheAsBitmap = toCacheStatus;
+        this.subContainersCached = toCacheStatus;
+      });
+    } else {
+      this.cacheAsBitmap = toCacheStatus;
+      this.subContainersCached = null;
+    }
 
     return toCacheStatus;
   }

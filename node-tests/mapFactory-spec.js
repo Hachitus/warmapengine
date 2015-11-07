@@ -48,7 +48,7 @@ describe("basic map - without plugins", function() {
               images: [
                 "/var/www/warMapEngine/public/assets/img/map/collection.png"
               ],
-              "frames": [
+              frames: [
                 [0,0,96,48],
                 [0,48,96,48],
                 [0,96,96,48],
@@ -56,7 +56,7 @@ describe("basic map - without plugins", function() {
                 [0,192,96,48],
                 [0,240,96,48]
               ],
-              "imageSize":[96,48]
+              imageSize:[96,48]
             },
             objects: [{
                 name: "Plain",
@@ -76,7 +76,7 @@ describe("basic map - without plugins", function() {
                     someCustomData: true
                   }
                 }]
-            }]
+              }]
           }]
         },{
           type: "Objects_terrain",
@@ -86,7 +86,7 @@ describe("basic map - without plugins", function() {
               images: [
                 "/var/www/warMapEngine/public/assets/img/map/collection.png"
               ],
-              "frames": [
+              frames: [
                 [0,0,96,48],
                 [0,48,96,48],
                 [0,96,96,48],
@@ -94,7 +94,7 @@ describe("basic map - without plugins", function() {
                 [0,192,96,48],
                 [0,240,96,48]
               ],
-              "imageSize":[96,48]
+              imageSize:[96,48]
             },
           options: {
             cache: false
@@ -111,7 +111,7 @@ describe("basic map - without plugins", function() {
               }
             }]
           }]
-      }]
+        }]
     }]
   };
 

@@ -19,7 +19,7 @@ export function spritesheetList () {
 
     loader.add("/assets/img/map/testHexagons/pixi_testHexagonSpritesheet.json");
 
-    loader.once('complete',onComplete);
+    loader.once('complete', onComplete);
 
     loader.load();
 

@@ -10,7 +10,7 @@
  * Usage: preload.generate("http://path.fi/path").onComplete().then(function() {}); */
 export class Preload {
   constructor (baseUrl, options = { xhrLoading: false, crossOrigin: false }) {
-		this.preloaderClass = new createjs.LoadQueue(options.xhrLoading, baseUrl, options.crossOrigin);
+    this.preloaderClass = new createjs.LoadQueue(options.xhrLoading, baseUrl, options.crossOrigin);
   }
   /**@return {Promise} Return promise object, that will be resolved when the preloading is finished */
   resolveOnComplete () {
@@ -23,7 +23,7 @@ export class Preload {
     return promise.promise;
   }
 	add(resource) {
-		this.preloaderClass.loadFile(resource);
+  this.preloaderClass.loadFile(resource);
 	}
   /** Preload assets. Uses easeljs manifest format */
   loadManifest (...args) {

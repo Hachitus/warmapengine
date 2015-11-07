@@ -5,15 +5,15 @@
 
 export class Preload {
   constructor (baseUrl) {
-		this.preloaderClass = new PIXI.loaders.Loader();
-		this.preloaderClass.baseUrl = baseUrl;    
+    this.preloaderClass = new PIXI.loaders.Loader();
+    this.preloaderClass.baseUrl = baseUrl;
   }
   /**
 	 * @return {Promise} Return promise object, that will be resolved when the preloading is finished */
   resolveOnComplete () {
     var promise = Q.defer();
-		
-		this.preloaderClass.load();
+
+    this.preloaderClass.load();
 
     this.preloaderClass.once('complete', function() {
       promise.resolve(true);
@@ -22,7 +22,7 @@ export class Preload {
     return promise.promise;
   }
 	add(resource) {
-		this.preloaderClass.add(resource);
+  this.preloaderClass.add(resource);
 	}
   /** Preload assets. Uses easeljs manifest format */
   loadManifest () {

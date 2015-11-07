@@ -19,8 +19,8 @@ export class Object_sprite extends createjs.Sprite {
     super(options.spritesheet);
 
     /* This seems not to be set as true in this version of easeljs. So we set it manually. Not sure does it introduce some bugs */
-		this._spritestage_compatibility = true;
-		this.name = "Objects_sprite_" + this.id;
+    this._spritestage_compatibility = true;
+    this.name = "Objects_sprite_" + this.id;
     this.type = "None";
     this.highlightable = true;
     this.selectable = true;
@@ -57,7 +57,7 @@ export class Object_sprite extends createjs.Sprite {
     return this.innerDraw(x, y);
   }
   setupShadow(options = {color: "#000000", offsetX: 5, offsetY: 5, blur: 10} ) {
-    if(this.throwShadow === true) {
+    if (this.throwShadow === true) {
       this.shadow = new createjs.Shadow(options.color, options.offsetX, options.offsetY, options.blur);
     }
   }

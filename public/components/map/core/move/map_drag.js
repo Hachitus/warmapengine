@@ -1,3 +1,5 @@
+/* global console */
+
 'use strict';
 
 /** The core plugin for the 2D map engine. Handles moving the map by dragging the map.
@@ -26,7 +28,7 @@ export let map_drag = (function map_drag() {
   /** Required init functions for the plugin
   * @param {Map object} mapObj - the Map class object */
   scope.init = function(map) {
-    if(map.getEnvironment() === "mobile") {
+    if (map.getEnvironment() === "mobile") {
       map.eventCBs.drag = _startDragListener_mobile(map);
     } else {
       map.eventCBs.drag = _startDragListener(map);
@@ -50,7 +52,7 @@ export let map_drag = (function map_drag() {
   function _startDragListener( map ) {
     return function startDrag(e) {
       try {
-        offsetCoords.setOffset(mouseUtils.getEventCoordsOnPage(e));
+        offsetCoords.setOffset(mouseUtils.eventData.getPointerCoords(e));
         _addDragListeners();
       } catch (e) {
         console.log(e);
@@ -62,43 +64,43 @@ export let map_drag = (function map_drag() {
         _removeDragListeners();
         _mapMoved(map);
       }
-        /** @requires map objects to be accessible in scope */
 
+      /** @requires map objects to be accessible in scope */
       function _dragListener(e) {
         try {
-        var eventCoords = mouseUtils.getEventCoordsOnPage(e);
+          var eventCoords = mouseUtils.eventData.getPointerCoords(e);
 
-        e.preventDefault();
+          e.preventDefault();
 
-        map.mapMoved(true);
+          map.mapMoved(true);
 
-        if(e.buttons === 0) {
-          _removeDragListeners();
-          /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
-          _mapMoved(map);
-        }
+          if (e.buttons === 0) {
+            _removeDragListeners();
+            /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
+            _mapMoved(map);
+          }
 
-        var offset = offsetCoords.getOffset();
-        var moved = {
-          x: eventCoords.x - offset.x,
-          y: eventCoords.y - offset.y
-        };
+          var offset = offsetCoords.getOffset();
+          var moved = {
+            x: eventCoords.x - offset.x,
+            y: eventCoords.y - offset.y
+          };
 
-        if(moved.x > 0 || moved.y > 0 || moved.x < 0 || moved.y < 0) {
-          map.moveMap(moved);
-        } else {
-          map.mapMoved(false);
-        }
+          if (moved.x > 0 || moved.y > 0 || moved.x < 0 || moved.y < 0) {
+            map.moveMap(moved);
+          } else {
+            map.mapMoved(false);
+          }
 
-        offsetCoords.setOffset({
-          x: eventCoords.x,
-          y: eventCoords.y
-        });
+          offsetCoords.setOffset({
+            x: eventCoords.x,
+            y: eventCoords.y
+          });
 
-        /* The mouse has been moved after pressing. This prevent the click
-          event to fire at the same time with the mouseDown / dragging event
-        */
-        //map.mouseMoved( true );
+          /* The mouse has been moved after pressing. This prevent the click
+            event to fire at the same time with the mouseDown / dragging event
+          */
+          //map.mouseMoved( true );
         } catch (e) {
           console.log(e);
         }
@@ -119,12 +121,12 @@ export let map_drag = (function map_drag() {
     var initialized = false;
 
     return function startDrag(e) {
-      var coords = e.center;
+      var coords = mouseUtils.eventData.getHAMMERPointerCoords(e);
 
       e.preventDefault();
 
       try {
-        if(!initialized) {
+        if (!initialized) {
           offsetCoords.setOffset({
             x: coords.x,
             y: coords.y
@@ -146,7 +148,7 @@ export let map_drag = (function map_drag() {
             y: coords.y - offset.y
           };
 
-        if(moved.x !== 0 || moved.y !== 0) {
+        if (moved.x !== 0 || moved.y !== 0) {
           map.moveMap(moved);
         }
 
@@ -169,14 +171,16 @@ export let map_drag = (function map_drag() {
     var offsetCoords;
 
     scope.setOffset = function setOffset(coords) {
-      return offsetCoords = coords;
+      offsetCoords = coords;
+
+      return offsetCoords;
     };
     scope.getOffset = function getOffset() {
       return offsetCoords;
     };
 
     return scope;
-  };
+  }
 
   /* Without this, the other eventListeners might fire inappropriate events. */
   function _mapMoved(map) {

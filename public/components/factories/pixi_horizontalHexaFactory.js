@@ -57,7 +57,7 @@ export function createMap(canvasElement, datas) {
 
       return dpr / bsr;
     })()
-    
+
   var mapOptions = {
     mapSize: gameData.mapSize,
     bounds: {
@@ -81,11 +81,11 @@ export function createMap(canvasElement, datas) {
   /* We iterate through the given map data and create objects accordingly */
   //for(let ia = 0; ia < 100; ia++) {
   mapData.layers.forEach( layerData => {
-    if(typeof layerData !== "object") {
+    if (typeof layerData !== "object") {
       console.log("Problem in horizontalHexaFactory, with layerData:", layerData);
       throw new Error("Problem in horizontalHexaFactory, with layerData:", layerData);
     }
-    
+
     var layerGroup = layerData.group;
     var objManager = map.objectManager;
     var layerConstructor = layers[layerData.type];
@@ -93,8 +93,8 @@ export function createMap(canvasElement, datas) {
     var thisLayer;
 
     try {
-			thisLayer = new layerConstructor(layerOptions);
-			map.addLayer(thisLayer);
+      thisLayer = new layerConstructor(layerOptions);
+      map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
         x: 0,
         y: 0,
@@ -108,51 +108,51 @@ export function createMap(canvasElement, datas) {
       layerData.objectGroups.forEach( objectGroup => {
         let spritesheetType = objectGroup.typeImageData;
 
-        if(!spritesheetType) {
+        if (!spritesheetType) {
           console.log("Error with spritesheetType-data");
           return;
         }
 
         objectGroup.objects.forEach( object => {
-  				var objTypeData, objData, objectOptions, currentFrame, newObject;
-  				
-  				objTypeData = typeData.objectData[spritesheetType][object.objType];
-  				if(!objTypeData) {
+          var objTypeData, objData, objectOptions, currentFrame, newObject;
+
+          objTypeData = typeData.objectData[spritesheetType][object.objType];
+          if (!objTypeData) {
             console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
             throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
           }
-  				
-  				try {
-  					objData = {
-  						typeData: objTypeData,
-  						activeData: object.data
-  					};
-  					currentFrame = PIXI.utils.TextureCache[objTypeData.image];
-  					objectOptions = {
-  						currentFrame,
-  						radius: gameData.hexagonRadius
-  					};
 
-  					newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
-  				
-  					objManager.addObject(
-  						layerGroup,
+          try {
+            objData = {
+              typeData: objTypeData,
+              activeData: object.data
+            };
+            currentFrame = PIXI.utils.TextureCache[objTypeData.image];
+            objectOptions = {
+              currentFrame,
+              radius: gameData.hexagonRadius
+            };
+
+            newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
+
+            objManager.addObject(
+                      layerGroup,
   						{
-  							x: newObject.x,
-  							y: newObject.y,
-  							width: newObject.width,
-  							height: newObject.height
+    x: newObject.x,
+    y: newObject.y,
+    width: newObject.width,
+    height: newObject.height
   						},
   							newObject
   					);
 
-  					thisLayer.addChild( newObject );
-  				} catch (e) {
-  					console.log(e);
-  				}
+            thisLayer.addChild( newObject );
+          } catch (e) {
+            console.log(e);
+          }
         });
       });
-    } catch(e) {
+    } catch (e) {
       console.log("Problem:", layerData.type, e.stack);
     }
   });

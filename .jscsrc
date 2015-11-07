@@ -26,5 +26,6 @@
   "disallowTrailingWhitespace": true,
   "disallowTrailingComma": true,
   "disallowKeywords": [ "with" ],
-  "disallowKeywordsOnNewLine": ["else"]
+  "disallowKeywordsOnNewLine": ["else"],
+  "excludeFiles": ["public/jspm_packages/**", "node_modules/**", "webcomponents/**"]
 }

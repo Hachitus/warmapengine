@@ -9,13 +9,13 @@ var jscs = require('gulp-jscs')
 //var babel = require("gulp-babel");
 
 gulp.task('watchAndCompile', function() {
-    gulp.watch('./public/tests/manual/createMap-test.es6.js', ['compile_manualTestMap']);
-    gulp.watch('./public/tests/es6/*.es6.js', ['compile_unitTests']);
+  gulp.watch('./public/tests/manual/createMap-test.es6.js', ['compile_manualTestMap']);
+  gulp.watch('./public/tests/es6/*.es6.js', ['compile_unitTests']);
 });
 
 gulp.task('compile_unitTests', function(done) {
   glob('./public/tests/es6/*.es6.js', function(err, files) {
-    if(err) {
+    if (err) {
       done(err);
       return;
     }
@@ -26,7 +26,7 @@ gulp.task('compile_unitTests', function(done) {
       var filename = entry.split("/");
       filename = filename[filename.length-1];
 
-      console.log("transpiling:",filename);
+      console.log("transpiling:", filename);
       streamForDone = browserify({
           entries: entry,
           debug: true

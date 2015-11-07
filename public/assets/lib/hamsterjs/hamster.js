@@ -200,7 +200,7 @@ Hamster.normalise = {
    * @param   {Function}    originalEvent
    * @returns {Object}      event
    */
-   event: function normaliseEvent(originalEvent){
+  event: function normaliseEvent(originalEvent){
     var event = {
           // keep a reference to the original event object
           originalEvent: originalEvent,

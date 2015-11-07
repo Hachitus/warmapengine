@@ -104,7 +104,7 @@ function testMap() {
         it("=> init and get size", function() {
           all.map.init({
             mapSize: new createjs.Rectangle(0,0,1,1)
-            });
+          });
           sizeFromMap = all.map.getSize();
 
           expect(sizeFromMap instanceof createjs.Rectangle).to.be.true;
@@ -113,7 +113,7 @@ function testMap() {
           expect(sizeFromMap.y === 0).to.be.true;
         });
         it("=> setSize", function() {
-          all.map.setSize(0,0,70,70);
+          all.map.setSize(0, 0, 70, 70);
           sizeFromMap = all.map.getSize();
           expect(sizeFromMap.width === 70).to.be.true;
           expect(sizeFromMap.height === 70).to.be.true;
@@ -130,7 +130,7 @@ function testMap() {
       });
     });
 
-  /* ===== Test class inits ===== */
+    /* ===== Test class inits ===== */
 
     describe("=> testing map (success)", function() {
       var all = _resetVariables();

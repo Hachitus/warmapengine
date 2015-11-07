@@ -1,5 +1,3 @@
-/* global createjs, PIXI */
-
 /** The simplest default UI implementation. Implement UI functionalities for:
  * showSelections
  * highlightSelectedObject
@@ -44,7 +42,7 @@ export class UI_default {
   showSelections(map, objects) {
     createHighlight = setupCreateHighlight(map);
 
-    if(map.getEnvironment() === "mobile") {
+    if (map.getEnvironment() === "mobile") {
       _showMobileSelections(objects, this.modal, map.drawOnNextTick.bind(map), map.getMovableLayer());
     } else {
       _showDesktopSelections(objects, this.modal, map.drawOnNextTick.bind(map), map.getMovableLayer());
@@ -53,7 +51,7 @@ export class UI_default {
   highlightSelectedObject(map, object) {
     createHighlight = setupCreateHighlight(map);
 
-    if(object.highlightable) {
+    if (object.highlightable) {
       return _highlightSelectedObject(object, map.getMovableLayer());
     }
   }
@@ -64,7 +62,7 @@ export class UI_default {
       /**
        * @todo change this modal system totally. As it is based on HTML 5.1 modal specifications atm. for easy testing
        * Maybe create a class that abstracts the modal behind it or then just use this? */
-      if(self.modal && self.modal.close) {
+      if (self.modal && self.modal.close) {
         _activateClosingElement( element, self.modal.close.bind(self.modal) );
       }
     });
@@ -95,12 +93,12 @@ function _addCSSRulesToScriptTag(sheet, rules) {
   sheet.insertRule(rules, 0);
 }
 function _addStyleElement() {
-    var _styleElement = document.createElement("style");
-    // WebKit hack :(
-    _styleElement.appendChild(document.createTextNode(""));
-    document.head.appendChild(_styleElement);
+  var _styleElement = document.createElement("style");
+  // WebKit hack :(
+  _styleElement.appendChild(document.createTextNode(""));
+  document.head.appendChild(_styleElement);
 
-    return _styleElement.sheet;
+  return _styleElement.sheet;
 }
 function _showModal(modalElem, cssClasses) {
   /** @todo make sure / check, that this get added only once */
@@ -110,7 +108,7 @@ function _showModal(modalElem, cssClasses) {
 }
 function _get$Element(which) {
   /* Set the jQuery element to collection only once */
-  if(!$elements[which]) {
+  if (!$elements[which]) {
     let $element = $(cssClasses[which]);
     $elements[which] = $element;
   }
@@ -155,7 +153,7 @@ function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
       UILayer.emptyUIObjects();
       updateCB();
       console.log("Error occured selecting the objects on this coordinates! Nothing found");
-    });    
+    });
   }
 }
 function _showMobileSelections(objects, modal, updateCB, UILayer) {
@@ -196,7 +194,7 @@ function _showMobileSelections(objects, modal, updateCB, UILayer) {
       UILayer.emptyUIObjects();
       updateCB();
       console.log("Error occured selecting the objects on this coordinates! Nothing found");
-    });    
+    });
   }
 }
 function _highlightSelectedObject(object, movableLayer, map) {
@@ -219,7 +217,7 @@ function _filterObjectsForHighlighting(objects) {
 function _selectionsInit(UILayer, objects) {
   var highlightObjects = _filterObjectsForHighlighting(objects);
 
-  if(highlightObjects.length < 1) {
+  if (highlightObjects.length < 1) {
     return false;
   }
 
@@ -237,10 +235,10 @@ function setupCreateHighlight(map) {
     var circle;
     var easelCircleCoords = {
       x: Number(object.x),
-      y: Number(object.y),
+      y: Number(object.y)
     };
 
-    if(typeof createjs != 'undefined') {
+    if (typeof createjs != 'undefined') {
       circle = createVisibleHexagon({ x:0, y:0 }, radius, "#F0F0F0");
       circle.x = easelCircleCoords.x - 1;
       circle.y = easelCircleCoords.y + 12;
@@ -248,10 +246,10 @@ function setupCreateHighlight(map) {
       //let positionOnMovable = object.toLocal(new PIXI.Point(0,0), movableLayer);
       let positionOnMovable = new PIXI.Point(0,0);
       circle = createPixiCircle(object, radius, positionOnMovable);
-			circle.x = calcShortDiagonal(radius) / 2;
-			circle.y = ( calcLongDiagonal(radius) / 2 ) + ( calcLongDiagonal(radius) / 4 );
+      circle.x = calcShortDiagonal(radius) / 2;
+      circle.y = ( calcLongDiagonal(radius) / 2 ) + ( calcLongDiagonal(radius) / 4 );
     }
-		
+
     circle.alpha = 0.5;
     container.addChild(circle, object);
 
@@ -276,8 +274,8 @@ function createEaseljsCircle(object, radius) {
   var highlightCircle;
 
   g.setStrokeStyle(1);
-  g.beginStroke(createjs.Graphics.getRGB(0,0,0));
-  g.beginFill(createjs.Graphics.getRGB(255,200,200, 0.2));
+  g.beginStroke(createjs.Graphics.getRGB(0, 0, 0));
+  g.beginFill(createjs.Graphics.getRGB(255, 200, 200, 0.2));
   g.drawCircle( 0, 0, radius );
 
   highlightCircle = new createjs.Shape(g);

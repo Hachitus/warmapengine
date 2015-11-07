@@ -20,27 +20,27 @@ var singletonScope;
    zoom: function() {}
  }*/
 export let eventListeners = function eventListenerModule(map, canvasElement = document.getElementsByTagName("canvas")[0]) {
-  if(singletonScope) {
+  if (singletonScope) {
     return singletonScope;
   }
-	/********** Required **********/
-  if(!map || !canvasElement) {
+  /********** Required **********/
+  if (!map || !canvasElement) {
     throw new Error("eventlisteners initialization require map callbacks and canvas element as arguments");
   }
-	
+
   var mapCBs = map.eventCBs;
-	var hammer;
-	
-	if(isMobileSite()) {
-  	hammer = new Hammer.Manager(canvasElement);
-	}
+  var hammer;
+
+  if (isMobileSite()) {
+    hammer = new Hammer.Manager(canvasElement);
+  }
 
   singletonScope = {
     states: {}
   };
 
   singletonScope.toggleFullSizeListener = function toggleFullSizeListener() {
-    if(singletonScope.states.fullSize !== true) {
+    if (singletonScope.states.fullSize !== true) {
       window.addEventListener("resize", mapCBs.fullSizeCB);
       singletonScope.states.fullSize = true;
     } else {
@@ -55,9 +55,9 @@ export let eventListeners = function eventListenerModule(map, canvasElement = do
 
     return mapCBs.fullscreen;
   };
-  singletonScope.toggleZoomListener = function toggleZoomListener() {		
-    if(singletonScope.states.zoom !== true) {
-      if(isMobileSite()) {
+  singletonScope.toggleZoomListener = function toggleZoomListener() {
+    if (singletonScope.states.zoom !== true) {
+      if (isMobileSite()) {
         hammer = new Hammer.Manager(canvasElement);
         var pinch = new Hammer.Pinch();
         hammer.add(pinch);
@@ -69,7 +69,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement = do
 
       singletonScope.states.zoom = true;
     } else {
-      if(isMobileSite()) {
+      if (isMobileSite()) {
         hammer.on("pinch", mapCBs.zoom);
       } else {
         Hamster(canvasElement).unwheel(mapCBs.zoom);
@@ -81,8 +81,8 @@ export let eventListeners = function eventListenerModule(map, canvasElement = do
     return mapCBs.zoom;
   };
   singletonScope.toggleDragListener = function toggleDragListener() {
-    if(singletonScope.states.drag !== true) {
-      if(isMobileSite()) {
+    if (singletonScope.states.drag !== true) {
+      if (isMobileSite()) {
         hammer = new Hammer.Manager(canvasElement);
         var pan = new Hammer.Pan({
           pointers: 1,
@@ -96,7 +96,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement = do
 
       singletonScope.states.drag = true;
     } else {
-      if(isMobileSite()) {
+      if (isMobileSite()) {
         hammer.off("pan", mapCBs.drag);
       } else {
         canvasElement.removeEventListener("mousedown", mapCBs.drag);
@@ -108,8 +108,8 @@ export let eventListeners = function eventListenerModule(map, canvasElement = do
     return mapCBs.drag;
   };
   singletonScope.toggleSelectListener = function toggleSelectListener() {
-    if(singletonScope.states.select !== true) {
-      if(isMobileSite()) {
+    if (singletonScope.states.select !== true) {
+      if (isMobileSite()) {
         hammer = new Hammer.Manager(canvasElement);
         var tap = new Hammer.Tap();
         hammer.add(tap);
@@ -120,7 +120,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement = do
 
       singletonScope.states.select = true;
     } else {
-      if(isMobileSite()) {
+      if (isMobileSite()) {
         hammer.off("tap", mapCBs.select);
       } else {
         canvasElement.removeEventListener("mousedown", mapCBs.select);

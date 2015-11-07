@@ -52,11 +52,11 @@ export function createMap(canvasElement, datas) {
 
   /* We iterate through the given map data and create objects accordingly */
   mapData.layers.forEach( layerData => {
-    if(typeof layerData !== "object") {
+    if (typeof layerData !== "object") {
       console.log("Problem in horizontalHexaFactory, with layerData:", layerData);
       throw new Error("Problem in horizontalHexaFactory, with layerData:", layerData);
     }
-    
+
     var layerGroup = layerData.group;
     var objManager = map.objectManager;
     var layerConstructor = layers[layerData.type];
@@ -64,8 +64,8 @@ export function createMap(canvasElement, datas) {
     var thisLayer;
 
     try {
-			thisLayer = new layerConstructor(layerOptions);
-			map.addLayer(thisLayer);
+      thisLayer = new layerConstructor(layerOptions);
+      map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
         x: 0,
         y: 0,
@@ -75,7 +75,7 @@ export function createMap(canvasElement, datas) {
         objects: 10,
         levels: 6
       });
-    } catch(e) {
+    } catch (e) {
       console.log("Problem:", layerData.type, e.stack);
     }
 
@@ -83,54 +83,54 @@ export function createMap(canvasElement, datas) {
       let spritesheet;
       let spritesheetType = objectGroup.typeImageData;
 
-      if(!spritesheetType) {
+      if (!spritesheetType) {
         console.log("Error with spritesheetType-data");
         return;
       }
 
-      if(spritesheetType) {
+      if (spritesheetType) {
         let spritesheetData = typeData.graphicData[spritesheetType];
 
         spritesheet = allSpritesheets.createSpritesheet(spritesheetData);
       }
 
       objectGroup.objects.forEach( object => {
-				var objTypeData, objData, objectOptions, currentFrame, newObject;
-				
-				objTypeData = typeData.objectData[spritesheetType][object.objType];
-				if(!objTypeData) {
+        var objTypeData, objData, objectOptions, currentFrame, newObject;
+
+        objTypeData = typeData.objectData[spritesheetType][object.objType];
+        if (!objTypeData) {
           console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
           throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
         }
-				
-        try {				
-					objData = {
-						typeData: objTypeData,
-						activeData: object.data
-					};
-					objectOptions = {
-						spritesheet,
-						currentFrame: objTypeData.image,
-						radius: gameData.hexagonRadius
-					};
 
-					newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
+        try {
+          objData = {
+            typeData: objTypeData,
+            activeData: object.data
+          };
+          objectOptions = {
+            spritesheet,
+            currentFrame: objTypeData.image,
+            radius: gameData.hexagonRadius
+          };
 
-	        objManager.addObject(
-						layerGroup,
+          newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
+
+          objManager.addObject(
+          layerGroup,
 						{
-							x: newObject.x,
-							y: newObject.y,
-							width: newObject.width,
-							height: newObject.height
+  x: newObject.x,
+  y: newObject.y,
+  width: newObject.width,
+  height: newObject.height
 						},
 							newObject
 					);
-					
-					thisLayer.addChild( newObject );
-				} catch (e) {
-					console.log(e);
-				}
+
+          thisLayer.addChild( newObject );
+        } catch (e) {
+          console.log(e);
+        }
       });
     });
   });

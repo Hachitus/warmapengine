@@ -1,4 +1,6 @@
-/* global PIXI */
+/* jshint ignore:start */
+// JSHINT IGNORE: Since does not seem to handle ES6 classes properly.
+
 'use strict';
 
 /**
@@ -50,31 +52,31 @@ export class Map_spriteLayer extends PIXI.Container {
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
 	constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, movable = false }) {
-	    super();
+  super();
 
-	    Object.assign(this, coord);
-	    this.renderer = renderer;
-	    this._cacheEnabled = true;
-	    this.name = "" + name; // For debugging. Shows up in toString
-	    this.drawThisChild = true;
-	    this.movable = movable;
-	    this.zoomable = false;
-	    this.preventSelection = false;
-	    this.oldAddChild = super.addChild.bind(this);
+  Object.assign(this, coord);
+  this.renderer = renderer;
+  this._cacheEnabled = true;
+  this.name = "" + name; // For debugging. Shows up in toString
+  this.drawThisChild = true;
+  this.movable = movable;
+  this.zoomable = false;
+  this.preventSelection = false;
+  this.oldAddChild = super.addChild.bind(this);
 	}
 	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
 	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
 	updateTransform() {
-		if (!this.visible)
-		{
-			return false;
-		}
+  if (!this.visible)
+  {
+    return false;
+  }
 
-		this.displayObjectUpdateTransform();
-		for (var i = 0, j = this.children.length; i < j; ++i)
-		{
-			this.children[i].updateTransform();
-		}
+  this.displayObjectUpdateTransform();
+  for (var i = 0, j = this.children.length; i < j; ++i)
+  {
+    this.children[i].updateTransform();
+  }
 	}
 }
 Object.assign(Map_spriteLayer.prototype, _baseContainerClass);
@@ -89,33 +91,33 @@ export class Map_bigSpriteLayer extends PIXI.Container {
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
 	constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, subContainerConfig = { size: 0 }, movable = false }) {
-	    super();
+  super();
 
-	    Object.assign(this, coord);
-	    this.subcontainerTypeConstructor = PIXI.ParticleContainer.bind(PIXI);
-	    this.renderer = renderer;
-	    this._cacheEnabled = true;
-	    this.name = "" + name; // For debugging. Shows up in toString
-	    this.drawThisChild = true;
-	    this.movable = movable;
-	    this.zoomable = false;
-	    this.preventSelection = false;
-	    this.subContainerConfig = subContainerConfig;
-	    this.oldAddChild = super.addChild.bind(this);
-  	}
+  Object.assign(this, coord);
+  this.subcontainerTypeConstructor = PIXI.ParticleContainer.bind(PIXI);
+  this.renderer = renderer;
+  this._cacheEnabled = true;
+  this.name = "" + name; // For debugging. Shows up in toString
+  this.drawThisChild = true;
+  this.movable = movable;
+  this.zoomable = false;
+  this.preventSelection = false;
+  this.subContainerConfig = subContainerConfig;
+  this.oldAddChild = super.addChild.bind(this);
+	}
 	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
 	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
 	updateTransform() {
-		if (!this.visible)
-		{
-			return false;
-		}
+  if (!this.visible)
+  {
+    return false;
+  }
 
-		this.displayObjectUpdateTransform();
-		for (var i = 0, j = this.children.length; i < j; ++i)
-		{
-			this.children[i].updateTransform();
-		}
+  this.displayObjectUpdateTransform();
+  for (var i = 0, j = this.children.length; i < j; ++i)
+  {
+    this.children[i].updateTransform();
+  }
 	}
 }
 Object.assign(Map_bigSpriteLayer.prototype, _baseContainerClass);
@@ -233,7 +235,14 @@ function _getBaseContainerClass() {
   function addUIObjects(objects) {
     _UIObjects = _UIObjects || [];
     if (Array.isArray(objects)) {
-      this.addChild.apply(this, objects);
+      objects.forEach( thisObj => {
+        /* We want to make a copy of the object, since if add existing child from another container to UI,
+         * it will get removed from the original container and messes up the hierarchy. Probably making a deep copy
+         * directly isn't the best way, but it's the easiest atm. */
+        //let newObj = general.deepCopy(thisObj);
+
+        //this.addChild(newObj);
+      })
     } else {
       this.addChild( objects );
     }

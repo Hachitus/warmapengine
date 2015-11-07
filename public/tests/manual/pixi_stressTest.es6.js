@@ -75,7 +75,7 @@ function initMap(mapData, options) {
     data: {}
   };
   var preload;
-  
+
   /* Determines how much stuff we show on screen for stress testing */
   // If either is even 1 pixel bigger than this, gets all black
   /* works with:

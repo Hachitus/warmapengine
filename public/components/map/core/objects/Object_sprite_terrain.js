@@ -1,3 +1,6 @@
+/* jshint ignore:start */
+// JSHINT IGNORE: Since does not seem to handle ES6 classes properly.
+
 'use strict';
 
 /** Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are

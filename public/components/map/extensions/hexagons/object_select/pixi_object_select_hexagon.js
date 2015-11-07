@@ -1,5 +1,3 @@
-/* global PIXI */
-
 /* Calculate the coordinates of the center hexagon always and get objects based on the coordinates. For example with
   some method like getAllObjectsInHexagon.
 SO:
@@ -41,7 +39,7 @@ export let object_select = (function object_select_hexagon() {
   return scope;
 
   function getObjectsForMap(clickCoords = { x: 0, y: 0 }, group) {
-		/* Filter objects based on quadtree and then based on possible group provided */
+    /* Filter objects based on quadtree and then based on possible group provided */
     var objects = {};
 
     objects[group] = map.objectManager.retrieve(group, clickCoords);

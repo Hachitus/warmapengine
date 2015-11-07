@@ -1,4 +1,5 @@
-/* global PIXI */
+/* jshint ignore:start */
+// JSHINT IGNORE: Since does not seem to handle ES6 classes properly.
 
 /** Map is the main class for constructing 2D map for strategy games
  *
@@ -34,12 +35,12 @@ export class Map {
    * @return Map instance
 
    @todo, set default values for given and required options */
-  constructor(canvas, { mapSize = { x: 0, y: 0 }, startCoord = { x: 0, y: 0 }, bounds = { width: 0, height: 0 }, options = {} }) {		
-    if(!canvas) {
+  constructor(canvas, { mapSize = { x: 0, y: 0 }, startCoord = { x: 0, y: 0 }, bounds = { width: 0, height: 0 }, options = {} }) {
+    if (!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }
-		
-    if(typeof canvas === "string") {
+
+    if (typeof canvas === "string") {
       canvas = document.querySelector(canvas);
     } else {
       canvas = canvas;
@@ -57,7 +58,7 @@ export class Map {
     this.plugins = new Set();
     this.mapSize = mapSize;
     /* Define event callback here!
-		 * @todo I think this should be organized another way? */
+     * @todo I think this should be organized another way? */
     this.eventCBs = {
       fullSize: boundResizer,
       fullscreen: setFullScreen.bind(this),
@@ -67,7 +68,7 @@ export class Map {
     };
     this.isFullsize = false;
     this._mapInMove = false;
-		let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
+    let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
     this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
 
     boundResizer = _resizeCanvas.bind(this);
@@ -90,9 +91,9 @@ export class Map {
    * during ticks
    * @return the current map instance */
   init(plugins = [], coord = { x: 0, y: 0 }, tickCB, options = { fullsize: true }) {
-    if(options.fullsize) {
+    if (options.fullsize) {
       this.toggleFullsize();
-    }    
+    }
 
     eventlisteners = eventListeners(this, this.canvas);
 
@@ -100,8 +101,8 @@ export class Map {
       this.activatePlugins(plugins);
     }
 
-    if(coord) {
-			Object.assign(_movableLayer, coord);
+    if (coord) {
+      Object.assign(_movableLayer, coord);
     }
 
     this.drawOnNextTick();
@@ -168,7 +169,7 @@ export class Map {
    * @return this map instance */
   cacheMap() {
     _movableLayer.children.forEach(child => {
-      if(child.getCacheEnabled()) {
+      if (child.getCacheEnabled()) {
         child.setCache(true);
       }
     });
@@ -179,7 +180,7 @@ export class Map {
    * @return this map instance */
   unCacheMap() {
     _movableLayer.children.forEach(child => {
-      if(child.getCacheEnabled()) {
+      if (child.getCacheEnabled()) {
         child.setCache(false);
       }
     });
@@ -193,17 +194,17 @@ export class Map {
 
     try {
       pluginsArray.forEach(plugin => {
-				currentPluginNameForErrors = "undefined";
-        if(!plugin || !plugin.pluginName) {
+        currentPluginNameForErrors = "undefined";
+        if (!plugin || !plugin.pluginName) {
           throw new Error("plugin or plugin.pluginName missing");
         }
         currentPluginNameForErrors = plugin.pluginName;
 
-        if(this.plugins.add(plugin[plugin.pluginName])) {
+        if (this.plugins.add(plugin[plugin.pluginName])) {
           plugin[plugin.pluginName].init(this);
         }
       });
-    } catch(e) {
+    } catch (e) {
       console.log("An error initializing plugin " + currentPluginNameForErrors, e);
     }
 
@@ -211,7 +212,7 @@ export class Map {
   }
   /** getter and setter for detecting if map is moved and setting the maps status as moved or not moved */
   mapMoved(yesOrNo) {
-    if(yesOrNo !== undefined) {
+    if (yesOrNo !== undefined) {
       this._mapInMove = yesOrNo;
       return yesOrNo;
     }
@@ -226,7 +227,7 @@ export class Map {
   /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
   the eventlistener callback use this.eventCBs */
   toggleFullsize() {
-    if(!this.isFullsize) {
+    if (!this.isFullsize) {
       _setResizeCanvas();
       this.isFullsize = true;
     } else {
@@ -297,7 +298,7 @@ export class Map {
 callback is always set and should not be removed or overruled */
 function _defaultTick(map, ticker) {
   ticker.add(function (time) {
-    if(_drawMapOnNextTick === true) {
+    if (_drawMapOnNextTick === true) {
       _renderer.render(_staticLayer);
     }
     _drawMapOnNextTick = false;

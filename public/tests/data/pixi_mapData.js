@@ -9,7 +9,7 @@ export let mapData = {
     name: "terrainLayer",
     group: "terrain", // For quadTrees
     specials: [{
-      "interactive": false
+      interactive: false
     }],
     options: {
       cache: true
@@ -19,75 +19,75 @@ export let mapData = {
       name: "Terrain", // For quadTrees and debugging
       typeImageData: "terrainBase",
       objects: [{
-         "objType":0,
-         "name":"swamp",
-         "_id":"53837d49976fed3b240006b8",
-         "coord":{
-            "x":"0",
-            "y":"0"
-         },
-         "data": {},
-         "lastSeenTurn":"1"
+        objType:0,
+        name:"swamp",
+        _id:"53837d49976fed3b240006b8",
+        coord:{
+          x:"0",
+          y:"0"
+        },
+        data: {},
+        lastSeenTurn:"1"
       },{
-         "objType":1,
-         "name":"swamp",
-         "_id":"53837d49976fed3b240006bd",
-         "coord":{
-            "x":"0",
-            "y":"140"
-         },
-         "data": {},
-         "lastSeenTurn":"1"
+        objType:1,
+        name:"swamp",
+        _id:"53837d49976fed3b240006bd",
+        coord:{
+          x:"0",
+          y:"140"
+        },
+        data: {},
+        lastSeenTurn:"1"
       },
       {
-         "objType":2,
-         "name":"tundra",
-         "_id":"53837d49976fed3b240006c2",
-         "coord":{
-            "x":"41",
-            "y":"70"
-         },
-         "data": {},
-         "lastSeenTurn":"1"
+        objType:2,
+        name:"tundra",
+        _id:"53837d49976fed3b240006c2",
+        coord:{
+          x:"41",
+          y:"70"
+        },
+        data: {},
+        lastSeenTurn:"1"
       },
       {
-         "objType":3,
-         "name":"forest",
-         "_id":"53837d49976fed3b240006c7",
-         "coord":{
-            "x":"82",
-            "y":"140"
-         },
-         "data": {},
-         "lastSeenTurn":"1"
+        objType:3,
+        name:"forest",
+        _id:"53837d49976fed3b240006c7",
+        coord:{
+          x:"82",
+          y:"140"
+        },
+        data: {},
+        lastSeenTurn:"1"
       }]
     }]
   },{
     type: "Map_bigSpriteLayer",
     coord: {
-        "x": "0",
-        "y": "0"
+      x: "0",
+      y: "0"
     },
-    "name": "unitLayer",
+    name: "unitLayer",
     group: "unit", // For quadTrees
-    "options": {
-      "cache": "false"
+    options: {
+      cache: "false"
     },
-    "objectGroups": [{
-      "type": "Object_unit",
-      "name": "Unit", // I guess only for debugging?
-      "typeImageData": "unit",
-      "objects": [{
-        "objType":0,
-        "name": "Tank you",
-        "coord": {
-          "x": "41", "y": "70"
+    objectGroups: [{
+      type: "Object_unit",
+      name: "Unit", // I guess only for debugging?
+      typeImageData: "unit",
+      objects: [{
+        objType:0,
+        name: "Tank you",
+        coord: {
+          x: "41", y: "70"
         },
-        "data": {
-          "playerID": 0,
-					"hp": 10
+        data: {
+          playerID: 0,
+          hp: 10
         },
-        "lastSeenTurn":"1"
+        lastSeenTurn:"1"
       }]
     }]
   }]

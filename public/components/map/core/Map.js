@@ -36,13 +36,13 @@ export class Map {
    * @param {Object} options - different options for the map to be given.
    * @return Map instance */
   constructor( canvas, { mapSize = { x: 0, y: 0 }, startCoord = { x: 0, y: 0 } } ) {
-    if(!canvas) {
+    if (!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }
-		
+
     this.canvas = canvas;
     fullSizer = resizeUtils.setToFullSize(this.canvas.getContext("2d"));
-		
+
     _stage = new Map_stage("mainStage", canvas);
     _staticLayer = new Map_layer("staticLayer");
     _stage.addChild(_staticLayer);
@@ -55,7 +55,7 @@ export class Map {
     this.activeTickCB = false;
     /* Define event callback here!
 		 * @todo I think this should be organized another way? */
-		this.eventCBs = {
+    this.eventCBs = {
       fullSize: resizeUtils.setToFullSize(canvas.getContext("2d")),
       fullscreen: resizeUtils.toggleFullScreen,
       select: null,
@@ -94,7 +94,7 @@ export class Map {
       this.activatePlugins(plugins);
     }
 
-    if(coord) {
+    if (coord) {
       Object.assign(_movableLayer, coord);
     }
 
@@ -150,7 +150,7 @@ export class Map {
       x: coord.x / _staticLayer.getScale(),
       y: coord.y / _staticLayer.getScale()
     };
-		
+
     _movableLayer.move(realCoordinates);
     this.drawOnNextTick();
 
@@ -162,11 +162,11 @@ export class Map {
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
    * @return this map instance */
   cacheMap() {
-    if(_movableLayer.getCacheEnabled()) {
+    if (_movableLayer.getCacheEnabled()) {
       _movableLayer.cache(0, 0, this.mapSize.x, this.mapSize.y);
     } else {
       _movableLayer.children.forEach(child => {
-        if(child.getCacheEnabled()) {
+        if (child.getCacheEnabled()) {
           child.cache(0, 0, this.mapSize.x, this.mapSize.y);
         }
       });
@@ -177,11 +177,11 @@ export class Map {
     return this;
   }
   unCacheMap() {
-    if(_movableLayer.getCacheEnabled()) {
+    if (_movableLayer.getCacheEnabled()) {
       _movableLayer.unCache(0, 0, this.mapSize.x, this.mapSize.y);
     } else {
       _movableLayer.children.forEach(child => {
-        if(child.getCacheEnabled()) {
+        if (child.getCacheEnabled()) {
           child.unCache(0, 0, this.mapSize.x, this.mapSize.y);
         }
       });
@@ -199,17 +199,17 @@ export class Map {
 
     try {
       pluginsArray.forEach(plugin => {
-				currentPluginNameForErrors = "undefined";
-        if(!plugin || !plugin.pluginName) {
+        currentPluginNameForErrors = "undefined";
+        if (!plugin || !plugin.pluginName) {
           throw new Error("plugin or plugin.pluginName missing");
         }
         currentPluginNameForErrors = plugin.pluginName;
 
-        if(this.plugins.add(plugin[plugin.pluginName])) {
+        if (this.plugins.add(plugin[plugin.pluginName])) {
           plugin[plugin.pluginName].init(this);
         }
       });
-    } catch(e) {
+    } catch (e) {
       console.log("An error initializing plugin " + currentPluginNameForErrors, e);
     }
 
@@ -239,7 +239,7 @@ export class Map {
   }
   /** getter and setter for detecting if map is moved and setting the maps status as moved or not moved */
   mapMoved(yesOrNo) {
-    if(yesOrNo !== undefined) {
+    if (yesOrNo !== undefined) {
       this._mapInMove = yesOrNo;
       return yesOrNo;
     }
@@ -255,7 +255,7 @@ export class Map {
     /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
   the eventlistener callback use this.eventCBs */
   toggleFullsize() {
-    if(!this.isFullsize) {
+    if (!this.isFullsize) {
       fullSizer();
 
       window.addEventListener("resize", fullSizer);
@@ -327,7 +327,7 @@ function _defaultTick(map) {
   return _tickFunc;
 
   function _tickFunc() {
-    if(_drawMapOnNextTick === true) {
+    if (_drawMapOnNextTick === true) {
       _drawMap(map);
       _drawMapOnNextTick = false;
     }

@@ -1,3 +1,6 @@
+/* jshint ignore:start */
+// JSHINT IGNORE: Since does not seem to handle ES6 classes properly.
+
 /* global PIXI */
 
 'use strict';
@@ -13,10 +16,10 @@ All of the objects need to have same argumentAPI for creating objects: coords, d
 
 export class Object_sprite extends PIXI.Sprite {
   constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {}, throwShadowOptions: false }) {
-		var { currentFrame, throwShadowOptions } = options;
+    var { currentFrame, throwShadowOptions } = options;
 
-    super(currentFrame);		
-		
+    super(currentFrame);
+
     this.name = "Objects_sprite_" + this.id;
     this.type = "None";
     this.highlightable = true;
@@ -55,7 +58,7 @@ export class Object_sprite extends PIXI.Sprite {
     return this.innerDraw(x, y);
   }
   setupShadow(options = {color: "#000000", offsetX: 5, offsetY: 5, blur: 10} ) {
-    if(this.throwShadow === true) {
+    if (this.throwShadow === true) {
       console.warn("NO SHADOW FUNCTION SET!")
     }
   }
@@ -79,7 +82,7 @@ export class Object_sprite extends PIXI.Sprite {
 function _findFirstParent(thisObj) {
   let parentObj = {};
 
-  if(thisObj.parent) {
+  if (thisObj.parent) {
     parentObj = _findFirstParent(thisObj.parent);
   } else {
     return thisObj;

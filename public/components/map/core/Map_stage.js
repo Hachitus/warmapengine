@@ -13,15 +13,15 @@ export class Map_stage extends createjs.Stage {
    * @param {x: Number, y: Number} stageBounds Set stage bounds based on these coordinates
   */
   constructor(name, canvas, stageBounds) {
-    if(!canvas) {
+    if (!canvas) {
       throw new Error(Map_stage.constructor.name + " needs canvas!");
-    } else if(typeof canvas === "string") {
+    } else if (typeof canvas === "string") {
       canvas = document.querySelector(canvas);
     }
 
     super(canvas);
 
-		/* this.canvas = canvas; // Provided by the parent module */
+    /* this.canvas = canvas; // Provided by the parent module */
     this._cacheEnabled = true;
     this.name = "" + name; // For debugging AND getting children by name. Shows up in toString
     /* createjs / super properties. Used also for controlling and optimizing the engine */
@@ -36,7 +36,7 @@ export class Map_stage extends createjs.Stage {
   /** setter and getter
    * @param {Boolean} status If provided sets the caching status otherwise returns the current status */
   cacheEnabled(status) {
-    if(status !== undefined) {
+    if (status !== undefined) {
       this._cacheEnabled = status;
     }
 

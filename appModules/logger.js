@@ -21,39 +21,39 @@ export let loggerMod = (function loggerMod (){
 
 /* ======= Public functions ======= */
 function backups() {
-    return bunyan.createLogger(
+  return bunyan.createLogger(
         {
-            name: "backup",
-            streams: [{
-                type: 'rotating-file',
-                path: '/var/log/workbird/backup.log',
-                period: '1d',   // daily rotation
-                count: 30        // keep 3 back copies
-            }]
+          name: "backup",
+          streams: [{
+            type: 'rotating-file',
+            path: '/var/log/workbird/backup.log',
+            period: '1d',   // daily rotation
+            count: 30        // keep 3 back copies
+          }]
         } );
 }
 function restore() {
-    return bunyan.createLogger(
+  return bunyan.createLogger(
         {
-            name: "restore",
-            streams: [{
-                type: 'rotating-file',
-                path: '/var/log/workbird/restore.log',
-                period: '1d',   // daily rotation
-                count: 30        // keep 3 back copies
-            }]
+          name: "restore",
+          streams: [{
+            type: 'rotating-file',
+            path: '/var/log/workbird/restore.log',
+            period: '1d',   // daily rotation
+            count: 30        // keep 3 back copies
+          }]
         } );
 }
 
 function node() {
-    return bunyan.createLogger(
+  return bunyan.createLogger(
         {
-            name: "restore",
-            streams: [{
-                type: 'rotating-file',
-                path: '/var/log/workbird/nodejs.log',
-                period: '1d',   // daily rotation
-                count: 30        // keep 3 back copies
-            }]
+          name: "restore",
+          streams: [{
+            type: 'rotating-file',
+            path: '/var/log/workbird/nodejs.log',
+            period: '1d',   // daily rotation
+            count: 30        // keep 3 back copies
+          }]
         } );
 }

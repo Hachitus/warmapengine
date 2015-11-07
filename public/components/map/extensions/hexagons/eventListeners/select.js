@@ -10,15 +10,15 @@ import { mouseUtils } from '../../../core/utils/utils';
 var eventlisteners;
 
 export function setupHexagonClick(map, callback) {
-	/********** Required **********/
-  if(!map || !callback) {
+  /********** Required **********/
+  if (!map || !callback) {
     throw new Error("eventlisteners initialization require map callbacks and callback as arguments");
   }
 
   /* Singleton should have been instantiated before, we only retrieve it with 0 params! */
   eventlisteners = eventListenerMod();
 
-  if(map.getEnvironment() === "mobile") {
+  if (map.getEnvironment() === "mobile") {
     map.eventCBs.select = setupTapListener(map, callback);
   } else {
     map.eventCBs.select = mouseDownListener;
@@ -32,7 +32,7 @@ export function setupHexagonClick(map, callback) {
   }
   function setupTapListener(map, callback) {
     return function tapListener(e) {
-      var touchCoords = e.center;
+      var touchCoords = mouseUtils.eventData.getHAMMERPointerCoords(e);
       var globalCoords =  {
         x: touchCoords.x, y: touchCoords.y
 
@@ -52,12 +52,12 @@ function onMouseUp(map, callback) {
   map.canvas.addEventListener("mouseup", retrieveClickData);
 
   function retrieveClickData(e) {
-    if( map.mapMoved() ) {
+    if ( map.mapMoved() ) {
       map.canvas.removeEventListener("mouseup", retrieveClickData);
       return false;
     }
 
-    var globalCoords = mouseUtils.getEventCoordsOnPage(e);
+    var globalCoords = mouseUtils.eventData.getPointerCoords(e);
     var objects, leveledObjects;
 
     objects = map.getObjectsUnderPoint(globalCoords, "unit");

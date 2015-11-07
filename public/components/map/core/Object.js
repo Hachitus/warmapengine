@@ -61,4 +61,5 @@ export class Object_sprite extends createjs.Sprite {
       this.shadow = new createjs.Shadow(options.color, options.offsetX, options.offsetY, options.blur);
     }
   }
+  hitTest() { throw new Error("hitTest not implemented on this object!" + this.name); }
 }

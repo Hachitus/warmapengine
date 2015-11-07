@@ -278,6 +278,18 @@ export class Map {
   getSize() {
     return this.mapSize;
   }
+  getObjectsUnderPoint(globalCoords = { x: 0, y: 0 }, type) {
+    /* Filter objects based on quadtree and then based on possible group provided */
+    var objects = {};
+    var allCoords = {
+      globalCoords
+    };
+
+    //correctCoords = map.getMovableLayer().toLocal(clickCoords);
+    objects[type] = this.objectManager.retrieve(allCoords, type);
+
+    return objects;
+  }
   /*************************************
    ******* APIS THROUGH PLUGINS ********
    ************************************/
@@ -289,7 +301,7 @@ export class Map {
    * @param { String } type type of the objects to search for */
   addObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet"; }
   removeObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet"; }
-  getObjectsUnderPoint(coord = { x: 0, y: 0 }, type) { return "notImplementedYet"; /* Implemented with a plugin */ }
+
   getObjectsUnderShape(coord = { x: 0, y: 0 }, shape, type) { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
 }
 

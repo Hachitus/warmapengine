@@ -31,23 +31,12 @@ export let object_select = (function object_select_hexagon() {
   scope.init = function(mapObj) {
     map = mapObj;
     /* We take the top-most stage on the map and add the listener to it */
-    _createPrototypes(mapObj);
+    //_createPrototypes(mapObj);
 
     _startClickListener(mapObj);
   };
 
   return scope;
-
-  function getObjectsForMap(clickCoords = { x: 0, y: 0 }, group) {
-    /* Filter objects based on quadtree and then based on possible group provided */
-    var objects = {};
-    var correctCoords = clickCoords;
-
-    //correctCoords = map.getMovableLayer().toLocal(clickCoords);
-    objects[group] = map.objectManager.retrieve(group, correctCoords);
-
-    return objects;
-  }
   /* ====== Private functions ====== */
   /**
    * Attached the correct prototypes to map. I do not think we need to override getObjectsUnderPoint for stages.
@@ -56,7 +45,6 @@ export let object_select = (function object_select_hexagon() {
    */
   function _createPrototypes(map) {
     map.objectManager.hitTest = hitTest;
-    map.setPrototype("getObjectsUnderPoint", getObjectsForMap);
   }
   /**
    * @param {Map} map - The Map class object

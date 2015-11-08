@@ -44,7 +44,7 @@ export function createMap(canvasElement, datas) {
   var gameData = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
   var map = new Map(canvasElement, { mapSize: gameData.mapSize });
   var dialog_selection = document.getElementById("selectionDialog");
-  var defaultUI = new UI_default(dialog_selection);
+  var defaultUI = new UI_default(dialog_selection, map);
   defaultUI.init();
 
   /* Initialize UI as singleton */

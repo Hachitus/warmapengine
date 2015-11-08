@@ -74,7 +74,7 @@ export function createMap(canvasElement, datas) {
   };
   var map = new Map(canvasElement, mapOptions ) ;
   var dialog_selection = document.getElementById("selectionDialog");
-  var defaultUI = new UI_default(dialog_selection);
+  var defaultUI = new UI_default(dialog_selection, map);
   defaultUI.init();
   /* Initialize UI as singleton */
   UI(defaultUI, map);

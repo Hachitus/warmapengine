@@ -31,12 +31,10 @@ export function UI (givenUITheme, givenMap) {
   var UITheme = givenUITheme;
   scope = {};
 
-  /** Responsible for showing selectiong element, where the player select the wanted object out of array of objects.
+  /** Responsible for showing selection element, where the player select the wanted object out of array of objects.
    * For example if there are several objects in one tile on the map and the player needs to be able to select one
-   * specific unit on the stack */
-  scope.showSelections = function showSelections(objects) {
-    return UITheme.showSelections(map, objects);
-  };
+   * specific unit on the stack. This is always defined in the UI theme-module */
+  scope.showSelections = UITheme.showSelections.bind(UITheme);
   /** Resonsible for hignlighting the selected object. For example the unit that is being commanded. The hightlight
    * can mean e.g. bringing the unit on top on the map and showing selection circle around it. */
   scope.highlightSelectedObject = function highlightSelectedObject(object) {

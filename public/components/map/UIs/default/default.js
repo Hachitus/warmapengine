@@ -24,7 +24,7 @@ var fadeAnimation = "slow";
 var createHighlight;
 
 export class UI_default {
-  constructor(modal, styles) {
+  constructor(modal, map, options = { styles: "#F0F0F0" }) {
     var createdCSS;
     // Add a media (and/or media query) here if you'd like!
     // style.setAttribute("media", "screen")
@@ -33,27 +33,26 @@ export class UI_default {
     createdCSS = createCSSRules(cssClasses);
     _addCSSRulesToScriptTag(_styleSheet, createdCSS);
 
+    this.map = map;
     this.modal = modal || document.getElementById("dialog_select");
-    this.styles = styles || {
-      backgroundColor: "#F0F0F0"
-    };
+    this.styles = options.styles;
 
     this.closingElements = _DOMElementsToArray(this.modal.getElementsByClassName("modal_close"));
   }
-  showSelections(map, objects) {
-    createHighlight = setupCreateHighlight(map);
+  showSelections(objects) {
+    createHighlight = setupCreateHighlight(this.map);
 
-    if (map.getEnvironment() === "mobile") {
-      _showMobileSelections(objects, this.modal, map.drawOnNextTick.bind(map), map.getMovableLayer());
+    if (this.map.getEnvironment() === "mobile") {
+      _showMobileSelections(objects, this.modal, this.map.drawOnNextTick.bind(this.map), this.map.getMovableLayer());
     } else {
-      _showDesktopSelections(objects, this.modal, map.drawOnNextTick.bind(map), map.getMovableLayer());
+      _showDesktopSelections(objects, this.modal, this.map.drawOnNextTick.bind(this.map), this.map.getMovableLayer());
     }
   }
-  highlightSelectedObject(map, object) {
-    createHighlight = setupCreateHighlight(map);
+  highlightSelectedObject(object) {
+    createHighlight = setupCreateHighlight(this.map);
 
     if (object.highlightable) {
-      return _highlightSelectedObject(object, map.getMovableLayer());
+      return _highlightSelectedObject(object, this.map.getMovableLayer());
     }
   }
   init() {

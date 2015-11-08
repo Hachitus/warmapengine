@@ -116,10 +116,14 @@ function _get$Element(which) {
   return $elements[which];
 }
 function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
-  var hightlightableObjects = _selectionsInit(UILayer, objects);
+  var hightlightableObjects = _filterObjectsForHighlighting(objects);
+  var cb;
+
+  /* We add the objects to be highlighted to the correct UI layer */
+  objectsToUI(UILayer, hightlightableObjects);
 
   if (objects && hightlightableObjects.length > 1) {
-    _get$Element("select").fadeOut(fadeAnimation, () => {
+    cb = () => {
       modal.innerHTML = templates.multiSelection({
         title: "Objects",
         objects
@@ -130,9 +134,9 @@ function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
       console.log(objects);
 
       _get$Element("select").fadeIn(fadeAnimation);
-    });
+    };
   } else if (hightlightableObjects.length === 1) {
-    _get$Element("select").fadeOut(fadeAnimation, () => {
+    cb = () => {
       modal.innerHTML = templates.singleSelection({
         title: "Selected",
         object: {
@@ -147,13 +151,20 @@ function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
       console.log(hightlightableObjects);
 
       _get$Element("select").fadeIn(fadeAnimation);
-    });
+    };
   } else {
-    _get$Element("select").fadeOut(fadeAnimation, () => {
+    cb = () => {
       UILayer.emptyUIObjects();
       updateCB();
       console.log("Error occured selecting the objects on this coordinates! Nothing found");
-    });
+    };
+  }
+
+  _get$Element("select").fadeOut(fadeAnimation, cb);
+
+  function objectsToUI(UILayer, highlightObjects) {
+    UILayer.emptyUIObjects();
+    UILayer.addUIObjects(highlightObjects);
   }
 }
 function _showMobileSelections(objects, modal, updateCB, UILayer) {
@@ -220,19 +231,11 @@ function _filterObjectsForHighlighting(objects) {
     });
   }
 
-  return newObjects;
-}
-function _selectionsInit(UILayer, objects) {
-  var highlightObjects = _filterObjectsForHighlighting(objects);
-
-  if (highlightObjects.length < 1) {
+  if (newObjects.length < 1) {
     return false;
   }
 
-  UILayer.emptyUIObjects();
-  UILayer.addUIObjects(highlightObjects);
-
-  return highlightObjects;
+  return newObjects;
 }
 
 /* @todo This whole damn system and logic needs to be changed and moved elsewhere, stupid stupid stupid atm. */

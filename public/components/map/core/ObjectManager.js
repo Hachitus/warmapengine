@@ -17,9 +17,9 @@ export class ObjectManager {
    * @todo This should support collision testing better. Now it basically really works only with coordinates and rectangles */
   retrieve(allCoords, type, options = { size: undefined }) {
     var quadtreeObjs, foundObjs;
-    var globalCoords = allCoords.globalCoords;
+    var { globalCoords, localCoords } = allCoords;
 
-    quadtreeObjs = this.quadtrees[type].retrieve(globalCoords, options.size);
+    quadtreeObjs = this.quadtrees[type].retrieve(localCoords, options.size);
 
     foundObjs = quadtreeObjs.filter(obj => {
       let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;

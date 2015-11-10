@@ -120,7 +120,7 @@ function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
   var cb;
 
   /* We add the objects to be highlighted to the correct UI layer */
-  objectsToUI(UILayer, hightlightableObjects);
+  //objectsToUI(UILayer, hightlightableObjects);
 
   if (objects && hightlightableObjects.length > 1) {
     cb = () => {
@@ -162,10 +162,10 @@ function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
 
   _get$Element("select").fadeOut(fadeAnimation, cb);
 
-  function objectsToUI(UILayer, highlightObjects) {
-    UILayer.emptyUIObjects();
-    UILayer.addUIObjects(highlightObjects);
-  }
+  //function objectsToUI(UILayer, highlightObjects) {
+  //  UILayer.emptyUIObjects();
+  //  UILayer.addUIObjects(highlightObjects);
+  //}
 }
 function _showMobileSelections(objects, modal, updateCB, UILayer) {
   var hightlightableObjects = _selectionsInit(UILayer, objects);
@@ -223,17 +223,9 @@ function _highlightSelectedObject(object, movableLayer, map) {
 
 }
 function _filterObjectsForHighlighting(objects) {
-  var newObjects = objects;
-
-  if (objects && objects.length > 1) {
-    newObjects = objects.filter(obj => {
-      return obj.highlightable === true ? true : false;
-    });
-  }
-
-  if (newObjects.length < 1) {
-    return false;
-  }
+  var newObjects = objects.filter(obj => {
+    return obj.highlightable === true ? true : false;
+  });
 
   return newObjects;
 }
@@ -274,6 +266,7 @@ function setupCreateHighlight(map) {
 
     container.position = options.coords;
 
+    movableLayer.emptyUIObjects();
     movableLayer.addUIObjects(container);
   };
 }

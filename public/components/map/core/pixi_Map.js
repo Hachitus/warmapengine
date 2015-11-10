@@ -282,10 +282,10 @@ export class Map {
     /* Filter objects based on quadtree and then based on possible group provided */
     var objects = {};
     var allCoords = {
-      globalCoords
+      globalCoords: globalCoords,
+      localCoords: this.getMovableLayer().toLocal(new PIXI.Point(globalCoords.x, globalCoords.y))
     };
 
-    //correctCoords = map.getMovableLayer().toLocal(clickCoords);
     objects[type] = this.objectManager.retrieve(allCoords, type);
 
     return objects;

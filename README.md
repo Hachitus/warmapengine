@@ -11,14 +11,23 @@ If you are interested contact me (http://hyytia.level7.fi/)
 ##NodeJS backend
 ##Requirements
 Install node.js and npm
+
     apt-get install nodejs npm
+
 Rather install these packages as global
+
     npm install -g forever gulp jspm
+
 Install jspm packages
-		jspm install text css json
+
+    jspm install text css json
+
 start server
+
     npm run start
+
 stop server
+
     npm run stop
 
 ##Tests

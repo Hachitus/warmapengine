@@ -18,9 +18,15 @@ Rather install these packages as global
 
     npm install -g forever gulp jspm
 
+Install package.json packages
+
+    npm install
+
 Install jspm packages
 
     jspm install text css json
+
+##Commanding the backend server
 
 start server
 
@@ -30,8 +36,8 @@ stop server
 
     npm run stop
 
-##Tests
-Tests in *warMapEngine.level7.fi/tests/*
+##Testing and development
+Tests can be found with index-file in tests/-folder. For example working example should be found in: *http://warmapengine.level7.fi/tests/*
 
 #How the Map engine works
 ##Plugins

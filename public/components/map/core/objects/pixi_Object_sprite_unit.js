@@ -1,16 +1,18 @@
 'use strict';
 
-/** Map unit like infantry or worker, usually something with actions or movable. Normally, but not necessarily, these are
- * inherited, depending on the map type. For example you might want to add some click area for these */
-
 import { Object_sprite } from '../pixi_Object';
-import { graphics } from "/components/map/core/utils/effects";
 
+/**
+ * Map unit like infantry or worker, usually something with actions or movable. Normally, but not necessarily, these are
+ * inherited, depending on the map type. For example you might want to add some click area for these
+ * @class
+ */
 export class Object_sprite_unit extends Object_sprite {
 	/**
 	 * @param {x: Number, y: Number} coords Coordinates for the object relative to it's parent
 	 * @param {object} data This units data
-	 * @param {object} options other specific options for constructing this unit, like options.throwShadow */
+	 * @param {object} options other specific options for constructing this unit, like options.throwShadow
+   */
   constructor(coords, data, options) {
     super(coords, data, options);
 

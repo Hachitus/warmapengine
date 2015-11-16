@@ -5,14 +5,16 @@
 export var mouseUtils = ( function mouseUtils() {
   var scope = {};
 
-  /** This function is from: http://www.adomas.org/javascript-mouse-wheel/, but modified for todays browsers
-    It detects which way the mousewheel has been moved.
-    zero delta = mouse wheel not moved
-    positive delta = scrolled up
-    negative delta = scrolled down
+  /**
+   * This function is from: http://www.adomas.org/javascript-mouse-wheel/, but modified for todays browsers
+   * It detects which way the mousewheel has been moved.
+   * zero delta = mouse wheel not moved
+   * positive delta = scrolled up
+   * negative delta = scrolled down
 
-    @param {Event} event pass the event to deltaFromWheel
-    @return delta. Positive if wheel was scrolled up, and negative, if wheel was scrolled down. */
+   * @param {Event} event pass the event to deltaFromWheel
+   * @return delta. Positive if wheel was scrolled up, and negative, if wheel was scrolled down.
+   */
   scope.deltaFromWheel = function( event ) {
     var delta = 0;
 
@@ -30,8 +32,10 @@ export var mouseUtils = ( function mouseUtils() {
       return delta;
     }
   };
-  /** Has the mouse click been right mouse button
-   * @param {Event} event The event where the click occured */
+  /**
+   * Detects if the mouse click has been the right mouse button
+   * @param {Event} event The event where the click occured
+   */
   scope.isRightClick = function( event ) {
     var rightclick;
 
@@ -126,8 +130,10 @@ export var resizeUtils = {
       return false;
     }
   },
-  /** Sets canvas size to maximum width and height on the browser, not using fullscreen
-   * @param {DOMElement Canvas context} context */
+  /**
+   * Sets canvas size to maximum width and height on the browser, not using fullscreen
+   * @param {DOMElement Canvas context} context
+   */
   setToFullSize: function setToFullSize(context) {
     return function fullSize() {
       var size = _getWindowSize();
@@ -168,13 +174,13 @@ export var general = (function () {
   scope.deepCopy = function deepCopy(src, /* INTERNAL */ _visited) {
     var i, ret;
 
-    if (src == null || typeof (src) !== 'object'){
+    if (src == null || typeof (src) !== 'object') {
       return src;
     }
 
     // Initialize the visited objects array if needed
     // This is used to detect cyclic references
-    if (_visited == undefined){
+    if (_visited == undefined) {
       _visited = [];
     }
     // Otherwise, ensure src has not already been visited
@@ -192,7 +198,7 @@ export var general = (function () {
     _visited.push(src);
 
     //Honor native/custom clone methods
-    if (typeof src.clone == 'function'){
+    if (typeof src.clone == 'function') {
       return src.clone(true);
     }
 
@@ -208,15 +214,15 @@ export var general = (function () {
       return ret;
     }
     //Date
-    if (src instanceof Date){
+    if (src instanceof Date) {
       return new Date(src.getTime());
     }
     //RegExp
-    if (src instanceof RegExp){
+    if (src instanceof RegExp) {
       return new RegExp(src);
     }
     //DOM Elements
-    if (src.nodeType && typeof src.cloneNode == 'function'){
+    if (src.nodeType && typeof src.cloneNode == 'function') {
       return src.cloneNode(true);
     }
 
@@ -229,7 +235,7 @@ export var general = (function () {
     }
     ret = Object.create(proto);
 
-    for (let key in src){
+    for (let key in src) {
       //Note: this does NOT preserve ES5 property attributes like 'writable', 'enumerable', etc.
       //For an example of how this could be modified to do so, see the singleMixin() function
       ret[key] = deepCopy(src[key], _visited);

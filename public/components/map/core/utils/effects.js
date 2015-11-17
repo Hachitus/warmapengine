@@ -1,4 +1,5 @@
 /* global createjs */
+
 'use strict';
 
 export var graphics = {

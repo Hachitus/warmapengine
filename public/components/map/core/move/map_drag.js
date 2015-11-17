@@ -2,11 +2,13 @@
 
 'use strict';
 
-/** The core plugin for the 2D map engine. Handles moving the map by dragging the map.
+/**
+ * The core plugin for the 2D map engine. Handles moving the map by dragging the map.
  * Core plugins can always be overwrote if needed
  *
  * @require Browser that support pointer events or Pointer events polyfill, such as: https://github.com/jquery/PEP
- * @todo See if this plugin need refactoring and more documentation */
+ * @todo See if this plugin need refactoring and more documentation
+ * */
 
 import { eventListeners as eventListenerMod } from '../eventlisteners';
 import { mouseUtils } from '../utils/utils';
@@ -25,8 +27,10 @@ export let map_drag = (function map_drag() {
   var scope = {};
   scope.pluginName = _pluginName;
 
-  /** Required init functions for the plugin
-  * @param {Map object} mapObj - the Map class object */
+  /**
+   * Required init functions for the plugin
+   * @param {Map object} mapObj - the Map class object
+   * */
   scope.init = function(map) {
     if (map.getEnvironment() === "mobile") {
       map.eventCBs.drag = _startDragListener_mobile(map);
@@ -45,7 +49,8 @@ export let map_drag = (function map_drag() {
 
   return scope;
 
-  /** Starts the whole functionality of this class
+  /**
+   * Starts the whole functionality of this class
    * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
    * @param {Map} map - The Map class object
    */
@@ -54,8 +59,8 @@ export let map_drag = (function map_drag() {
       try {
         offsetCoords.setOffset(mouseUtils.eventData.getPointerCoords(e));
         _addDragListeners();
-      } catch (e) {
-        console.log(e);
+      } catch (ev) {
+        console.log(ev);
       }
 
       /** @requires map objects to be accessible in scope */
@@ -101,8 +106,8 @@ export let map_drag = (function map_drag() {
             event to fire at the same time with the mouseDown / dragging event
           */
           //map.mouseMoved( true );
-        } catch (e) {
-          console.log(e);
+        } catch (ev) {
+          console.log(ev);
         }
       }
 
@@ -156,8 +161,8 @@ export let map_drag = (function map_drag() {
           x: coords.x,
           y: coords.y
         });
-      } catch (e) {
-        console.log(e);
+      } catch (ev) {
+        console.log(ev);
       }
     };
   }
@@ -165,7 +170,9 @@ export let map_drag = (function map_drag() {
   /* =================
      Private functions
      ================= */
-  /** Function for setting and getting the mouse offset. */
+  /**
+   * Function for setting and getting the mouse offset.
+   */
   function _offsetCoords() {
     var scope = {};
     var offsetCoords;

@@ -1,4 +1,8 @@
-/** @require Quadtree-js. Though this base library can be changed easily */
+'use strict';
+
+/**
+ * @require Quadtree-js. Though this base library can be changed easily
+ */
 
 import { Quadtree as QuadMod } from "../../../../assets/lib/quadtree-js/quadtree-js-hitman";
 
@@ -51,7 +55,7 @@ export class Quadtree {
   refreshAll() {
     this.quadtree.cleanup();
   }
-  findObject(coords, size, data, onlyData) {
+  findObject(coords, size, data) {
     var foundObject = this.retrieve(coords, size).filter(function(object) {
       return object.data === data ? true : false;
     });
@@ -59,8 +63,15 @@ export class Quadtree {
     return foundObject;
   }
 }
-
-function _creteQuadtreeObject(coords = {x:undefined, y:undefined}, size = {width:0, height:0}, data) {
+/**
+ * [_creteQuadtreeObject description]
+ * @param  {x:Number, y:Number} coords          global coordinates on canvas
+ * @param  {width:Number, height:Number} size   You can use bounds for the object
+ * if you wish, instead of point / coordinates
+ * @param  {Object} data                        Extra data stored for the quadtree object
+ * @return {Object}                             Added quadtree object
+ */
+function _creteQuadtreeObject(coords, size = {width:0, height:0}, data = undefined) {
   var objToAdd = coords;
 
   if (coords.x === undefined && coords.y === undefined) {

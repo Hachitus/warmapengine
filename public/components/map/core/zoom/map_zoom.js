@@ -1,8 +1,10 @@
 'use strict';
 
-/** The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed */
-
-/** @todo Change the map move after zooming to be mouse based or such. Now it is based on the map corners coordinates */
+/**
+ * The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed
+ *
+ * @todo Change the map move after zooming to be mouse based or such. Now it is based on the map corners coordinates
+ */
 
 /** ===== OWN imports ===== */
 import { resizeUtils } from "../utils/utils.js";
@@ -27,13 +29,16 @@ export let map_zoom = (function map_zoom() {
   var scope = {};
   scope.pluginName = _pluginName;
 
-  /** Required init functions for the plugin
-  * @param {Map object} mapObj - the Map class object */
+  /**
+   * Required init functions for the plugin
+   * @param {Map object} mapObj - the Map class object
+   *
+   * @todo think through should setZoomLimits and setZoomModifier be in map.prototype?
+   * But zoomLimit and modifier need to be setable in creation, init or later with setters
+   * */
   scope.init = function(map) {
     map.setPrototype("zoomIn", zoomIn);
     map.setPrototype("zoomOut", zoomOut);
-    /* @todo think through should these be in map.prototype? But zoomLimit and modifier need to be setable in creation,
-    init or later with setters */
     map.setPrototype("setZoomLimits", setZoomLimits);
     map.setPrototype("setZoomModifier", setZoomModifier);
 
@@ -57,8 +62,10 @@ export let map_zoom = (function map_zoom() {
   /* ============================
      PROTOTYPE extensions for map
      ============================*/
-  /** How much one mouse wheel step zooms
-   * @param {Number} amount How much one mouse wheel step zooms. Needs to be in between 0 - 0.5 */
+  /**
+   * How much one mouse wheel step zooms
+   * @param {Number} amount How much one mouse wheel step zooms. Needs to be in between 0 - 0.5
+   * */
   function setZoomModifier (amount) {
     if (! (amount > 0 || amount <= 0.5) ) {
       throw new Error("Wrong zoom modifier! (needs to be >0 and <=0.5, given:" + amount);
@@ -67,25 +74,31 @@ export let map_zoom = (function map_zoom() {
 
     return this;
   }
-  /** How much can be zoomed in maximum and minimum
+  /**
+   * How much can be zoomed in maximum and minimum
    * @param {Number 1+} farther How much one mouse wheel step zooms out
-   * @param {Number 0 - 1} closer How much one mouse wheel step zooms in */
+   * @param {Number 0 - 1} closer How much one mouse wheel step zooms in
+   * */
   function setZoomLimits (farther, closer) {
     zoomLimit.farther = farther;
     zoomLimit.closer = closer;
 
     return this;
   }
-  /** Zoom in to the map
-   * @param {Number} amount how much map is zoomed in */
+  /**
+   * Zoom in to the map
+   * @param {Number} amount how much map is zoomed in
+   * */
   function zoomIn (amount) {
     var zoomLayer = this.getZoomLayer();
     var presentScale = zoomLayer.getScale();
 
     return _zoom(zoomLayer, presentScale, Math.abs(amount) || zoomModifier, true);
   }
-  /** Zoom out of the map
-   * @param {Number} amount how much map is zoomed out */
+  /**
+   * Zoom out of the map
+   * @param {Number} amount how much map is zoomed out
+   * */
   function zoomOut (amount) {
     var zoomLayer = this.getZoomLayer();
     var presentScale = zoomLayer.getScale();

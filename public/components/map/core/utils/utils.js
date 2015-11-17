@@ -1,6 +1,8 @@
 'use strict';
 
-/** The core utils for the 2D map engine. */
+/**
+ * The core utils for the 2D map engine.
+ */
 
 export var mouseUtils = ( function mouseUtils() {
   var scope = {};

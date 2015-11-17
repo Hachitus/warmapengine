@@ -1,3 +1,4 @@
+/* global createjs */
 'use strict';
 
 /**
@@ -12,7 +13,7 @@ export class Map_stage extends createjs.Stage {
    * @param {DOM Canvas element} canvas REQUIRED! Canvas element used by the map
    * @param {x: Number, y: Number} stageBounds Set stage bounds based on these coordinates
   */
-  constructor(name, canvas, stageBounds) {
+  constructor(name, canvas) {
     if (!canvas) {
       throw new Error(Map_stage.constructor.name + " needs canvas!");
     } else if (typeof canvas === "string") {
@@ -50,7 +51,8 @@ export class Map_stage extends createjs.Stage {
         return layer;
       }
 
-      if (child = layer.getChildNamed(name)) {
+      child = layer.getChildNamed(name);
+      if (child) {
         return child;
       }
     }
@@ -61,4 +63,5 @@ export class Map_stage extends createjs.Stage {
 
 /**
  * @todo implement spriteStage! It should be more efficient when using spritesheets. Only issue was that minified
- * easeljs doesn't have the spriteStage and neither the node-easel (and node doesn't have the extend) */
+ * easeljs doesn't have the spriteStage and neither the node-easel (and node doesn't have the extend)
+ * */

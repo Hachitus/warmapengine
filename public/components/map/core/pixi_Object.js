@@ -1,5 +1,3 @@
-/* jshint ignore:start */
-
 'use strict';
 
 /**

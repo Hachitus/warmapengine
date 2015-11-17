@@ -1,7 +1,9 @@
 /* global Q, PIXI */
 
-/** We want to put spritesheets to their own module, so they are separated and e.g. we can remove createjs from the
- * spritesheet if needed */
+/**
+ * @todo  We want to put spritesheets to their own module, so they are separated and e.g. we can remove createjs from the
+ * spritesheet if needed
+ * */
 
 'use strict';
 
@@ -9,10 +11,12 @@
 export function spritesheetList () {
   var scope = {};
 
-  /** Create new spritesheet (new createjs.SpriteSheet()) and keeps it in object collection. So we don't create acciden-
+  /**
+   * Create new spritesheet (new createjs.SpriteSheet()) and keeps it in object collection. So we don't create acciden-
    * tally another one and we can safely remove it later.
    * @param {Object} spritesheetData Object that contains createjs-compatible spritesheetData
-   * @return new spritesheet instance to use. */
+   * @return new spritesheet instance to use.
+   * */
   scope.createSpritesheet = function createSpritesheet(spritesheetData) {
     var promise = Q.defer();
     var loader = PIXI.loader;

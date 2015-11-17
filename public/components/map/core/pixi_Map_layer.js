@@ -1,6 +1,3 @@
-/* jshint ignore:start */
-// JSHINT IGNORE: Since does not seem to handle ES6 classes properly.
-
 'use strict';
 
 import { general } from './utils/utils';
@@ -8,7 +5,8 @@ import { general } from './utils/utils';
 /**
  * @require the PIXI framework in global namespace
  * @todo I don't think this class should be done in the new class-word, since it is much more efficient with normal
- * prototypal inheritance way. */
+ * prototypal inheritance way.
+ * */
 
 var _UIObjects = [];
 var oldAddChild;
@@ -25,7 +23,7 @@ export class Map_layer extends PIXI.Container {
    * @param {Number} 				subContainers	size is the maximum pixels width and height of one subcontainer.
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
-  */
+   */
   constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, subContainerConfig = { size: 0 }, movable = false }) {
     super();
 
@@ -53,23 +51,29 @@ export class Map_spriteLayer extends PIXI.Container {
    * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
-  */
-	constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, movable = false }) {
-  super();
+   */
+	constructor({
+      name = "",
+      coord = { x: 0, y: 0 },
+      renderer = null,
+      movable = false }) {
+    super();
 
-  Object.assign(this, coord);
-  this.renderer = renderer;
-  this._cacheEnabled = true;
-  this.name = "" + name; // For debugging. Shows up in toString
-  this.drawThisChild = true;
-  this.movable = movable;
-  this.zoomable = false;
-  this.preventSelection = false;
-  this.oldAddChild = super.addChild.bind(this);
-  this.subContainersCached = null;
+    Object.assign(this, coord);
+    this.renderer = renderer;
+    this._cacheEnabled = true;
+    this.name = "" + name; // For debugging. Shows up in toString
+    this.drawThisChild = true;
+    this.movable = movable;
+    this.zoomable = false;
+    this.preventSelection = false;
+    this.oldAddChild = super.addChild.bind(this);
+    this.subContainersCached = null;
 	}
-	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
-	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
+	/**
+   * If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
+	 * the children too. I think this has been normally disabled to make the particleContainer as efficient as possible
+   * */
 	updateTransform() {
   if (!this.visible)
   {
@@ -94,24 +98,31 @@ export class Map_bigSpriteLayer extends PIXI.Container {
    * otherwise too!
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
   */
-	constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, subContainerConfig = { size: 0 }, movable = false }) {
-  super();
+	constructor({
+      name = "",
+      coord = { x: 0, y: 0 },
+      renderer = null,
+      subContainerConfig = { size: 0 },
+      movable = false }) {
+    super();
 
-  Object.assign(this, coord);
-  this.subcontainerTypeConstructor = PIXI.Container.bind(PIXI);
-  this.renderer = renderer;
-  this._cacheEnabled = true;
-  this.name = "" + name; // For debugging. Shows up in toString
-  this.drawThisChild = true;
-  this.movable = movable;
-  this.zoomable = false;
-  this.preventSelection = false;
-  this.subContainerConfig = subContainerConfig;
-  this.oldAddChild = super.addChild.bind(this);
-  this.subContainersCached = null;
-}
-	/** If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
-	the children too. I think this has been normally disabled to make the particleContainer as efficient as possible */
+    Object.assign(this, coord);
+    this.subcontainerTypeConstructor = PIXI.Container.bind(PIXI);
+    this.renderer = renderer;
+    this._cacheEnabled = true;
+    this.name = "" + name; // For debugging. Shows up in toString
+    this.drawThisChild = true;
+    this.movable = movable;
+    this.zoomable = false;
+    this.preventSelection = false;
+    this.subContainerConfig = subContainerConfig;
+    this.oldAddChild = super.addChild.bind(this);
+    this.subContainersCached = null;
+  }
+	/**
+   * If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
+	 * the children too. I think this has been normally disabled to make the particleContainer as efficient as possible
+   * */
 	updateTransform() {
   if (!this.visible)
   {
@@ -146,8 +157,8 @@ function _getBaseContainerClass() {
   };
 
   /**
-  	 * @param {PIXI.DisplayObject} displayObject
-  	 */
+	 * @param {PIXI.DisplayObject} displayObject
+	 */
   function hasSubcontainers() {
     return (this.subContainerConfig && this.subContainerConfig.size);
   }
@@ -185,9 +196,11 @@ function _getBaseContainerClass() {
   function getCurrentCache(status) {
     return this.cacheAsBitmap;
   }
-  /** Move layer
+  /**
+   * Move layer
    * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
-  	 * @return this layer instance */
+	 * @return this layer instance
+   * */
   function move(coord) {
     if (this.movable) {
       this.x += coord.x;
@@ -197,9 +210,11 @@ function _getBaseContainerClass() {
 
     return this;
   }
-  /** gets child (layer or object - sprite etc.) from this layer
-  	 * @param {string} name searches for a layer that has this name-property
-  	 * @return the first layer that was found or false if nothing was found */
+  /**
+   * gets child (layer or object - sprite etc.) from this layer
+	 * @param {string} name searches for a layer that has this name-property
+	 * @return the first layer that was found or false if nothing was found
+   * */
   function getChildNamed(name) {
     if (this.children[0] instanceof PIXI.DisplayObjectContainer ) {
       for (let child of this.children) {
@@ -210,24 +225,32 @@ function _getBaseContainerClass() {
     }
     return false;
   }
-  /** set layer scale
-  	 * @param {Number} amount The amount that you want the layer to scale.
-  	 * @amount that was given */
+  /**
+   * set layer scale
+	 * @param {Number} amount The amount that you want the layer to scale.
+	 * @amount that was given
+   * */
   function setScale(amount) {
     return this.scale.x = this.scale.y = amount;
   }
-  /** get layer scale
-  	 * @return current amount of scale */
+  /**
+   * get layer scale
+	 * @return current amount of scale
+   * */
   function getScale() {
     return this.scale.x;
   }
-  /** get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
-  	 * @return current UIObjects */
+  /**
+   * get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
+	 * @return current UIObjects
+   * */
   function getUIObjects() {
     return _UIObjects;
   }
-  /** Remove all the UIObjects from this layer
-  	 * @return empty UIObjects array */
+  /**
+   * Remove all the UIObjects from this layer
+	 * @return empty UIObjects array
+   * */
   function emptyUIObjects() {
     _UIObjects.map(obj => {
       this.removeChild(obj);
@@ -236,9 +259,11 @@ function _getBaseContainerClass() {
 
     return _UIObjects;
   }
-  /** Add UIObjects to this layer
-  	 * @param {Object || Array} objects Objects can be an object containing one object to add or an Array of objects to add.
-  	 * @return All the UIObjects currently on this layer */
+  /**
+   * Add UIObjects to this layer
+	 * @param {Object || Array} objects Objects can be an object containing one object to add or an Array of objects to add.
+	 * @return All the UIObjects currently on this layer
+   * */
   function addUIObjects(objects) {
     _UIObjects = _UIObjects || [];
     if (Array.isArray(objects)) {

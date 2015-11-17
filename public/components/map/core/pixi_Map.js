@@ -1,7 +1,5 @@
-/* jshint ignore:start */
-// JSHINT IGNORE: Since does not seem to handle ES6 classes properly.
-
-/** Map is the main class for constructing 2D map for strategy games
+/**
+ * Map is the main class for constructing 2D map for strategy games
  *
  * Map is instantiated and then initialized with init-method.
  *
@@ -14,7 +12,8 @@
  *
  * @require Plugins that use eventlistener by default, use pointer events polyfill, such as: https://github.com/jquery/PEP
  * Plugins and eventlistener can be overriden, but they user pointer events by default (either the browser must support
- * them or use polyfill) */
+ * them or use polyfill)
+ * */
 
 'use strict';
 
@@ -33,8 +32,9 @@ export class Map {
    * @param {Object} options - different options for the map to be given. Format:
    * { bounds: { width: Number, height: Number}, renderer: {} }
    * @return Map instance
-
-   @todo, set default values for given and required options */
+   *
+   * @todo, set default values for given and required options
+   */
   constructor(canvas, { mapSize = { x: 0, y: 0 }, startCoord = { x: 0, y: 0 }, bounds = { width: 0, height: 0 }, options = {} }) {
     if (!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
@@ -83,13 +83,15 @@ export class Map {
     _renderer.view.style.left = "0px";
     _renderer.view.style.top = "0px";
   }
-  /** initialization method
+  /**
+   * initialization method
    * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
    * separately passing them to activatePlugins method
    * @param {x: ? y:?} coord - Starting coordinates for the map
    * @param {Function} tickCB - callback function for tick. Tick callback is initiated in every frame. So map draws happen
    * during ticks
-   * @return the current map instance */
+   * @return the current map instance
+   * */
   init(plugins = [], coord = { x: 0, y: 0 }, tickCB, options = { fullsize: true }) {
     if (options.fullsize) {
       this.toggleFullsize();
@@ -111,15 +113,19 @@ export class Map {
 
     return this;
   }
-  /** The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
-   * @return the current map instance */
+  /**
+   * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
+   * @return the current map instance
+   * */
   drawOnNextTick() {
     _drawMapOnNextTick = true;
 
     return this;
   }
-  /** The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
-   * @return the current map instance */
+  /**
+   * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
+   * @return the current map instance
+   * */
   getLayersWithAttributes(attribute, value) {
     return _staticLayer.children[0].children.filter(layer => {
       return layer[attribute] === value;
@@ -130,28 +136,34 @@ export class Map {
 
     return layer;
   }
-  /** All parameters are passed to Map_layer constructor
-   * @return created Map_layer instance */
+  /**
+   * All parameters are passed to Map_layer constructor
+   * @return created Map_layer instance
+   * */
   addLayer(layer) {
     _movableLayer.addChild(layer);
 
     return layer;
   }
   /**
-   * @param {Map_layer} layer - the layer object to be removed */
+   * @param {Map_layer} layer - the layer object to be removed
+   * */
   removeLayer(layer) {
     _movableLayer.removeChild(layer);
 
     return layer;
   }
-  /** @return layer with the passed layer name */
+  /**
+   * @return layer with the passed layer name
+   * */
   getLayerNamed(name) {
     return _movableLayer.getChildNamed(name);
   }
   /**
    * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
-   * @return this map instance */
+   * @return this map instance
+   * */
   moveMap(coord = { x: 0, y: 0 }) {
     var realCoordinates = {
       x: coord.x / _staticLayer.getScale(),
@@ -162,11 +174,13 @@ export class Map {
 
     return this;
   }
-  /** Cache the map. This provides significant performance boost, when used correctly. cacheMap iterates through all the
+  /**
+   * Cache the map. This provides significant performance boost, when used correctly. cacheMap iterates through all the
    * layer on the map and caches the ones that return true from getCacheEnabled-method.
    * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
-   * @return this map instance */
+   * @return this map instance
+   * */
   cacheMap() {
     _movableLayer.children.forEach(child => {
       if (child.getCacheEnabled()) {
@@ -176,8 +190,10 @@ export class Map {
 
     return this;
   }
-  /** unCache the map.
-   * @return this map instance */
+  /**
+   * unCache the map.
+   * @return this map instance
+   * */
   unCacheMap() {
     _movableLayer.children.forEach(child => {
       if (child.getCacheEnabled()) {
@@ -187,8 +203,10 @@ export class Map {
 
     return this;
   }
-  /** Activate plugins for the map. Plugins need .pluginName property and .init-method
-  @param [Array] pluginsArray - Array that consists of the plugin modules */
+  /**
+   * Activate plugins for the map. Plugins need .pluginName property and .init-method
+   * @param [Array] pluginsArray - Array that consists of the plugin modules
+   * */
   activatePlugins(pluginsArray = []) {
     var currentPluginNameForErrors;
 
@@ -210,7 +228,9 @@ export class Map {
 
     return this;
   }
-  /** getter and setter for detecting if map is moved and setting the maps status as moved or not moved */
+  /**
+   * getter and setter for detecting if map is moved and setting the maps status as moved or not moved
+   * */
   mapMoved(yesOrNo) {
     if (yesOrNo !== undefined) {
       this._mapInMove = yesOrNo;
@@ -224,8 +244,10 @@ export class Map {
 
     thisPrototype[property] = value;
   }
-  /** Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
-  the eventlistener callback use this.eventCBs */
+  /**
+   * Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
+   * the eventlistener callback use this.eventCBs
+   */
   toggleFullsize() {
     if (!this.isFullsize) {
       _setResizeCanvas();
@@ -239,15 +261,19 @@ export class Map {
 
     /** ===== PRIVATE ===== */
   }
-    /** Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
-  the eventlistener callback use this.eventCBs */
+  /**
+   * Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
+   * the eventlistener callback use this.eventCBs
+   * */
   toggleFullScreen () {
     resizeUtils.toggleFullScreen();
   }
   setEnvironment(env = "desktop") {
     this.environment = env;
   }
-  /** @return { x: Number, y: Number }, current coordinates for the map */
+  /**
+   * @return { x: Number, y: Number }, current coordinates for the map
+   * */
   getMapPosition() {
     return {
       x: _movableLayer.x,
@@ -295,10 +321,12 @@ export class Map {
    ************************************/
   zoomIn() { return "notImplementedYet. Activate with plugin"; }
   zoomOut() { return "notImplementedYet. Activate with plugin"; }
-  /** Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
+  /**
+   * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
    * Default uses quadtree
    * @param { x: Number, y: Number } coordinates to search from
-   * @param { String } type type of the objects to search for */
+   * @param { String } type type of the objects to search for
+   * */
   addObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet"; }
   removeObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet"; }
 
@@ -306,8 +334,10 @@ export class Map {
 }
 
 /** ===== PRIVATE ===== */
-/* This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
-callback is always set and should not be removed or overruled */
+/**
+ * This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
+ * callback is always set and should not be removed or overruled
+ */
 function _defaultTick(map, ticker) {
   ticker.add(function (time) {
     if (_drawMapOnNextTick === true) {

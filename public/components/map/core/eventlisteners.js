@@ -1,13 +1,14 @@
-'use strict';
+/* global Hammer, Hamster */
 
-/* global Hammer, Hamster, createjs */
+'use strict';
 
 /**
  * Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for
  * the eventlistener management. This way all the eventlisteners are in the same object, conveniently.
  *
  * @require Browser that support pointer events or Pointer events polyfill, such as: https://github.com/jquery/PEP
- * @require Hammer.js for touch events*/
+ * @require Hammer.js for touch events
+ */
 
 var singletonScope;
 
@@ -15,11 +16,14 @@ var singletonScope;
 /**
  * eventListeners is a singleton that needs to be initialized with an object, that holds all the callbacks used in this
  * class. I.e.
- {
-   select: function() {},
-   zoom: function() {}
- }*/
+ *  {
+ *  select: function() {},
+ *   zoom: function() {}
+ * }
+ */
 export let eventListeners = function eventListenerModule(map, canvasElement = document.getElementsByTagName("canvas")[0]) {
+  var mapCBs, hammer;
+
   if (singletonScope) {
     return singletonScope;
   }
@@ -28,8 +32,7 @@ export let eventListeners = function eventListenerModule(map, canvasElement = do
     throw new Error("eventlisteners initialization require map callbacks and canvas element as arguments");
   }
 
-  var mapCBs = map.eventCBs;
-  var hammer;
+  mapCBs = map.eventCBs;
 
   if (isMobileSite()) {
     hammer = new Hammer.Manager(canvasElement);
@@ -136,5 +139,5 @@ export let eventListeners = function eventListenerModule(map, canvasElement = do
 };
 
 function isMobileSite() {
-  return typeof Hammer != 'undefined';
+  return typeof Hammer !== undefined;
 }

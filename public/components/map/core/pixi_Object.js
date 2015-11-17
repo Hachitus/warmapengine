@@ -1,20 +1,21 @@
 /* jshint ignore:start */
-// JSHINT IGNORE: Since does not seem to handle ES6 classes properly.
-
-/* global PIXI */
 
 'use strict';
 
-/** The actual objects used on the map (suchs as terrain and units), under containers.
-@param {PIXI.Point} coords - the coordinate where the object is located at, relative to it's parent
-@param {Object} data - objects data, that will be used in the game. It will not actually be mainly used in graphical
-but rather things like unit-data and city-data presentations etc.
-@param {Integer} currFrame - the current frames number. This is basically the initial image, we can change it later
-for animation or such
-
-All of the objects need to have same argumentAPI for creating objects: coords, data, imageData */
+/**
+ * The actual objects used on the map (suchs as terrain and units), under containers.
+ *
+ * All of the objects need to have same argumentAPI for creating objects: coords, data, imageData
+ */
 
 export class Object_sprite extends PIXI.Sprite {
+  /**
+   * @param {PIXI.Point} coords - the coordinate where the object is located at, relative to it's parent
+   * @param {Object} data - objects data, that will be used in the game. It will not actually be mainly used in graphical
+   * but rather things like unit-data and city-data presentations etc.
+   * @param {Integer} currFrame - the current frames number. This is basically the initial image, we can change it later
+   * for animation or such
+   */
   constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {}, throwShadowOptions: false }) {
     var { currentFrame, throwShadowOptions } = options;
 
@@ -28,18 +29,18 @@ export class Object_sprite extends PIXI.Sprite {
     this.data = data;
     this.currentFrame = currentFrame;
     /* Execute initial draw function */
-    //this.innerDraw(coord.x, coord.y);
     this.position.set(coord.x,  coord.y);
-    /* createjs / super properties. Used also for controlling and optimizing the engine */
     this.setupShadow(throwShadowOptions);
 
     this.tickEnabled = false;
     this.mouseEnabled = false;
   }
-  /** Drawing the object with createjs-methods
+  /**
+   * Drawing the object with createjs-methods
    * @param {Number} x coordinate x
    * @param {Number} y coordinate y
-   * @return this object instance */
+   * @return this object instance
+   */
   innerDraw(x, y) {
     this.fromFrame ( this.currentFrame );
     this.x = x;
@@ -47,11 +48,13 @@ export class Object_sprite extends PIXI.Sprite {
 
     return this;
   }
-  /** Draws new frame to animate or such
+  /**
+   * Draws new frame to animate or such
    * @param {Number} x coordinate x
    * @param {Number} y coordinate y
    * @param {Number} newFrameNumber New frame number to animate to
-   * @return this object instance */
+   * @return this object instance
+   */
   drawNewFrame(x, y, newFrame) {
     this.currentFrame = newFrame;
 

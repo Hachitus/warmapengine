@@ -1,15 +1,11 @@
-/* global createjs, PIXI */
+/* global createjs */
 'use strict';
 
-import extend from '../../../assets/lib/createjs/utils/extend';
-import promote from '../../../assets/lib/createjs/utils/promote';
-import SpriteContainer from '../../../assets/lib/easeljs/SpriteContainer/SpriteContainer';
-
 /**
-@require the createjs framework in global namespace
-@todo I don't think this class should be done in the new class-word, since it is much more efficient with normal
-prototypal inheritance way.
-*/
+ * @require the createjs framework in global namespace
+ * @todo I don't think this class should be done in the new class-word, since it is much more efficient with normal
+ * prototypal inheritance way.
+ */
 
 var _UIObjects = [];
 /* This will extend the layer-classes prototype */
@@ -45,7 +41,8 @@ Object.assign(Map_layer.prototype, _baseContainerClass);
 
 /**
  * @todo implement spriteContainer! It should be more efficient when using spritesheets. Only issue was that minified
- * easeljs doesn't have the spriteStage (and spriteContainer?) and neither the node-easel (and node doesn't have the extend) */
+ * easeljs doesn't have the spriteStage (and spriteContainer?) and neither the node-easel (and node doesn't have the extend)
+ *  */
 export class Map_spriteLayer extends createjs.SpriteContainer {
   /**
    * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
@@ -74,7 +71,7 @@ export class Map_spriteLayer extends createjs.SpriteContainer {
 Object.assign(Map_spriteLayer.prototype, _baseContainerClass);
 
 function _getBaseContainerClass() {
-  	return {
+  return {
     setCache,
     getCurrentCache,
     getCacheEnabled,
@@ -85,10 +82,12 @@ function _getBaseContainerClass() {
     getUIObjects,
     emptyUIObjects,
     addUIObjects
-  	};
+  };
 
-  /** layer caching. Not implemented yet
-  	 * @todo Implement */
+  /**
+   * layer caching. Not implemented yet
+   * @todo Implement
+   *  */
   function setCache(status) {
     if (status) {
       let bounds = this.getBounds();
@@ -107,9 +106,11 @@ function _getBaseContainerClass() {
   function getCacheEnabled() {
     return this._cacheEnabled;
   }
-  /** Move layer
+  /**
+   * Move layer
    * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
-  	 * @return this layer instance */
+	 * @return this layer instance
+   * */
   function move(coord) {
     if (this.movable) {
       this.x = ~~this.x + ~~coord.x;
@@ -119,9 +120,11 @@ function _getBaseContainerClass() {
 
     return this;
   }
-  /** gets child (layer or object - sprite etc.) from this layer
-  	 * @param {string} name searches for a layer that has this name-property
-  	 * @return the first layer that was found or false if nothing was found */
+  /**
+   * gets child (layer or object - sprite etc.) from this layer
+	 * @param {string} name searches for a layer that has this name-property
+	 * @return the first layer that was found or false if nothing was found
+   * */
   function getChildNamed(name) {
     if (this.children[0] instanceof createjs.Container) {
       for (let child of this.children) {
@@ -132,27 +135,35 @@ function _getBaseContainerClass() {
     }
     return false;
   }
-  /** set layer scale
-  	 * @param {Number} amount The amount that you want the layer to scale.
-  	 * @amount that was given */
+  /**
+   * set layer scale
+	 * @param {Number} amount The amount that you want the layer to scale.
+	 * @amount that was given
+   * */
   function setScale(amount) {
     this.scaleX = amount;
     this.scaleY = amount;
 
     return amount;
   }
-  /** get layer scale
-  	 * @return current amount of scale */
+  /**
+   * get layer scale
+	 * @return current amount of scale
+   * */
   function getScale() {
     return this.scaleX;
   }
-  /** get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
-  	 * @return current UIObjects */
+  /**
+   * get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
+	 * @return current UIObjects
+   * */
   function getUIObjects() {
     return _UIObjects;
   }
-  /** Remove all the UIObjects from this layer
-  	 * @return empty UIObjects array */
+  /**
+   * Remove all the UIObjects from this layer
+	 * @return empty UIObjects array
+   * */
   function emptyUIObjects() {
     _UIObjects.map(obj => {
       this.removeChild(obj);
@@ -161,9 +172,11 @@ function _getBaseContainerClass() {
 
     return _UIObjects = [];
   }
-  /** Add UIObjects to this layer
-  	 * @param {Object || Array} objects Objects can be an object containing one object to add or an Array of objects to add.
-  	 * @return All the UIObjects currently on this layer */
+  /**
+   * Add UIObjects to this layer
+	 * @param {Object || Array} objects Objects can be an object containing one object to add or an Array of objects to add.
+	 * @return All the UIObjects currently on this layer
+   * */
   function addUIObjects(objects) {
     _UIObjects = _UIObjects || [];
 

@@ -6,33 +6,6 @@ export var mouseUtils = ( function mouseUtils() {
   var scope = {};
 
   /**
-   * This function is from: http://www.adomas.org/javascript-mouse-wheel/, but modified for todays browsers
-   * It detects which way the mousewheel has been moved.
-   * zero delta = mouse wheel not moved
-   * positive delta = scrolled up
-   * negative delta = scrolled down
-
-   * @param {Event} event pass the event to deltaFromWheel
-   * @return delta. Positive if wheel was scrolled up, and negative, if wheel was scrolled down.
-   */
-  scope.deltaFromWheel = function( event ) {
-    var delta = 0;
-
-    event = event ? event : window.event; /* For IE. */
-
-    if ( event.deltaY > 99 ) { /* IE/Opera. */
-      delta = event.deltaY / 100;
-    } else if ( event.deltaY <= 99 ) {
-      delta = event.deltaY;
-    }
-
-    /* If delta is nonzero, handle it, otherwise scrap it Basically, delta is now positive if
-    wheel was scrolled up, and negative, if wheel was scrolled down. */
-    if ( delta ) {
-      return delta;
-    }
-  };
-  /**
    * Detects if the mouse click has been the right mouse button
    * @param {Event} event The event where the click occured
    */

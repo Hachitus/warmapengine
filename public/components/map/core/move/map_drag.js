@@ -13,25 +13,29 @@
 import { eventListeners as eventListenerMod } from '../eventlisteners';
 import { mouseUtils } from '../utils/utils';
 
-var _pluginName = "map_drag";
+export var pluginName = "map_drag";
 
-export var pluginName = _pluginName;
-
-export let map_drag = (function map_drag() {
+export var map_drag = (function map_drag() {
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
 
   /* =====================
      MODULE API (in scope)
      ===================== */
-  var scope = {};
-  scope.pluginName = _pluginName;
+  return {
+    pluginName: pluginName,
+    init,
+    _startDragListener /* Function revealed for testing */
+  };
 
+  /**************************
+  ********* PUBLIC **********
+  **************************/
   /**
    * Required init functions for the plugin
    * @param {Map object} mapObj - the Map class object
    * */
-  scope.init = function(map) {
+  function init(map) {
     if (map.getEnvironment() === "mobile") {
       map.eventCBs.drag = _startDragListener_mobile(map);
     } else {
@@ -40,15 +44,11 @@ export let map_drag = (function map_drag() {
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
     eventListenerMod().toggleDragListener();
-  };
+  }
 
-  /* ======================================
-   private functions revealed for testing
-   ======================================*/
-  scope._startDragListener = _startDragListener;
-
-  return scope;
-
+  /*****************************
+  ********* PRIVATE ************
+  *****************************/
   /**
    * Starts the whole functionality of this class
    * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
@@ -73,7 +73,7 @@ export let map_drag = (function map_drag() {
       /** @requires map objects to be accessible in scope */
       function _dragListener(e) {
         try {
-          var eventCoords = mouseUtils.eventData.getPointerCoords(e);
+          var coords = mouseUtils.eventData.getPointerCoords(e);
 
           e.preventDefault();
 
@@ -85,22 +85,7 @@ export let map_drag = (function map_drag() {
             _mapMoved(map);
           }
 
-          var offset = offsetCoords.getOffset();
-          var moved = {
-            x: eventCoords.x - offset.x,
-            y: eventCoords.y - offset.y
-          };
-
-          if (moved.x > 0 || moved.y > 0 || moved.x < 0 || moved.y < 0) {
-            map.moveMap(moved);
-          } else {
-            map.mapMoved(false);
-          }
-
-          offsetCoords.setOffset({
-            x: eventCoords.x,
-            y: eventCoords.y
-          });
+          _mapMovement(e, map, coords);
 
           /* The mouse has been moved after pressing. This prevent the click
             event to fire at the same time with the mouseDown / dragging event
@@ -145,31 +130,42 @@ export let map_drag = (function map_drag() {
           map.mapMoved(false);
         }
 
-        map.mapMoved(true);
-
-        let offset = offsetCoords.getOffset();
-        let moved = {
-            x: coords.x - offset.x,
-            y: coords.y - offset.y
-          };
-
-        if (moved.x !== 0 || moved.y !== 0) {
-          map.moveMap(moved);
-        }
-
-        offsetCoords.setOffset({
-          x: coords.x,
-          y: coords.y
-        });
+        _mapMovement(e, map, coords);
       } catch (ev) {
         console.log(ev);
       }
     };
   }
 
-  /* =================
-     Private functions
-     ================= */
+  /**
+   * This handles offset Changes and setting data has map been moved based on it. Also
+   * sets basic settings like preventDefault etc.
+   * @param  {[type]} e      [description]
+   * @param  {[type]} map    [description]
+   * @param  {[type]} coords [description]
+   * @return {[type]}        [description]
+   */
+  function _mapMovement(e, map, coords) {
+    e.preventDefault();
+    map.mapMoved(true);
+
+    var offset = offsetCoords.getOffset();
+    var moved = {
+      x: coords.x - offset.x,
+      y: coords.y - offset.y
+    };
+
+    if (moved.x > 0 || moved.y > 0 || moved.x < 0 || moved.y < 0) {
+      map.moveMap(moved);
+    } else {
+      map.mapMoved(false);
+    }
+
+    offsetCoords.setOffset({
+      x: coords.x,
+      y: coords.y
+    });
+  }
   /**
    * Function for setting and getting the mouse offset.
    */

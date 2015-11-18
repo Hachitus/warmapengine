@@ -139,5 +139,5 @@ export let eventListeners = function eventListenerModule(map, canvasElement = do
 };
 
 function isMobileSite() {
-  return typeof Hammer !== undefined;
+  return typeof Hammer !== 'undefined';
 }

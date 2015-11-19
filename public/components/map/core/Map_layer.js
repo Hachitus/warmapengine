@@ -42,8 +42,10 @@ Object.assign(Map_layer.prototype, _baseContainerClass);
 /**
  * @todo implement spriteContainer! It should be more efficient when using spritesheets. Only issue was that minified
  * easeljs doesn't have the spriteStage (and spriteContainer?) and neither the node-easel (and node doesn't have the extend)
+ *
+ * This SHOULD be "extends createjs.SpriteContainer"
  *  */
-export class Map_spriteLayer extends createjs.SpriteContainer {
+export class Map_spriteLayer extends createjs.Container {
   /**
    * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
@@ -71,6 +73,7 @@ export class Map_spriteLayer extends createjs.SpriteContainer {
 Object.assign(Map_spriteLayer.prototype, _baseContainerClass);
 
 function _getBaseContainerClass() {
+  /*jshint validthis: true */
   return {
     setCache,
     getCurrentCache,
@@ -89,6 +92,7 @@ function _getBaseContainerClass() {
    * @todo Implement
    *  */
   function setCache(status) {
+
     if (status) {
       let bounds = this.getBounds();
       this.cache(bounds.x, bounds.y, bounds.width, bounds.height);
@@ -112,11 +116,13 @@ function _getBaseContainerClass() {
 	 * @return this layer instance
    * */
   function move(coord) {
+    /*jshint bitwise: false*/
     if (this.movable) {
       this.x = ~~this.x + ~~coord.x;
       this.y = ~~this.y + ~~coord.y;
       this.drawThisChild = true;
     }
+    /*jshint bitwise: true*/
 
     return this;
   }
@@ -170,7 +176,9 @@ function _getBaseContainerClass() {
       obj = null;
     });
 
-    return _UIObjects = [];
+    _UIObjects = [];
+
+    return _UIObjects;
   }
   /**
    * Add UIObjects to this layer

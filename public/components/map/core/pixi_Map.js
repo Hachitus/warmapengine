@@ -160,9 +160,12 @@ export class Map {
     return _movableLayer.getChildNamed(name);
   }
   /**
-   * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
+   * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount
+   * of movement that the map should move.
+   *
+   * @param {x: Number, y: Number} coord      The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
-   * @return this map instance
+   * @return                                  this
    * */
   moveMap(coord = { x: 0, y: 0 }) {
     var realCoordinates = {
@@ -171,6 +174,8 @@ export class Map {
     };
     _movableLayer.move(realCoordinates);
     this.drawOnNextTick();
+
+    this.mapMoved(true);
 
     return this;
   }

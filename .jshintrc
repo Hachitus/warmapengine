@@ -16,5 +16,6 @@
     "hammer": true,
     "PIXI": true,
     "easeljs": true
-  }
+  },
+  "expr": true
 }

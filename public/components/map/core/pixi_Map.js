@@ -24,7 +24,7 @@ import { eventListeners } from './eventlisteners';
 import { ObjectManager } from './ObjectManager';
 
 var _drawMapOnNextTick = false;
-var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, boundUnResizer;
+var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer;
 
 export class Map {
   /**
@@ -35,7 +35,9 @@ export class Map {
    *
    * @todo, set default values for given and required options
    */
-  constructor(canvas, { mapSize = { x: 0, y: 0 }, startCoord = { x: 0, y: 0 }, bounds = { width: 0, height: 0 }, options = {} }) {
+  constructor(canvas = null, props = { mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: {} }) {
+    var { mapSize, startCoord, bounds, options } = props;
+
     if (!canvas) {
       throw new Error(this.constructor.name + " needs canvas!");
     }
@@ -92,7 +94,7 @@ export class Map {
    * during ticks
    * @return the current map instance
    * */
-  init(plugins = [], coord = { x: 0, y: 0 }, tickCB, options = { fullsize: true }) {
+  init(plugins = [], coord = { x: 0, y: 0 }, tickCB = null, options = { fullsize: true }) {
     if (options.fullsize) {
       this.toggleFullsize();
     }
@@ -162,6 +164,8 @@ export class Map {
   /**
    * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount
    * of movement that the map should move.
+   *
+   * Internally it moves the movableLayer, taking into account necessary properties (like scale).
    *
    * @param {x: Number, y: Number} coord      The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
@@ -309,7 +313,7 @@ export class Map {
   getSize() {
     return this.mapSize;
   }
-  getObjectsUnderPoint(globalCoords = { x: 0, y: 0 }, type) {
+  getObjectsUnderPoint(globalCoords = { x: 0, y: 0 }, type = undefined) {
     /* Filter objects based on quadtree and then based on possible group provided */
     var objects = {};
     var allCoords = {
@@ -331,11 +335,25 @@ export class Map {
    * Default uses quadtree
    * @param { x: Number, y: Number } coordinates to search from
    * @param { String } type type of the objects to search for
+   * @param { String } object The object to add
    * */
-  addObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet"; }
-  removeObjectsForSelection(coord = { x: 0, y: 0 }, type, object) { return "notImplementedYet"; }
-
-  getObjectsUnderShape(coord = { x: 0, y: 0 }, shape, type) { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
+  addObjectsForSelection() { return "notImplementedYet"; }
+  /**
+   * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
+   * Default uses quadtree
+   * @param { x: Number, y: Number } coordinates to search from
+   * @param { String } type type of the objects to search for
+   * @param { String } object The object to add
+   * */
+  removeObjectsForSelection() { return "notImplementedYet"; }
+  /**
+   * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
+   * Default uses quadtree
+   * @param { x: Number, y: Number } coordinates to search from
+   * @param { String } shape The shape to match against
+   * @param { String } type type of the objects to search for
+   * */
+  getObjectsUnderShape() { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
 }
 
 /** ===== PRIVATE ===== */
@@ -344,7 +362,7 @@ export class Map {
  * callback is always set and should not be removed or overruled
  */
 function _defaultTick(map, ticker) {
-  ticker.add(function (time) {
+  ticker.add(function () {
     if (_drawMapOnNextTick === true) {
       _renderer.render(_staticLayer);
     }

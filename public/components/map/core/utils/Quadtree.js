@@ -1,22 +1,51 @@
 'use strict';
 
 /**
+ * This class handles the API for quadtree to search for the wanted objects on the certain coordinates. After this
+ * the map should do it's own - more precise - hit detections.
+ *
  * @require Quadtree-js. Though this base library can be changed easily
  */
 
-import { Quadtree as QuadMod } from "../../../../assets/lib/quadtree-js/quadtree-js-hitman";
+import { Quadtree as QuadMod } from "/assets/lib/quadtree-js/quadtree-js-hitman";
 
 export class Quadtree {
+  /**
+   * @param {Object} options    options for the QuadModule
+   * @param {Object} max        How many levels deep
+   * @return                    Quadtree instance
+   *
+   * @todo  options should not be directly to the quadModule, they should be handled in this module and then the
+   * necessary options are passed to the "parent" quadtree module.
+   */
   constructor(options, max) {
     var { objects: max_objects, levels: max_levels } = max;
 
     this.quadtree = new QuadMod(options, max_objects, max_levels);
   }
+  /**
+   * Add an object to the quadtree.
+   *
+   * @param {x: Number, y: Number} coords         Coordinates on the global / canvas element.
+   * @param {width:Number, height:Number} size    You can use bounds for the object "hit" detection
+   * @param {Object} data                         Objects extra custom data. This is optional.
+   * @return                                      Quadtree instance
+   */
   add(coords, size, data) {
     var objToAdd = _creteQuadtreeObject(coords, size, data);
 
     this.quadtree.insert(objToAdd);
   }
+  /**
+   * Remove an object from the quadtree.
+   *
+   * @param {x: Number, y: Number} coords         Coordinates on the global / canvas element.
+   * @param {width:Number, height:Number} size    You can use bounds for the object "hit" detection
+   * @param {Object} data                         Objects extra custom data. This is optional.
+   * @param {Boolean} refresh                     Should we refresh the quadtree setting, after removal. Can take some
+   * resources to execute. So we want this to be optional.
+   * @return                                      Quadtree instance
+   */
   remove(coords, size, data, refresh) {
     var objToRemove = _creteQuadtreeObject(coords, size, data);
 
@@ -38,6 +67,16 @@ export class Quadtree {
 
     return objects;
   }
+  /**
+   * Move an object on the quadtree
+   *
+   * @param {x: Number, y: Number} coords         Coordinates on the global / canvas element.
+   * @param {width:Number, height:Number} size    You can use bounds for the object "hit" detection
+   * @param {Object} data                         Objects extra custom data. This is optional.
+   * @param {Boolean} to                          Should we refresh the quadtree setting, after removal. Can take some
+   * resources to execute. So we want this to be optional.
+   * @return {Boolean}                            True of false
+   */
   move(coords, size, data, to) {
     var foundObject = this.findObject(coords, size, data);
 
@@ -52,9 +91,20 @@ export class Quadtree {
 
     return false;
   }
+  /**
+   * refresh the whole quadtree setting. Can spend some resources.
+   */
   refreshAll() {
     this.quadtree.cleanup();
   }
+  /**
+   * Find an object by hitDetection from the quadtree setting.
+   *
+   * @param {x: Number, y: Number} coords         Coordinates on the global / canvas element.
+   * @param {width:Number, height:Number} size    You can use bounds for the object "hit" detection
+   * @param {Object} data                         Objects extra custom data. This is optional.
+   * @return {Object}                             Found object
+   */
   findObject(coords, size, data) {
     var foundObject = this.retrieve(coords, size).filter(function(object) {
       return object.data === data ? true : false;
@@ -63,6 +113,7 @@ export class Quadtree {
     return foundObject;
   }
 }
+
 /**
  * [_creteQuadtreeObject description]
  * @param  {x:Number, y:Number} coords          global coordinates on canvas

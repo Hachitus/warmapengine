@@ -17,5 +17,6 @@
     "PIXI": true,
     "easeljs": true
   },
-  "expr": true
+  "expr": true,
+  "validthis": true
 }

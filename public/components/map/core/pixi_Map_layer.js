@@ -1,7 +1,5 @@
 'use strict';
 
-import { general } from './utils/utils';
-
 /**
  * @require the PIXI framework in global namespace
  * @todo I don't think this class should be done in the new class-word, since it is much more efficient with normal
@@ -9,7 +7,6 @@ import { general } from './utils/utils';
  * */
 
 var _UIObjects = [];
-var oldAddChild;
 /* This will extend the layer-classes prototype */
 var _baseContainerClass = _getBaseContainerClass();
 
@@ -24,7 +21,9 @@ export class Map_layer extends PIXI.Container {
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
-  constructor({ name = "", coord = { x: 0, y: 0 }, renderer = null, subContainerConfig = { size: 0 }, movable = false }) {
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, subContainerConfig: { size: 0 }, movable: false } ) {
+    var { name, coord, renderer, subContainerConfig, movable } = options;
+
     super();
 
     Object.assign(this, coord);
@@ -52,11 +51,9 @@ export class Map_spriteLayer extends PIXI.Container {
    * otherwise too!
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
    */
-	constructor({
-      name = "",
-      coord = { x: 0, y: 0 },
-      renderer = null,
-      movable = false }) {
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false } ) {
+    var { name, coord, renderer, movable } = options;
+
     super();
 
     Object.assign(this, coord);
@@ -69,7 +66,7 @@ export class Map_spriteLayer extends PIXI.Container {
     this.preventSelection = false;
     this.oldAddChild = super.addChild.bind(this);
     this.subContainersCached = null;
-	}
+  }
 	/**
    * If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
 	 * the children too. I think this has been normally disabled to make the particleContainer as efficient as possible
@@ -94,16 +91,17 @@ normal container too, but since this one is optimized for performance we use it 
 
 export class Map_bigSpriteLayer extends PIXI.Container {
   /**
-   * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
+   * @param {String}        name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
-   * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
-  */
-	constructor({
-      name = "",
-      coord = { x: 0, y: 0 },
-      renderer = null,
-      subContainerConfig = { size: 0 },
-      movable = false }) {
+   * @param {x: Number, y: Number}  coord starting coords of layer. Relative to parent map layer.
+   * @param {PIXI renderer}     renderer Not really needed by the super class, but used elsewhere.
+   * @param {Number}        subContainers size is the maximum pixels width and height of one subcontainer.
+   * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
+   * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
+   */
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, subContainerConfig: { size: 0 }, movable: false } ) {
+    var { name, coord, renderer, subContainerConfig, movable } = options;
+
     super();
 
     Object.assign(this, coord);
@@ -193,7 +191,7 @@ function _getBaseContainerClass() {
 
     return toCacheStatus;
   }
-  function getCurrentCache(status) {
+  function getCurrentCache() {
     return this.cacheAsBitmap;
   }
   /**
@@ -231,7 +229,9 @@ function _getBaseContainerClass() {
 	 * @amount that was given
    * */
   function setScale(amount) {
-    return this.scale.x = this.scale.y = amount;
+    this.scale.x = this.scale.y = amount;
+
+    return this.scale.x;
   }
   /**
    * get layer scale
@@ -267,14 +267,14 @@ function _getBaseContainerClass() {
   function addUIObjects(objects) {
     _UIObjects = _UIObjects || [];
     if (Array.isArray(objects)) {
-      objects.forEach( thisObj => {
+      objects.forEach( (/*thisObj*/) => {
         /* We want to make a copy of the object, since if add existing child from another container to UI,
          * it will get removed from the original container and messes up the hierarchy. Probably making a deep copy
          * directly isn't the best way, but it's the easiest atm. */
         //let newObj = general.deepCopy(thisObj);
 
         //this.addChild(newObj);
-      })
+      });
     } else {
       //let newObj = general.deepCopy(objects);
       let newObj = objects;
@@ -322,21 +322,21 @@ function _getBaseContainerClass() {
   }
 }
 
-function _setSubContainers(parentSize, subsize) {
-  var counts = {
-    x: Math.floor(parentSize.x / subsize),
-    y: Math.floor(parentSize.y / subsize)
-  };
-  var subContainers = [];
+// function _setSubContainers(parentSize, subsize) {
+//   var counts = {
+//     x: Math.floor(parentSize.x / subsize),
+//     y: Math.floor(parentSize.y / subsize)
+//   };
+//   var subContainers = [];
 
-  for (let x = 0; counts.x < x; x++) {
-    for (let y = 0; counts.y < y; y++) {
-      let newContainer = new PIXI.Container();
-      newContainer.x = x;
-      newContainer.y = y;
-      subContainers.push(newContainer);
-    }
-  }
+//   for (let x = 0; counts.x < x; x++) {
+//     for (let y = 0; counts.y < y; y++) {
+//       let newContainer = new PIXI.Container();
+//       newContainer.x = x;
+//       newContainer.y = y;
+//       subContainers.push(newContainer);
+//     }
+//   }
 
-  return subContainers;
-}
+//   return subContainers;
+// }

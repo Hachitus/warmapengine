@@ -1,7 +1,8 @@
 'use strict';
 
 /**
- * The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed
+ * The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed.
+ * Zooming happens when the user scrolls the mousewheel
  *
  * @todo Change the map move after zooming to be mouse based or such. Now it is based on the map corners coordinates
  */
@@ -12,22 +13,31 @@ import { eventListeners as eventListenerMod } from '../eventlisteners';
 
 var _pluginName = "map_zoom";
 
+/* Required by the plugins! */
 export var pluginName = _pluginName;
 
 export let map_zoom = (function map_zoom() {
-  /* Maximum and minimum the player can zoomt he map */
+  /**
+   * Maximum and minimum amount, the player can zoom the map
+   * @type { farther: Number, closer: Number }
+   */
   var zoomLimit = {
     farther: 0.4,
     closer : 2.5
   };
-  /* How much one step of zooming affects: */
+  /**
+   * How much one step of zooming affects
+   * @type {Number}
+   */
   var zoomModifier = 0.1;
 
-  /* =====================
-     MODULE API (in scope)
-     ===================== */
-  var scope = {};
-  scope.pluginName = _pluginName;
+  /************************
+  ********** API **********
+  ************************/
+  return {
+    init,
+    pluginName: _pluginName // More for debugging
+  };
 
   /**
    * Required init functions for the plugin
@@ -36,7 +46,7 @@ export let map_zoom = (function map_zoom() {
    * @todo think through should setZoomLimits and setZoomModifier be in map.prototype?
    * But zoomLimit and modifier need to be setable in creation, init or later with setters
    * */
-  scope.init = function(map) {
+  function init(map) {
     map.setPrototype("zoomIn", zoomIn);
     map.setPrototype("zoomOut", zoomOut);
     map.setPrototype("setZoomLimits", setZoomLimits);
@@ -50,14 +60,12 @@ export let map_zoom = (function map_zoom() {
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
     eventListenerMod().toggleZoomListener();
-  };
+  }
 
   /* ======================================
      private functions revealed for testing
      ======================================*/
   //scope._setupZoomEvent = _setupZoomEvent;
-
-  return scope;
 
   /* ============================
      PROTOTYPE extensions for map
@@ -164,7 +172,6 @@ export let map_zoom = (function map_zoom() {
 
           return;
         } else if (e.isFinal === true) {
-          alert("STOP");
           initialized = false;
         }
 
@@ -186,8 +193,8 @@ export let map_zoom = (function map_zoom() {
           y: changeY
         };
 
-      } catch (e) {
-        console.log("Error! ", e);
+      } catch (ev) {
+        console.log("Error! ", ev);
       }
     };
   }

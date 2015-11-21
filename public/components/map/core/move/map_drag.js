@@ -21,7 +21,7 @@ export var map_drag = (function map_drag() {
   ********* API **********
   ***********************/
   return {
-    pluginName: pluginName,
+    pluginName: pluginName, // More for debugging
     init,
     _startDragListener /* Function revealed for testing */
   };

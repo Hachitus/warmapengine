@@ -55,6 +55,10 @@ Plugin objects have to have init method, in the format of:
   }
 }
 ```
+
+Plugins need to export pluginName-variable, like so:
+export var pluginName = "thisPluginName";
+
 Also the map engine uses it's own interface to use the normal map functionalities like moving the map (default dragging
 the map), selecting units and zooming the map. These are implemented via eventlisteners.js and UI.js core modules.
 

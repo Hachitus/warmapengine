@@ -1,5 +1,8 @@
-// async stack traces
-require('longjohn');
+/* global require, __dirname */
+'use strict';
+
+// async stack traces. Had dependency issues on new installations for this, so disabled for now.
+//require('longjohn');
 
 // Express dependencies
 var express = require('express');

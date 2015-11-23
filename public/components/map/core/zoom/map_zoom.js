@@ -2,7 +2,7 @@
 
 /**
  * The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed.
- * Zooming happens when the user scrolls the mousewheel
+ * Zooming happens when the user scrolls the mousewheel or in mobile, pinches the screen
  *
  * @todo Change the map move after zooming to be mouse based or such. Now it is based on the map corners coordinates
  */
@@ -17,6 +17,7 @@ var _pluginName = "map_zoom";
 export var pluginName = _pluginName;
 
 export let map_zoom = (function map_zoom() {
+  var eventListenerCB;
   /**
    * Maximum and minimum amount, the player can zoom the map
    * @type { farther: Number, closer: Number }
@@ -53,23 +54,18 @@ export let map_zoom = (function map_zoom() {
     map.setPrototype("setZoomModifier", setZoomModifier);
 
     if (map.getEnvironment() === "mobile") {
-      map.eventCBs.zoom = _setupZoomEvent_mobile(map);
+      eventListenerCB = _setupZoomEvent_mobile(map);
     } else {
-      map.eventCBs.zoom = _setupZoomEvent(map);
+      eventListenerCB = _setupZoomEvent(map);
     }
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
-    eventListenerMod().toggleZoomListener();
+    eventListenerMod().toggleZoomListener(eventListenerCB);
   }
 
-  /* ======================================
-     private functions revealed for testing
-     ======================================*/
-  //scope._setupZoomEvent = _setupZoomEvent;
-
-  /* ============================
-     PROTOTYPE extensions for map
-     ============================*/
+  /****************************************
+  ***** PROTOTYPE extensions for map ******
+  ****************************************/
   /**
    * How much one mouse wheel step zooms
    * @param {Number} amount How much one mouse wheel step zooms. Needs to be in between 0 - 0.5
@@ -115,14 +111,19 @@ export let map_zoom = (function map_zoom() {
     return _zoom(zoomLayer, presentScale, amount || -zoomModifier);
   }
 
-  /* ============
-     Initializers
-     ============ */
+  /**********************************
+  ******* plugin Initializers *******
+  **********************************/
+  /**
+   * Setup desktop zoomEvent by currying. Internally: Sets up correct scale + moves map accordingly to zoom to the
+   * current center coordinates
+   *
+   * @param  {Map} map             Map instance
+   */
   function _setupZoomEvent(map) {
     return function handleZoomEvent(e, delta, deltaX, deltaY) {
       var mouseWheelDelta = deltaY;
-      /* We use old scale, since the scale really changes when the map is drawn. So we must make calculations with the
-      old scale now */
+      /* Scale changes when the map is drawn. We make calculations with the old scale before draw */
       var oldScale = map.getScale();
 
       /* No nasty scrolling side-effects */
@@ -137,16 +138,18 @@ export let map_zoom = (function map_zoom() {
           map.moveMap(_calculateCenterMoveCoordinates(oldScale));
         }
       }
-
-      // no need when we use map.move:
-      //map.drawOnNextTick();
     };
   }
-
+  /**
+   * Setup mobile zoomEvent by currying. Internally: Sets up correct scale and moves map to where the use pinches
+   *
+   * @param  {Map} map             Map instance
+   */
   function _setupZoomEvent_mobile(map) {
-    zoomModifier = zoomModifier * 0.5;
     var initialized = false;
     var difference = {};
+
+    zoomModifier = zoomModifier * 0.5;
 
     return function handleZoomEvent_mobile(e) {
       var pointers = e.pointers;
@@ -176,17 +179,14 @@ export let map_zoom = (function map_zoom() {
         }
 
         if (difference.x + difference.y < changeX + changeY) {
-          if (map.zoomIn(undefined)) {
+          if (map.zoomIn()) {
             map.moveMap(_calculateCenterMoveCoordinates(map.getScale(), true));
           }
         } else {
-          if (map.zoomOut(undefined)) {
+          if (map.zoomOut()) {
             map.moveMap(_calculateCenterMoveCoordinates(map.getScale()));
           }
         }
-
-        // no need when we use map.move:
-        //map.drawOnNextTick();
 
         difference = {
           x: changeX,

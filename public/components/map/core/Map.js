@@ -66,7 +66,7 @@ export class Map {
       zoom: null
     };
     this._fullSizeFunction = null;
-    eventlisteners = eventListeners(this, canvas);
+    eventlisteners = eventListeners(this.eventCBs, canvas);
     this.environment = "desktop";
     this.setEnvironment(environmentDetection.isMobile() ? "mobile" : "desktop");
     this._mapInMove = false;

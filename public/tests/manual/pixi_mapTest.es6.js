@@ -1,4 +1,4 @@
-/* global PIXI, System, alert */
+/* global alert */
 
 'use strict';
 /* ====== Library imports ====== */
@@ -47,27 +47,19 @@ window.initMap = function () {
 
     map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
 
-    gameData.pluginsToActivate.map.map(plugin => {
-      promises.push(System.import(plugin));
-    });
+    // gameData.pluginsToActivate.map.map(plugin => {
+    //   promises.push(System.import(plugin));
+    // });
 
-    Promise.all(promises).then(activetablePlugins => {
-      map.init( activetablePlugins, mapData.startPoint );
+    // Promise.all(promises).then(activetablePlugins => {
+    //map.init( activetablePlugins, mapData.startPoint );
+    promises = map.init( gameData.pluginsToActivate.map, mapData.startPoint );
 
+    Promise.all(promises).then( () => {
       document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
-
-      if (map.setCache) {
-        // There is an issue with cache. About worldTransform. If cache is on selecting units will not work atm. because
-        // world transform does not take coordinates, achors etc. into account correctly
-        //map.setCache(true);
-      }
     });
+    // });
   }
 
   return globalMap;
-
-  /* ====== private functions, or to be moved elsewhere ====== */
-  function preloadErrorHandler(err) {
-    console.log("PRELOADER ERROR", err );
-  }
 };

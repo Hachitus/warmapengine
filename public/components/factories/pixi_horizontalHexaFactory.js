@@ -18,7 +18,6 @@ import { Object_unit } from '../map/extensions/hexagons/object/pixi_Object_unit_
 import { resizeUtils } from '../map/core/utils/utils';
 import { UI } from '../map/core/UI';
 import { UI_default } from "../map/UIs/default/default.js";
-import { eventListeners } from '../map/core/eventlisteners';
 
 /***** CONFIG. Set correct classes to use *****/
 var functionsInObj = {
@@ -56,7 +55,7 @@ export function createMap(canvasElement, datas) {
       ctx.backingStorePixelRatio || 1;
 
       return dpr / bsr;
-    })()
+    })();
 
   var mapOptions = {
     mapSize: gameData.mapSize,
@@ -88,12 +87,12 @@ export function createMap(canvasElement, datas) {
 
     var layerGroup = layerData.group;
     var objManager = map.objectManager;
-    var layerConstructor = layers[layerData.type];
+    var LayerConstructor = layers[layerData.type];
     var layerOptions = { name: layerData.name, coord: layerData.coord, subContainerConfig: { size: 4096 } };
     var thisLayer;
 
     try {
-      thisLayer = new layerConstructor(layerOptions);
+      thisLayer = new LayerConstructor(layerOptions);
       map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
         x: 0,
@@ -136,15 +135,14 @@ export function createMap(canvasElement, datas) {
             newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
 
             objManager.addObject(
-                      layerGroup,
-  						{
-    x: newObject.x,
-    y: newObject.y,
-    width: newObject.width,
-    height: newObject.height
-  						},
-  							newObject
-  					);
+              layerGroup, {
+                x: newObject.x,
+                y: newObject.y,
+                width: newObject.width,
+                height: newObject.height
+              },
+                newObject
+            );
 
             thisLayer.addChild( newObject );
           } catch (e) {

@@ -1,3 +1,5 @@
+'use strict';
+
 export let gameData = {
   ID: "53837d47976fed3b24000005",
   dataPackageID: 0,

@@ -1,7 +1,13 @@
+/* global System */
+
+'use strict';
+
 /**
  * Map is the main class for constructing 2D map for strategy games
  *
- * Map is instantiated and then initialized with init-method.
+ * Map is instantiated and then initialized with init-method:
+ * var map = new Map(canvasElement, mapOptions );
+ * promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
  *
  * Plugins can be added with activatePlugins-method by prodiving init(map) method in the plugin. Plugins are always
  * functions, not objects that are instantiated. Plugins are supposed to extend the map object or anything in it via
@@ -14,8 +20,6 @@
  * Plugins and eventlistener can be overriden, but they user pointer events by default (either the browser must support
  * them or use polyfill)
  * */
-
-'use strict';
 
 /* ====== Own module imports ====== */
 import { Map_layer } from '/components/map/core/pixi_Map_layer';
@@ -32,8 +36,6 @@ export class Map {
    * @param {Object} options - different options for the map to be given. Format:
    * { bounds: { width: Number, height: Number}, renderer: {} }
    * @return Map instance
-   *
-   * @todo, set default values for given and required options
    */
   constructor(canvas = null, props = { mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: {} }) {
     var { mapSize, startCoord, bounds, options } = props;
@@ -59,22 +61,11 @@ export class Map {
     _staticLayer.addChild(_movableLayer);
     this.plugins = new Set();
     this.mapSize = mapSize;
-    /* Define event callback here!
-     * @todo I think this should be organized another way? */
-    this.eventCBs = {
-      fullSize: boundResizer,
-      fullscreen: setFullScreen.bind(this),
-      select: null,
-      drag: null,
-      zoom: null
-    };
     this.isFullsize = false;
     this._mapInMove = false;
     let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
     this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
-
     boundResizer = _resizeCanvas.bind(this);
-
     this.environment = environmentDetection.isMobile() ? "mobile" : "desktop";
 
     /* needed for fullsize canvas in PIXI */
@@ -87,33 +78,44 @@ export class Map {
   }
   /**
    * initialization method
-   * @param [Array] plugins - Plugins to be activated for the map. Normally you should give the plugins here instead of
-   * separately passing them to activatePlugins method
-   * @param {x: ? y:?} coord - Starting coordinates for the map
-   * @param {Function} tickCB - callback function for tick. Tick callback is initiated in every frame. So map draws happen
-   * during ticks
-   * @return the current map instance
+   * @param {Array | String} plugins    Plugins to be activated for the map. Normally you should give the plugins here
+   * instead of separately passing them to activatePlugins method. You can provide the module strings or module objects.
+   * @param {x: ? y:?} coord            Starting coordinates for the map
+   * @param {Function} tickCB           callback function for tick. Tick callback is initiated in every frame. So map
+   * draws happen during ticks
+   * @return {Array}                    Returns an array of Promises. If this is empty / zero. Then there is nothing to
+   * wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
    * */
   init(plugins = [], coord = { x: 0, y: 0 }, tickCB = null, options = { fullsize: true }) {
+    var allPromises = [];
+
     if (options.fullsize) {
       this.toggleFullsize();
     }
 
-    eventlisteners = eventListeners(this, this.canvas);
-
-    if (plugins.length) {
+    if (plugins.length && typeof plugins[0] === "object") {
       this.activatePlugins(plugins);
+    } else if (plugins.length && typeof plugins[0] === "string") {
+      plugins.map(plugin => {
+        let thisPromise;
+
+        thisPromise = System.import(plugin).then( (plugin) => {
+          this.activatePlugin(plugin);
+        });
+
+        allPromises.push(thisPromise);
+      });
     }
 
-    if (coord) {
-      Object.assign(_movableLayer, coord);
-    }
+    eventlisteners = eventListeners(this.canvas);
+
+    coord && Object.assign(_movableLayer, coord);
 
     this.drawOnNextTick();
     _defaultTick(this, PIXI.ticker.shared);
     tickCB && this.customTickOn(tickCB);
 
-    return this;
+    return allPromises;
   }
   /**
    * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
@@ -186,6 +188,7 @@ export class Map {
   /**
    * Cache the map. This provides significant performance boost, when used correctly. cacheMap iterates through all the
    * layer on the map and caches the ones that return true from getCacheEnabled-method.
+   *
    * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
    * @return this map instance
@@ -201,6 +204,7 @@ export class Map {
   }
   /**
    * unCache the map.
+   *
    * @return this map instance
    * */
   unCacheMap() {
@@ -214,28 +218,33 @@ export class Map {
   }
   /**
    * Activate plugins for the map. Plugins need .pluginName property and .init-method
+   *
    * @param [Array] pluginsArray - Array that consists of the plugin modules
    * */
   activatePlugins(pluginsArray = []) {
-    var currentPluginNameForErrors;
-
-    try {
-      pluginsArray.forEach(plugin => {
-        currentPluginNameForErrors = "undefined";
-        if (!plugin || !plugin.pluginName) {
-          throw new Error("plugin or plugin.pluginName missing");
-        }
-        currentPluginNameForErrors = plugin.pluginName;
-
-        if (this.plugins.add(plugin[plugin.pluginName])) {
-          plugin[plugin.pluginName].init(this);
-        }
-      });
-    } catch (e) {
-      console.log("An error initializing plugin " + currentPluginNameForErrors, e);
-    }
+    pluginsArray.forEach(plugin => {
+      this.activatePlugin(plugin);
+    });
 
     return this;
+  }
+  /**
+   * Activate plugins for the map. Plugins need .pluginName property and .init-method
+   *
+   * @param [String | Object] plugin        String to module or the module object.
+   * */
+  activatePlugin(plugin) {
+    try {
+      if (!plugin || !plugin.pluginName) {
+        throw new Error("plugin or plugin.pluginName missing");
+      }
+
+      if (this.plugins.add(plugin[plugin.pluginName])) {
+        plugin[plugin.pluginName].init(this);
+      }
+    } catch (e) {
+      console.log("An error initializing plugin " + plugin ? plugin.pluginName : "no plugin name", e);
+    }
   }
   /**
    * getter and setter for detecting if map is moved and setting the maps status as moved or not moved
@@ -267,15 +276,33 @@ export class Map {
     }
 
     return this.isFullsize;
-
-    /** ===== PRIVATE ===== */
   }
   /**
    * Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
    * the eventlistener callback use this.eventCBs
    * */
   toggleFullScreen () {
-    resizeUtils.toggleFullScreen();
+    var eventListenerCB = setFullScreen.bind(this);
+
+    eventlisteners.toggleFullscreen(eventListenerCB);
+  }
+  /**
+   * Filter objects based on quadtree and then based on possible group provided
+   *
+   * @param  {x: Number, y: Number} globalCoords      The global coordinates on canvas, that is hitTested.
+   * @param  {String} type                            Type of the objects / layer to find.
+   * @return {Array}                                  Array of object found on the map.
+   */
+  getObjectsUnderPoint(globalCoords = { x: 0, y: 0 }, type = undefined) {
+    var objects = {};
+    var allCoords = {
+      globalCoords: globalCoords,
+      localCoords: this.getMovableLayer().toLocal(new PIXI.Point(globalCoords.x, globalCoords.y))
+    };
+
+    objects[type] = this.objectManager.retrieve(allCoords, type);
+
+    return objects;
   }
   setEnvironment(env = "desktop") {
     this.environment = env;
@@ -312,18 +339,6 @@ export class Map {
   }
   getSize() {
     return this.mapSize;
-  }
-  getObjectsUnderPoint(globalCoords = { x: 0, y: 0 }, type = undefined) {
-    /* Filter objects based on quadtree and then based on possible group provided */
-    var objects = {};
-    var allCoords = {
-      globalCoords: globalCoords,
-      localCoords: this.getMovableLayer().toLocal(new PIXI.Point(globalCoords.x, globalCoords.y))
-    };
-
-    objects[type] = this.objectManager.retrieve(allCoords, type);
-
-    return objects;
   }
   /*************************************
    ******* APIS THROUGH PLUGINS ********
@@ -369,7 +384,9 @@ function _defaultTick(map, ticker) {
     _drawMapOnNextTick = false;
   });
 }
-
+/**
+ * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
+ */
 function _resizeCanvas() {
   let windowSize = resizeUtils.getWindowSize();
 
@@ -377,14 +394,23 @@ function _resizeCanvas() {
   _renderer.resize(windowSize.x, windowSize.y);
   this.drawOnNextTick();
 }
+/**
+ * Activate canvas resizer through eventListeners
+ */
 function _setResizeCanvas() {
   window.addEventListener("resize", boundResizer);
   boundResizer();
 }
+/**
+ * Remove canvas resizer through eventListeners
+ */
 function _removeResizeCanvas() {
   _renderer.autoResize = false;
   window.removeEventListener("resize", boundResizer);
 }
+/**
+ * Activate the browsers fullScreen mode and expand the canvas to fullsize
+ */
 function setFullScreen() {
   resizeUtils.toggleFullScreen();
   _resizeCanvas.call(this);

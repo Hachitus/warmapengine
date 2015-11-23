@@ -16,6 +16,7 @@ export var pluginName = "map_drag";
 export var map_drag = (function map_drag() {
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
+  var eventListenerCB;
 
   /***********************
   ********* API **********
@@ -35,13 +36,13 @@ export var map_drag = (function map_drag() {
    * */
   function init(map) {
     if (map.getEnvironment() === "mobile") {
-      map.eventCBs.drag = _startDragListener_mobile(map);
+      eventListenerCB = _startDragListener_mobile(map);
     } else {
-      map.eventCBs.drag = _startDragListener(map);
+      eventListenerCB = _startDragListener(map);
     }
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
-    eventListenerMod().toggleDragListener();
+    eventListenerMod().toggleDragListener(eventListenerCB);
   }
 
   /*****************************

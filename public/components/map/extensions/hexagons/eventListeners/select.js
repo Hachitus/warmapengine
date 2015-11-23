@@ -11,6 +11,8 @@ import { mouseUtils } from '../../../core/utils/utils';
 var eventlisteners, ui;
 
 export function setupHexagonClick(map) {
+  var eventListenerCB;
+
   /********** Required **********/
   if (!map) {
     throw new Error("eventlisteners initialization require map arguments");
@@ -21,11 +23,11 @@ export function setupHexagonClick(map) {
   ui = UI();
 
   if (map.getEnvironment() === "mobile") {
-    map.eventCBs.select = setupTapListener(map);
+    eventListenerCB = setupTapListener(map);
   } else {
-    map.eventCBs.select = mouseDownListener;
+    eventListenerCB = mouseDownListener;
   }
-  eventlisteners.toggleSelectListener();
+  eventlisteners.toggleSelectListener(eventListenerCB);
 
   return false;
 

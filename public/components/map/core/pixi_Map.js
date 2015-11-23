@@ -54,19 +54,27 @@ export class Map {
     /* We handle all the events ourselves through addEventListeners-method on canvas, so destroy pixi native method */
     _renderer.plugins.interaction.destroy();
     canvas.parentElement.replaceChild(_renderer.view, canvas);
-    this.canvas = _renderer.view;
 
-    _staticLayer = new Map_layer({ name:"staticLayer", coord: { x: 0, y: 0 }, renderer: _renderer });
-    _movableLayer = new Map_layer({ name:"movableLayer", coord: startCoord, movable: true });
-    _staticLayer.addChild(_movableLayer);
+    this.canvas = _renderer.view;
     this.plugins = new Set();
     this.mapSize = mapSize;
     this.isFullsize = false;
     this._mapInMove = false;
+    this.environment = environmentDetection.isMobile() ? "mobile" : "desktop";
+
+    /* These are the 2 topmost layers on the map:
+     * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
+     * objects that do not move with the map.
+     * - movableLayer: Moves the map, when the user commands. Can hold e.g. UI objects that move with the map. Like
+     * graphics that show which area or object is currently selected. */
+    _staticLayer = new Map_layer({ name:"staticLayer", coord: { x: 0, y: 0 }, renderer: _renderer });
+    _movableLayer = new Map_layer({ name:"movableLayer", coord: startCoord, movable: true });
+    _staticLayer.addChild(_movableLayer);
+
+    /* InteractionManager is responsible for finding what objects are under certain coordinates. E.g. when selecting */
     let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
     this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
     boundResizer = _resizeCanvas.bind(this);
-    this.environment = environmentDetection.isMobile() ? "mobile" : "desktop";
 
     /* needed for fullsize canvas in PIXI */
     _renderer.view.style.position = "absolute";

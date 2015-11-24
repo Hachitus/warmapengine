@@ -40,21 +40,12 @@ window.initMap = initMap;
 ****** GENERATE RANDOM MAP DATA *******
 **************************************/
 function getMapData(mapsize) {
-  var data = {
-    gameID: "53837d47976fed3b24000005",
-    turn: 1,
-    startPoint: { x: 0, y: 0 },
-    element: "#mapCanvas",
-    layers: []
-  };
-  var unitCount = 10000;
   var terrainTypeCount = 4;
   var unitTypeCount = 56;
-  var objGroup, layerData;
   var coordMapsize = {
     x: mapsize,
     y: mapsize
-  }
+  };
 
   return {
     gameID: "53837d47976fed3b24000005",
@@ -84,11 +75,11 @@ function initMap(mapData, options) {
   mapsize = {
     x: options.mapsize || 1000,
     y: options.mapsize || 1000
-  }
+  };
 
   preload = new Preload( "", { crossOrigin: false } );
-  preload.add( typeData.graphicData.terrainBase.json );
-  preload.add( typeData.graphicData.unit.json );
+  preload.addResource( typeData.graphicData.terrainBase.json );
+  preload.addResource( typeData.graphicData.unit.json );
 
   preload.setErrorHandler(function(e) {
     console.log("preloader error:", e);
@@ -186,7 +177,6 @@ function populateTerrainLayer(size, typeCount, mapsize) {
 
 function populateUnitLayer(size, typeCount, mapsize) {
   let layerData = addBase_spriteLayerData("unitLayer", "unit");
-  var randomCoords;
 
   for (let y = 0; y < mapsize.y; y += size.y ) {
     let x = 0;

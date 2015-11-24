@@ -2,11 +2,6 @@
 
 'use strict';
 
-/**
- * @todo  We want to put spritesheets to their own module, so they are separated and e.g. we can remove createjs from the
- * spritesheet if needed
- * */
-
 import hash from 'blueimp-md5';
 
 var allSpritesheets = {};

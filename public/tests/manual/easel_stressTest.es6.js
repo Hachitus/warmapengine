@@ -81,11 +81,11 @@ function initMap(mapData, options) {
   mapsize = {
     x: options.mapsize || 1000,
     y: options.mapsize || 1000
-  }
+  };
 
   preload = new Preload( "", { crossOrigin: false } );
-  preload.add( typeData.graphicData.terrainBase.json );
-  preload.add( typeData.graphicData.unit.json );
+  preload.addResource( typeData.graphicData.terrainBase.json );
+  preload.addResource( typeData.graphicData.unit.json );
 
   preload.setErrorHandler(function(e) {
     console.log("preloader error:", e);

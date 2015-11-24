@@ -47,8 +47,9 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
    * @return {Function}       Return the used function
    */
   singletonScope.toggleFullSizeListener = function toggleFullSizeListener(cb) {
-    if (singletonScope.states.fullSize !== true) {
+    if ( !singletonScope.states.fullSize ) {
       CBs.fullSize = cb;
+      cb();
       window.addEventListener("resize", CBs.fullSize);
     } else {
       window.removeEventListener("resize", CBs.fullSize);
@@ -56,7 +57,7 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
 
     singletonScope.states.fullSize = !singletonScope.states.fullSize;
 
-    return CBs.fullSize;
+    return singletonScope.states.fullSize;
   };
   /**
    * Sets the canvas to fullsize (as in fullSizeListener) and sets the browser in fullscreen mode

@@ -58,7 +58,6 @@ export class Map {
     this.canvas = _renderer.view;
     this.plugins = new Set();
     this.mapSize = mapSize;
-    this.isFullsize = false;
     this._mapInMove = false;
     this.environment = environmentDetection.isMobile() ? "mobile" : "desktop";
 
@@ -74,7 +73,7 @@ export class Map {
     /* InteractionManager is responsible for finding what objects are under certain coordinates. E.g. when selecting */
     let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
     this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
-    boundResizer = _resizeCanvas.bind(this);
+    eventlisteners = eventListeners(this.canvas);
 
     /* needed for fullsize canvas in PIXI */
     _renderer.view.style.position = "absolute";
@@ -91,15 +90,14 @@ export class Map {
    * @param {x: ? y:?} coord            Starting coordinates for the map
    * @param {Function} tickCB           callback function for tick. Tick callback is initiated in every frame. So map
    * draws happen during ticks
+   * @param {Object} options            Fullsize: Do we set fullsize canvas or not.
    * @return {Array}                    Returns an array of Promises. If this is empty / zero. Then there is nothing to
    * wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
    * */
   init(plugins = [], coord = { x: 0, y: 0 }, tickCB = null, options = { fullsize: true }) {
     var allPromises = [];
 
-    if (options.fullsize) {
-      this.toggleFullsize();
-    }
+    options.fullsize && this.toggleFullsize();
 
     if (plugins.length && typeof plugins[0] === "object") {
       this.activatePlugins(plugins);
@@ -114,8 +112,6 @@ export class Map {
         allPromises.push(thisPromise);
       });
     }
-
-    eventlisteners = eventListeners(this.canvas);
 
     coord && Object.assign(_movableLayer, coord);
 
@@ -275,15 +271,11 @@ export class Map {
    * the eventlistener callback use this.eventCBs
    */
   toggleFullsize() {
-    if (!this.isFullsize) {
-      _setResizeCanvas();
-      this.isFullsize = true;
-    } else {
-      _removeResizeCanvas();
-      this.isFullsize = false;
+    if (!boundResizer) {
+      boundResizer = _resizeCanvas.bind(this);
     }
 
-    return this.isFullsize;
+    return eventlisteners.toggleFullSizeListener(boundResizer);
   }
   /**
    * Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
@@ -316,7 +308,7 @@ export class Map {
     this.environment = env;
   }
   /**
-   * @return { x: Number, y: Number }, current coordinates for the map
+   * @return { x: Number, y: Number }, current coordinates for the moved map
    * */
   getMapPosition() {
     return {
@@ -401,20 +393,6 @@ function _resizeCanvas() {
   _renderer.autoResize = true;
   _renderer.resize(windowSize.x, windowSize.y);
   this.drawOnNextTick();
-}
-/**
- * Activate canvas resizer through eventListeners
- */
-function _setResizeCanvas() {
-  window.addEventListener("resize", boundResizer);
-  boundResizer();
-}
-/**
- * Remove canvas resizer through eventListeners
- */
-function _removeResizeCanvas() {
-  _renderer.autoResize = false;
-  window.removeEventListener("resize", boundResizer);
 }
 /**
  * Activate the browsers fullScreen mode and expand the canvas to fullsize

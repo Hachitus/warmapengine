@@ -1,6 +1,8 @@
 /* global PIXI, Q */
 
-/** @todo should you use PIXI here or just https://github.com/englercj/resource-loader straight? */
+/**
+ * @todo should you use PIXI here or just https://github.com/englercj/resource-loader straight?
+ */
 "use strict";
 
 export class Preload {
@@ -9,7 +11,7 @@ export class Preload {
     this.preloaderClass.baseUrl = baseUrl;
   }
   /**
-	 * @return {Promise} Return promise object, that will be resolved when the preloading is finished */
+   * @return {Promise} Return promise object, that will be resolved when the preloading is finished */
   resolveOnComplete () {
     var promise = Q.defer();
 
@@ -21,9 +23,9 @@ export class Preload {
 
     return promise.promise;
   }
-	add(resource) {
-  this.preloaderClass.add(resource);
-	}
+  addResource (resource) {
+    this.preloaderClass.add(resource);
+  }
   /** Preload assets. Uses easeljs manifest format */
   loadManifest () {
     return this;
@@ -40,7 +42,7 @@ export class Preload {
 
     return this;
   }
-  /** Activat sound preloading also */
+  /** Activate sound preloading also */
   activateSound () {
     this.preloaderClass.installPlugin();
   }

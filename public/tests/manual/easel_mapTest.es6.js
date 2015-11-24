@@ -30,8 +30,8 @@ window.initMap = function () {
   var preload;
 
   preload = new Preload( "", { crossOrigin: false } );
-  preload.add( typeData.graphicData.terrainBase.json );
-  preload.add( typeData.graphicData.unit.json );
+  preload.addResource( typeData.graphicData.terrainBase.json );
+  preload.addResource( typeData.graphicData.unit.json );
 
   preload.setErrorHandler(function(e) {
     console.log("preloader error:", e);

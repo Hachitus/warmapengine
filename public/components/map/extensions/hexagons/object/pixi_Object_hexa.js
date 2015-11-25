@@ -1,7 +1,7 @@
 'use strict';
 
-import { createHexagon } from '../utils/pixi_createHexagon';
-import hexagonMath from '../utils/hexagonMath';
+import { createHexagon } from '/components/map/extensions/hexagons/utils/pixi_createHexagon';
+import hexagonMath from '/components/map/extensions/hexagons/utils/hexagonMath';
 
 var shape;
 

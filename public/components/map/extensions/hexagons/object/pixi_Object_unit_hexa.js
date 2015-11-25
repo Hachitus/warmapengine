@@ -1,10 +1,15 @@
 'use strict';
 
 import { object_sprite_hexa } from './pixi_Object_hexa';
-import { Object_sprite_unit } from '../../../core/objects/pixi_Object_sprite_unit';
+import { Object_sprite_unit } from '/components/map/core/objects/pixi_Object_sprite_unit';
 
+/**
+ * @param {x: Number, y: Number} coords         This units coordinates, relative to it's parent container
+ * @param {object} data                         This units custom data
+ * @param {Object} options                      options.radius REQUIRED. This is the radius of the game maps hexagon
+ */
 export class Object_unit extends Object_sprite_unit {
-  constructor(coords = {x:0, y:0}, data, options) {
+  constructor(coords, data, options) {
     var { radius } = options;
 
     super(coords, data, options);

@@ -1,6 +1,6 @@
-'use strict'
+'use strict';
 
-import { calcHeight, getHexagonPoints } from './hexagonMath';
+import { getHexagonPoints } from './hexagonMath';
 
 /** Credits belogn to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js */
 // Creates a hex shaped polygon that is used for the hex's hit area.

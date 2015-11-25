@@ -1,8 +1,8 @@
 'use strict';
 
 import { object_sprite_hexa } from './Object_hexa';
-import { Object_sprite_unit } from '../../../core/objects/Object_sprite_unit';
-import { hexaHitTest, getHexagonPoints } from '../utils/hexagonMath';
+import { Object_sprite_unit } from '/components/map/core/objects/Object_sprite_unit';
+import { hexaHitTest, getHexagonPoints } from '/components/map/extensions/hexagons/utils/hexagonMath';
 
 export class Object_unit extends Object_sprite_unit {
   constructor(coords = {x:0, y:0}, data, options) {

@@ -21,6 +21,8 @@
 var scope;
 
 export function UI (givenUITheme, givenMap) {
+  var map, UITheme;
+
   /* SINGLETON MODULE */
   if (scope) {
     return scope;
@@ -30,8 +32,8 @@ export function UI (givenUITheme, givenMap) {
     throw new Error("UI-module requires UITheme and map object");
   }
 
-  var map = givenMap;
-  var UITheme = givenUITheme;
+  map = givenMap;
+  UITheme = givenUITheme;
   scope = {};
 
   /**

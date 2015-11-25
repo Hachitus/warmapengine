@@ -1,4 +1,5 @@
 /* global createjs */
+
 'use strict';
 
 import { getHexagonPoints } from './hexagonMath';

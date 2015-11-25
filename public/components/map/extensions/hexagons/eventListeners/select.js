@@ -1,15 +1,21 @@
 'use strict';
 
 /**
- * @require Browser that support pointer events or Pointer events polyfill, such as: https://github.com/jquery/PEP */
+ * Handles the eventlistner for selecting objects on the map. THe actual logic for detecting the objects under mouse
+ * etc. are in object_select_hexagon
+ */
 
-import { eventListeners as eventListenerMod } from '../../../core/eventlisteners';
-import { UI } from '../../../core/UI';
-import { mouseUtils } from '../../../core/utils/utils';
+import { eventListeners as eventListenerMod } from '/components/map/core/eventlisteners';
+import { UI } from '/components/map/core/UI';
+import { mouseUtils } from '/components/map/core/utils/utils';
 
 /* eventlisteners is a singleton, so we might as well declare it here */
 var eventlisteners, ui;
-
+/**
+ * Curries the detection of clicking on the map and selecting the correct hexagon area.
+ * @param  {Map} map      The currently use Map instance
+ * @return {[type]}       -
+ */
 export function setupHexagonClick(map) {
   var eventListenerCB;
 
@@ -18,7 +24,7 @@ export function setupHexagonClick(map) {
     throw new Error("eventlisteners initialization require map arguments");
   }
 
-  /* Singleton should have been instantiated before, we only retrieve it with 0 params! */
+  /* Singleton should have been instantiated before, we only retrieve it with 0 params */
   eventlisteners = eventListenerMod();
   ui = UI();
 
@@ -29,8 +35,11 @@ export function setupHexagonClick(map) {
   }
   eventlisteners.toggleSelectListener(eventListenerCB);
 
-  return false;
+  return true;
 
+  /*************************
+  ********* PUBLIC *********
+  *************************/
   function mouseDownListener() {
     onMouseUp(map);
   }

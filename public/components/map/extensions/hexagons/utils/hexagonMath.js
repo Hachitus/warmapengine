@@ -1,4 +1,5 @@
 'use strict';
+
 /** Calculates the hexagons:
  * innerDiameter
  * - Vertical / Flat hexagons height

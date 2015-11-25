@@ -1,7 +1,7 @@
 'use strict';
 
-import { createHexagon } from '../utils/createHexagon';
-import hexagonMath from '../utils/hexagonMath';
+import { createHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
+import hexagonMath from '/components/map/extensions/hexagons/utils/hexagonMath';
 
 var shape;
 

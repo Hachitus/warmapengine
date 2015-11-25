@@ -1,3 +1,5 @@
+'use strict';
+
 /* Calculate the coordinates of the center hexagon always and get objects based on the coordinates. For example with
   some method like getAllObjectsInHexagon.
 SO:
@@ -11,10 +13,8 @@ HOW we do the whole organizational stuff?
 - map_utils_hexagon? -> getHexagonCoordsFromClick(x,y), getObjectsInHexagon(hexagon?)
 */
 
-'use strict';
-
-import { setupHexagonClick } from '../eventListeners/select';
-import { UI } from '../../../core/UI';
+import { setupHexagonClick } from '/components/map/extensions/hexagons/eventListeners/select';
+import { UI } from '/components/map/core/UI';
 
 var _pluginName = "object_select";
 
@@ -52,7 +52,7 @@ export let object_select = (function object_select_hexagon() {
   function _startClickListener(map) {
     var singletonUI = UI();
 
-    return setupHexagonClick(map, singletonUI.showSelections);
+    return setupHexagonClick(map);
   }
   function hitTest(obj, coords) {
     obj.updateTransform();

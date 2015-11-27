@@ -1,6 +1,6 @@
 'use strict';
 
-import { Object_sprite } from '../Object';
+import { Object_sprite } from '/components/map/core/Object';
 
 /**
  * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are

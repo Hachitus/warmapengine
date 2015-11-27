@@ -1,38 +1,34 @@
-/* global createjs */
-
 'use strict';
 
 /**
- * The actual objects used on the map (suchs as terrain and units), under stages and containers.
- * @class
+ * The actual objects used on the map (suchs as terrain and units), under containers.
  *
  * All of the objects need to have same argumentAPI for creating objects: coords, data, imageData
  */
 
-export class Object_sprite extends createjs.Sprite {
+export class Object_sprite extends PIXI.Sprite {
   /**
-   * @param {x: Number, y: Number} coords - the coordinate where the object is located at, relative to it's parent
+   * @param {PIXI.Point} coords - the coordinate where the object is located at, relative to it's parent
    * @param {Object} data - objects data, that will be used in the game. It will not actually be mainly used in graphical
    * but rather things like unit-data and city-data presentations etc.
-   * @param {createjs.SpriteSheet} spriteSheet
-   * @param {Integer} currentFrame - the current frames number. This is basically the initial image, we can change it later
+   * @param {Integer} currFrame - the current frames number. This is basically the initial image, we can change it later
    * for animation or such
    */
-  constructor(coord, data, options) {
-    super(options.spritesheet);
+  constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {}, throwShadowOptions: false }) {
+    var { currentFrame, throwShadowOptions } = options;
 
-    /* This seems not to be set as true in this version of easeljs. So we set it manually. Not sure does it introduce some bugs */
-    this._spritestage_compatibility = true;
+    super(currentFrame);
+
     this.name = "Objects_sprite_" + this.id;
     this.type = "None";
     this.highlightable = true;
     this.selectable = true;
     /* Set data for the object next */
-    this.data = data || {};
-    this.currFrameNumber = options.currentFrame;
+    this.data = data;
+    this.currentFrame = currentFrame;
     /* Execute initial draw function */
-    this.innerDraw(coord.x, coord.y);
-    this.setupShadow(options.throwShadowOptions);
+    this.position.set(coord.x,  coord.y);
+    this.setupShadow(throwShadowOptions);
 
     this.tickEnabled = false;
     this.mouseEnabled = false;
@@ -44,7 +40,7 @@ export class Object_sprite extends createjs.Sprite {
    * @return this object instance
    */
   innerDraw(x, y) {
-    this.gotoAndStop( Number( this.currFrameNumber ) );
+    this.fromFrame ( this.currentFrame );
     this.x = x;
     this.y = y;
 
@@ -57,15 +53,48 @@ export class Object_sprite extends createjs.Sprite {
    * @param {Number} newFrameNumber New frame number to animate to
    * @return this object instance
    */
-  drawNewFrame(x, y, newFrameNumber) {
-    this.currFrameNumber = newFrameNumber;
+  drawNewFrame(x, y, newFrame) {
+    this.currentFrame = newFrame;
 
     return this.innerDraw(x, y);
   }
   setupShadow(options = {color: "#000000", offsetX: 5, offsetY: 5, blur: 10} ) {
     if (this.throwShadow === true) {
-      this.shadow = new createjs.Shadow(options.color, options.offsetX, options.offsetY, options.blur);
+      console.warn("NO SHADOW FUNCTION SET!")
     }
   }
-  hitTest() { throw new Error("hitTest not implemented on this object!" + this.name); }
+  localToLocal(x, y, target) {
+    var globalCoords = this.toGlobal( { x, y } );
+    var targetLocalCoords = target.toLocal( globalCoords );
+
+    return targetLocalCoords;
+  }
+  clone(options = { position: false, anchor: false }) {
+    var newSprite = new PIXI.Sprite();
+    var firstParent = _findFirstParent(this);
+    var renderer = firstParent.renderer;
+
+    newSprite.texture = this.generateTexture(renderer);
+
+    if (options.anchor) {
+      newSprite.anchor = Object.assign({}, this.anchor);
+    }
+    if (options.position) {
+      newSprite.position = Object.assign({}, this.position);
+    }
+
+    return newSprite;
+  }
+}
+
+function _findFirstParent(thisObj) {
+  let parentObj = {};
+
+  if (thisObj.parent) {
+    parentObj = _findFirstParent(thisObj.parent);
+  } else {
+    return thisObj;
+  }
+
+  return parentObj;
 }

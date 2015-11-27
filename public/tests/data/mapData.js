@@ -1,10 +1,10 @@
 export let mapData = {
   gameID: "53837d47976fed3b24000005",
   turn: 1,
-  startPoint: { x: 0, y: 0 },
+  startPoint: { x: 41, y: 47 },
   element: "#mapCanvas",
   layers: [{
-    type: "Map_spriteLayer",
+    type: "Map_bigSpriteLayer",
     coord: { x: 0, y: 0 },
     name: "terrainLayer",
     group: "terrain", // For quadTrees
@@ -63,7 +63,7 @@ export let mapData = {
       }]
     }]
   },{
-    type: "Map_spriteLayer",
+    type: "Map_bigSpriteLayer",
     coord: {
       x: "0",
       y: "0"
@@ -84,7 +84,8 @@ export let mapData = {
           x: "41", y: "70"
         },
         data: {
-          someCustomData: "true"
+          playerID: 0,
+          hp: 10
         },
         lastSeenTurn:"1"
       }]

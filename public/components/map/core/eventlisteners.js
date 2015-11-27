@@ -140,7 +140,3 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
 
   return singletonScope;
 };
-
-function isMobileSite() {
-  return typeof window.isMobile !== 'undefined';
-}

@@ -11,7 +11,6 @@
 import { templates } from './layout/templates';
 import { createCSSRules } from './layout/CSSRules';
 import { createVisibleHexagon } from '../../extensions/hexagons/utils/createHexagon';
-import { pixi_createVisibleHexagon } from '../../extensions/hexagons/utils/pixi_createHexagon';
 
 import { calcShortDiagonal, calcLongDiagonal } from '/components/map/extensions/hexagons/utils/hexagonMath';
 
@@ -241,21 +240,15 @@ function setupCreateHighlight(map) {
     };
     var highlighterObject;
 
-    if (typeof createjs != 'undefined') {
-      highlighterObject = createVisibleHexagon({ x:0, y:0 }, radius, "#F0F0F0");
-      highlighterObject.x = easelObjCoords.x - 1;
-      highlighterObject.y = easelObjCoords.y + 12;
-    } else {
-      //let positionOnMovable = object.toLocal(new PIXI.Point(0,0), movableLayer);
-      highlighterObject = pixi_createVisibleHexagon(radius, { color: "#F0F0F0" });
-      //highlighterObject = new PIXI.Sprite(highlighterObject.generateTexture(false));
-      highlighterObject.x = easelObjCoords.x + 32;
-      highlighterObject.y = easelObjCoords.y + 27;
-      /*let positionOnMovable = new PIXI.Point(0,0);
-      circle = createPixiCircle(object, radius, positionOnMovable);
-      circle.x = calcShortDiagonal(radius) / 2;
-      circle.y = ( calcLongDiagonal(radius) / 2 ) + ( calcLongDiagonal(radius) / 4 );*/
-    }
+    //let positionOnMovable = object.toLocal(new PIXI.Point(0,0), movableLayer);
+    highlighterObject = createVisibleHexagon(radius, { color: "#F0F0F0" });
+    //highlighterObject = new PIXI.Sprite(highlighterObject.generateTexture(false));
+    highlighterObject.x = easelObjCoords.x + 32;
+    highlighterObject.y = easelObjCoords.y + 27;
+    /*let positionOnMovable = new PIXI.Point(0,0);
+    circle = createPixiCircle(object, radius, positionOnMovable);
+    circle.x = calcShortDiagonal(radius) / 2;
+    circle.y = ( calcLongDiagonal(radius) / 2 ) + ( calcLongDiagonal(radius) / 4 );*/
 
     highlighterObject.alpha = 0.5;
 

@@ -31,42 +31,42 @@ export let object_select = (function object_select_hexagon() {
   scope.init = function(mapObj) {
     map = mapObj;
     /* We take the top-most stage on the map and add the listener to it */
-    _createPrototypes(mapObj);
+    //_createPrototypes(mapObj);
 
     _startClickListener(mapObj);
   };
 
   return scope;
-
-  function getObjectsForMap(clickCoords = { x: 0, y: 0 }, group) {
-    /* Filter objects based on quadtree and then based on possible group provided */
-    var objects = {};
-
-    objects[group] = map.objectManager.retrieve(group, clickCoords);
-
-    return objects;
-  }
   /* ====== Private functions ====== */
   /**
    * Attached the correct prototypes to map. I do not think we need to override getObjectsUnderPoint for stages.
    *
-   * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
    * @param {Map} map - The Map class object
    */
   function _createPrototypes(map) {
     map.objectManager.hitTest = hitTest;
-    map.setPrototype("getObjectsUnderPoint", getObjectsForMap);
   }
   /**
-   * @param {createjs.Stage} topMostStage - createjs.Stage object, that is the topmost on the map (meant for interaction).
    * @param {Map} map - The Map class object
    */
-  function _startClickListener( map ) {
+  function _startClickListener(map) {
     var singletonUI = UI();
 
     return setupHexagonClick(map);
   }
   function hitTest(obj, coords) {
-    return obj.contains(coords.x, coords.y);
+    obj.updateTransform();
+    //map.getMovableLayer().updateTransform();
+    //coords = map.getMovableLayer().toLocal(coords);
+    var isHit = this.hitDetector.processInteractive(
+      new PIXI.Point(coords.x, coords.y),
+      obj,
+      function(parent, hits) {
+        console.log("Shouldn't get here, the object should be non-interactive");
+      },
+      true,
+      true);
+
+    return isHit;
   }
 })();

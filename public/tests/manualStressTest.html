@@ -4,6 +4,11 @@
   <meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 
+  <!-- MOBILE prevent zooming with mobile native gestures and use our own -->
+  <meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1">
+  <!-- MOBILE Remove tap highlight on Windows Phone -->
+  <meta name="msapplication-tap-highlight" content="no" />
+
 	<script src="/assets/lib/pixi/pixi.js"></script>
   <script src="/assets/lib/jquery/jquery-css-ajax-effects.min.js"></script>
 	<!-- purely for internet explorer. Though I think this issue is only in EI11,not in edge? -->
@@ -49,7 +54,7 @@
 
   <!-- include spec files here... -->
   <script>
-		System.import('/tests/manual/pixi_stressTest.es6').then(function() {
+		System.import('/tests/manual/stressTest.es6').then(function() {
       var mapsizeElement = document.getElementById("hexaTiles");
       var cacheElement = document.getElementById("cache");
       var currentMapSize, mapData;

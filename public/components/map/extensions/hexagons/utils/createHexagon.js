@@ -1,22 +1,30 @@
-/* global createjs */
-
 'use strict';
 
 import { getHexagonPoints } from './hexagonMath';
 
-export function createHexagon(radius) {
-  return getHexagonPoints(radius);
+/** Credits belogn to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js */
+// Creates a hex shaped polygon that is used for the hex's hit area.
+export function createHexagon(radius, isFlatTop = false) {
+  var points = [];
+
+  points = coordsToPixiPoints(radius);
+
+  return new PIXI.Polygon(points);
+}
+export function createVisibleHexagon(radius, options = { color: "#000000", isFlatTop: false }) {
+  var graphics = new PIXI.Graphics();
+  var points = coordsToPixiPoints(radius);
+
+  graphics.beginFill(options.color, 1);
+  graphics.drawPolygon(points);
+  graphics.endFill();
+
+  return graphics;
 }
 
-export function createVisibleHexagon(coords = { x:0, y:0 }, radius, color = "#444444", angle = 30) {
-  var shape = new createjs.Shape();
-
-  /* Why? This centers the hexagon atm. for some reason */
-  coords.y -= 47 / 4 + 1;
-  coords.x += 1;
-
-  shape.graphics.beginFill(color)
-      .drawPolyStar ( coords.x, coords.y, radius, 6, 0, angle );
-
-  return shape;
+/******* PRIVATE *******/
+function coordsToPixiPoints(radius) {
+  return getHexagonPoints(radius).map(function(point) {
+    return new PIXI.Point(point.x, point.y);
+  });
 }

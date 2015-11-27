@@ -99,6 +99,8 @@ export var map_drag = (function map_drag() {
     return function startDrag(e) {
       var coords = mouseUtils.eventData.getHAMMERPointerCoords(e);
 
+      map.mapMoved(true);
+
       if (!initialized) {
         offsetCoords.setOffset({
           x: coords.x,

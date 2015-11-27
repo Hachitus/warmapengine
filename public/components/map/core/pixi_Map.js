@@ -185,8 +185,6 @@ export class Map {
     _movableLayer.move(realCoordinates);
     this.drawOnNextTick();
 
-    this.mapMoved(true);
-
     return this;
   }
   /**

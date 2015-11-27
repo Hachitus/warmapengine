@@ -28,11 +28,8 @@ export function setupHexagonClick(map) {
   eventlisteners = eventListenerMod();
   ui = UI();
 
-  if (map.getEnvironment() === "mobile") {
-    eventListenerCB = setupTapListener(map);
-  } else {
-    eventListenerCB = mouseDownListener;
-  }
+  eventListenerCB = setupTapListener(map);
+
   eventlisteners.toggleSelectListener(eventListenerCB);
 
   return true;
@@ -40,50 +37,21 @@ export function setupHexagonClick(map) {
   /*************************
   ********* PUBLIC *********
   *************************/
-  function mouseDownListener() {
-    onMouseUp(map);
-  }
   function setupTapListener(map) {
     return function tapListener(e) {
-      var touchCoords = mouseUtils.eventData.getHAMMERPointerCoords(e);
-      var globalCoords =  {
-        x: touchCoords.x, y: touchCoords.y
-
-      };
-      var objects;
+      var globalCoords = mouseUtils.eventData.getHAMMERPointerCoords(e);
+      var objects, leveledObjects;
 
       objects = map.getObjectsUnderPoint(globalCoords, "unit");
 
-      if (objects && objects.length > 0) {
-        ui.showSelections(objects);
+      leveledObjects = Object.keys(objects).map(objGroup => {
+        return objects[objGroup];
+      });
+      if (leveledObjects && leveledObjects.length > 0) {
+        let merged = [];
+
+        ui.showSelections(merged.concat.apply(merged, leveledObjects));
       }
     };
-  }
-}
-
-function onMouseUp(map) {
-  map.canvas.addEventListener("mouseup", retrieveClickData);
-
-  function retrieveClickData(e) {
-    if ( map.mapMoved() ) {
-      map.canvas.removeEventListener("mouseup", retrieveClickData);
-      return false;
-    }
-
-    var globalCoords = mouseUtils.eventData.getPointerCoords(e);
-    var objects, leveledObjects;
-
-    objects = map.getObjectsUnderPoint(globalCoords, "unit");
-
-    leveledObjects = Object.keys(objects).map(objGroup => {
-      return objects[objGroup];
-    });
-    if (leveledObjects && leveledObjects.length > 0) {
-      let merged = [];
-
-      ui.showSelections(merged.concat.apply(merged, leveledObjects));
-    }
-
-    map.canvas.removeEventListener("mouseup", retrieveClickData);
   }
 }

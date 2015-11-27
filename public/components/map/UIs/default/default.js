@@ -3,16 +3,15 @@
  * highlightSelectedObject
  *
  * @require Handlebars
- * @todo IN PROGRESS, not implemented well yet. Uses chromes built-in modal support only atm. just for the kicks :)
-    NEED to at least remove the framework specific things out of this module! */
+ * */
 
 'use strict';
 
-import { templates } from './layout/templates';
-import { createCSSRules } from './layout/CSSRules';
-import { createVisibleHexagon } from '../../extensions/hexagons/utils/createHexagon';
+import { templates } from '/components/map/UIs/default/layout/templates';
+import { createCSSRules } from '/components/map/UIs/default/layout/CSSRules';
+import { createVisibleHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
 
-import { calcShortDiagonal, calcLongDiagonal } from '/components/map/extensions/hexagons/utils/hexagonMath';
+// import { calcShortDiagonal, calcLongDiagonal } from '/components/map/extensions/hexagons/utils/hexagonMath';
 
 var _styleSheet = {};
 var cssClasses = {
@@ -40,12 +39,7 @@ export class UI_default {
   }
   showSelections(objects) {
     createHighlight = setupCreateHighlight(this.map);
-
-    if (this.map.getEnvironment() === "mobile") {
-      _showMobileSelections(objects, this.modal, this.map.drawOnNextTick.bind(this.map), this.map.getMovableLayer());
-    } else {
-      _showDesktopSelections(objects, this.modal, this.map.drawOnNextTick.bind(this.map), this.map.getMovableLayer());
-    }
+    _showSelections(objects, this.modal, this.map.drawOnNextTick.bind(this.map), this.map.getMovableLayer());
   }
   highlightSelectedObject(object) {
     createHighlight = setupCreateHighlight(this.map);
@@ -60,7 +54,8 @@ export class UI_default {
     this.closingElements.forEach(function(element) {
       /**
        * @todo change this modal system totally. As it is based on HTML 5.1 modal specifications atm. for easy testing
-       * Maybe create a class that abstracts the modal behind it or then just use this? */
+       * Maybe create a class that abstracts the modal behind it or then just use this?
+       * */
       if (self.modal && self.modal.close) {
         _activateClosingElement( element, self.modal.close.bind(self.modal) );
       }
@@ -70,17 +65,19 @@ export class UI_default {
 
 /** ====== PRIVATE FUNCTIONS ====== */
 function _activateClosingElement(element, closeCB) {
-  element.addEventListener("click", function(e) {
+  element.addEventListener("click", function () {
         closeCB();
       });
 }
 function _DOMElementsToArray(elements) {
+  var length, elementArray;
+
   if (!elements) {
     throw new Error(this.constructor + " function needs elements");
   }
 
-  var length = elements.length;
-  var elementArray = [];
+  length = elements.length;
+  elementArray = [];
 
   for (let i = 0; i < length; i++) {
     elementArray.push(elements[i]);
@@ -100,7 +97,7 @@ function _addStyleElement() {
   return _styleElement.sheet;
 }
 function _showModal(modalElem, cssClasses) {
-  /** @todo make sure / check, that this get added only once */
+  /** @todo make sure / check, that this gets added only once */
   modalElem.classList.add(cssClasses.select);
   /* Would be HTML 5.1 standard, but that might be a long way
     this.modal.show();*/
@@ -114,7 +111,7 @@ function _get$Element(which) {
 
   return $elements[which];
 }
-function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
+function _showSelections(objects, modal, updateCB, UILayer, map) {
   var hightlightableObjects = _filterObjectsForHighlighting(objects);
   var cb;
 
@@ -166,49 +163,8 @@ function _showDesktopSelections(objects, modal, updateCB, UILayer, map) {
   //  UILayer.addUIObjects(highlightObjects);
   //}
 }
-function _showMobileSelections(objects, modal, updateCB, UILayer) {
-  var hightlightableObjects = _selectionsInit(UILayer, objects);
-
-  if (objects && objects.length > 1) {
-    _get$Element("select").fadeOut(fadeAnimation, () => {
-      modal.innerHTML = templates.multiSelection({
-        title: "Objects",
-        objects
-      });
-
-      _showModal(modal, cssClasses);
-
-      console.log(objects);
-
-      _get$Element("select").fadeIn(fadeAnimation);
-    });
-  } else if (hightlightableObjects.length === 1) {
-    _get$Element("select").fadeOut(fadeAnimation, () => {
-      modal.innerHTML = templates.singleSelection({
-        title: "Selected",
-        object: {
-          name: hightlightableObjects[0].data.typeData.name
-        }
-      });
-
-      _showModal(modal, cssClasses);
-      _highlightSelectedObject(hightlightableObjects[0], UILayer, map);
-      updateCB();
-
-      console.log(hightlightableObjects);
-
-      _get$Element("select").fadeIn(fadeAnimation);
-    });
-  } else {
-    _get$Element("select").fadeOut(fadeAnimation, () => {
-      UILayer.emptyUIObjects();
-      updateCB();
-      console.log("Error occured selecting the objects on this coordinates! Nothing found");
-    });
-  }
-}
-function _highlightSelectedObject(object, movableLayer, map) {
-  var clonedObject, correctCoords;
+function _highlightSelectedObject(object, movableLayer) {
+  var clonedObject;
 
   clonedObject = object.clone();
 
@@ -234,21 +190,15 @@ function setupCreateHighlight(map) {
   return function createHighlight(object, movableLayer, options = { coords: new PIXI.Point(0, 0) }) {
     var radius = 47;
     var container = new map.createLayer("UILayer");
-    var easelObjCoords = {
+    var objCoords = {
       x: Number(object.x),
       y: Number(object.y)
     };
     var highlighterObject;
 
-    //let positionOnMovable = object.toLocal(new PIXI.Point(0,0), movableLayer);
     highlighterObject = createVisibleHexagon(radius, { color: "#F0F0F0" });
-    //highlighterObject = new PIXI.Sprite(highlighterObject.generateTexture(false));
-    highlighterObject.x = easelObjCoords.x + 32;
-    highlighterObject.y = easelObjCoords.y + 27;
-    /*let positionOnMovable = new PIXI.Point(0,0);
-    circle = createPixiCircle(object, radius, positionOnMovable);
-    circle.x = calcShortDiagonal(radius) / 2;
-    circle.y = ( calcLongDiagonal(radius) / 2 ) + ( calcLongDiagonal(radius) / 4 );*/
+    highlighterObject.x = objCoords.x + 32;
+    highlighterObject.y = objCoords.y + 27;
 
     highlighterObject.alpha = 0.5;
 
@@ -262,29 +212,4 @@ function setupCreateHighlight(map) {
     movableLayer.emptyUIObjects();
     movableLayer.addUIObjects(container);
   };
-}
-
-function createPixiCircle(object, radius, positionOnMovable) {
-  var circle = new PIXI.Graphics();
-  circle.lineStyle(2, 0xFF00FF);  //(thickness, color)
-  circle.drawCircle(0, 0, radius);   //(x,y,radius)
-  circle.endFill();
-
-  circle.position = Object.assign({}, positionOnMovable);
-
-  return circle;
-}
-
-function createEaseljsCircle(object, radius) {
-  var g = new createjs.Graphics();
-  var highlightCircle;
-
-  g.setStrokeStyle(1);
-  g.beginStroke(createjs.Graphics.getRGB(0, 0, 0));
-  g.beginFill(createjs.Graphics.getRGB(255, 200, 200, 0.2));
-  g.drawCircle( 0, 0, radius );
-
-  highlightCircle = new createjs.Shape(g);
-
-  return highlightCircle;
 }

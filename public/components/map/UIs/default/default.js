@@ -1,29 +1,32 @@
+/* global $ */
+
+'use strict';
+
 /** The simplest default UI implementation. Implement UI functionalities for:
  * showSelections
  * highlightSelectedObject
  *
  * @require Handlebars
+ * @require jQuery
+ * @todo  should take jQuery away from this, as soon as we refactor the animations and graphics for selections
  * */
-
-'use strict';
 
 import { templates } from '/components/map/UIs/default/layout/templates';
 import { createCSSRules } from '/components/map/UIs/default/layout/CSSRules';
 import { createVisibleHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
 
-// import { calcShortDiagonal, calcLongDiagonal } from '/components/map/extensions/hexagons/utils/hexagonMath';
-
-var _styleSheet = {};
 var cssClasses = {
   select: "#dialog_select"
 };
-var $elements = {};
 var fadeAnimation = "slow";
+var _styleSheet = {};
+var $elements = {};
 var createHighlight;
 
 export class UI_default {
   constructor(modal, map, options = { styles: "#F0F0F0" }) {
     var createdCSS;
+
     // Add a media (and/or media query) here if you'd like!
     // style.setAttribute("media", "screen")
     // style.setAttribute("media", "only screen and (max-width : 1024px)")
@@ -37,10 +40,18 @@ export class UI_default {
 
     this.closingElements = _DOMElementsToArray(this.modal.getElementsByClassName("modal_close"));
   }
+  /**
+   * Required by the map/core/UI.js API
+   * @param  {Object} objects     Objects that have been selected. @todo: Should add object format to this documentation
+   */
   showSelections(objects) {
     createHighlight = setupCreateHighlight(this.map);
     _showSelections(objects, this.modal, this.map.drawOnNextTick.bind(this.map), this.map.getMovableLayer());
   }
+  /**
+   * Required by the map/core/UI.js API
+   * @param  {Object} objects       Objects that have been selected. @todo: Should add object format to this documentation
+   */
   highlightSelectedObject(object) {
     createHighlight = setupCreateHighlight(this.map);
 
@@ -66,8 +77,8 @@ export class UI_default {
 /** ====== PRIVATE FUNCTIONS ====== */
 function _activateClosingElement(element, closeCB) {
   element.addEventListener("click", function () {
-        closeCB();
-      });
+      closeCB();
+    });
 }
 function _DOMElementsToArray(elements) {
   var length, elementArray;

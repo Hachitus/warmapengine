@@ -98,21 +98,23 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
   };
   /**
    * DragListener (normally used for moving the map)
+   * @param {Function} cb     Callback function that handles the event for dragging the map.
    *
    * @return {Function}       Return the used function
    */
   singletonScope.toggleDragListener = function toggleDragListener(cb) {
-    if (singletonScope.states.drag !== true) {
-      CBs.drag = cb;
+    var pan;
 
-      var pan = new Hammer.Pan({
+    CBs.drag = cb;
+
+    if (singletonScope.states.drag !== true) {
+      pan = new Hammer.Pan({
         pointers: 1,
         threshold: 5,
         direction:  Hammer.DIRECTION_ALL });
       hammer.add(pan);
       hammer.on("pan", CBs.drag);
     } else {
-      CBs.drag = cb;
       hammer.off("pan", CBs.drag);
     }
 

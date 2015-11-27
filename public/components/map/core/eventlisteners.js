@@ -23,6 +23,7 @@ var singletonScope;
  */
 export let eventListeners = function eventListenerModule(canvasElement = document.getElementsByTagName("canvas")[0]) {
   var CBs = {};
+  var hamster = new Hamster(canvasElement);
   var hammer;
 
   if (singletonScope) {
@@ -73,23 +74,17 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
    * @return {Function}       Return the used function
    */
   singletonScope.toggleZoomListener = function toggleZoomListener(cb) {
-    if (singletonScope.states.zoom !== true) {
-      CBs.zoom = cb;
+    CBs.zoom = cb;
 
-      if (isMobileSite()) {
-        var pinch = new Hammer.Pinch();
-        hammer.add(pinch);
-        hammer.on("pinch", CBs.zoom);
-      } else {
-        /* Hamster handles wheel events really nicely */
-        Hamster(canvasElement).wheel(CBs.zoom);
-      }
+    if (singletonScope.states.zoom !== true) {
+      var pinch = new Hammer.Pinch();
+      hammer.add(pinch);
+      hammer.on("pinch", CBs.zoom);
+      /* Hamster handles wheel events really nicely */
+      hamster.wheel(CBs.zoom);
     } else {
-      if (isMobileSite()) {
-        hammer.on("pinch", CBs.zoom);
-      } else {
-        Hamster(canvasElement).unwheel(CBs.zoom);
-      }
+      hammer.on("pinch", CBs.zoom);
+      hamster.unwheel(CBs.zoom);
     }
 
     singletonScope.states.zoom = !singletonScope.states.zoom;
@@ -128,23 +123,14 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
    * @return {Function}       Return the used function
    */
   singletonScope.toggleSelectListener = function toggleSelectListener(cb) {
-    if (singletonScope.states.select !== true) {
-      CBs.select = cb;
+    CBs.select = cb;
 
-      if (isMobileSite()) {
-        var tap = new Hammer.Tap();
-        hammer.add(tap);
-        hammer.on("tap", CBs.select);
-      } else {
-        canvasElement.addEventListener("mousedown", CBs.select);
-      }
+    if (singletonScope.states.select !== true) {
+      var tap = new Hammer.Tap();
+      hammer.add(tap);
+      hammer.on("tap", CBs.select);
     } else {
-      if (isMobileSite()) {
-        hammer.off("tap", CBs.select);
-      } else {
-        canvasElement.removeEventListener("mousedown", CBs.select);
-        CBs.select = undefined;
-      }
+      hammer.off("tap", CBs.select);
     }
 
     singletonScope.states.select = !singletonScope.states.select;

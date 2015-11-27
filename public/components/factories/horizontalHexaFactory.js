@@ -74,7 +74,6 @@ export function createMap(canvasElement, datas) {
   var map = new Map(canvasElement, mapOptions ) ;
   var dialog_selection = document.getElementById("selectionDialog");
   var defaultUI = new UI_default(dialog_selection, map);
-  defaultUI.init();
   /* Initialize UI as singleton */
   UI(defaultUI, map);
   /* We iterate through the given map data and create objects accordingly */

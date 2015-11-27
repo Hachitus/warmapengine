@@ -14,6 +14,7 @@
 import { templates } from '/components/map/UIs/default/layout/templates';
 import { createCSSRules } from '/components/map/UIs/default/layout/CSSRules';
 import { createVisibleHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
+import { UI_templateBase } from '/components/map/core/UI_templateBase';
 
 var cssClasses = {
   select: "#dialog_select"
@@ -23,22 +24,34 @@ var _styleSheet = {};
 var $elements = {};
 var createHighlight;
 
-export class UI_default {
+export class UI_default extends UI_templateBase {
   constructor(modal, map, options = { styles: "#F0F0F0" }) {
     var createdCSS;
+
+    super(cssClasses);
 
     // Add a media (and/or media query) here if you'd like!
     // style.setAttribute("media", "screen")
     // style.setAttribute("media", "only screen and (max-width : 1024px)")
-    _styleSheet = _addStyleElement();
+    _styleSheet = this.addStyleElement();
     createdCSS = createCSSRules(cssClasses);
-    _addCSSRulesToScriptTag(_styleSheet, createdCSS);
+    this.addCSSRulesToScriptTag(_styleSheet, createdCSS);
 
     this.map = map;
     this.modal = modal || document.getElementById("dialog_select");
     this.styles = options.styles;
-
-    this.closingElements = _DOMElementsToArray(this.modal.getElementsByClassName("modal_close"));
+  }
+  /**
+   * Required by the map/core/UI.js API
+   */
+  getCSSRules() {
+    return createCSSRules;
+  }
+  /**
+   * Required by the map/core/UI.js API
+   */
+  getTemplates() {
+    return templates;
   }
   /**
    * Required by the map/core/UI.js API
@@ -46,7 +59,53 @@ export class UI_default {
    */
   showSelections(objects) {
     createHighlight = setupCreateHighlight(this.map);
-    _showSelections(objects, this.modal, this.map.drawOnNextTick.bind(this.map), this.map.getMovableLayer());
+    var hightlightableObjects = _filterObjectsForHighlighting(objects);
+    var updateCB = this.map.drawOnNextTick.bind(this.map);
+    var UILayer = this.map.getMovableLayer();
+    var cb;
+
+    /* We add the objects to be highlighted to the correct UI layer */
+    //objectsToUI(UILayer, hightlightableObjects);
+
+    if (objects && hightlightableObjects.length > 1) {
+      cb = () => {
+        this.modal.innerHTML = templates.multiSelection({
+          title: "Objects",
+          objects
+        });
+
+        this.showModal(this.modal, cssClasses);
+
+        console.log(objects);
+
+        _get$Element("select").fadeIn(fadeAnimation);
+      };
+    } else if (hightlightableObjects.length === 1) {
+      cb = () => {
+        this.modal.innerHTML = templates.singleSelection({
+          title: "Selected",
+          object: {
+            name: hightlightableObjects[0].data.typeData.name
+          }
+        });
+
+        this.showModal(this.modal, cssClasses);
+        _highlightSelectedObject(hightlightableObjects[0], UILayer, this.map);
+        updateCB();
+
+        console.log(hightlightableObjects);
+
+        _get$Element("select").fadeIn(fadeAnimation);
+      };
+    } else {
+      cb = () => {
+        UILayer.emptyUIObjects();
+        updateCB();
+        console.log("Error occured selecting the objects on this coordinates! Nothing found");
+      };
+    }
+
+    _get$Element("select").fadeOut(fadeAnimation, cb);
   }
   /**
    * Required by the map/core/UI.js API
@@ -59,60 +118,12 @@ export class UI_default {
       return _highlightSelectedObject(object, this.map.getMovableLayer());
     }
   }
-  init() {
-    var self = this;
+  init() {}
 
-    this.closingElements.forEach(function(element) {
-      /**
-       * @todo change this modal system totally. As it is based on HTML 5.1 modal specifications atm. for easy testing
-       * Maybe create a class that abstracts the modal behind it or then just use this?
-       * */
-      if (self.modal && self.modal.close) {
-        _activateClosingElement( element, self.modal.close.bind(self.modal) );
-      }
-    });
-  }
+
 }
 
 /** ====== PRIVATE FUNCTIONS ====== */
-function _activateClosingElement(element, closeCB) {
-  element.addEventListener("click", function () {
-      closeCB();
-    });
-}
-function _DOMElementsToArray(elements) {
-  var length, elementArray;
-
-  if (!elements) {
-    throw new Error(this.constructor + " function needs elements");
-  }
-
-  length = elements.length;
-  elementArray = [];
-
-  for (let i = 0; i < length; i++) {
-    elementArray.push(elements[i]);
-  }
-
-  return elementArray;
-}
-function _addCSSRulesToScriptTag(sheet, rules) {
-  sheet.insertRule(rules, 0);
-}
-function _addStyleElement() {
-  var _styleElement = document.createElement("style");
-  // WebKit hack :(
-  _styleElement.appendChild(document.createTextNode(""));
-  document.head.appendChild(_styleElement);
-
-  return _styleElement.sheet;
-}
-function _showModal(modalElem, cssClasses) {
-  /** @todo make sure / check, that this gets added only once */
-  modalElem.classList.add(cssClasses.select);
-  /* Would be HTML 5.1 standard, but that might be a long way
-    this.modal.show();*/
-}
 function _get$Element(which) {
   /* Set the jQuery element to collection only once */
   if (!$elements[which]) {
@@ -121,58 +132,6 @@ function _get$Element(which) {
   }
 
   return $elements[which];
-}
-function _showSelections(objects, modal, updateCB, UILayer, map) {
-  var hightlightableObjects = _filterObjectsForHighlighting(objects);
-  var cb;
-
-  /* We add the objects to be highlighted to the correct UI layer */
-  //objectsToUI(UILayer, hightlightableObjects);
-
-  if (objects && hightlightableObjects.length > 1) {
-    cb = () => {
-      modal.innerHTML = templates.multiSelection({
-        title: "Objects",
-        objects
-      });
-
-      _showModal(modal, cssClasses);
-
-      console.log(objects);
-
-      _get$Element("select").fadeIn(fadeAnimation);
-    };
-  } else if (hightlightableObjects.length === 1) {
-    cb = () => {
-      modal.innerHTML = templates.singleSelection({
-        title: "Selected",
-        object: {
-          name: hightlightableObjects[0].data.typeData.name
-        }
-      });
-
-      _showModal(modal, cssClasses);
-      _highlightSelectedObject(hightlightableObjects[0], UILayer, map);
-      updateCB();
-
-      console.log(hightlightableObjects);
-
-      _get$Element("select").fadeIn(fadeAnimation);
-    };
-  } else {
-    cb = () => {
-      UILayer.emptyUIObjects();
-      updateCB();
-      console.log("Error occured selecting the objects on this coordinates! Nothing found");
-    };
-  }
-
-  _get$Element("select").fadeOut(fadeAnimation, cb);
-
-  //function objectsToUI(UILayer, highlightObjects) {
-  //  UILayer.emptyUIObjects();
-  //  UILayer.addUIObjects(highlightObjects);
-  //}
 }
 function _highlightSelectedObject(object, movableLayer) {
   var clonedObject;
@@ -186,7 +145,6 @@ function _highlightSelectedObject(object, movableLayer) {
   jee.y -= object.height * object.anchor.y;
 
   createHighlight(clonedObject, movableLayer, { coords: jee });
-
 }
 function _filterObjectsForHighlighting(objects) {
   var newObjects = objects.filter(obj => {

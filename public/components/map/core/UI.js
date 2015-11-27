@@ -18,22 +18,22 @@
  *
  * @todo Not implemented fully yet and probably need refactoring
  * */
+
 var scope;
 
-export function UI (givenUITheme, givenMap) {
-  var map, UITheme;
+export function UI (UITheme, givenMap) {
+  var map;
 
   /* SINGLETON MODULE */
   if (scope) {
     return scope;
   }
 
-  if (!givenUITheme || !givenMap) {
+  if (!UITheme || !givenMap) {
     throw new Error("UI-module requires UITheme and map object");
   }
 
   map = givenMap;
-  UITheme = givenUITheme;
   scope = {};
 
   /**
@@ -51,4 +51,11 @@ export function UI (givenUITheme, givenMap) {
   };
 
   return scope;
+}
+
+/****************************
+********** PRIVATE **********
+****************************/
+function _addCSSRulesToScriptTag(sheet, rules) {
+  sheet.insertRule(rules, 0);
 }

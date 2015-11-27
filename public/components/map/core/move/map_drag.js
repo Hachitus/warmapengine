@@ -35,11 +35,7 @@ export var map_drag = (function map_drag() {
    * @param {Map object} mapObj - the Map class object
    * */
   function init(map) {
-    if (map.getEnvironment() === "mobile") {
-      eventListenerCB = _startDragListener_mobile(map);
-    } else {
-      eventListenerCB = _startDragListener(map);
-    }
+    eventListenerCB = _startDragListener_mobile(map);
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
     eventListenerMod().toggleDragListener(eventListenerCB);
@@ -113,6 +109,7 @@ export var map_drag = (function map_drag() {
         return;
       } else if (e.isFinal === true) {
         initialized = false;
+        map.mapMoved(false);
       }
 
       _mapMovement(e, map, coords);

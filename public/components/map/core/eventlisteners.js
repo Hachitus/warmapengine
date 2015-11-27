@@ -33,9 +33,7 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
     throw new Error("eventlisteners initialization require map callbacks and canvas element as arguments");
   }
 
-  if (isMobileSite()) {
-    hammer = new Hammer.Manager(canvasElement);
-  }
+  hammer = new Hammer.Manager(canvasElement);
 
   singletonScope = {
     states: {}
@@ -79,7 +77,6 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
       CBs.zoom = cb;
 
       if (isMobileSite()) {
-        hammer = new Hammer.Manager(canvasElement);
         var pinch = new Hammer.Pinch();
         hammer.add(pinch);
         hammer.on("pinch", CBs.zoom);
@@ -108,24 +105,15 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
     if (singletonScope.states.drag !== true) {
       CBs.drag = cb;
 
-      if (isMobileSite()) {
-        hammer = new Hammer.Manager(canvasElement);
-        var pan = new Hammer.Pan({
-          pointers: 1,
-          threshold: 5,
-          direction:  Hammer.DIRECTION_ALL });
-        hammer.add(pan);
-        hammer.on("pan", CBs.drag);
-      } else {
-        canvasElement.addEventListener("mousedown", CBs.drag);
-      }
+      var pan = new Hammer.Pan({
+        pointers: 1,
+        threshold: 5,
+        direction:  Hammer.DIRECTION_ALL });
+      hammer.add(pan);
+      hammer.on("pan", CBs.drag);
     } else {
       CBs.drag = cb;
-      if (isMobileSite()) {
-        hammer.off("pan", CBs.drag);
-      } else {
-        canvasElement.removeEventListener("mousedown", CBs.drag);
-      }
+      hammer.off("pan", CBs.drag);
     }
 
     singletonScope.states.drag = !singletonScope.states.drag;
@@ -142,7 +130,6 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
       CBs.select = cb;
 
       if (isMobileSite()) {
-        hammer = new Hammer.Manager(canvasElement);
         var tap = new Hammer.Tap();
         hammer.add(tap);
         hammer.on("tap", CBs.select);
@@ -167,5 +154,5 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
 };
 
 function isMobileSite() {
-  return typeof Hammer !== 'undefined';
+  return typeof window.isMobile !== 'undefined';
 }

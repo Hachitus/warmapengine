@@ -11,13 +11,31 @@ If you are interested contact me (http://hyytia.level7.fi/)
 
 #Development data
 ##Requirements
+This is an example install for a fresh debian based virtual server (tested). You may naturally skip any step you wish, if there are alternatives on your server, step you want to perform differently or something you already have on your server.
+
 Install node.js and npm
 
-    apt-get install nodejs npm
+    apt-get install nodejs npm git
 
 Rather install these packages as global
 
-    npm install -g forever gulp
+    npm install -g forever
+
+If you have issues with forever (type forever and enter on the cmd):
+
+    ln -s /usr/bin/nodejs /usr/bin/node
+
+or
+
+    apt-get install nodejs-legacy
+
+Clone the repository
+
+    git clone [url to this repository]
+
+change to the repository
+
+    cd [installed repository path]
 
 Install package.json packages
 
@@ -25,7 +43,7 @@ Install package.json packages
 
 Install jspm packages
 
-    nodejs node_modules/jspm/jspm.js install text css json
+    nodejs node_modules/jspm/jspm.js install
 
 ##Commanding the backend server
 
@@ -44,9 +62,8 @@ But naturally on your server it is http://server_address/tests/
 
 #How the Map engine works
 ##How to setup simple map
-Unfortunately this instruction is not yet available. As the map is more finished and refactored, you will get the nstructions. Now if you have the energy. See through the tests e.g. tests/pixi_manualTest.html or pixi_manualStressTest.html, which have the fully working map prototype. Pixi in general has better support atm. than easel, since that is most likely the best way to go with.
+Unfortunately this instruction is not yet available. As the map is more finished and refactored, you will get the instructions. Now if you have the energy. See through the tests e.g. tests/pixi_manualTest.html or pixi_manualStressTest.html, which have the fully working map prototype.
 ##Plugins
-Plugins are modules that when imported return an object. The modules work in ES6-format.
 Plugin objects have to have init method, in the format of:
 ```javascript
 {
@@ -57,13 +74,15 @@ Plugin objects have to have init method, in the format of:
 ```
 
 Plugins need to export pluginName-variable, like so:
+```javascript
 export var pluginName = "thisPluginName";
+```
 
 Also the map engine uses it's own interface to use the normal map functionalities like moving the map (default dragging
 the map), selecting units and zooming the map. These are implemented via eventlisteners.js and UI.js core modules.
 
 UI interface is implemented so that map uses the UI.js module to implement API and to that API you pass in the UITheme
 module you want to use in the game. All UIThemes have to implement at least the core functionality API (or overwrite
-the API, which is naturally not encouraged). The UI module can be extended with plugins.
+the API, which is naturally not encouraged).
 
 All UI templates need to extend the UI_templateBase @ '/components/map/core/UI_templateBase'

@@ -12,7 +12,6 @@
  * */
 
 import { templates } from '/components/map/UIs/default/layout/templates';
-import { createCSSRules } from '/components/map/UIs/default/layout/CSSRules';
 import { createVisibleHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
 import { UI_templateBase } from '/components/map/core/UI_templateBase';
 
@@ -20,32 +19,20 @@ var cssClasses = {
   select: "#dialog_select"
 };
 var fadeAnimation = "slow";
-var _styleSheet = {};
 var $elements = {};
 var createHighlight;
 
 export class UI_default extends UI_templateBase {
   constructor(modal, map, options = { styles: "#F0F0F0" }) {
-    var createdCSS;
-
     super(cssClasses);
 
     // Add a media (and/or media query) here if you'd like!
     // style.setAttribute("media", "screen")
     // style.setAttribute("media", "only screen and (max-width : 1024px)")
-    _styleSheet = this.addStyleElement();
-    createdCSS = createCSSRules(cssClasses);
-    this.addCSSRulesToScriptTag(_styleSheet, createdCSS);
 
     this.map = map;
     this.modal = modal || document.getElementById("dialog_select");
     this.styles = options.styles;
-  }
-  /**
-   * Required by the map/core/UI.js API
-   */
-  getCSSRules() {
-    return createCSSRules;
   }
   /**
    * Required by the map/core/UI.js API

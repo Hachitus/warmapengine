@@ -1,3 +1,5 @@
+'use strict';
+
 export let typeData = {
   graphicData: {
     terrainBase:{
@@ -30,16 +32,20 @@ export let typeData = {
         name: "forDebugging - terrainBase 3"
       }],
     terrain:[{
-    name:"desert",
-    image:"0",
-    desc:"very dry land",
-    modifiers:{
-    City:{
-    _player_:[{
-    from:"thisOnePlace",
-						modifiers:{
-  production:"Provides +1 food for cities"
-		}}]}}}],
+      name:"desert",
+      image:"0",
+      desc:"very dry land",
+      modifiers: {
+        City: {
+          _player_: [{
+            from:"thisOnePlace",
+            modifiers: {
+              production:"Provides +1 food for cities"
+            }
+          }]
+        }
+      }
+    }],
     unit:[{
       name:"anti-tank",
       desc:"Vrooom...",

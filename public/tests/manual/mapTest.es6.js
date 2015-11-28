@@ -1,12 +1,8 @@
 /* global alert */
 
 'use strict';
-/* ====== Library imports ====== */
 
-/* ====== Own module imports ====== */
-//var Map = require( '../public/components/map/Map');
-/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol os something missing: http://babeljs.io/docs/usage/polyfill/ */
-//require("babel/polyfill");
+/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
 
 import { createMap } from '/components/factories/horizontalHexaFactory';
 
@@ -47,18 +43,11 @@ window.initMap = function () {
 
     map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
 
-    // gameData.pluginsToActivate.map.map(plugin => {
-    //   promises.push(System.import(plugin));
-    // });
-
-    // Promise.all(promises).then(activetablePlugins => {
-    //map.init( activetablePlugins, mapData.startPoint );
     promises = map.init( gameData.pluginsToActivate.map, mapData.startPoint );
 
     Promise.all(promises).then( () => {
       document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
     });
-    // });
   }
 
   return globalMap;

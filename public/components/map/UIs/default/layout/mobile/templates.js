@@ -1,3 +1,5 @@
+'use strict';
+
 export var templates = {
   multiSelection: Handlebars.compile(`
     <span style='font-size:200%;display:block;margin-bottom:20px;'>

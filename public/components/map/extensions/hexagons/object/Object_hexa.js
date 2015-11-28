@@ -3,10 +3,18 @@
 import { createHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
 import hexagonMath from '/components/map/extensions/hexagons/utils/hexagonMath';
 
-var shape;
+/**
+ * Base class for hexagon objects. So basically choosing objects from map that is hexagon based.
+ */
 
-export var object_sprite_hexa = {
-  build: function calculateHexa(radius) {
+export var object_sprite_hexa = (function object_sprite_hexa() {
+  var shape;
+
+  /**************************
+  ********** API ************
+  **************************/
+  return {
+    build: function calculateHexa(radius) {
       if (!radius) {
         throw new Error("Need radius!");
       }
@@ -38,12 +46,15 @@ export var object_sprite_hexa = {
         return isHit;
       };
     }
-};
+  };
+  /***********************
+  ******* PRIVATE ********
+  ***********************/
+  function setAndGetShape(radius) {
+    if (!shape) {
+      shape = createHexagon(radius);
+    }
 
-function setAndGetShape(radius) {
-  if (!shape) {
-    shape = createHexagon(radius);
+    return shape;
   }
-
-  return shape;
-}
+})();

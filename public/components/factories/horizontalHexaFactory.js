@@ -1,23 +1,24 @@
 /* global PIXI */
+
 'use strict';
 
 /** Factory where we construct a horizontal hexagon map for test and development purposes
  *
  * @require createjs framework in global namespace
  * @require canvas HTML5-element to work. This is more for node.js
- * @todo Add documentation and refactor (maybe modularize / functionalize) the actual logic */
+ * @todo Add documentation and refactor (maybe modularize / functionalize) the actual logic
+ * */
 
 /* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol or something missing: http://babeljs.io/docs/usage/polyfill/ */
-//require("babel/polyfill");
 
 /* ====== Own module imports ====== */
-import { Map } from '../map/core/Map';
-import { Map_layer, Map_spriteLayer, Map_bigSpriteLayer } from '/components/map/core/Map_layer';
-import { Object_terrain } from '../map/extensions/hexagons/object/Object_terrain_hexa';
-import { Object_unit } from '../map/extensions/hexagons/object/Object_unit_hexa';
-import { resizeUtils } from '../map/core/utils/utils';
-import { UI } from '../map/core/UI';
-import { UI_default } from "../map/UIs/default/default.js";
+import { Map } from "/components/map/core/Map";
+import { Map_layer, Map_spriteLayer, Map_bigSpriteLayer } from "/components/map/core/Map_layer";
+import { Object_terrain } from "/components/map/extensions/hexagons/object/Object_terrain_hexa";
+import { Object_unit } from "/components/map/extensions/hexagons/object/Object_unit_hexa";
+import { resizeUtils, environmentDetection } from "/components/map/core/utils/utils";
+import { UI } from "/components/map/core/UI";
+import { UI_default } from "/components/map/UIs/default/default.js";
 
 /***** CONFIG. Set correct classes to use *****/
 var functionsInObj = {
@@ -33,29 +34,19 @@ var layers = {
 /* ===== EXPORT ===== */
 /**
  * @param {DOMElement Canvas} canvasElement the canvas element for the map
- * @param {Object} gameDataArg gameData. More specific data in data-folders test-datas
- * @param {bigass Object} mapData - holds all the stage, layer and object data needed to construct a full map.
- * More specific data in data-folders test-datas
- * @param {Object} typeDataArg typeData. More specific data in data-folders test-datas.
+ * @param {Object} datas      Object with mapDatas: { map, type, game }
+ *                            map: Holds all the stage, layer and object data needed to construct a full map
+ *                            game: More general game data (like turn number, map size etc.)
+ *                            type: Type data such as different unit types and their graphics (tank, soldier etc.)
 */
 
 export function createMap(canvasElement, datas) {
-  console.log("============================================");
+  console.log("============== Map factory started =============");
   var mapData = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
   var typeData = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
   var gameData = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
   var windowSize = resizeUtils.getWindowSize();
-  var pixelRatio = (function () {
-      var ctx = canvasElement.getContext("2d"),
-      dpr = window.devicePixelRatio || 1,
-      bsr = ctx.webkitBackingStorePixelRatio ||
-      ctx.mozBackingStorePixelRatio ||
-      ctx.msBackingStorePixelRatio ||
-      ctx.oBackingStorePixelRatio ||
-      ctx.backingStorePixelRatio || 1;
-
-      return dpr / bsr;
-    })();
+  var pixelRatio = environmentDetection.getPixelRatio(canvasElement);
 
   var mapOptions = {
     mapSize: gameData.mapSize,

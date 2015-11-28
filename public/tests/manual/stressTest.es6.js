@@ -1,12 +1,7 @@
 /* global System, alert, console */
 
 'use strict';
-/* ====== Library imports ====== */
-
-/* ====== Own module imports ====== */
-//var Map = require( '../public/components/map/Map');
-/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol os something missing: http://babeljs.io/docs/usage/polyfill/ */
-//require("babel/polyfill");
+/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
 
 import { createMap } from '/components/factories/horizontalHexaFactory';
 
@@ -97,15 +92,11 @@ function initMap(mapData, options) {
 
     map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
 
-    gameData.pluginsToActivate.map.map(plugin => {
-      promises.push(System.import(plugin));
-    });
+    promises = map.init( gameData.pluginsToActivate.map, mapData.startPoint );
 
-    Promise.all(promises).then(activetablePlugins => {
-      map.init( activetablePlugins, HEXASIZE );
+    Promise.all(promises).then( () => {
+      document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
       if (options.cache) {
-        // There is an issue with cache. About worldTransform. If cache is on selecting units will not work atm. because
-        // world transform does not take coordinates, achors etc. into account correctly
         map.cacheMap(true);
       }
     });

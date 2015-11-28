@@ -1,3 +1,5 @@
+'use strict';
+
 export let mapData = {
   gameID: "53837d47976fed3b24000005",
   turn: 1,

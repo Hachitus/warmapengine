@@ -197,9 +197,7 @@ export class Map {
    * */
   cacheMap() {
     _movableLayer.children.forEach(child => {
-      if (child.getCacheEnabled()) {
-        child.setCache(true);
-      }
+      child.setCache(child.getCacheEnabled());
     });
 
     return this;
@@ -211,9 +209,7 @@ export class Map {
    * */
   unCacheMap() {
     _movableLayer.children.forEach(child => {
-      if (child.getCacheEnabled()) {
-        child.setCache(false);
-      }
+      child.setCache(false);
     });
 
     return this;

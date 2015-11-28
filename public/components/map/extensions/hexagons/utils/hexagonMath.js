@@ -1,9 +1,22 @@
 'use strict';
 
+/**
+ * Utility module, for making different calculations and tests when hexagon based grid map in use
+ */
+
+export default {
+  calcShortDiagonal: calcShortDiagonal,
+  calcLongDiagonal: calcLongDiagonal,
+  calcSide: calcSide,
+  getHexagonPoints: getHexagonPoints,
+  hexaHitTest: hexaHitTest
+};
+
 /** Calculates the hexagons:
  * innerDiameter
  * - Vertical / Flat hexagons height
  * - Horizontal / pointy hexagons width
+ *
  * @param {float} value - Usually the radius of the hexagon
  * @param {string} type - If you provide something else than radius, where the calculation is based from
  * @param {integer} precision - How many decimals to round
@@ -22,6 +35,7 @@ export function calcShortDiagonal(value, type = "radius", precision = 3) {
  * outerDiameter
  * - Vertical / Flat hexagons width
  * - Horizontal / pointy hexagons height
+ *
  * @param {float} value					Usually the radius of the hexagon
  * @param {string} type					If you provide something else than radius, where the calculation is based from
  * @param {integer} precision 	How many decimals to round
@@ -74,7 +88,15 @@ export function getHexagonPoints(radius, options = { isFlatTop: false, precision
 
   return points;
 }
-
+/**
+ * Test do the given coordinates hit the hexagon, given by the points container / array
+ *
+ * @param  {Array} points         Array of PIXI.points
+ * @param  {Object} hitCoords     The coordinates to test against
+ * @param  {Object} offsetCoords  offsetCoordinates that are added to the hitCoordinates. Separate because these are
+ *                                outside the given array.
+ * @return {Boolean}              Is the coordinate inside the hexagon or not
+ */
 export function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) {
   var realPolygonPoints = points.map(point => {
     return {
@@ -89,7 +111,14 @@ export function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0,
 /**************************
 ********* PRIVATE *********
 **************************/
-/* credits to: https://github.com/substack/point-in-polygon */
+/**
+ * credits to: https://github.com/substack/point-in-polygon
+ * Tests whether the given point / coordinate is inside the given points. Assuming the points form a polygon
+ *
+ * @param  {x: Number, y: Number} point       The point to test against
+ * @param  {Array} vs                         The points of the polygon to test [0] === x-point, [1] === y-point
+ * @return {Boolean}                          Is the coordinate inside the hexagon or not
+ */
 function _pointInPolygon(point, vs) {
   var x = point.x, y = point.y;
 
@@ -106,73 +135,4 @@ function _pointInPolygon(point, vs) {
   }
 
   return inside;
-}
-
-export default {
-  calcShortDiagonal: calcShortDiagonal,
-  calcLongDiagonal: calcLongDiagonal,
-  calcSide: calcSide,
-  getHexagonPoints: getHexagonPoints,
-  hexaHitTest: hexaHitTest
-};
-
-/************************************
-********** NOT IN USE ATM ***********
-************************************/
-/* Modified From java example: http://blog.ruslans.com/2011/02/hexagonal-grid-math.html
- * This is supposed to calculate the correct hexagonal index, that represents the hexagon the player clicked. */
-export function setCellByPoint(radius, x = 0, y = 0) {
-  var HEIGHT = radius * Math.sqrt(3);
-  var SIDE = radius * 3 / 2;
-
-  var ci = Math.floor(x/SIDE);
-  var cx = x - SIDE * ci;
-
-  var ty = y - (ci % 2) * HEIGHT / 2;
-  var cj = Math.floor( ty / HEIGHT);
-  var cy = ty - HEIGHT * cj;
-
-  if (cx > Math.abs(radius / 2 - radius * cy / HEIGHT)) {
-    return {
-        x: ci,
-        y: cj
-      };
-  } else {
-    return {
-      x: ci - 1,
-      y: cj + (ci % 2) - ((cy < HEIGHT / 2) ? 1 : 0)
-    };
-  }
-}
-
-/* From the x,y-coordinates calculates the closest hexagons center coordinates */
-export function toHexaCenterCoord(hexRadius, x = 0, y = 0) {
-  var hexaSize = getHexaSize(hexRadius);
-  var radius = hexaSize.radius;
-  var halfHexaSize = {
-    x: hexaSize.radius,
-    y: hexaSize.y * 0.5
-  };
-  var centerCoords = {};
-  var coordinateIndexes;
-
-  coordinateIndexes = setCellByPoint(radius, x, y);
-
-  if (coordinateIndexes.x < 0 && coordinateIndexes.x < 0) {
-    throw new Error("click outside of the hexagon area");
-  }
-  centerCoords = {
-    x: Math.round(coordinateIndexes.x * hexaSize.x + halfHexaSize.x),
-    y: Math.round(coordinateIndexes.y * hexaSize.y + halfHexaSize.y)
-  };
-
-  return centerCoords;
-
-  function getHexaSize(radius) {
-    return {
-      radius: radius,
-      x: radius * 2,
-      y: radius * Math.sqrt(3)
-    };
-  }
 }

@@ -52,8 +52,6 @@ export var drawShapes = (function() {
 
     */
   function drawArrow( shape, x1, y1, x2, y2, style, which, angle, d ) {
-    'use strict';
-
     var graphics = shape.graphics,
        color = "#000",
        angle1, topx, topy, angle2, botx, boty;
@@ -197,7 +195,7 @@ export var drawShapes = (function() {
           break;
       }
     }
-  };
+  }
   function drawArcedArrow( graphics, x, y, r, startangle, endangle, anticlockwise,
      style, which, angle, d ) {
     var sx, sy, lineangle, destx, desty;

@@ -1,3 +1,5 @@
+'use strict';
+
 export function createCSSRules(classNames, dialogOptions = { zIndex: 9999, opacity: 0.9 }) {
   return `
     ${classNames.select} {

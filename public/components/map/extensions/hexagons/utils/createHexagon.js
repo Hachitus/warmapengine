@@ -2,15 +2,28 @@
 
 import { getHexagonPoints } from './hexagonMath';
 
-/** Credits belogn to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js */
-// Creates a hex shaped polygon that is used for the hex's hit area.
-export function createHexagon(radius, isFlatTop = false) {
+/**
+ * Credits belong to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js
+ * Creates a hex shaped polygon that is used for the hex's hit area.
+ *
+ * @param {Number} radius       Radius of the hexagon
+ * @param {Object} options      Options, such as: isFlatTop (Boolean), is the heaxgon flat-topped
+ * @return {PIXI.Polygon}       Hexagon shaped PIXI.Polygon object. That houses the hexagons corner points.
+ */
+export function createHexagon(radius, options = { isFlatTop: false }) {
   var points = [];
 
   points = coordsToPixiPoints(radius);
 
   return new PIXI.Polygon(points);
 }
+/**
+ * @param {Number} radius       Radius of the hexagon
+ * @param {Object} options      Options, such as:
+ *                              color: The fill color of the hexagon
+ *                              isFlatTop (Boolean), is the heaxgon flat-topped
+ * @return {PIXI.Graphics}      Graphics object that is shaped as hexagon, based on given radius and options.
+ */
 export function createVisibleHexagon(radius, options = { color: "#000000", isFlatTop: false }) {
   var graphics = new PIXI.Graphics();
   var points = coordsToPixiPoints(radius);
@@ -23,6 +36,12 @@ export function createVisibleHexagon(radius, options = { color: "#000000", isFla
 }
 
 /******* PRIVATE *******/
+/**
+ * Converts Array of x- and y-coordinates to new PIXI.Point coordinates
+ *
+ * @param  {Number} radius        Hexagons radius
+ * @return {Array}                Array of PIXI.Point coordinates
+ */
 function coordsToPixiPoints(radius) {
   return getHexagonPoints(radius).map(function(point) {
     return new PIXI.Point(point.x, point.y);

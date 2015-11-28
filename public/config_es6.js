@@ -1,3 +1,7 @@
+/* global System */
+
+'use strict';
+
 System.config({
   baseURL: "/",
   defaultJSExtensions: true,

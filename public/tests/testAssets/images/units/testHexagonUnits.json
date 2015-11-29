@@ -280,7 +280,7 @@
 			"sourceSize": {"w":65,"h":52},
 			"pivot": {"x":0.5,"y":0.5}
 		},
-		"pioneer.png": {
+		"donkeyPioneer.png": {
 			"frame": {"x":195,"y":206,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
@@ -319,13 +319,9 @@
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
 			"sourceSize": {"w":65,"h":52},
 			"pivot": {"x":0.5,"y":0.5}
-		}
-		
-		
-		
-		,
+		},
 		"nomad.png": {
-			"frame": {"x":0,"y":206,"w":65,"h":52},
+			"frame": {"x":0,"y":258,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -333,7 +329,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"knight2.png": {
-			"frame": {"x":65,"y":206,"w":65,"h":52},
+			"frame": {"x":65,"y":258,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -341,7 +337,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"priest.png": {
-			"frame": {"x":130,"y":206,"w":65,"h":52},
+			"frame": {"x":130,"y":258,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -349,7 +345,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"awacs.png": {
-			"frame": {"x":195,"y":206,"w":65,"h":52},
+			"frame": {"x":195,"y":258,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -357,7 +353,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"oldman.png": {
-			"frame": {"x":260,"y":206,"w":65,"h":52},
+			"frame": {"x":260,"y":258,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -365,7 +361,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"king.png": {
-			"frame": {"x":325,"y":206,"w":65,"h":52},
+			"frame": {"x":325,"y":258,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -373,7 +369,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"blackie.png": {
-			"frame": {"x":390,"y":206,"w":65,"h":52},
+			"frame": {"x":390,"y":258,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -381,7 +377,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"ranger.png": {
-			"frame": {"x":455,"y":206,"w":65,"h":52},
+			"frame": {"x":455,"y":258,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -389,7 +385,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"reddie.png": {
-			"frame": {"x":0,"y":206,"w":65,"h":52},
+			"frame": {"x":0,"y":310,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -397,7 +393,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"charriot.png": {
-			"frame": {"x":65,"y":206,"w":65,"h":52},
+			"frame": {"x":65,"y":310,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -405,7 +401,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"floatingfort.png": {
-			"frame": {"x":130,"y":206,"w":65,"h":52},
+			"frame": {"x":130,"y":310,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -413,7 +409,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"airborne.png": {
-			"frame": {"x":195,"y":206,"w":65,"h":52},
+			"frame": {"x":195,"y":310,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -421,7 +417,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"elephant.png": {
-			"frame": {"x":260,"y":206,"w":65,"h":52},
+			"frame": {"x":260,"y":310,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -429,7 +425,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"archer.png": {
-			"frame": {"x":325,"y":206,"w":65,"h":52},
+			"frame": {"x":325,"y":310,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -437,7 +433,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"rider.png": {
-			"frame": {"x":390,"y":206,"w":65,"h":52},
+			"frame": {"x":390,"y":310,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},
@@ -445,7 +441,7 @@
 			"pivot": {"x":0.5,"y":0.5}
 		},
 		"crusader.png": {
-			"frame": {"x":455,"y":206,"w":65,"h":52},
+			"frame": {"x":455,"y":310,"w":65,"h":52},
 			"rotated": false,
 			"trimmed": false,
 			"spriteSourceSize": {"x":0,"y":0,"w":65,"h":52},

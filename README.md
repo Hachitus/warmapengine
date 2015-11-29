@@ -85,4 +85,4 @@ UI interface is implemented so that map uses the UI.js module to implement API a
 module you want to use in the game. All UIThemes have to implement at least the core functionality API (or overwrite
 the API, which is naturally not encouraged).
 
-All UI templates need to extend the UI_templateBase @ '/components/map/core/UI_templateBase'
+All UI templates need to extend the UI_templateBase @ '/components/map/core/UI_themeBase'

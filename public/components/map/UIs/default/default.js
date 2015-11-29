@@ -13,7 +13,8 @@
 
 import { templates } from '/components/map/UIs/default/layout/templates';
 import { createVisibleHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
-import { UI_templateBase } from '/components/map/core/UI_templateBase';
+import { UI_templateBase } from '/components/map/core/UI_themeBase';
+import { drawShapes } from '/components/map/UIs/default/utils/arrows';
 
 var cssClasses = {
   select: "#dialog_select"
@@ -105,6 +106,7 @@ export class UI_default extends UI_templateBase {
       return _highlightSelectedObject(object, this.map.getMovableLayer());
     }
   }
+  showUnitMovement() {}
   init() {}
 
 

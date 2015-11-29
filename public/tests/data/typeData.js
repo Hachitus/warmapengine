@@ -491,7 +491,7 @@ export let typeData = {
 							modifiers:{
   morale:"suffers morale drop"
 			}}]}}},{
-				name:"someArcticSoldier?",
+				name:"finnishSoldier",
 				desc:"wiuuuuu",
 				image:"some.png",
 				att:"1",
@@ -671,9 +671,9 @@ export let typeData = {
 							modifiers:{
   morale:"suffers morale drop"
 			}}]}}},{
-				name:"donkeyAndMan?",
+				name:"donkeyPioneer?",
 				desc:"wiuuuuu",
-				image:"pioneer.png",
+				image:"donkeyPioneer.png",
 				att:"1",
 				def:"2",
 				siege:"2",
@@ -761,7 +761,7 @@ export let typeData = {
 							modifiers:{
   morale:"suffers morale drop"
 			}}]}}},{
-				name:"nomadOrMissile?",
+				name:"nomad",
 				desc:"wiuuuuu",
 				image:"nomad.png",
 				att:"1",
@@ -779,7 +779,7 @@ export let typeData = {
 							modifiers:{
   morale:"suffers morale drop"
 			}}]}}},{
-				name:"knight2OrSomeShip?",
+				name:"joustingKnight",
 				desc:"wiuuuuu",
 				image:"knight2.png",
 				att:"1",
@@ -833,7 +833,7 @@ export let typeData = {
 							modifiers:{
   morale:"suffers morale drop"
 			}}]}}},{
-				name:"oldmanOrOSTruck?",
+				name:"oldman?",
 				desc:"wiuuuuu",
 				image:"oldman.png",
 				att:"1",
@@ -869,7 +869,7 @@ export let typeData = {
 							modifiers:{
   morale:"suffers morale drop"
 			}}]}}},{
-				name:"blackieOrGreenNinja?",
+				name:"blackDude?",
 				desc:"wiuuuuu",
 				image:"blackie.png",
 				att:"1",
@@ -941,9 +941,9 @@ export let typeData = {
 							modifiers:{
   morale:"suffers morale drop"
 			}}]}}},{
-				name:"blackie",
+				name:"floatingfort",
 				desc:"wiuuuuu",
-				image:"blackie.png",
+				image:"floatingfort.png",
 				att:"1",
 				def:"2",
 				siege:"2",
@@ -959,9 +959,9 @@ export let typeData = {
 							modifiers:{
   morale:"suffers morale drop"
 			}}]}}},{
-				name:"floatingfort",
+				name:"airborne",
 				desc:"wiuuuuu",
-				image:"floatingfort.png",
+				image:"airborne.png",
 				att:"1",
 				def:"2",
 				siege:"2",
@@ -1013,7 +1013,7 @@ export let typeData = {
 							modifiers:{
   morale:"suffers morale drop"
 			}}]}}},{
-				name:"riderOrGreenNinja?",
+				name:"shieldRider",
 				desc:"wiuuuuu",
 				image:"rider.png",
 				att:"1",

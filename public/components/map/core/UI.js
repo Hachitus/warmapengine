@@ -46,16 +46,11 @@ export function UI (UITheme, givenMap) {
    * Resonsible for hignlighting the selected object. For example the unit that is being commanded. The hightlight
    * can mean e.g. bringing the unit on top on the map and showing selection circle around it.
    * */
-  scope.highlightSelectedObject = function highlightSelectedObject(object) {
-    return UITheme.highlightSelectedObject(map, object);
-  };
+  scope.highlightSelectedObject = UITheme.highlightSelectedObject.bind(UITheme);
+  /**
+   * Shows arrow or movement or what ever to indicate the selected unit is moving to the given location
+   * */
+  scope.showUnitMovement = UITheme.showUnitMovement.bind(UITheme);
 
   return scope;
-}
-
-/****************************
-********** PRIVATE **********
-****************************/
-function _addCSSRulesToScriptTag(sheet, rules) {
-  sheet.insertRule(rules, 0);
 }

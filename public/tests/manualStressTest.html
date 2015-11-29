@@ -24,9 +24,11 @@
 </head>
 
 <body>
-  <canvas id="mapCanvas" height="600" width="1200">
-    Canvas not supported!
-  </canvas>
+  <div id="mapCanvasContainer" height="600" width="1200">
+    <canvas id="mapCanvas" height="600" width="1200">
+      Canvas not supported!
+    </canvas>
+  </div>
 
   <div id="testNotification" style="position:fixed; bottom:100px; left:50px;font-size: 20px;color:red;">
     WAIT FOR THE MODULES TO LOAD!
@@ -42,7 +44,7 @@
       <input id="hexaTiles" value="8000" type="text">,
       cache:
       <input id="cache" type="checkbox" checked>
-      <button id="changeValues">
+      <button id="changeValues" disabled>
         START!
       </button>
     </div>
@@ -65,6 +67,7 @@
         var cacheMap = true;
 
         document.getElementById("testNotification").textContent = "START THE TESTS BY SELECTING VALUES BELOW AND CLICKING START!";
+        document.getElementById("changeValues").disabled = false;
 
         document.getElementById("changeValues").addEventListener("click", function() {
           document.getElementById("testNotification").style.display = "none";
@@ -74,7 +77,8 @@
           mapData = window.getMapData(currentMapSize);
           window.map = window.initMap(mapData, {
             mapsize: currentMapSize,
-            cache: cacheMap
+            cache: cacheMap,
+            canvasContainer: document.getElementById("mapCanvasContainer")
           });
         });
   		});

@@ -38,23 +38,22 @@ export class Map {
    * { bounds: { width: Number, height: Number}, renderer: {} }
    * @return Map instance
    */
-  constructor(canvas = null, props = { mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: {} }) {
+  constructor(canvasContainer = null, props = { mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: {} }) {
     var { mapSize, startCoord, bounds, options } = props;
 
-    if (!canvas) {
-      throw new Error(this.constructor.name + " needs canvas!");
+    if (!canvasContainer) {
+      throw new Error(this.constructor.name + " needs canvasContainer!");
     }
 
-    if (typeof canvas === "string") {
-      canvas = document.querySelector(canvas);
-    } else {
-      canvas = canvas;
+    if (typeof canvasContainer === "string") {
+      canvasContainer = document.querySelector(canvasContainer);
     }
 
     _renderer = PIXI.autoDetectRenderer(bounds.width, bounds.height, options);
     /* We handle all the events ourselves through addEventListeners-method on canvas, so destroy pixi native method */
     _renderer.plugins.interaction.destroy();
-    canvas.parentElement.replaceChild(_renderer.view, canvas);
+    canvasContainer.innerHTML = "";
+    canvasContainer.appendChild(_renderer.view, canvasContainer);
 
     this.canvas = _renderer.view;
     this.plugins = new Set();
@@ -319,6 +318,9 @@ export class Map {
       x: _movableLayer.x,
       y: _movableLayer.y
     };
+  }
+  getCanvas() {
+    return this.canvas;
   }
   getEnvironment() {
     return this.environment;

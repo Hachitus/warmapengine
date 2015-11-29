@@ -40,13 +40,13 @@ var layers = {
  *                            type: Type data such as different unit types and their graphics (tank, soldier etc.)
 */
 
-export function createMap(canvasElement, datas) {
+export function createMap(canvasContainerElement, datas) {
   console.log("============== Map factory started =============");
   var mapData = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
   var typeData = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
   var gameData = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
   var windowSize = resizeUtils.getWindowSize();
-  var pixelRatio = environmentDetection.getPixelRatio(canvasElement);
+  var pixelRatio = environmentDetection.getPixelRatio();
 
   var mapOptions = {
     mapSize: gameData.mapSize,
@@ -62,7 +62,7 @@ export function createMap(canvasElement, datas) {
       //resolution: changincVariable - We might need this later on, when doing mobile optimizations, for different pizel density devices
     }
   };
-  var map = new Map(canvasElement, mapOptions ) ;
+  var map = new Map(canvasContainerElement, mapOptions ) ;
   var dialog_selection = document.getElementById("selectionDialog");
   var defaultUI = new UI_default(dialog_selection, map);
   /* Initialize UI as singleton */

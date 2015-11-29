@@ -1,4 +1,4 @@
-/* global System, alert, console, Q */
+/* global alert, console, Q */
 
 'use strict';
 /* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
@@ -20,10 +20,6 @@ if (typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAge
 }
 
 /** ===== CONFIGS ===== */
-const HEXASIZE = {
-  x: 41,
-  y: 47
-};
 /* Note the y is 3/4 of the actual height */
 const HEXAGON_DISTANCES = {
   x: 82,
@@ -59,7 +55,7 @@ function getMapData(mapsize) {
 }
 
 function initMap(mapData, options) {
-  var canvasElement = document.getElementById("mapCanvas");
+  var canvasContainerElement = options.canvasContainer;
   var map = {};
   var globalMap = {
     data: {}
@@ -97,11 +93,11 @@ function initMap(mapData, options) {
 
     gameData.mapSize = mapsize;
 
-    map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
+    map = globalMap.data = createMap(canvasContainerElement, { game: gameData, map: mapData, type: typeData });
 
     promises = map.init( gameData.pluginsToActivate.map, mapData.startPoint );
 
-    map.whenReady.then( () => {
+    map.whenReady().then( () => {
       document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
       if (options.cache) {
         map.cacheMap(true);

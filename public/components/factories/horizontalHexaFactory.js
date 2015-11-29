@@ -48,7 +48,7 @@ export function createMap(canvasContainerElement, datas) {
   var windowSize = resizeUtils.getWindowSize();
   var pixelRatio = environmentDetection.getPixelRatio();
 
-  var mapOptions = {
+  var mapProperties = {
     mapSize: gameData.mapSize,
     bounds: {
       width: windowSize.width,
@@ -62,7 +62,10 @@ export function createMap(canvasContainerElement, datas) {
       //resolution: changincVariable - We might need this later on, when doing mobile optimizations, for different pizel density devices
     }
   };
-  var map = new Map(canvasContainerElement, mapOptions ) ;
+  var mapOptions = {
+    refreshEventListeners: true
+  };
+  var map = new Map(canvasContainerElement, mapProperties, mapOptions ) ;
   var dialog_selection = document.getElementById("selectionDialog");
   var defaultUI = new UI_default(dialog_selection, map);
   /* Initialize UI as singleton */

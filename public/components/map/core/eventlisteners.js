@@ -21,20 +21,25 @@ var singletonScope;
  *   zoom: function() {}
  * }
  */
-export let eventListeners = function eventListenerModule(canvasElement = document.getElementsByTagName("canvas")[0]) {
+export let eventListeners = function eventListenerModule(canvasElement = document.getElementsByTagName("canvas")[0], refresh = false) {
   var CBs = {};
-  var hamster = new Hamster(canvasElement);
-  var hammer;
+  var hammer, hamster;
+
+  if (refresh) {
+    singletonScope = undefined;
+  }
 
   if (singletonScope) {
     return singletonScope;
   }
-  /********** Required **********/
+
   if (!canvasElement) {
     throw new Error("eventlisteners initialization require map callbacks and canvas element as arguments");
   }
 
   hammer = new Hammer.Manager(canvasElement);
+  hamster = new Hamster(canvasElement);
+  /********** Required **********/
 
   singletonScope = {
     states: {}

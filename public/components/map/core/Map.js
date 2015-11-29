@@ -38,7 +38,7 @@ export class Map {
    * { bounds: { width: Number, height: Number}, renderer: {} }
    * @return Map instance
    */
-  constructor(canvasContainer = null, props = { mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: {} }) {
+  constructor(canvasContainer = null, props = { mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true } }) {
     var { mapSize, startCoord, bounds, options } = props;
 
     if (!canvasContainer) {
@@ -73,7 +73,7 @@ export class Map {
     /* InteractionManager is responsible for finding what objects are under certain coordinates. E.g. when selecting */
     let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
     this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
-    eventlisteners = eventListeners(this.canvas);
+    eventlisteners = eventListeners(this.canvas, true);
 
     /* needed for fullsize canvas in PIXI */
     _renderer.view.style.position = "absolute";

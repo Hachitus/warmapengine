@@ -1,4 +1,4 @@
-/* global System */
+/* global System, Q */
 
 'use strict';
 
@@ -28,6 +28,7 @@ import { eventListeners } from './eventlisteners';
 import { ObjectManager } from './ObjectManager';
 
 var _drawMapOnNextTick = false;
+var isMapReadyPromises = [];
 var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer;
 
 export class Map {
@@ -119,7 +120,16 @@ export class Map {
     _defaultTick(this, PIXI.ticker.shared);
     tickCB && this.customTickOn(tickCB);
 
+    isMapReadyPromises = allPromises;
+
     return allPromises;
+  }
+  /**
+   * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
+   * @return the current map instance
+   * */
+  whenReady() {
+    return Q.all(isMapReadyPromises);
   }
   /**
    * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.

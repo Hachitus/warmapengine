@@ -1,7 +1,11 @@
-/* global System, alert, console */
+/* global System, alert, console, Q */
 
 'use strict';
 /* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
+
+/**
+ * @requir Q for promises
+ */
 
 import { createMap } from '/components/factories/horizontalHexaFactory';
 
@@ -60,6 +64,7 @@ function initMap(mapData, options) {
   var globalMap = {
     data: {}
   };
+  var promise = Q.defer();
   var preload;
 
   /* Determines how much stuff we show on screen for stress testing */
@@ -83,7 +88,9 @@ function initMap(mapData, options) {
     console.log("progressing" + progress);
   });
 
-  preload.resolveOnComplete().then(onComplete);
+  preload.resolveOnComplete().then(onComplete).then( () => {
+    promise.resolve(true);
+  });
 
   function onComplete() {
     var promises = [];
@@ -94,7 +101,7 @@ function initMap(mapData, options) {
 
     promises = map.init( gameData.pluginsToActivate.map, mapData.startPoint );
 
-    Promise.all(promises).then( () => {
+    map.whenReady.then( () => {
       document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
       if (options.cache) {
         map.cacheMap(true);

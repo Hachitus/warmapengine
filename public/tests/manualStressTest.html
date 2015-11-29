@@ -28,8 +28,8 @@
     Canvas not supported!
   </canvas>
 
-  <div id="testNotification" style="position:fixed; bottom:100px; left:50px;font-size: 20px;">
-    START THE TESTS BY SELECTING VALUES BELOW AND CLICKING START!
+  <div id="testNotification" style="position:fixed; bottom:100px; left:50px;font-size: 20px;color:red;">
+    WAIT FOR THE MODULES TO LOAD!
   </div>
   <div style="position:fixed; bottom:0px; left:0px;">
     <div style="display: inline-block;">
@@ -52,26 +52,33 @@
     MODAL WINDOW
   </div>
 
-  <!-- include spec files here... -->
   <script>
-		System.import('/tests/manual/stressTest.es6').then(function() {
-      var mapsizeElement = document.getElementById("hexaTiles");
-      var cacheElement = document.getElementById("cache");
-      var currentMapSize, mapData;
-      var cacheMap = true;
+    (function () {
+      /* global System */
 
-      document.getElementById("changeValues").addEventListener("click", function() {
-        document.getElementById("testNotification").style.display = "none";
-        currentMapSize = mapsizeElement.value;
-        cacheMap = cacheElement.checked;
+      'use strict';
 
-        mapData = window.getMapData(currentMapSize);
-        window.map = window.initMap(mapData, {
-          mapsize: currentMapSize,
-          cache: cacheMap
+  		System.import('/tests/manual/stressTest.es6').then(function() {
+        var mapsizeElement = document.getElementById("hexaTiles");
+        var cacheElement = document.getElementById("cache");
+        var currentMapSize, mapData;
+        var cacheMap = true;
+
+        document.getElementById("testNotification").textContent = "START THE TESTS BY SELECTING VALUES BELOW AND CLICKING START!";
+
+        document.getElementById("changeValues").addEventListener("click", function() {
+          document.getElementById("testNotification").style.display = "none";
+          currentMapSize = mapsizeElement.value;
+          cacheMap = cacheElement.checked;
+
+          mapData = window.getMapData(currentMapSize);
+          window.map = window.initMap(mapData, {
+            mapsize: currentMapSize,
+            cache: cacheMap
+          });
         });
-      });
-		});
+  		});
+    })();
 	</script>
 </body>
 </html>

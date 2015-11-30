@@ -135,8 +135,6 @@ export var resizeUtils = ( function resizeUtils() {
 })();
 export var environmentDetection = (function environmentDetection() {
   return {
-    isMobile,
-    isMobile_detectUserAgent,
     getPixelRatio
   };
 
@@ -169,6 +167,7 @@ export var environmentDetection = (function environmentDetection() {
     return dpr / bsr;
   }
 })();
+
 export var general = (function () {
   var PIXEL_EPSILON = 0.01;
 
@@ -176,8 +175,7 @@ export var general = (function () {
   *********** API ***********
   **************************/
   return {
-    pixelEpsilonEquality: epsilonEquality,
-    deepCopy
+    pixelEpsilonEquality: epsilonEquality
   };
 
   /**************************
@@ -185,76 +183,5 @@ export var general = (function () {
   **************************/
   function epsilonEquality(x, y) {
     return ( Math.abs(x) - Math.abs(y) ) < PIXEL_EPSILON;
-  }
-
-  /* Credits to: http://stackoverflow.com/questions/122102/what-is-the-most-efficient-way-to-clone-an-object */
-  function deepCopy(src, /* INTERNAL */ _visited) {
-    var i, ret;
-
-    if (src === null || typeof (src) !== 'object') {
-      return src;
-    }
-
-    // Initialize the visited objects array if needed
-    // This is used to detect cyclic references
-    if (_visited === undefined) {
-      _visited = [];
-    }
-    // Otherwise, ensure src has not already been visited
-    else {
-      let len = _visited.length;
-      for (i = 0; i < len; i++) {
-        // If src was already visited, don't try to copy it, just return the reference
-        if (src === _visited[i]) {
-          return src;
-        }
-      }
-    }
-
-    // Add this object to the visited array
-    _visited.push(src);
-
-    //Honor native/custom clone methods
-    if (typeof src.clone === 'function') {
-      return src.clone(true);
-    }
-
-    //Special cases:
-    //Array
-    if (Object.prototype.toString.call(src) === '[object Array]') {
-      //[].slice(0) would soft clone
-      ret = src.slice();
-      i = ret.length || 0;
-      while (i--){
-        ret[i] = deepCopy(ret[i], _visited);
-      }
-      return ret;
-    }
-    //Date
-    if (src instanceof Date) {
-      return new Date(src.getTime());
-    }
-    //RegExp
-    if (src instanceof RegExp) {
-      return new RegExp(src);
-    }
-    //DOM Elements
-    if (src.nodeType && typeof src.cloneNode === 'function') {
-      return src.cloneNode(true);
-    }
-
-    //If we've reached here, we have a regular object, array, or function
-
-    //make sure the returned object has the same prototype as the original
-    var proto = (Object.getPrototypeOf ? Object.getPrototypeOf(src): src.__proto__);
-    if (!proto) {
-      proto = src.constructor.prototype; //this line would probably only be reached by very old browsers
-    }
-    ret = Object.create(proto);
-
-    Object.keys(src).forEach(function (key) {
-      ret[key] = deepCopy(src[key], _visited);
-    });
-    return ret;
   }
 })();

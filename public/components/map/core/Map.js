@@ -23,7 +23,7 @@
 
 /* ====== Own module imports ====== */
 import { Map_layer } from '/components/map/core/Map_layer';
-import { resizeUtils, environmentDetection } from './utils/utils';
+import { resizeUtils } from './utils/utils';
 import { eventListeners } from './eventlisteners';
 import { ObjectManager } from './ObjectManager';
 
@@ -59,7 +59,6 @@ export class Map {
     this.plugins = new Set();
     this.mapSize = mapSize;
     this._mapInMove = false;
-    this.environment = environmentDetection.isMobile() ? "mobile" : "desktop";
 
     /* These are the 2 topmost layers on the map:
      * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
@@ -307,9 +306,6 @@ export class Map {
 
     return objects;
   }
-  setEnvironment(env = "desktop") {
-    this.environment = env;
-  }
   /**
    * @return { x: Number, y: Number }, current coordinates for the moved map
    * */
@@ -321,9 +317,6 @@ export class Map {
   }
   getCanvas() {
     return this.canvas;
-  }
-  getEnvironment() {
-    return this.environment;
   }
   getZoomLayer() {
     return _staticLayer;

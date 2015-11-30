@@ -1,23 +1,19 @@
-/* global alert, console, Q */
+/* global console, Q */
 
 'use strict';
 /* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
 
 /**
- * @requir Q for promises
+ * @requie Q for promises
  */
 
 import { createMap } from '/components/factories/horizontalHexaFactory';
+import { polyfills } from '/components/utilities/polyfills';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';
 import { typeData } from '/tests/data/typeData';
 import { Preload } from '/components/preloading/preloading';
-
-import { environmentDetection } from '../../components/map/core/utils/utils';
-if (typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgent()) {
-  alert("You seem to be using mobile device, I suggest you use mobile site for tests, since this won't work for you");
-}
 
 /** ===== CONFIGS ===== */
 /* Note the y is 3/4 of the actual height */
@@ -30,6 +26,9 @@ const HEXAGON_DISTANCES = {
 var mapsize;
 window.getMapData = getMapData;
 window.initMap = initMap;
+
+/* REQUIRED FOR IE11 */
+polyfills.arrayFind();
 
 /**************************************
 ****** GENERATE RANDOM MAP DATA *******
@@ -84,9 +83,14 @@ function initMap(mapData, options) {
     console.log("progressing" + progress);
   });
 
-  preload.resolveOnComplete().then(onComplete).then( () => {
-    promise.resolve(true);
-  });
+  preload.resolveOnComplete()
+    .then(onComplete)
+    .then( () => {
+      promise.resolve(true);
+    })
+    .catch(function (e) {
+      console.log("Map stressTest error: ", e);
+    });
 
   function onComplete() {
     var promises = [];

@@ -8,8 +8,9 @@
  */
 
 /** ===== OWN imports ===== */
-import { resizeUtils } from "../utils/utils.js";
-import { eventListeners as eventListenerMod } from '../eventlisteners';
+import { resizeUtils } from "/components/map/core/utils/utils";
+import { environmentDetection } from "/components/utilities/environment";
+import { eventListeners as eventListenerMod } from '/components/map/core/eventlisteners';
 
 var _pluginName = "map_zoom";
 
@@ -53,7 +54,7 @@ export let map_zoom = (function map_zoom() {
     map.setPrototype("setZoomLimits", setZoomLimits);
     map.setPrototype("setZoomModifier", setZoomModifier);
 
-    if (map.getEnvironment() === "mobile") {
+    if (environmentDetection.isMobile() === "mobile" || environmentDetection.isMobile_detectUserAgent()) {
       eventListenerCB = _setupZoomEvent_mobile(map);
     } else {
       eventListenerCB = _setupZoomEvent(map);

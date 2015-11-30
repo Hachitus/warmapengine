@@ -24,9 +24,11 @@
 </head>
 
 <body>
-  <canvas id="mapCanvas" height="600" width="1200">
-    Canvas not supported!
-  </canvas>
+  <div id="mapCanvasContainer" height="600" width="1200">
+    <canvas id="mapCanvas" height="600" width="1200">
+      Canvas not supported!
+    </canvas>
+  </div>
 
   <button id="testFullscreen" style="position:fixed; bottom:0px; left:0px;">
     fullscreen
@@ -38,9 +40,21 @@
 
   <!-- include spec files here... -->
   <script>
-		System.import('/tests/manual/mapTest.es6').then(function() {
-			window.map = window.initMap();
-		});
+    (function () {
+      /* global System, console */
+      'use strict';
+
+  		System.import('/tests/manual/mapTest.es6')
+        .catch(scriptErrors => {
+          scriptErrors.forEach(function(error) {
+            console.error(error);
+          });
+        }).then(function() {
+    			window.map = window.initMap( {
+            canvasContainer: document.getElementById("mapCanvasContainer")
+          });
+  		});
+    })();
 	</script>
 </body>
 </html>

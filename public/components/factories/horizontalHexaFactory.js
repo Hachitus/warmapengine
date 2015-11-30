@@ -55,11 +55,10 @@ export function createMap(canvasContainerElement, datas) {
       height: windowSize.height
     },
     options: {
-      resolution: pixelRatio,
+      resolution: pixelRatio, // We might need this later on, when doing mobile optimizations, for different pizel density devices
       autoResize: true,
       transparent: true,
       antialias: false // TEST. Only should work in chrome atm.?
-      //resolution: changincVariable - We might need this later on, when doing mobile optimizations, for different pizel density devices
     }
   };
   var mapOptions = {

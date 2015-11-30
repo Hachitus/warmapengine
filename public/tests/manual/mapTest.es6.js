@@ -1,10 +1,9 @@
-/* global alert */
-
 'use strict';
 
 /* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
 
 import { createMap } from '/components/factories/horizontalHexaFactory';
+import { polyfills } from '/components/utilities/polyfills';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';
@@ -12,13 +11,11 @@ import { typeData } from '/tests/data/typeData';
 import { mapData } from '/tests/data/mapData';
 import { Preload } from '/components/preloading/preloading';
 
-import { environmentDetection } from '/components/map/core/utils/utils';
-if (typeof Hammer === 'undefined' && environmentDetection.isMobile_detectUserAgent()) {
-  alert("You seem to be using mobile device, I suggest you use mobile site for tests, since this won't work for you");
-}
+/* REQUIRED FOR IE11 */
+polyfills.arrayFind();
 
-window.initMap = function () {
-  var canvasElement = document.getElementById("mapCanvas");
+window.initMap = function (options) {
+  var canvasElement = options.canvasContainer;
   var map = {};
   var globalMap = {
     data: {}
@@ -36,7 +33,11 @@ window.initMap = function () {
     console.log("progressing" + progress);
   });
 
-  preload.resolveOnComplete().then(onComplete);
+  preload.resolveOnComplete()
+    .then(onComplete)
+    .catch(function (e) {
+      console.log("Map stressTest error: ", e);
+    });
 
   function onComplete() {
     var promises = [];

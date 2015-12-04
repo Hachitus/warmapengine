@@ -87,11 +87,6 @@ export function createMap(canvasContainerElement, datas) {
       thisLayer = new LayerConstructor(layerOptions);
       map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
-        x: 0,
-        y: 0,
-        width: map.getSize().x,
-        height: map.getSize().y
-      }, {
         objects: 10,
         levels: 6
       });

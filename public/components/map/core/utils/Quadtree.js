@@ -116,6 +116,7 @@ export class Quadtree {
 
 /**
  * [_creteQuadtreeObject description]
+ *
  * @param  {x:Number, y:Number} coords          global coordinates on canvas
  * @param  {width:Number, height:Number} size   You can use bounds for the object
  * if you wish, instead of point / coordinates

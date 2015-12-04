@@ -38,8 +38,8 @@ export class Map {
    * { bounds: { width: Number, height: Number}, renderer: {} }
    * @return Map instance
    */
-  constructor(canvasContainer = null, props = { mapSize: { x: 0, y: 0 }, startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true } }) {
-    var { mapSize, startCoord, bounds, options } = props;
+  constructor(canvasContainer = null, props = { startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true } }) {
+    var { startCoord, bounds, options } = props;
 
     if (!canvasContainer) {
       throw new Error(this.constructor.name + " needs canvasContainer!");
@@ -57,7 +57,6 @@ export class Map {
 
     this.canvas = _renderer.view;
     this.plugins = new Set();
-    this.mapSize = mapSize;
     this._mapInMove = false;
 
     /* These are the 2 topmost layers on the map:
@@ -335,9 +334,6 @@ export class Map {
   }
   getStage() {
     return _staticLayer;
-  }
-  getSize() {
-    return this.mapSize;
   }
   /*************************************
    ******* APIS THROUGH PLUGINS ********

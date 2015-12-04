@@ -78,7 +78,8 @@ export class UI_default extends UI_templateBase {
         });
 
         this.showModal(this.modal, cssClasses);
-        _highlightSelectedObject(hightlightableObjects[0], UILayer, this.map);
+        // _highlightSelectedObject(hightlightableObjects[0], UILayer);
+        this.highlightSelectedObject(hightlightableObjects[0]);
         updateCB();
 
         console.log(hightlightableObjects);
@@ -100,15 +101,27 @@ export class UI_default extends UI_templateBase {
    * @param  {Object} objects       Objects that have been selected. @todo: Should add object format to this documentation
    */
   highlightSelectedObject(object) {
+    var highlightableObject;
+
     createHighlight = setupCreateHighlight(this.map);
 
     if (object.highlightable) {
-      return _highlightSelectedObject(object, this.map.getMovableLayer());
+      highlightableObject = _highlightSelectedObject(object, this.map.getMovableLayer());
+
+      var shadow  = new PIXI.filters.DropShadowFilter();
+      shadow.color  = 0x0000;
+      shadow.distance = 5;
+      shadow.alpha  = 0.55;
+      shadow.angle  = 45;
+      shadow.blur   = 5;
+
+      highlightableObject.filters = [shadow];
+
+      return highlightableObject;
     }
   }
   showUnitMovement() {}
   init() {}
-
 
 }
 
@@ -134,6 +147,8 @@ function _highlightSelectedObject(object, movableLayer) {
   jee.y -= object.height * object.anchor.y;
 
   createHighlight(clonedObject, movableLayer, { coords: jee });
+
+  return clonedObject;
 }
 function _filterObjectsForHighlighting(objects) {
   var newObjects = objects.filter(obj => {

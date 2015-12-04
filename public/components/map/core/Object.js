@@ -26,8 +26,12 @@ export class Object_sprite extends PIXI.Sprite {
     /* Set data for the object next */
     this.data = data;
     this.currentFrame = currentFrame;
-    /* Execute initial draw function */
-    this.position.set(coord.x,  coord.y);
+    /* We need to round the numbers. If there are decimal values, the graphics will get blurry */
+    let exactCoords = {
+      x: Math.round(coord.x),
+      y: Math.round(coord.y)
+    };
+    this.position.set(exactCoords.x,  exactCoords.y);
     this.setupShadow(throwShadowOptions);
 
     this.tickEnabled = false;

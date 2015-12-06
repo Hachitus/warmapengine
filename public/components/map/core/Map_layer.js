@@ -17,17 +17,16 @@ export class Map_layer extends PIXI.Container {
    * otherwise too!
    * @param {x: Number, y: Number} 	coord starting coords of layer. Relative to parent map layer.
    * @param {PIXI renderer}			renderer Not really needed by the super class, but used elsewhere.
-   * @param {Number} 				subContainers	size is the maximum pixels width and height of one subcontainer.
+   *
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, subContainerConfig: { size: 0 }, movable: false } ) {
-    var { name, coord, renderer, subContainerConfig, movable } = options;
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false } ) {
+    var { name, coord, renderer, movable } = options;
 
     super();
 
     Object.assign(this, coord);
-    this.subcontainerTypeConstructor = PIXI.Container.bind(PIXI);
     this.renderer = renderer;
     this._cacheEnabled = true;
     this.name = "" + name; // Used otherwise too, but good for debugging. Shows up in toString
@@ -35,9 +34,7 @@ export class Map_layer extends PIXI.Container {
     this.movable = movable;
     this.zoomable = false;
     this.preventSelection = false;
-    this.subContainerConfig = subContainerConfig;
     this.oldAddChild = super.addChild.bind(this);
-    this.subContainersCached = null;
   }
 }
 Object.assign(Map_layer.prototype, _baseContainerClass);
@@ -65,7 +62,6 @@ export class Map_spriteLayer extends PIXI.Container {
     this.zoomable = false;
     this.preventSelection = false;
     this.oldAddChild = super.addChild.bind(this);
-    this.subContainersCached = null;
   }
 	/**
    * If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
@@ -95,17 +91,16 @@ export class Map_bigSpriteLayer extends PIXI.Container {
    * otherwise too!
    * @param {x: Number, y: Number}  coord starting coords of layer. Relative to parent map layer.
    * @param {PIXI renderer}     renderer Not really needed by the super class, but used elsewhere.
-   * @param {Number}        subContainers size is the maximum pixels width and height of one subcontainer.
+   *
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, subContainerConfig: { size: 0 }, movable: false } ) {
-    var { name, coord, renderer, subContainerConfig, movable } = options;
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false } ) {
+    var { name, coord, renderer, movable } = options;
 
     super();
 
     Object.assign(this, coord);
-    this.subcontainerTypeConstructor = PIXI.Container.bind(PIXI);
     this.renderer = renderer;
     this._cacheEnabled = true;
     this.name = "" + name; // For debugging. Shows up in toString
@@ -113,9 +108,7 @@ export class Map_bigSpriteLayer extends PIXI.Container {
     this.movable = movable;
     this.zoomable = false;
     this.preventSelection = false;
-    this.subContainerConfig = subContainerConfig;
     this.oldAddChild = super.addChild.bind(this);
-    this.subContainersCached = null;
   }
 	/**
    * If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
@@ -138,7 +131,6 @@ Object.assign(Map_bigSpriteLayer.prototype, _baseContainerClass);
 
 function _getBaseContainerClass() {
   return {
-    hasSubcontainers,
     addChild,
     setCache,
     getCurrentCache,
@@ -149,45 +141,18 @@ function _getBaseContainerClass() {
     getScale,
     getUIObjects,
     emptyUIObjects,
-    addUIObjects,
-    createNewSubcontainer,
-    getCorrectSubcontainer
+    addUIObjects
   };
 
-  /**
-	 * @param {PIXI.DisplayObject} displayObject
-	 */
-  function hasSubcontainers() {
-    return (this.subContainerConfig && this.subContainerConfig.size);
-  }
   function addChild(displayObject) {
-    if (this.hasSubcontainers()) {
-      let {x, y} = displayObject.position;
-      let correctSubContainer = this.getCorrectSubcontainer({ x, y });
-
-      if (!correctSubContainer) {
-        throw new Error("getCorrectSubcontainer did not find correct subcontainer!");
-      }
-
-      correctSubContainer.addChild(displayObject);
-    } else {
-      this.oldAddChild(displayObject);
-    }
+    this.oldAddChild(displayObject);
 
     return displayObject;
   }
   function setCache(status) {
     var toCacheStatus = status ? true : false;
 
-    if (this.hasSubcontainers()) {
-      this.subContainers.forEach(sub => {
-        sub.cacheAsBitmap = toCacheStatus;
-        this.subContainersCached = toCacheStatus;
-      });
-    } else {
-      this.cacheAsBitmap = toCacheStatus;
-      this.subContainersCached = null;
-    }
+    this.cacheAsBitmap = toCacheStatus;
 
     return toCacheStatus;
   }
@@ -285,58 +250,7 @@ function _getBaseContainerClass() {
 
     return _UIObjects;
   }
-
-  function createNewSubcontainer(coord = {x: 0, y: 0}) {
-    let newSubcontainer;
-
-    newSubcontainer = new this.subcontainerTypeConstructor();
-    newSubcontainer.x = this.subContainerConfig.size * Math.floor(coord.x / this.subContainerConfig.size);
-    newSubcontainer.y = this.subContainerConfig.size * Math.floor(coord.y / this.subContainerConfig.size);
-
-    this.oldAddChild(newSubcontainer);
-
-    return newSubcontainer;
-  }
-  function getCorrectSubcontainer(coord) {
-    var foundContainer = [];
-    this.subContainers = this.subContainers || [];
-
-    foundContainer = this.subContainers.find(sub => {
-      if (sub.x <= coord.x &&
-      sub.y <= coord.y &&
-      sub.x + this.subContainerConfig.size > coord.x &&
-      sub.y + this.subContainerConfig.size > coord.y) {
-        return sub;
-      }
-    });
-
-    if (!foundContainer) {
-      foundContainer = this.createNewSubcontainer(coord);
-      this.subContainers.push(foundContainer);
-    }
-
-    return foundContainer;
-  }
   function getCacheEnabled() {
     return this._cacheEnabled;
   }
 }
-
-// function _setSubContainers(parentSize, subsize) {
-//   var counts = {
-//     x: Math.floor(parentSize.x / subsize),
-//     y: Math.floor(parentSize.y / subsize)
-//   };
-//   var subContainers = [];
-
-//   for (let x = 0; counts.x < x; x++) {
-//     for (let y = 0; counts.y < y; y++) {
-//       let newContainer = new PIXI.Container();
-//       newContainer.x = x;
-//       newContainer.y = y;
-//       subContainers.push(newContainer);
-//     }
-//   }
-
-//   return subContainers;
-// }

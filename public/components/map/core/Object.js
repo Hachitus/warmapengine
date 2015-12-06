@@ -62,6 +62,16 @@ export class Object_sprite extends PIXI.Sprite {
 
     return this.innerDraw(x, y);
   }
+  getGraphicalArea(getGlobal) {
+    var coordinates = getGlobal ? this.toGlobal(new PIXI.Point(0,0)) : this;
+
+    return {
+      x: coordinates.x + ( this.width * this.anchor.x ),
+      y: coordinates.y + ( this.height * this.anchor.y ),
+      width: this.width,
+      height: this.height
+    };
+  }
   setupShadow(options = {color: "#000000", offsetX: 5, offsetY: 5, blur: 10} ) {
     if (this.throwShadow === true) {
       console.warn("NO SHADOW FUNCTION SET!")

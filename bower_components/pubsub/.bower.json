@@ -1,0 +1,26 @@
+{
+  "name": "pubsub",
+  "homepage": "https://github.com/softwarespot/PubSub",
+  "description": "A publish-subscribe messaging pattern for JavaScript",
+  "main": "dist/pubsub.js",
+  "keywords": [
+    "pubsub",
+    "publisher",
+    "subscriber"
+  ],
+  "license": "MIT",
+  "ignore": [],
+  "dependencies": {},
+  "devDependencies": {},
+  "version": "2.2.4",
+  "_release": "2.2.4",
+  "_resolution": {
+    "type": "version",
+    "tag": "v2.2.4",
+    "commit": "25dc644d289c7130927ffb585434a8f0a9f06744"
+  },
+  "_source": "git://github.com/softwarespot/PubSub.git",
+  "_target": "~2.2.4",
+  "_originalSource": "pubsub-module",
+  "_direct": true
+}

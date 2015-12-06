@@ -19,6 +19,7 @@ import { Object_unit } from "/components/map/extensions/hexagons/object/Object_u
 import { resizeUtils, environmentDetection } from "/components/map/core/utils/utils";
 import { UI } from "/components/map/core/UI";
 import { UI_default } from "/components/map/UIs/default/default.js";
+import { managingChildrenOnMap } from "/components/map/extensions/dynamicMaps/managingChildrenOnMap/managingChildrenOnMap.js";
 
 /***** CONFIG. Set correct classes to use *****/
 var functionsInObj = {
@@ -67,6 +68,7 @@ export function createMap(canvasContainerElement, datas) {
   var map = new Map(canvasContainerElement, mapProperties, mapOptions ) ;
   var dialog_selection = document.getElementById("selectionDialog");
   var defaultUI = new UI_default(dialog_selection, map);
+
   /* Initialize UI as singleton */
   UI(defaultUI, map);
   /* We iterate through the given map data and create objects accordingly */
@@ -80,7 +82,8 @@ export function createMap(canvasContainerElement, datas) {
     var layerGroup = layerData.group;
     var objManager = map.objectManager;
     var LayerConstructor = layers[layerData.type];
-    var layerOptions = { name: layerData.name, coord: layerData.coord, subContainerConfig: { size: 4096 } };
+    var renderer = map.getRenderer();
+    var layerOptions = { name: layerData.name, coord: layerData.coord, drawOutsideViewport: { x: renderer.width, y: renderer.height } };
     var thisLayer;
 
     try {
@@ -131,7 +134,11 @@ export function createMap(canvasContainerElement, datas) {
                 newObject
             );
 
-            thisLayer.addChild( newObject );
+            var globalCoordinates = thisLayer.toGlobal(newObject.getGraphicalArea());
+            managingChildrenOnMap.add(newObject, globalCoordinates, thisLayer, map);
+            // if (newObject.x < 2000 && newObject.y < 1500) {
+            //   thisLayer.addChild( newObject );
+            // }
           } catch (e) {
             console.log(e);
           }
@@ -142,6 +149,9 @@ export function createMap(canvasContainerElement, datas) {
     }
   });
 
+  managingChildrenOnMap.startEventListeners(function () {
+    managingChildrenOnMap.check(map.getMovableLayer(), map);
+  });
   map.moveMap(mapData.startPoint);
 
   return map;

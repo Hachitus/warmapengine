@@ -26,6 +26,7 @@ import { Map_layer } from '/components/map/core/Map_layer';
 import { resizeUtils } from './utils/utils';
 import { eventListeners } from './eventlisteners';
 import { ObjectManager } from './ObjectManager';
+import { mapEvents } from './mapEvents';
 
 var _drawMapOnNextTick = false;
 var isMapReadyPromises = [];
@@ -160,6 +161,16 @@ export class Map {
 
     return layer;
   }
+  getViewportArea(isLocal = false) {
+    var layer = isLocal ? this.getMovableLayer() : this.getStaticLayer();
+
+    return {
+      x: layer.x,
+      y: layer.y,
+      width: _renderer.width,
+      height: _renderer.height
+    };
+  }
   /**
    * @param {Map_layer} layer - the layer object to be removed
    * */
@@ -190,6 +201,7 @@ export class Map {
       y: coord.y / _staticLayer.getScale()
     };
     _movableLayer.move(realCoordinates);
+    mapEvents.publish("mapMoved");
     this.drawOnNextTick();
 
     return this;
@@ -276,6 +288,8 @@ export class Map {
       boundResizer = _resizeCanvas.bind(this);
     }
 
+    mapEvents.publish("mapResized");
+
     return eventlisteners.toggleFullSizeListener(boundResizer);
   }
   /**
@@ -335,6 +349,9 @@ export class Map {
   getStage() {
     return _staticLayer;
   }
+  getStaticLayer() {
+    return _staticLayer;
+  }
   /*************************************
    ******* APIS THROUGH PLUGINS ********
    ************************************/
@@ -387,6 +404,7 @@ function _resizeCanvas() {
 
   _renderer.autoResize = true;
   _renderer.resize(windowSize.x, windowSize.y);
+  mapEvents.publish("mapResized");
   this.drawOnNextTick();
 }
 /**
@@ -394,5 +412,6 @@ function _resizeCanvas() {
  */
 function setFullScreen() {
   resizeUtils.toggleFullScreen();
+  mapEvents.publish("mapResized");
   _resizeCanvas.call(this);
 }

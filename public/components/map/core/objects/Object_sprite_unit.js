@@ -1,7 +1,14 @@
 'use strict';
 
+/***********************
+******** IMPORT ********
+***********************/
 import { Object_sprite } from '/components/map/core/Object';
+import { graphics } from '/components/map/core/utils/effects';
 
+/***********************
+********* API **********
+***********************/
 /**
  * Map unit like infantry or worker, usually something with actions or movable. Normally, but not necessarily, these are
  * inherited, depending on the map type. For example you might want to add some click area for these
@@ -41,3 +48,4 @@ export class Object_sprite_unit extends Object_sprite {
     this.actions[type].push(cb);
   }
 }
+Object_sprite_unit.prototype.dropShadow = graphics.dropShadow;

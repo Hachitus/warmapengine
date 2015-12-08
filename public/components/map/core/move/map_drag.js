@@ -7,13 +7,23 @@
  * @require Mobile part requires Hammer.js
  * */
 
+/***********************
+******** IMPORT ********
+***********************/
 import { eventListeners as eventListenerMod } from '../eventlisteners';
 import { mouseUtils } from '../utils/utils';
 
+/***********************
+********* API **********
+***********************/
 /* pluginName is always needed as export! */
 export var pluginName = "map_drag";
+export var map_drag = setupMap_drag();
 
-export var map_drag = (function map_drag() {
+/***********************
+******** PUBLIC ********
+***********************/
+function setupMap_drag() {
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
   var eventListenerCB;
@@ -182,4 +192,4 @@ export var map_drag = (function map_drag() {
       map.mapMoved(false);
     }, 1);
   }
-})();
+}

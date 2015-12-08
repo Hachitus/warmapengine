@@ -1,7 +1,13 @@
 'use strict';
 
+/***********************
+******** IMPORT ********
+***********************/
 import { Quadtree } from './utils/Quadtree';
 
+/***********************
+********* API **********
+***********************/
 /**
  * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or
  * when objects or areas collide with each other.

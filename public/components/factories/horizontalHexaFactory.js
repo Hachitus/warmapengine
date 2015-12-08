@@ -2,16 +2,20 @@
 
 'use strict';
 
-/** Factory where we construct a horizontal hexagon map for test and development purposes
+/**
+ * Factory where we construct a horizontal hexagon map for test and development purposes
  *
  * @require createjs framework in global namespace
  * @require canvas HTML5-element to work. This is more for node.js
+ *
  * @todo Add documentation and refactor (maybe modularize / functionalize) the actual logic
  * */
 
 /* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol or something missing: http://babeljs.io/docs/usage/polyfill/ */
 
-/* ====== Own module imports ====== */
+/***********************
+******* IMPORTS ********
+***********************/
 import { Map } from "/components/map/core/Map";
 import { Map_layer, Map_spriteLayer, Map_bigSpriteLayer } from "/components/map/core/Map_layer";
 import { Object_terrain } from "/components/map/extensions/hexagons/object/Object_terrain_hexa";
@@ -21,7 +25,9 @@ import { UI } from "/components/map/core/UI";
 import { UI_default } from "/components/map/UIs/default/default.js";
 import { managingChildrenOnMap } from "/components/map/extensions/dynamicMaps/managingChildrenOnMap/managingChildrenOnMap.js";
 
-/***** CONFIG. Set correct classes to use *****/
+/***********************
+****** VARIABLES *******
+***********************/
 var functionsInObj = {
   Object_terrain,
   Object_unit
@@ -32,7 +38,14 @@ var layers = {
   Map_bigSpriteLayer
 };
 
-/* ===== EXPORT ===== */
+/***********************
+********* API **********
+***********************/
+export var createMap = createMap;
+
+/***********************
+******* PUBLIC *********
+***********************/
 /**
  * @param {DOMElement Canvas} canvasElement the canvas element for the map
  * @param {Object} datas      Object with mapDatas: { map, type, game }
@@ -40,8 +53,7 @@ var layers = {
  *                            game: More general game data (like turn number, map size etc.)
  *                            type: Type data such as different unit types and their graphics (tank, soldier etc.)
 */
-
-export function createMap(canvasContainerElement, datas) {
+function createMap(canvasContainerElement, datas) {
   console.log("============== Map factory started =============");
   var mapData = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
   var typeData = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;

@@ -1,9 +1,18 @@
 'use strict';
 
+/***********************
+******** IMPORT ********
+***********************/
 import { createCSSRules } from '/components/map/UIs/default/layout/CSSRules';
 
+/***********************
+****** VARIABLES *******
+***********************/
 var styleSheetElement, allCSSClasses;
 
+/***********************
+********* API **********
+***********************/
 export class UI_templateBase {
   constructor(CSSClasses) {
     allCSSClasses = CSSClasses;

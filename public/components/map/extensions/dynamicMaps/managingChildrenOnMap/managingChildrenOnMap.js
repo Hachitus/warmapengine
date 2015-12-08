@@ -1,8 +1,29 @@
 'use strict';
 
+/**
+ * This module manages visibility of the objects, based on are they visible to the player (on the canvas / webgl) or
+ * outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise.
+ *
+ * @todo  I think this can be improved to be more efficient. Now we just basically iterate through the whole set of
+ * objects on the map. Outside or inside the viewport. We could at least iterate through the objects, based on
+ * coordinates, so we don't iterate and test ALL the objects. Or then some other methods. One option might even be to
+ * use typedArrays to form a more efficient array?
+ */
+
+/***********************
+******* IMPORTS ********
+***********************/
 import { mapEvents } from '/components/map/core/mapEvents';
 
-export var managingChildrenOnMap = (function () {
+/***********************
+********* API **********
+***********************/
+export var managingChildrenOnMap = setupManagingChildrenOnMap();
+
+/***********************
+******* PUBLIC *********
+***********************/
+function setupManagingChildrenOnMap () {
   var childrenOutsideViewport = new Set();
   var childrenInsideViewport = new Set();
 
@@ -70,4 +91,4 @@ export var managingChildrenOnMap = (function () {
 
     return isIt;
   }
-})();
+}

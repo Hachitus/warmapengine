@@ -4,7 +4,15 @@
  * These are utils for manipulating the data, that our classes and functions use.
  */
 
-export var mapObjects = ( function mapObjects() {
+/***********************
+********* API **********
+***********************/
+export var mapObjects = setupMapObjects();
+
+/***********************
+******** PUBLIC ********
+***********************/
+function setupMapObjects() {
   /***********************
   ********* API **********
   ***********************/
@@ -43,4 +51,4 @@ export var mapObjects = ( function mapObjects() {
 
     return merged.concat.apply(merged, objects);
   }
-})();
+}

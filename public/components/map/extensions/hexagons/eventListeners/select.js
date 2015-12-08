@@ -7,17 +7,28 @@
  * @require Hammer.js. Some events are done with Hammer.js, so we need it to handle those events correctly
  */
 
+/***********************
+******* IMPORTS ********
+***********************/
 import { eventListeners as eventListenerMod } from '/components/map/core/eventlisteners';
 import { UI } from '/components/map/core/UI';
 import { mouseUtils } from '/components/map/core/utils/utils';
 import { mapObjects } from '/components/map/core/utils/dataManipulation';
 
+/***********************
+********* API **********
+***********************/
+export var setupHexagonClick = _setupHexagonClick;
+
+/***********************
+******* PUBLIC *********
+***********************/
 /**
  * Curries the detection of clicking on the map and selecting the correct hexagon area.
  * @param  {Map} map      The currently use Map instance
  * @return {[type]}       -
  */
-export function setupHexagonClick(map) {
+function _setupHexagonClick(map) {
   var eventlisteners, ui;
 
   /********** Required **********/

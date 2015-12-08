@@ -1,7 +1,13 @@
 'use strict';
 
+/***********************
+******** IMPORT ********
+***********************/
 import { Object_sprite } from '/components/map/core/Object';
 
+/***********************
+********* API **********
+***********************/
 /**
  * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
  * inherited, depending on the map type. For example you might want to add some click area for these

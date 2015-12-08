@@ -10,9 +10,19 @@
  * @require Hamster.js for good cross-browser (desktop) mousewheel events
  */
 
+/***********************
+****** VARIABLES *******
+***********************/
 var singletonScope;
 
-/* ===== EXPORT ===== */
+/***********************
+********* API **********
+***********************/
+export { eventListenerModule as eventListeners };
+
+/***********************
+******** PUBLIC ********
+***********************/
 /**
  * eventListeners is a singleton that needs to be initialized with an object, that holds all the callbacks used in this
  * class. I.e.
@@ -21,7 +31,7 @@ var singletonScope;
  *   zoom: function() {}
  * }
  */
-export let eventListeners = function eventListenerModule(canvasElement = document.getElementsByTagName("canvas")[0], refresh = false) {
+function eventListenerModule(canvasElement = document.getElementsByTagName("canvas")[0], refresh = false) {
   var CBs = {};
   var hammer, hamster;
 
@@ -144,4 +154,4 @@ export let eventListeners = function eventListenerModule(canvasElement = documen
   };
 
   return singletonScope;
-};
+}

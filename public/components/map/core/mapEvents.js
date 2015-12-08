@@ -1,6 +1,18 @@
 'use strict';
 
-export var mapEvents = (function () {
+/**
+ * This module handles map events. Like informing map movement, object selection and other changes.
+ */
+
+/***********************
+********* API **********
+***********************/
+export var mapEvents = setupMapEvents();
+
+/***********************
+******** PUBLIC ********
+***********************/
+function setupMapEvents () {
   return {
     subscribe,
     publish
@@ -12,4 +24,4 @@ export var mapEvents = (function () {
   function publish(type, data = []) {
     PubSub.publish(type, ...data);
   }
-})();
+};

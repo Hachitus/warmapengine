@@ -11,11 +11,17 @@
  * @todo  should take jQuery away from this, as soon as we refactor the animations and graphics for selections
  * */
 
+/***********************
+******* IMPORT *********
+***********************/
 import { templates } from '/components/map/UIs/default/layout/templates';
 import { createVisibleHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
 import { UI_templateBase } from '/components/map/core/UI_themeBase';
 import { drawShapes } from '/components/map/UIs/default/utils/arrows';
 
+/***********************
+****** VARIABLES *******
+***********************/
 var cssClasses = {
   select: "#dialog_select"
 };
@@ -23,6 +29,9 @@ var fadeAnimation = "slow";
 var $elements = {};
 var createHighlight;
 
+/***********************
+********* API **********
+***********************/
 export class UI_default extends UI_templateBase {
   constructor(modal, map, options = { styles: "#F0F0F0" }) {
     super(cssClasses);
@@ -108,14 +117,7 @@ export class UI_default extends UI_templateBase {
     if (object.highlightable) {
       highlightableObject = _highlightSelectedObject(object, this.map.getMovableLayer());
 
-      var shadow  = new PIXI.filters.DropShadowFilter();
-      shadow.color  = 0x0000;
-      shadow.distance = 5;
-      shadow.alpha  = 0.55;
-      shadow.angle  = 45;
-      shadow.blur   = 5;
-
-      highlightableObject.filters = [shadow];
+      highlightableObject.dropShadow({ color: "0x0000", distance: 5, alpha: 0.55, angle: 45, blur: 5 });
 
       return highlightableObject;
     }
@@ -125,7 +127,9 @@ export class UI_default extends UI_templateBase {
 
 }
 
-/** ====== PRIVATE FUNCTIONS ====== */
+/***********************
+******* PRIVATE ********
+***********************/
 function _get$Element(which) {
   /* Set the jQuery element to collection only once */
   if (!$elements[which]) {
@@ -139,6 +143,7 @@ function _highlightSelectedObject(object, movableLayer) {
   var clonedObject;
 
   clonedObject = object.clone();
+  clonedObject.__proto__ = object.__proto__;
 
   var jee = object.toGlobal(new PIXI.Point(0,0));
   jee = movableLayer.toLocal(jee);

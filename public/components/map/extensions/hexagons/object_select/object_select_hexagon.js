@@ -13,14 +13,26 @@ HOW we do the whole organizational stuff?
 - map_utils_hexagon? -> getHexagonCoordsFromClick(x,y), getObjectsInHexagon(hexagon?)
 */
 
+/***********************
+******* IMPORTS ********
+***********************/
 import { setupHexagonClick } from '/components/map/extensions/hexagons/eventListeners/select';
-import { UI } from '/components/map/core/UI';
 
+/***********************
+****** VARIABLES *******
+***********************/
 var _pluginName = "object_select";
 
+/***********************
+********* API **********
+***********************/
 export var pluginName = _pluginName;
+export var object_select = setupObject_select_hexagon();
 
-export let object_select = (function object_select_hexagon() {
+/***********************
+******* PUBLIC *********
+***********************/
+function setupObject_select_hexagon() {
   var scope = {};
   var map = {};
   scope.pluginName = _pluginName;
@@ -30,43 +42,19 @@ export let object_select = (function object_select_hexagon() {
    */
   scope.init = function(mapObj) {
     map = mapObj;
-    /* We take the top-most stage on the map and add the listener to it */
-    //_createPrototypes(mapObj);
 
     _startClickListener(mapObj);
   };
 
   return scope;
-  /* ====== Private functions ====== */
-  /**
-   * Attached the correct prototypes to map. I do not think we need to override getObjectsUnderPoint for stages.
-   *
-   * @param {Map} map - The Map class object
-   */
-  function _createPrototypes(map) {
-    map.objectManager.hitTest = hitTest;
-  }
+
+  /***********************
+  ******* PRIVATE ********
+  ***********************/
   /**
    * @param {Map} map - The Map class object
    */
   function _startClickListener(map) {
-    var singletonUI = UI();
-
     return setupHexagonClick(map);
   }
-  function hitTest(obj, coords) {
-    obj.updateTransform();
-    //map.getMovableLayer().updateTransform();
-    //coords = map.getMovableLayer().toLocal(coords);
-    var isHit = this.hitDetector.processInteractive(
-      new PIXI.Point(coords.x, coords.y),
-      obj,
-      function(parent, hits) {
-        console.log("Shouldn't get here, the object should be non-interactive");
-      },
-      true,
-      true);
-
-    return isHit;
-  }
-})();
+}

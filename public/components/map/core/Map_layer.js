@@ -2,15 +2,21 @@
 
 /**
  * @require the PIXI framework in global namespace
+ *
  * @todo I don't think this class should be done in the new class-word, since it is much more efficient with normal
  * prototypal inheritance way.
  * */
 
+/***********************
+****** VARIABLES *******
+***********************/
 var _UIObjects = [];
 /* This will extend the layer-classes prototype */
 var _baseContainerClass = _getBaseContainerClass();
 
-/* ===== EXPORT ===== */
+/***********************
+******** EXPORT ********
+***********************/
 export class Map_layer extends PIXI.Container {
   /**
    * @param {String}				name layer property name, used for identifiying the layer, usefull in debugging, but used also
@@ -129,6 +135,9 @@ export class Map_bigSpriteLayer extends PIXI.Container {
 }
 Object.assign(Map_bigSpriteLayer.prototype, _baseContainerClass);
 
+/***********************
+******* PRIVATE ********
+***********************/
 function _getBaseContainerClass() {
   return {
     addChild,

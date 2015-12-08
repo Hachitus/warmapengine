@@ -12,12 +12,22 @@ import { resizeUtils } from "/components/map/core/utils/utils";
 import { environmentDetection } from "/components/utilities/environment";
 import { eventListeners as eventListenerMod } from '/components/map/core/eventlisteners';
 
+/***********************
+****** VARIABLES *******
+***********************/
 var _pluginName = "map_zoom";
 
+/***********************
+********* API **********
+***********************/
 /* Required by the plugins! */
 export var pluginName = _pluginName;
+export let map_zoom = setupMap_zoom();
 
-export let map_zoom = (function map_zoom() {
+/***********************
+******** PUBLIC ********
+***********************/
+function setupMap_zoom() {
   var eventListenerCB;
   /**
    * Maximum and minimum amount, the player can zoom the map
@@ -232,4 +242,4 @@ export let map_zoom = (function map_zoom() {
 
     return newScale;
   }
-})();
+}

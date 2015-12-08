@@ -6,6 +6,9 @@
  * All of the objects need to have same argumentAPI for creating objects: coords, data, imageData
  */
 
+/***********************
+********* API **********
+***********************/
 export class Object_sprite extends PIXI.Sprite {
   /**
    * @param {PIXI.Point} coords - the coordinate where the object is located at, relative to it's parent
@@ -14,8 +17,8 @@ export class Object_sprite extends PIXI.Sprite {
    * @param {Integer} currFrame - the current frames number. This is basically the initial image, we can change it later
    * for animation or such
    */
-  constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {}, throwShadowOptions: false }) {
-    var { currentFrame, throwShadowOptions } = options;
+  constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {} }) {
+    var { currentFrame } = options;
 
     super(currentFrame);
 
@@ -32,7 +35,6 @@ export class Object_sprite extends PIXI.Sprite {
       y: Math.round(coord.y)
     };
     this.position.set(exactCoords.x,  exactCoords.y);
-    this.setupShadow(throwShadowOptions);
 
     this.tickEnabled = false;
     this.mouseEnabled = false;
@@ -72,11 +74,6 @@ export class Object_sprite extends PIXI.Sprite {
       height: this.height
     };
   }
-  setupShadow(options = {color: "#000000", offsetX: 5, offsetY: 5, blur: 10} ) {
-    if (this.throwShadow === true) {
-      console.warn("NO SHADOW FUNCTION SET!")
-    }
-  }
   localToLocal(x, y, target) {
     var globalCoords = this.toGlobal( { x, y } );
     var targetLocalCoords = target.toLocal( globalCoords );
@@ -101,6 +98,9 @@ export class Object_sprite extends PIXI.Sprite {
   }
 }
 
+/***********************
+******* PRIVATE ********
+***********************/
 function _findFirstParent(thisObj) {
   let parentObj = {};
 

@@ -7,8 +7,14 @@
  * @require Quadtree-js. Though this base library can be changed easily
  */
 
+/***********************
+******** IMPORT ********
+***********************/
 import { Quadtree as QuadMod } from "/assets/lib/quadtree-js/quadtree-js-hitman";
 
+/***********************
+********* API **********
+***********************/
 export class Quadtree {
   /**
    * @param {Object} options    options for the QuadModule
@@ -114,6 +120,9 @@ export class Quadtree {
   }
 }
 
+/***********************
+******* PRIVATE ********
+***********************/
 /**
  * [_creteQuadtreeObject description]
  *

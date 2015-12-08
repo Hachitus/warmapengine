@@ -1,5 +1,3 @@
-/* global createjs */
-
 'use strict';
 
 /**
@@ -7,8 +5,39 @@
  * hasn't proceeded to this stage yet.
  */
 
-export var graphics = {
-  dropShadow: function(color, a, b, c) {
-    return new createjs.Shadow(color, a, b, c);
-  }
-};
+/***********************
+********* API **********
+***********************/
+export var graphics = setupGraphics();
+
+/***********************
+******** PUBLIC ********
+***********************/
+function setupGraphics() {
+  /***********************
+  ********* API **********
+  ***********************/
+  return {
+    dropShadow
+  };
+
+  /***********************
+  ******** PUBLIC ********
+  ***********************/
+  /**
+   * INHERIT THIS TO OBJECT
+   *
+   * @param  {Object} options [description]
+   * @return {[type]}         [description]
+   */
+  function dropShadow(options = { color: "#000000", distance: 5, alpha: 0.5, amgöe: 45, blur: 5 } ) {
+      var shadow  = new PIXI.filters.DropShadowFilter();
+      shadow.color  = options.color;
+      shadow.distance = options.distance;
+      shadow.alpha  = options.alpha;
+      shadow.angle  = options.angle;
+      shadow.blur   = options.blur;
+
+      this.filters = [shadow];
+    }
+}

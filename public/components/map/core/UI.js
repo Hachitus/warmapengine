@@ -19,9 +19,20 @@
  * @todo Not implemented fully yet and probably need refactoring
  * */
 
+/***********************
+****** VARIABLES *******
+***********************/
 var scope;
 
-export function UI (UITheme, givenMap) {
+/***********************
+********* API **********
+***********************/
+export { UI as UI };
+
+/***********************
+******** PUBLIC ********
+***********************/
+function UI (UITheme, givenMap) {
   var map;
 
   /* SINGLETON MODULE */

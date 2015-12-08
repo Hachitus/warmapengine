@@ -21,17 +21,25 @@
  * them or use polyfill)
  * */
 
-/* ====== Own module imports ====== */
+/***********************
+******** IMPORT ********
+***********************/
 import { Map_layer } from '/components/map/core/Map_layer';
 import { resizeUtils } from './utils/utils';
 import { eventListeners } from './eventlisteners';
 import { ObjectManager } from './ObjectManager';
 import { mapEvents } from './mapEvents';
 
+/***********************
+****** VARIABLES *******
+***********************/
 var _drawMapOnNextTick = false;
 var isMapReadyPromises = [];
 var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer;
 
+/***********************
+********* API **********
+***********************/
 export class Map {
   /**
    * @param {DOM Canvas element} canvas - Canvas used by the map
@@ -383,7 +391,9 @@ export class Map {
   getObjectsUnderShape() { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
 }
 
-/** ===== PRIVATE ===== */
+/***********************
+******* PRIVATE ********
+***********************/
 /**
  * This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
  * callback is always set and should not be removed or overruled

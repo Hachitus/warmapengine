@@ -5,6 +5,9 @@
  */
 "use strict";
 
+/***********************
+********* API **********
+***********************/
 export class Preload {
   constructor (baseUrl) {
     this.preloaderClass = new PIXI.loaders.Loader();

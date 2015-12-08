@@ -4,7 +4,15 @@
  * Polyfills for the map, as necessary. Easy to drop out.
  */
 
-export var polyfills = (function () {
+/***********************
+********* API **********
+***********************/
+export var polyfills = setupPolyfills();
+
+/***********************
+******** PUBLIC ********
+***********************/
+function setupPolyfills() {
   return {
     arrayFind
   };
@@ -33,4 +41,4 @@ export var polyfills = (function () {
       };
     }
   }
-})();
+}

@@ -79,7 +79,8 @@ function setupMap_drag() {
       function _mouseupListener() {
         e.preventDefault();
         _removeDragListeners();
-        _mapMoved(map);
+        _mapMoved(map, true);
+
       }
 
       /** @requires map objects to be accessible in scope */
@@ -121,7 +122,7 @@ function setupMap_drag() {
         return;
       } else if (e.isFinal === true) {
         initialized = false;
-        map.mapMoved(false);
+        map.mapMoved(false, true);
       }
 
       _mapMovement(e, map, coords);
@@ -187,9 +188,9 @@ function setupMap_drag() {
    * parameter get set to false after the other synchronous actions have passed. Otherwise it is possible that
    * @param  {Map Object} map
    */
-  function _mapMoved(map) {
+  function _mapMoved(map, isFinal) {
     window.setTimeout(function (){
-      map.mapMoved(false);
+      map.mapMoved(false, isFinal);
     }, 1);
   }
 }

@@ -24,8 +24,10 @@ export var managingChildrenOnMap = setupManagingChildrenOnMap();
 ******* PUBLIC *********
 ***********************/
 function setupManagingChildrenOnMap () {
+  const VIEWPORT_OFFSET = 200;
   var childrenOutsideViewport = new Set();
   var childrenInsideViewport = new Set();
+  var endTime;
 
   return {
     add,
@@ -33,13 +35,13 @@ function setupManagingChildrenOnMap () {
     startEventListeners
   };
 
-  function add(object, globalCoordinates, layer, map) {
-    var viewportArea = map.getViewportArea();
-    viewportArea.x2 = viewportArea.y + viewportArea.width;
-    viewportArea.y2 = viewportArea.x + viewportArea.height;
+  function add(object, layer, map) {
+    var viewportArea;
+
+    viewportArea = map.getViewportArea();
+    Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
 
     if (isObjectOutsideViewport(object, viewportArea, false) ) {
-      // object.persistentParentLink = layer;
       childrenOutsideViewport.add(object);
       object.visible = false;
     } else {
@@ -50,33 +52,59 @@ function setupManagingChildrenOnMap () {
 
     layer.addChild(object);
   }
-  function check(layer, map) {
-    var viewportArea = map.getViewportArea();
-    viewportArea.x2 = viewportArea.y + viewportArea.width;
-    viewportArea.y2 = viewportArea.x + viewportArea.height;
+  /**
+   * This one checks the that the objects that should currently be visible in the viewport area are visible and outside
+   * of the viewport objects are set .visible = false. This affect performance a lot. Basically when the map moves, we
+   * set a check in the future based on the given intervalCheck milliseconds. And immediately after it we check if there
+   * is another map movement. If there is we set another timeout. This works better with timeouts.
+   *
+   * @param  {[type]} layer [description]
+   * @param  {[type]} map   [description]
+   * @return {[type]}       [description]
+   */
+  function check(map) {
+    var intervalForChecks = 100;
+    var startTime;
 
-    childrenInsideViewport.forEach((thisObject) => {
-      if (isObjectOutsideViewport(thisObject, viewportArea) ) {
-        childrenOutsideViewport.add(thisObject);
-        thisObject.visible = false;
-      }
-    });
-    childrenOutsideViewport.forEach((thisObject) => {
-      if (!isObjectOutsideViewport(thisObject, viewportArea) ) {
-        childrenOutsideViewport.delete(thisObject);
-        thisObject.visible = true;
-      }
-    });
+    startTime = new Date().getTime();
 
-    map.drawOnNextTick();
+    if (startTime - endTime < intervalForChecks + 1) {
+      return false;
+    }
+
+    let viewportFn = setupHandleViewportArea(map.getViewportArea());
+    window.setTimeout(viewportFn, intervalForChecks);
+
+    endTime = new Date().getTime();
+
+    function setupHandleViewportArea(viewportArea) {
+      return function handleViewportArea() {
+        Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
+
+        childrenInsideViewport.forEach((thisObject) => {
+          if (isObjectOutsideViewport(thisObject, viewportArea) ) {
+            childrenOutsideViewport.add(thisObject);
+            thisObject.visible = false;
+          }
+        });
+        childrenOutsideViewport.forEach((thisObject) => {
+          if (!isObjectOutsideViewport(thisObject, viewportArea) ) {
+            childrenOutsideViewport.delete(thisObject);
+            thisObject.visible = true;
+          }
+        });
+
+        map.drawOnNextTick();
+      };
+    }
   }
-  function startEventListeners(cb) {
-    mapEvents.subscribe("mapMoved", function (...args) {
-      cb(...args);
-    });
-    mapEvents.subscribe("mapResized", function (...args) {
-      cb(...args);
-    });
+  function startEventListeners(map) {
+    mapEvents.subscribe("mapMoved", cb);
+    mapEvents.subscribe("mapResized", cb);
+
+    function cb() {
+      managingChildrenOnMap.check(map);
+    }
   }
   /**************************************
   *********** PRIVATE *******************
@@ -90,5 +118,11 @@ function setupManagingChildrenOnMap () {
             globalCoords.x > viewportArea.x2 || globalCoords.y > viewportArea.y2;
 
     return isIt;
+  }
+  function getViewportsRightSideCoordinates(viewportArea) {
+    return {
+      x2: viewportArea.x + viewportArea.width + VIEWPORT_OFFSET,
+      y2: viewportArea.y + viewportArea.height + VIEWPORT_OFFSET
+    };
   }
 }

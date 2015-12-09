@@ -146,11 +146,7 @@ function createMap(canvasContainerElement, datas) {
                 newObject
             );
 
-            var globalCoordinates = thisLayer.toGlobal(newObject.getGraphicalArea());
-            managingChildrenOnMap.add(newObject, globalCoordinates, thisLayer, map);
-            // if (newObject.x < 2000 && newObject.y < 1500) {
-            //   thisLayer.addChild( newObject );
-            // }
+            managingChildrenOnMap.add(newObject, thisLayer, map);
           } catch (e) {
             console.log(e);
           }
@@ -161,9 +157,7 @@ function createMap(canvasContainerElement, datas) {
     }
   });
 
-  managingChildrenOnMap.startEventListeners(function () {
-    managingChildrenOnMap.check(map.getMovableLayer(), map);
-  });
+  managingChildrenOnMap.startEventListeners(map);
   map.moveMap(mapData.startPoint);
 
   return map;

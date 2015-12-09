@@ -274,7 +274,9 @@ export class Map {
   /**
    * getter and setter for detecting if map is moved and setting the maps status as moved or not moved
    * */
-  mapMoved(yesOrNo) {
+  mapMoved(yesOrNo, isFinal) {
+    isFinal && mapEvents.publish("mapMovedFinal");
+
     if (yesOrNo !== undefined) {
       this._mapInMove = yesOrNo;
       return yesOrNo;

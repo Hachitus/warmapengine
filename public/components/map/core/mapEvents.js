@@ -2,6 +2,11 @@
 
 /**
  * This module handles map events. Like informing map movement, object selection and other changes.
+ *
+ * Events atm:
+ * - mapMoved
+ * - mapMovedFinal
+ * - mapResize
  */
 
 /***********************

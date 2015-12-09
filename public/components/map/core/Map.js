@@ -175,8 +175,8 @@ export class Map {
     return {
       x: layer.x,
       y: layer.y,
-      width: _renderer.width,
-      height: _renderer.height
+      width: window.innerWidth,
+      height: window.innerHeight
     };
   }
   /**

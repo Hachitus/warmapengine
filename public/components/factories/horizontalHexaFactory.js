@@ -23,7 +23,7 @@ import { Object_unit } from "/components/map/extensions/hexagons/object/Object_u
 import { resizeUtils, environmentDetection } from "/components/map/core/utils/utils";
 import { UI } from "/components/map/core/UI";
 import { UI_default } from "/components/map/UIs/default/default.js";
-import { managingChildrenOnMap } from "/components/map/extensions/dynamicMaps/managingChildrenOnMap/managingChildrenOnMap.js";
+import { managingTileMapMovement } from "/components/map/extensions/dynamicMaps/managingTileMapMovement/managingHexagons.js";
 
 /***********************
 ****** VARIABLES *******
@@ -146,7 +146,7 @@ function createMap(canvasContainerElement, datas) {
                 newObject
             );
 
-            managingChildrenOnMap.add(newObject, thisLayer, map);
+            managingTileMapMovement.add(newObject, thisLayer, map);
           } catch (e) {
             console.log(e);
           }
@@ -157,7 +157,7 @@ function createMap(canvasContainerElement, datas) {
     }
   });
 
-  managingChildrenOnMap.startEventListeners(map);
+  managingTileMapMovement.startEventListeners(map);
   map.moveMap(mapData.startPoint);
 
   return map;

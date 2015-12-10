@@ -4,6 +4,9 @@
  * This module manages visibility of the objects, based on are they visible to the player (on the canvas / webgl) or
  * outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise.
  *
+ * This hexagon version requires that the map has stable hexagon layout: Each hexagon has to be the same size and next
+ * to each other.
+ *
  * @todo  I think this can be improved to be more efficient. Now we just basically iterate through the whole set of
  * objects on the map. Outside or inside the viewport. We could at least iterate through the objects, based on
  * coordinates, so we don't iterate and test ALL the objects. Or then some other methods. One option might even be to
@@ -18,15 +21,14 @@ import { mapEvents } from '/components/map/core/mapEvents';
 /***********************
 ********* API **********
 ***********************/
-export var managingChildrenOnMap = setupManagingChildrenOnMap();
+export var managingTileMapMovement = setupManagingTileMapMovement();
 
 /***********************
 ******* PUBLIC *********
 ***********************/
-function setupManagingChildrenOnMap () {
+function setupManagingTileMapMovement () {
   const VIEWPORT_OFFSET = 200;
-  var childrenOutsideViewport = new Set();
-  var childrenInsideViewport = new Set();
+  var children = []; // 2-dimensional
   var endTime;
 
   return {
@@ -36,20 +38,17 @@ function setupManagingChildrenOnMap () {
   };
 
   function add(object, layer, map) {
-    var viewportArea;
+    var viewportArea, coordIndexes;
 
     viewportArea = map.getViewportArea();
     Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
 
-    if (isObjectOutsideViewport(object, viewportArea, false) ) {
-      childrenOutsideViewport.add(object);
-      object.visible = false;
-    } else {
-      object.visible = true;
-      object.persistentParentLink = layer;
-      childrenInsideViewport.add(object);
-    }
+    object.visible = isObjectOutsideViewport(object, viewportArea, false) ? false : true;
 
+    coordIndexes = getIndexes(object);
+    children[coordIndexes.x] = children[coordIndexes.x] || [];
+    children[coordIndexes.x][coordIndexes.y] = children[coordIndexes.x][coordIndexes.y] || [];
+    children[coordIndexes.x][coordIndexes.y].push(object);
     layer.addChild(object);
   }
   /**
@@ -79,20 +78,36 @@ function setupManagingChildrenOnMap () {
 
     function setupHandleViewportArea(viewportArea) {
       return function handleViewportArea() {
+        const OFFSET = 200;
+        var isOutside, indexBounds;
+
         Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
 
-        childrenInsideViewport.forEach((thisObject) => {
-          if (isObjectOutsideViewport(thisObject, viewportArea) ) {
-            childrenOutsideViewport.add(thisObject);
-            thisObject.visible = false;
+        indexBounds = {
+          x: Math.round(( viewportArea.x - OFFSET) / children[0][0][0].width),
+          y: Math.round(( viewportArea.y - OFFSET)/ children[0][0][0].height),
+          x2: Math.round(( viewportArea.x + viewportArea.width + OFFSET) / children[0][0][0].width),
+          y2: Math.round(( viewportArea.y + viewportArea.height + OFFSET)/ children[0][0][0].height)
+        };
+
+        for (let xIndex = indexBounds.x; xIndex < indexBounds.x2; xIndex++) {
+          if (!Array.isArray(children[xIndex])) {
+            continue;
           }
-        });
-        childrenOutsideViewport.forEach((thisObject) => {
-          if (!isObjectOutsideViewport(thisObject, viewportArea) ) {
-            childrenOutsideViewport.delete(thisObject);
-            thisObject.visible = true;
+          for (let yIndex = indexBounds.y; yIndex < indexBounds.y2; yIndex++) {
+            if (!Array.isArray(children[xIndex][yIndex])) {
+              continue;
+            }
+
+            children[xIndex][yIndex].forEach((thisObject) => {
+              isOutside = isObjectOutsideViewport(thisObject, viewportArea);
+
+              if ( (thisObject.visible && isOutside ) || ( !thisObject.visible && !isOutside )) {
+                thisObject.visible = !thisObject.visible;
+              }
+            });
           }
-        });
+        }
 
         map.drawOnNextTick();
       };
@@ -103,7 +118,7 @@ function setupManagingChildrenOnMap () {
     mapEvents.subscribe("mapResized", cb);
 
     function cb() {
-      managingChildrenOnMap.check(map);
+      managingTileMapMovement.check(map);
     }
   }
   /**************************************
@@ -123,6 +138,12 @@ function setupManagingChildrenOnMap () {
     return {
       x2: viewportArea.x + viewportArea.width + VIEWPORT_OFFSET,
       y2: viewportArea.y + viewportArea.height + VIEWPORT_OFFSET
+    };
+  }
+  function getIndexes(object) {
+    return {
+      x: Math.floor(object.x / object.width),
+      y: Math.floor(object.y / object.height)
     };
   }
 }

@@ -169,6 +169,12 @@ export class Map {
 
     return layer;
   }
+  /**
+   * Get the size of area that is shown to the player. Depends a bit if we want to show the maximum possible or current.
+   *
+   * @param  {Boolean} isLocal       Do we want to use moving layer or static (global) coordinates
+   * @return {Object}                x- and y-coordinates and the width and height of the viewport
+   */
   getViewportArea(isLocal = false) {
     var layer = isLocal ? this.getMovableLayer() : this.getStaticLayer();
 

@@ -5,7 +5,7 @@
  * outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise.
  *
  * @todo  I think this can be improved to be more efficient. Now we just basically iterate through the whole set of
- * objects on the map. Outside or inside the viewport. We could at least iterate through the objects, based on
+ * objects on the map. Outside and inside the viewport. We could at least iterate through the objects, based on
  * coordinates, so we don't iterate and test ALL the objects. Or then some other methods. One option might even be to
  * use typedArrays to form a more efficient array?
  */
@@ -104,7 +104,7 @@ function setupManagingTileMapMovement () {
   function isObjectOutsideViewport(object, viewportArea, hasParent = true) {
     var isIt, globalCoords;
 
-    globalCoords = object.getGraphicalArea(hasParent);
+    globalCoords = object.getGraphicalArea({ toGlobal: hasParent });
 
     isIt = globalCoords.x < viewportArea.x || globalCoords.y < viewportArea.y ||
             globalCoords.x > viewportArea.x2 || globalCoords.y > viewportArea.y2;

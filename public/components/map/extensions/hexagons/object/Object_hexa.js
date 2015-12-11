@@ -35,14 +35,15 @@ function setupObject_sprite_hexa() {
       throw new Error("Need radius!");
     }
 
-    const HEIGHT = hexagonMath.calcLongDiagonal(radius);
-    const WIDTH = hexagonMath.calcShortDiagonal(radius);
-    const SIDE = hexagonMath.calcSide(radius);
+    const HEIGHT = Math.round(hexagonMath.calcLongDiagonal(radius));
+    const WIDTH = Math.round(hexagonMath.calcShortDiagonal(radius));
+    const SIDE = Math.round(hexagonMath.calcSide(radius));
 
     this.anchor.set(0.5, 0.5);
-    this.HEIGHT = HEIGHT;
-    this.WIDTH = WIDTH;
+    this.areaHeight = this.HEIGHT = HEIGHT;
+    this.areaWidth = this.WIDTH = WIDTH;
     this.SIDE = SIDE;
+    this.ROW_HEIGHT = Math.round(HEIGHT * 0.75);
 
     /* Draw hexagon to test the hits with hitArea */
     this.hitArea = setAndGetShape(radius);

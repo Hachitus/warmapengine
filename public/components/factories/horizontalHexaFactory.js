@@ -23,7 +23,7 @@ import { Object_unit } from "/components/map/extensions/hexagons/object/Object_u
 import { resizeUtils, environmentDetection } from "/components/map/core/utils/utils";
 import { UI } from "/components/map/core/UI";
 import { UI_default } from "/components/map/UIs/default/default.js";
-import { managingTileMapMovement } from "/components/map/extensions/dynamicMaps/managingTileMapMovement/managingHexagons.js";
+import { managingTileMapMovement } from "/components/map/extensions/dynamicMaps/managingTileMapMovement/managingGeneral.js";
 
 /***********************
 ****** VARIABLES *******

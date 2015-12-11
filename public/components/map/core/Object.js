@@ -29,6 +29,9 @@ export class Object_sprite extends PIXI.Sprite {
     /* Set data for the object next */
     this.data = data;
     this.currentFrame = currentFrame;
+
+    this.areaWidth = this.width;
+    this.areaHeight = this.height;
     /* We need to round the numbers. If there are decimal values, the graphics will get blurry */
     let exactCoords = {
       x: Math.round(coord.x),
@@ -64,8 +67,11 @@ export class Object_sprite extends PIXI.Sprite {
 
     return this.innerDraw(x, y);
   }
-  getGraphicalArea(getGlobal) {
-    var coordinates = getGlobal ? this.toGlobal(new PIXI.Point(0,0)) : this;
+  getGraphicalArea(options = { toGlobal: true } ) {
+    var zeroCoordinates, coordinates;
+
+    zeroCoordinates = new PIXI.Point(0,0);
+    coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(0,0)) : this;
 
     return {
       x: coordinates.x + ( this.width * this.anchor.x ),

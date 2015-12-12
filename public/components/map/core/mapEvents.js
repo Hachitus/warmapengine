@@ -27,6 +27,7 @@ function setupMapEvents () {
     PubSub.subscribe(type, cb);
   }
   function publish(type, data = []) {
+    console.log("EVENT: " + type);
     PubSub.publish(type, ...data);
   }
-};
+}

@@ -216,6 +216,7 @@ export class Map {
     };
     _movableLayer.move(realCoordinates);
     mapEvents.publish("mapMoved");
+    console.log("EVENT: mapMoved");
     this.drawOnNextTick();
 
     return this;

@@ -25,8 +25,9 @@ export var managingTileMapMovement = setupManagingTileMapMovement();
 ***********************/
 function setupManagingTileMapMovement () {
   const VIEWPORT_OFFSET = 200;
+  const CHECK_INTERVAL = 20;
   var children = new Set();
-  var endTime;
+  var endTime, checkInProgress;
 
   return {
     add,
@@ -56,35 +57,51 @@ function setupManagingTileMapMovement () {
    * @return {[type]}       [description]
    */
   function check(map) {
-    var intervalForChecks = 80;
-    var startTime;
+    console.log("CHECK");
+    var queue = {};
 
-    startTime = new Date().getTime();
-
-    if (startTime - endTime < intervalForChecks + 1) {
+    if (queue.processing) {
       return false;
     }
 
-    let viewportFn = setupHandleViewportArea(map.getViewportArea());
-    window.setTimeout(viewportFn, intervalForChecks);
+    queue.processing = true;
 
-    endTime = new Date().getTime();
+    let viewportFn = setupHandleViewportArea(queue, map.getViewportArea(), map.getRenderer());
+    console.log("TRUE");
+    window.setTimeout(viewportFn, CHECK_INTERVAL);
 
-    function setupHandleViewportArea(viewportArea) {
+    function setupHandleViewportArea(queue, viewportArea, renderer) {
       return function handleViewportArea() {
         var isOutside;
 
-        Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
+        var startTime;
 
-        children.forEach((thisObject) => {
-          isOutside = isObjectOutsideViewport(thisObject, viewportArea);
+        startTime = new Date().getTime();
 
-          if (thisObject.visible && isOutside) {
-            thisObject.visible = false;
-          } else if (!thisObject.visible && !isOutside ) {
-            thisObject.visible = true;
-          }
-        });
+        try {
+          Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
+
+          children.forEach((thisObject) => {
+            isOutside = isObjectOutsideViewport(thisObject, viewportArea);
+
+            if (thisObject.visible && isOutside) {
+              thisObject.visible = false;
+            } else if (!thisObject.visible && !isOutside ) {
+              thisObject.visible = true;
+  /*            if (renderer.renderDisplayObject) {
+                renderer.renderDisplayObject(thisObject, renderer.currentRenderTarget);
+              } else {
+                renderer.render(thisObject);
+              }*/
+            }
+          });
+        } catch (e) {
+          console.log("ISSUE: ", e);
+        }
+
+        queue.processing = false;
+        console.log("FALSE");
+        console.log(startTime - new Date().getTime());
 
         map.drawOnNextTick();
       };

@@ -27,7 +27,7 @@ function setupManagingTileMapMovement () {
   const VIEWPORT_OFFSET = 200;
   const CHECK_INTERVAL = 20;
   var children = new Set();
-  var endTime, checkInProgress;
+  var queue = {};
 
   return {
     add,
@@ -57,9 +57,6 @@ function setupManagingTileMapMovement () {
    * @return {[type]}       [description]
    */
   function check(map) {
-    console.log("CHECK");
-    var queue = {};
-
     if (queue.processing) {
       return false;
     }
@@ -67,7 +64,6 @@ function setupManagingTileMapMovement () {
     queue.processing = true;
 
     let viewportFn = setupHandleViewportArea(queue, map.getViewportArea(), map.getRenderer());
-    console.log("TRUE");
     window.setTimeout(viewportFn, CHECK_INTERVAL);
 
     function setupHandleViewportArea(queue, viewportArea, renderer) {
@@ -88,11 +84,6 @@ function setupManagingTileMapMovement () {
               thisObject.visible = false;
             } else if (!thisObject.visible && !isOutside ) {
               thisObject.visible = true;
-  /*            if (renderer.renderDisplayObject) {
-                renderer.renderDisplayObject(thisObject, renderer.currentRenderTarget);
-              } else {
-                renderer.render(thisObject);
-              }*/
             }
           });
         } catch (e) {
@@ -100,7 +91,6 @@ function setupManagingTileMapMovement () {
         }
 
         queue.processing = false;
-        console.log("FALSE");
         console.log(startTime - new Date().getTime());
 
         map.drawOnNextTick();

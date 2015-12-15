@@ -64,8 +64,10 @@ function createMap(canvasContainerElement, datas) {
   var mapProperties = {
     mapSize: gameData.mapSize,
     bounds: {
-      width: windowSize.width,
-      height: windowSize.height
+      x: 0,
+      y: 0,
+      width: windowSize.x,
+      height: windowSize.y
     },
     options: {
       resolution: pixelRatio, // We might need this later on, when doing mobile optimizations, for different pizel density devices
@@ -102,8 +104,13 @@ function createMap(canvasContainerElement, datas) {
       thisLayer = new LayerConstructor(layerOptions);
       map.addLayer(thisLayer);
       objManager.addLayer(layerGroup, {
-        objects: 10,
-        levels: 6
+          x: 0,
+          y: 0,
+          width: +mapProperties.mapSize.x,
+          height: +mapProperties.mapSize.y
+        }, {
+          objects: 10,
+          levels: 6
       });
 
       layerData.objectGroups.forEach( objectGroup => {

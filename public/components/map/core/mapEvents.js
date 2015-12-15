@@ -26,7 +26,7 @@ function setupMapEvents () {
   function subscribe(type, cb) {
     PubSub.subscribe(type, cb);
   }
-  function publish(type, data = []) {
+  function publish(type, ...data) {
     console.log("EVENT: " + type);
     PubSub.publish(type, ...data);
   }

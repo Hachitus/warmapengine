@@ -58,16 +58,16 @@ export class Quadtree {
     this.quadtree.removeObject(objToRemove);
     refresh && this.quadtree.cleanup();
   }
-  retrieve(coords, size) {
+  retrieve(coords, size = { width: 0, height: 0 } ) {
     var hitDimensions = {
       x: coords.x,
       y: coords.y,
-      width: size ? size.width : 0,
-      height: size ? size.height : 0
+      width: size.width,
+      height: size.height
     };
     var objects = [];
 
-    objects = this.quadtree.retrieve(hitDimensions).map(function(object) {
+    objects = this.quadtree.retrieve(hitDimensions).map((object) => {
       return object.data;
     });
 

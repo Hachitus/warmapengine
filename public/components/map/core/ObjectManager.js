@@ -4,6 +4,7 @@
 ******** IMPORT ********
 ***********************/
 import { Quadtree } from './utils/Quadtree';
+import { arrays } from '/components/utilities/general';
 
 /***********************
 ********* API **********
@@ -24,24 +25,35 @@ export class ObjectManager {
   /**
    * Retrieve objects under certain coordinates or area, if size is given
    *
+   * @param {globalCoords: { x:Number, y:Number }, localCoords: { x:Number, y:Number } } coords the coordinates which we
+   * want to hitTest
    * @param {string} type type of the object / layer that we want to retrieve
-   * @param {x:Number, y:Number} coords the coordinates which we want to hitTest
-   * @param {x:Number, y:Number} size If we want to test rectangle, instead of just coordinates
+   * @param {Object} size If we want to test rectangle, instead of just coordinates
    *
    * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to
    * detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn't be the issue.
    */
-  retrieve(allCoords, type, options = { size: undefined }) {
+  retrieve(allCoords, type, options = { size: { width: 0, height: 0 } }) {
     var quadtreeObjs, foundObjs;
     var { globalCoords, localCoords } = allCoords;
 
-    quadtreeObjs = this.quadtrees[type].retrieve(localCoords, options.size);
+    if (!type) {
+      quadtreeObjs = Object.keys(this.quadtrees).map((thisIndex) => {
+        return this.quadtrees[thisIndex].retrieve(localCoords, options.size);
+      });
+    } else {
+      quadtreeObjs = this.quadtrees[type].retrieve(localCoords, options.size);
+    }
 
-    foundObjs = quadtreeObjs.filter(obj => {
-      let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
+    foundObjs = arrays.flatten(quadtreeObjs);
 
-      return isHit;
-    });
+    if (!options.size.width || !options.size.height) {
+      foundObjs = quadtreeObjs.filter(obj => {
+        let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
+
+        return isHit;
+      });
+    }
 
     return foundObjs;
   }
@@ -73,8 +85,8 @@ export class ObjectManager {
    * @param {string} type type of the layer that we want to add
    * @param {objects: Number, levels: Number} extra quadtree-settings: maximum objects before we split and maximum levels of nested layers
    */
-  addLayer(type, extra) {
-    this.quadtrees[type] = new Quadtree({}, {
+  addLayer(type, bounds, extra = {}) {
+    this.quadtrees[type] = new Quadtree(bounds, {
         objects: extra.objects || 10,
         levels: extra.levels || 5
       });

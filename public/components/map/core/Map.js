@@ -24,10 +24,10 @@
 ******** IMPORT ********
 ***********************/
 import { Map_layer } from '/components/map/core/Map_layer';
-import { resizeUtils } from './utils/utils';
-import { eventListeners } from './eventlisteners';
-import { ObjectManager } from './ObjectManager';
-import { mapEvents } from './mapEvents';
+import { resizeUtils } from '/components/map/core/utils/utils';
+import { eventListeners } from '/components/map/core/eventlisteners';
+import { ObjectManager } from '/components/map/core/ObjectManager';
+import { mapEvents } from '/components/map/core/mapEvents';
 
 /***********************
 ****** VARIABLES *******
@@ -214,7 +214,7 @@ export class Map {
       y: coord.y / _staticLayer.getScale()
     };
     _movableLayer.move(realCoordinates);
-    mapEvents.publish("mapMoved");
+    mapEvents.publish("mapMoved", realCoordinates);
     this.drawOnNextTick();
 
     return this;
@@ -323,14 +323,26 @@ export class Map {
    * @param  {String} type                            Type of the objects / layer to find.
    * @return {Array}                                  Array of object found on the map.
    */
-  getObjectsUnderPoint(globalCoords = { x: 0, y: 0 }, type = undefined) {
+  getObjectsUnderPoint(globalCoords = { x: 0, y: 0, width: 0, height: 0 }, type = undefined) {
     var objects = {};
     var allCoords = {
       globalCoords: globalCoords,
       localCoords: this.getMovableLayer().toLocal(new PIXI.Point(globalCoords.x, globalCoords.y))
     };
+    // allCoords.localCoords.width = globalCoords.width;
+    // allCoords.localCoords.height = globalCoords.height;
 
-    objects[type] = this.objectManager.retrieve(allCoords, type);
+    if (type) {
+      objects[type] = this.objectManager.retrieve(allCoords, type, { size: {
+        width: globalCoords.width,
+        height: globalCoords.height
+      }});
+    } else {
+      objects = this.objectManager.retrieve(allCoords, type, { size: {
+        width: globalCoords.width,
+        height: globalCoords.height
+      }});
+    }
 
     return objects;
   }

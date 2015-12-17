@@ -10,18 +10,16 @@ export var arrays = setupArrays();
 ***********************/
 function setupArrays() {
   return {
-    flatten
+    flatten2Levels
   };
 
   /**
-   * Flattern 2-dimensional arrays. Credits: http://stackoverflow.com/a/15030117/1523545
+   * Flattern 2 levels deep, 2-dimensional arrays. Credits: http://stackoverflow.com/a/15030117/1523545
    *
    * @param  {[type]} arr [description]
    * @return {[type]}     [description]
    */
-  function flatten(arr) {
-    return arr.reduce(function (flat, toFlatten) {
-      return flat.concat(Array.isArray(toFlatten) ? flatten(toFlatten) : toFlatten);
-    }, []);
+  function flatten2Levels(arr) {
+    return [].concat.apply([], arr);
   }
 }

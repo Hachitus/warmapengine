@@ -45,7 +45,7 @@ export class ObjectManager {
       quadtreeObjs = this.quadtrees[type].retrieve(localCoords, options.size);
     }
 
-    foundObjs = arrays.flatten(quadtreeObjs);
+    foundObjs = arrays.flatten2Levels(quadtreeObjs);
 
     if (!options.size.width || !options.size.height) {
       foundObjs = quadtreeObjs.filter(obj => {

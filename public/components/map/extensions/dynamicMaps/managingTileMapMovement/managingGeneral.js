@@ -14,7 +14,6 @@
 ******* IMPORTS ********
 ***********************/
 import { mapEvents } from '/components/map/core/mapEvents';
-import { arrays } from '/components/utilities/general';
 
 /***********************
 ********* API **********
@@ -25,7 +24,7 @@ export var managingTileMapMovement = setupManagingTileMapMovement();
 ******* PUBLIC *********
 ***********************/
 function setupManagingTileMapMovement () {
-  const VIEWPORT_OFFSET = 200;
+  const VIEWPORT_OFFSET = 0.1;
   const CHECK_INTERVAL = 20;
   var queue = {};
   var changedCoordinates = {
@@ -73,26 +72,25 @@ function setupManagingTileMapMovement () {
       var viewportArea = map.getViewportArea();
 
       return function handleViewportArea() {
-        var clonedCoordinates = Object.assign({}, changedCoordinates);
-        var objectsUnderChangedArea, isOutside, areas;
-
-        /* RESET */
-        changedCoordinates.width = 0;
-        changedCoordinates.height = 0;
-
-
-
+        var objectsUnderChangedArea, isOutside;
+var startTime = new Date().getTime();
         try {
-          Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
+          Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea));
 
-          areas = getChangedAreas(viewportArea, clonedCoordinates);
-                  /* Remove after optimizations ready */
-        var startTime = new Date().getTime();
-          objectsUnderChangedArea = areas.map((thisArea) => {
-            return map.getObjectsUnderPoint(thisArea);
-          });
-console.log(startTime - new Date().getTime());
-          objectsUnderChangedArea = arrays.flatten(objectsUnderChangedArea);
+          if (changedCoordinates.width < 0) {
+            Object.assign( viewportArea, getViewportsLeftSideCoordinates(viewportArea));
+          }
+          if (changedCoordinates.height < 0) {
+            Object.assign( viewportArea, getViewportsLeftSideCoordinates(viewportArea));
+          }
+          viewportArea.width += Math.abs(changedCoordinates.width);
+          viewportArea.height += Math.abs(changedCoordinates.height);
+
+          /* RESET */
+          changedCoordinates.width = 0;
+          changedCoordinates.height = 0;
+
+          objectsUnderChangedArea = map.getObjectsUnderPoint(viewportArea);
 
           objectsUnderChangedArea.forEach((thisObject) => {
             isOutside = isObjectOutsideViewport(thisObject, viewportArea);
@@ -103,7 +101,8 @@ console.log(startTime - new Date().getTime());
               thisObject.visible = true;
             }
           });
-
+          /** @todo Remove after optimization ready */
+          console.log(startTime - new Date().getTime());
           if (window.Worker) {
             // var worker = new Worker("/components/map/extensions/dynamicMaps/managingTileMapMovement/managingGeneralWorker.js");
             // worker.onmessage = function(e) {
@@ -155,56 +154,27 @@ console.log(startTime - new Date().getTime());
     return isIt;
   }
   function getViewportsRightSideCoordinates(viewportArea) {
+    var offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET * 2 );
+    var width = Math.abs( viewportArea.width ) + offsetSize;
+    var height = Math.abs( viewportArea.width ) + offsetSize;
+
     return {
-      x2: viewportArea.x + viewportArea.width + VIEWPORT_OFFSET,
-      y2: viewportArea.y + viewportArea.height + VIEWPORT_OFFSET
+      x2: viewportArea.x + Math.abs( viewportArea.width ) + width,
+      y2: viewportArea.y + Math.abs( viewportArea.height ) + height,
+      width: viewportArea.width + width,
+      height: viewportArea.height + height
     };
   }
-  /**
-   *
-   * @param  {[type]} newViewportArea [description]
-   * @return {[type]}                 [description]
-   *
-   * @todo Make a better functionality for this. Math isn't my specialty.
-   */
-  function getChangedAreas(viewportArea, clonedCoordinates) {
-    var areas = [];
+  function getViewportsLeftSideCoordinates(viewportArea) {
+    var offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET );
+    var width = Math.abs( viewportArea.width ) + offsetSize;
+    var height = Math.abs( viewportArea.width ) + offsetSize;
 
-    /* The small rectangle outside everything */
-    if (clonedCoordinates.width > 0 && clonedCoordinates.height < 0) {
-      areas.push(smallCornerPiece({
-        x: viewportArea.x2,
-        y: viewportArea.y + clonedCoordinates.height
-      }));
-    }
-    if (clonedCoordinates.width < 0 && clonedCoordinates.height < 0) {
-      areas.push(smallCornerPiece({
-        x: viewportArea.x + clonedCoordinates.width,
-        y: viewportArea.y + clonedCoordinates.height
-      }));
-    }
-    if (clonedCoordinates.width > 0 && clonedCoordinates.height > 0) {
-      areas.push(smallCornerPiece({
-        x: viewportArea.x2,
-        y: viewportArea.y2
-      }));
-    }
-    if (clonedCoordinates.width < 0 && clonedCoordinates.height > 0) {
-      areas.push(smallCornerPiece({
-        x: viewportArea.x + clonedCoordinates.width,
-        y: viewportArea.y
-      }));
-    }
-
-    return areas;
-
-    function smallCornerPiece(coord) {
-      return {
-        x: coord.x,
-        y: coord.y,
-        width: Math.abs(clonedCoordinates.width),
-        height: Math.abs(clonedCoordinates.height)
-      };
-    }
+    return {
+      x: viewportArea.x - width,
+      y: viewportArea.y - height,
+      width: viewportArea.width + width,
+      height: viewportArea.height + height
+    };
   }
 }

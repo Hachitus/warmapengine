@@ -4,10 +4,8 @@
  * This module manages visibility of the objects, based on are they visible to the player (on the canvas / webgl) or
  * outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise.
  *
- * @todo  I think this can be improved to be more efficient. Now we just basically iterate through the whole set of
- * objects on the map. Outside and inside the viewport. We could at least iterate through the objects, based on
- * coordinates, so we don't iterate and test ALL the objects. Or then some other methods. One option might even be to
- * use typedArrays to form a more efficient array?
+ * @todo  We can make this a bit more efficient still at least should work with static / fixed grid. Now we use
+ * quadtree and that is not optimal
  */
 
 /***********************
@@ -73,7 +71,7 @@ function setupManagingTileMapMovement () {
 
       return function handleViewportArea() {
         var objectsUnderChangedArea, isOutside;
-var startTime = new Date().getTime();
+
         try {
           Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea));
 
@@ -102,7 +100,7 @@ var startTime = new Date().getTime();
             }
           });
           /** @todo Remove after optimization ready */
-          console.log(startTime - new Date().getTime());
+
           if (window.Worker) {
             // var worker = new Worker("/components/map/extensions/dynamicMaps/managingTileMapMovement/managingGeneralWorker.js");
             // worker.onmessage = function(e) {

@@ -48,7 +48,7 @@ export class ObjectManager {
     foundObjs = arrays.flatten2Levels(quadtreeObjs);
 
     if (!options.size.width || !options.size.height) {
-      foundObjs = quadtreeObjs.filter(obj => {
+      foundObjs = foundObjs.filter(obj => {
         let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
 
         return isHit;

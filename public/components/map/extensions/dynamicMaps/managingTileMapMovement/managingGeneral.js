@@ -67,6 +67,7 @@ function setupManagingTileMapMovement () {
     window.setTimeout(viewportFn, CHECK_INTERVAL);
 
     function setupHandleViewportArea(queue, map, changedCoordinates) {
+      var scale = map.getScale();
       var viewportArea = map.getViewportArea();
 
       return function handleViewportArea() {
@@ -81,8 +82,10 @@ function setupManagingTileMapMovement () {
           if (changedCoordinates.height < 0) {
             Object.assign( viewportArea, getViewportsLeftSideCoordinates(viewportArea));
           }
-          viewportArea.width += Math.abs(changedCoordinates.width);
-          viewportArea.height += Math.abs(changedCoordinates.height);
+          viewportArea.width += Math.round(Math.abs(changedCoordinates.width));
+          viewportArea.height += Math.round(Math.abs(changedCoordinates.height));
+
+          Object.assign( viewportArea, applyScaleToViewport(viewportArea, scale) );
 
           /* RESET */
           changedCoordinates.width = 0;
@@ -153,26 +156,32 @@ function setupManagingTileMapMovement () {
   }
   function getViewportsRightSideCoordinates(viewportArea) {
     var offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET * 2 );
-    var width = Math.abs( viewportArea.width ) + offsetSize;
-    var height = Math.abs( viewportArea.width ) + offsetSize;
 
     return {
-      x2: viewportArea.x + Math.abs( viewportArea.width ) + width,
-      y2: viewportArea.y + Math.abs( viewportArea.height ) + height,
-      width: viewportArea.width + width,
-      height: viewportArea.height + height
+      x2: Math.round( viewportArea.x + Math.abs( viewportArea.width ) + offsetSize ),
+      y2: Math.round( viewportArea.y + Math.abs( viewportArea.height ) + offsetSize ),
+      width: Math.round( viewportArea.width + offsetSize ),
+      height: Math.round( viewportArea.height + offsetSize )
     };
   }
   function getViewportsLeftSideCoordinates(viewportArea) {
-    var offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET );
-    var width = Math.abs( viewportArea.width ) + offsetSize;
-    var height = Math.abs( viewportArea.width ) + offsetSize;
+    var offsetSize = Math.round(Math.abs( viewportArea.width * VIEWPORT_OFFSET ));
 
     return {
-      x: viewportArea.x - width,
-      y: viewportArea.y - height,
-      width: viewportArea.width + width,
-      height: viewportArea.height + height
+      x: Math.round( viewportArea.x - offsetSize ),
+      y: Math.round( viewportArea.y - offsetSize ),
+      width: Math.round( viewportArea.width + offsetSize ),
+      height: Math.round( viewportArea.height + offsetSize )
+    };
+  }
+  function applyScaleToViewport(viewportArea, scale) {
+    return {
+      x: Math.round( viewportArea.x / scale ),
+      y: Math.round( viewportArea.y / scale ),
+      x2: Math.round( viewportArea.x2 / scale ),
+      y2: Math.round( viewportArea.y2 / scale ),
+      width: Math.round( viewportArea.width / scale ),
+      height: Math.round( viewportArea.height / scale )
     };
   }
 }

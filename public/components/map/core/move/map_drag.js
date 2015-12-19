@@ -45,7 +45,7 @@ function setupMap_drag() {
    * @param {Map object} mapObj - the Map class object
    * */
   function init(map) {
-    eventListenerCB = _startDragListener_mobile(map);
+    eventListenerCB = _startDragListener(map);
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
     eventListenerMod().toggleDragListener(eventListenerCB);
@@ -55,56 +55,11 @@ function setupMap_drag() {
   ********** PRIVATE ***********
   *****************************/
   /**
-   * Desktop version. Starts the functionality, by activating from mouse click and then starting up proper listeners
-   * for mouseup (when the drag ends) and mousemove (when the actual drag happens).
-   * @param {Map Object} map        The current map object
-   */
-  function _startDragListener( map ) {
-    return function startDrag(e) {
-      e.preventDefault();
-
-      offsetCoords.setOffset(mouseUtils.eventData.getPointerCoords(e));
-      _addDragListeners();
-
-      function _addDragListeners() {
-        map.canvas.addEventListener("mousemove", _dragListener);
-        map.canvas.addEventListener("mouseup", _mouseupListener);
-      }
-      function _removeDragListeners() {
-        map.canvas.removeEventListener("mousemove", _dragListener);
-        map.canvas.removeEventListener("mouseup", _mouseupListener);
-      }
-
-      /** @requires map objects to be accessible in scope */
-      function _mouseupListener() {
-        e.preventDefault();
-        _removeDragListeners();
-        _mapMoved(map, true);
-
-      }
-
-      /** @requires map objects to be accessible in scope */
-      function _dragListener(e) {
-        var coords = mouseUtils.eventData.getPointerCoords(e);
-
-        map.mapMoved(true);
-
-        _mapMovement(e, map, coords);
-
-        if (e.buttons === 0) {
-          _removeDragListeners();
-          /* So that the events will stop when mouse is up, even though mouseup event wouldn't fire */
-          _mapMoved(map);
-        }
-      }
-    };
-  }
-  /**
    * Mobile version. Starts the functionality, uses Hammer.js heavily for doing the drag. More simple and better than
    * desktop version, since we don't need to calculate the drag with several event listener, one is enough with Hammer
    * @param {Map Object} map        The current map object
    */
-  function _startDragListener_mobile( map ) {
+  function _startDragListener( map ) {
     var initialized = false;
 
     return function startDrag(e) {
@@ -181,16 +136,5 @@ function setupMap_drag() {
     function getOffset() {
       return offsetCoords;
     }
-  }
-
-  /**
-   * Without this, the other eventListeners might fire inappropriate events. This basically to ensure that the mapMoved
-   * parameter get set to false after the other synchronous actions have passed. Otherwise it is possible that
-   * @param  {Map Object} map
-   */
-  function _mapMoved(map, isFinal) {
-    window.setTimeout(function (){
-      map.mapMoved(false, isFinal);
-    }, 1);
   }
 }

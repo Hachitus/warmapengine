@@ -28,6 +28,7 @@ export let map_zoom = setupMap_zoom();
 ***********************/
 function setupMap_zoom() {
   var initialized = false;
+  var initialized2 = false;
   var difference = {};
   var map;
   /**
@@ -127,6 +128,10 @@ function setupMap_zoom() {
       alert("DELTA");
       handleZoomEventDesktop(e, delta, deltaX, deltaY);
     } else if (e.pointers) {
+      if (!initialized2) {
+        initialized2 = true;
+        zoomModifier = zoomModifier * 0.5;
+      }
       alert("e.pointers");
       handleZoomEventMobile(e);
     }
@@ -158,7 +163,6 @@ function setupMap_zoom() {
   }
   function handleZoomEventMobile(e) {
     alert("MOBILE");
-    zoomModifier = zoomModifier * 0.5;
     var pointers = e.pointers;
     var coords = [{
         x: pointers[0].pageX,

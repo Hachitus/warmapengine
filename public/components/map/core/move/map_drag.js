@@ -69,8 +69,8 @@ function setupMap_drag() {
 
       if (!initialized) {
         offsetCoords.setOffset({
-          x: coords.x,
-          y: coords.y
+          x: coords.x / map.getScale(),
+          y: coords.y / map.getScale()
         });
         initialized = true;
 
@@ -87,6 +87,7 @@ function setupMap_drag() {
   /**
    * This handles offset Changes and setting data has map been moved based on it. Also
    * sets basic settings like preventDefault etc.
+   *
    * @param  {Event} e                        The event being dealt with
    * @param  {Map Object} map                 The map object
    * @param  {x: Number, y: Number} coords    Current pointer coordinates

@@ -122,9 +122,12 @@ function setupMap_zoom() {
   ******* plugin Initializers *******
   **********************************/
   function eventList(e, delta, deltaX, deltaY) {
+    alert("EVENT");
     if (delta) {
+      alert("DELTA");
       handleZoomEventDesktop(e, delta, deltaX, deltaY);
-    } else {
+    } else if (e.touches) {
+      alert("e.touches");
       eventListenerCBMobile(e);
     }
   }
@@ -135,6 +138,7 @@ function setupMap_zoom() {
    * @param  {Map} map             Map instance
    */
   function handleZoomEventDesktop(e, delta, deltaX, deltaY) {
+    alert("DESKTOP");
     var mouseWheelDelta = deltaY;
     /* Scale changes when the map is drawn. We make calculations with the old scale before draw */
     var oldScale = map.getScale();
@@ -153,6 +157,7 @@ function setupMap_zoom() {
     }
   }
   function handleZoomEventMobile(e) {
+    alert("MOBILE");
     zoomModifier = zoomModifier * 0.5;
     var pointers = e.pointers;
     var coords = [{

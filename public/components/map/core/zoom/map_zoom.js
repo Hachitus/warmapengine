@@ -128,7 +128,7 @@ function setupMap_zoom() {
       handleZoomEventDesktop(e, delta, deltaX, deltaY);
     } else if (e.pointers) {
       alert("e.pointers");
-      eventListenerCBMobile(e);
+      handleZoomEventMobile(e);
     }
   }
   /**

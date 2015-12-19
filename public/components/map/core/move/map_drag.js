@@ -69,8 +69,8 @@ function setupMap_drag() {
 
       if (!initialized) {
         offsetCoords.setOffset({
-          x: coords.x / map.getScale(),
-          y: coords.y / map.getScale()
+          x: Math.round( coords.x ),
+          y: Math.round( coords.y )
         });
         initialized = true;
 

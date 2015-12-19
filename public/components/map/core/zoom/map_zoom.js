@@ -3,8 +3,6 @@
 /**
  * The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed.
  * Zooming happens when the user scrolls the mousewheel or in mobile, pinches the screen
- *
- * @todo Change the map move after zooming to be mouse based or such. Now it is based on the map corners coordinates
  */
 
 /** ===== OWN imports ===== */
@@ -19,16 +17,19 @@ var _pluginName = "map_zoom";
 /***********************
 ********* API **********
 ***********************/
-/* Required by the plugins! */
+/* Required by the plugin */
 export var pluginName = _pluginName;
-export let map_zoom = setupMap_zoom();
+export var map_zoom = setupMap_zoom();
 
 /***********************
 ******** PUBLIC ********
 ***********************/
 function setupMap_zoom() {
+  /***********************
+  ****** VARIABLES *******
+  ***********************/
   var initialized = false;
-  var initialized2 = false;
+  var mobileInitialized = false;
   var difference = {};
   var map;
   /**
@@ -53,6 +54,9 @@ function setupMap_zoom() {
     pluginName: _pluginName // More for debugging
   };
 
+  /************************
+  ********* PUBLIC ********
+  ************************/
   /**
    * Required init functions for the plugin
    * @param {Map object} mapObj - the Map class object
@@ -68,7 +72,7 @@ function setupMap_zoom() {
     map.setPrototype("setZoomModifier", setZoomModifier);
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
-    eventListenerMod().toggleZoomListener(eventList);
+    eventListenerMod().toggleZoomListener(unifiedEventCB);
   }
 
   /****************************************
@@ -120,19 +124,25 @@ function setupMap_zoom() {
   }
 
   /**********************************
-  ******* plugin Initializers *******
+  ********* Event functions *********
   **********************************/
-  function eventList(e, delta, deltaX, deltaY) {
-    alert("EVENT");
+  /**
+   * This starts the correct eventListener for the current environment. Mousewheel and pinch differ quite dramatically
+   * so we keep them as separate functions.
+   *
+   * @param  {Event} e             Event object
+   * @param  {Integer} delta       Hamster.js provided delta
+   * @param  {Integer} deltaX      Hamster.js provided delta
+   * @param  {Integer} deltaY      Hamster.js provided delta
+   */
+  function unifiedEventCB(e, delta, deltaX, deltaY) {
     if (delta) {
-      alert("DELTA");
       handleZoomEventDesktop(e, delta, deltaX, deltaY);
     } else if (e.pointers) {
-      if (!initialized2) {
-        initialized2 = true;
-        zoomModifier = zoomModifier * 0.5;
+      if (!mobileInitialized) {
+        mobileInitialized = true;
+        setZoomModifier(zoomModifier * 0.5);
       }
-      alert("e.pointers");
       handleZoomEventMobile(e);
     }
   }
@@ -143,7 +153,6 @@ function setupMap_zoom() {
    * @param  {Map} map             Map instance
    */
   function handleZoomEventDesktop(e, delta, deltaX, deltaY) {
-    alert("DESKTOP");
     var mouseWheelDelta = deltaY;
     /* Scale changes when the map is drawn. We make calculations with the old scale before draw */
     var oldScale = map.getScale();
@@ -162,7 +171,6 @@ function setupMap_zoom() {
     }
   }
   function handleZoomEventMobile(e) {
-    alert("MOBILE");
     var pointers = e.pointers;
     var coords = [{
         x: pointers[0].pageX,
@@ -206,6 +214,7 @@ function setupMap_zoom() {
 
     } catch (ev) {
       console.log("Error! ", ev);
+      alert("error was thrown");
     }
   }
 

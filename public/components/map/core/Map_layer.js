@@ -203,7 +203,7 @@ function _getBaseContainerClass() {
 	 * @amount that was given
    * */
   function setScale(amount) {
-    this.scale.x = this.scale.y = amount;
+    this.scale.x = this.scale.y = +amount.toFixed(2);
 
     return this.scale.x;
   }

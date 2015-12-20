@@ -67,10 +67,13 @@ function setupMap_drag() {
 
       map.mapMoved(true);
 
+      coords.x = Math.round( coords.x );
+      coords.y = Math.round( coords.y );
+
       if (!initialized) {
         offsetCoords.setOffset({
-          x: Math.round( coords.x ),
-          y: Math.round( coords.y )
+          x: coords.x,
+          y: coords.y
         });
         initialized = true;
 

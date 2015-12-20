@@ -22,7 +22,7 @@ export var managingTileMapMovement = setupManagingTileMapMovement();
 ******* PUBLIC *********
 ***********************/
 function setupManagingTileMapMovement () {
-  const VIEWPORT_OFFSET = 0.1;
+  const VIEWPORT_OFFSET = 0.15;
   const CHECK_INTERVAL = 20;
   var queue = {};
   var changedCoordinates = {
@@ -37,10 +37,12 @@ function setupManagingTileMapMovement () {
   };
 
   function add(object, layer, map) {
+    var scale = map.getScale();
     var viewportArea;
 
     viewportArea = map.getViewportArea();
     Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
+    Object.assign( viewportArea , applyScaleToViewport(viewportArea, scale) );
 
     object.visible = isObjectOutsideViewport(object, viewportArea, false) ? false : true;
 
@@ -71,7 +73,7 @@ function setupManagingTileMapMovement () {
       var viewportArea = map.getViewportArea();
 
       return function handleViewportArea() {
-        var objectsUnderChangedArea, isOutside;
+        var objectsUnderChangedArea, isOutside, scaledViewport;
 
         try {
           Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea));
@@ -85,13 +87,13 @@ function setupManagingTileMapMovement () {
           viewportArea.width += Math.round(Math.abs(changedCoordinates.width));
           viewportArea.height += Math.round(Math.abs(changedCoordinates.height));
 
-          Object.assign( viewportArea, applyScaleToViewport(viewportArea, scale) );
+          scaledViewport = Object.assign({} , applyScaleToViewport(viewportArea, scale) );
 
           /* RESET */
           changedCoordinates.width = 0;
           changedCoordinates.height = 0;
 
-          objectsUnderChangedArea = map.getObjectsUnderPoint(viewportArea);
+          objectsUnderChangedArea = map.getObjectsUnderPoint(scaledViewport);
 
           objectsUnderChangedArea.forEach((thisObject) => {
             isOutside = isObjectOutsideViewport(thisObject, viewportArea);

@@ -13,6 +13,7 @@
 /***********************
 ****** VARIABLES *******
 ***********************/
+var stateOfEvents = {};
 var singletonScope;
 
 /***********************
@@ -53,6 +54,13 @@ function eventListenerModule(canvasElement = document.getElementsByTagName("canv
 
   singletonScope = {
     states: {}
+  };
+
+  singletonScope.setState = function setState(type, state) {
+    stateOfEvents[type] = state;
+  };
+  singletonScope.getState = function setState(type) {
+    return stateOfEvents[type];
   };
 
   /**

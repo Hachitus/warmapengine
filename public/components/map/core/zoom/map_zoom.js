@@ -28,10 +28,11 @@ function setupMap_zoom() {
   /***********************
   ****** VARIABLES *******
   ***********************/
+  const TIMEOUT_AFTER_ZOOM = 40;
   var initialized = false;
   var mobileInitialized = false;
   var difference = {};
-  var map;
+  var map, eventListener;
   /**
    * Maximum and minimum amount, the player can zoom the map
    * @type { farther: Number, closer: Number }
@@ -65,6 +66,7 @@ function setupMap_zoom() {
    * But zoomLimit and modifier need to be setable in creation, init or later with setters
    * */
   function init(thisMap) {
+    eventListener = eventListenerMod();
     map = thisMap;
     map.setPrototype("zoomIn", zoomIn);
     map.setPrototype("zoomOut", zoomOut);
@@ -72,7 +74,7 @@ function setupMap_zoom() {
     map.setPrototype("setZoomModifier", setZoomModifier);
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
-    eventListenerMod().toggleZoomListener(unifiedEventCB);
+    eventListener.toggleZoomListener(unifiedEventCB);
   }
 
   /****************************************
@@ -190,10 +192,17 @@ function setupMap_zoom() {
           x: changeX,
           y: changeY
         };
+        eventListener.setState("zoom", true);
         initialized = true;
 
         return;
-      } else if (e.isFinal === true) {
+      } else if (e.eventType === 4 || e.eventType === 8) { /* e.eventType 4 = event canceled, e.eventType 8 = event finished */
+        /* We don't want another event to be fired right after a pinch event. It makes the zoomign experience rather
+         * bad if after zoom there is immediately an unexplainable drag and the map moves a bit
+         * */
+        window.setTimeout(function () {
+          eventListener.setState("zoom", false);
+        }, TIMEOUT_AFTER_ZOOM);
         initialized = false;
       }
 

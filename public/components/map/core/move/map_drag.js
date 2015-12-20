@@ -26,7 +26,7 @@ export var map_drag = setupMap_drag();
 function setupMap_drag() {
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
-  var eventListenerCB;
+  var eventListenerCB, eventListener;
 
   /***********************
   ********* API **********
@@ -45,10 +45,11 @@ function setupMap_drag() {
    * @param {Map object} mapObj - the Map class object
    * */
   function init(map) {
+    eventListener = eventListenerMod();
     eventListenerCB = _startDragListener(map);
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
-    eventListenerMod().toggleDragListener(eventListenerCB);
+    eventListener.toggleDragListener(eventListenerCB);
   }
 
   /*****************************
@@ -63,6 +64,9 @@ function setupMap_drag() {
     var initialized = false;
 
     return function startDrag(e) {
+      if (eventListener.getState("zoom")) {
+        return false;
+      }
       var coords = mouseUtils.eventData.getHAMMERPointerCoords(e);
 
       map.mapMoved(true);

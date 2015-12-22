@@ -1,3 +1,5 @@
+/* global performance */
+
 'use strict';
 
 /**
@@ -17,6 +19,7 @@ import { mapEvents } from '/components/map/core/mapEvents';
 ********* API **********
 ***********************/
 export var managingTileMapMovement = setupManagingTileMapMovement();
+var worker = new Worker("/components/map/extensions/dynamicMaps/managingTileMapMovement/managingGeneralWorker.js");
 
 /***********************
 ******* PUBLIC *********
@@ -54,6 +57,8 @@ function setupManagingTileMapMovement () {
    * set a check in the future based on the given intervalCheck milliseconds. And immediately after it we check if there
    * is another map movement. If there is we set another timeout. This works better with timeouts.
    *
+   * NOTE! This uses webWorkers. They seemed to speed up the check, when timing with performance.now.
+   *
    * @param  {[type]} layer [description]
    * @param  {[type]} map   [description]
    * @return {[type]}       [description]
@@ -69,65 +74,42 @@ function setupManagingTileMapMovement () {
     window.setTimeout(viewportFn, CHECK_INTERVAL);
 
     function setupHandleViewportArea(queue, map, changedCoordinates) {
-      var scale = map.getScale();
       var viewportArea = map.getViewportArea();
 
-      return function handleViewportArea() {
-        var objectsUnderChangedArea, isOutside, scaledViewport;
+      try {
+        if (window.Worker) {
+          worker.onmessage = function(e) {
+            var isOutside;
 
-        try {
-          Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea));
+            let scaledViewport = e.data[0];
+            let objectsUnderChangedArea = map.getObjectsUnderPoint(scaledViewport);
 
-          if (changedCoordinates.width < 0) {
-            Object.assign( viewportArea, getViewportsLeftSideCoordinates(viewportArea));
-          }
-          if (changedCoordinates.height < 0) {
-            Object.assign( viewportArea, getViewportsLeftSideCoordinates(viewportArea));
-          }
-          viewportArea.width += Math.round(Math.abs(changedCoordinates.width));
-          viewportArea.height += Math.round(Math.abs(changedCoordinates.height));
+            objectsUnderChangedArea.forEach((thisObject) => {
+              isOutside = isObjectOutsideViewport(thisObject, viewportArea);
 
-          scaledViewport = Object.assign({} , applyScaleToViewport(viewportArea, scale) );
+              if (thisObject.visible && isOutside) {
+                thisObject.visible = false;
+              } else if (!thisObject.visible && !isOutside ) {
+                thisObject.visible = true;
+              }
+            });
 
-          /* RESET */
-          changedCoordinates.width = 0;
-          changedCoordinates.height = 0;
-
-          objectsUnderChangedArea = map.getObjectsUnderPoint(scaledViewport);
-
-          objectsUnderChangedArea.forEach((thisObject) => {
-            isOutside = isObjectOutsideViewport(thisObject, viewportArea);
-
-            if (thisObject.visible && isOutside) {
-              thisObject.visible = false;
-            } else if (!thisObject.visible && !isOutside ) {
-              thisObject.visible = true;
-            }
-          });
-          /** @todo Remove after optimization ready */
-
-          if (window.Worker) {
-            // var worker = new Worker("/components/map/extensions/dynamicMaps/managingTileMapMovement/managingGeneralWorker.js");
-            // worker.onmessage = function(e) {
-            //   console.log("MESSAGE FROM BEYOND");
-            //   // e.data == 'msg from worker'
-            // };
-            // worker.postMessage(children); // Start the worker.
-            // webworker.postMessage("children");
-            // console.log('Message posted to worker');
-            // webworker.addEventListener('message', function(event) {
-            //   console.log("DATA", event.data);
-            // });
-          }
-        } catch (e) {
-          console.log("ISSUE: ", e);
+            queue.processing = false;
+            map.drawOnNextTick();
+          };
+          worker.postMessage([
+            viewportArea,
+            changedCoordinates,
+            map.getScale()
+          ]);
+        } else {
+          queue.processing = false;
+          throw new Error("ERROR WITH WEB WORKER");
         }
-
+      } catch (e) {
         queue.processing = false;
-
-
-        map.drawOnNextTick();
-      };
+        console.log(e);
+      }
     }
   }
   function startEventListeners(map) {
@@ -162,16 +144,6 @@ function setupManagingTileMapMovement () {
     return {
       x2: Math.round( viewportArea.x + Math.abs( viewportArea.width ) + offsetSize ),
       y2: Math.round( viewportArea.y + Math.abs( viewportArea.height ) + offsetSize ),
-      width: Math.round( viewportArea.width + offsetSize ),
-      height: Math.round( viewportArea.height + offsetSize )
-    };
-  }
-  function getViewportsLeftSideCoordinates(viewportArea) {
-    var offsetSize = Math.round(Math.abs( viewportArea.width * VIEWPORT_OFFSET ));
-
-    return {
-      x: Math.round( viewportArea.x - offsetSize ),
-      y: Math.round( viewportArea.y - offsetSize ),
       width: Math.round( viewportArea.width + offsetSize ),
       height: Math.round( viewportArea.height + offsetSize )
     };

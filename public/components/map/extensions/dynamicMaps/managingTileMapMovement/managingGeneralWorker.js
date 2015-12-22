@@ -2,6 +2,11 @@
 
 'use strict';
 
+/**
+ * This webworker receives array as postMessage. The first index will determine what we do. First index is a value of
+ * integer.
+ */
+
 /* object.assign polyfill for IE11 */
 if (typeof Object.assign != 'function') {
   (function () {
@@ -27,34 +32,42 @@ if (typeof Object.assign != 'function') {
 }
 
 const VIEWPORT_OFFSET = 0.15;
-var scaledViewport, viewportArea, changedCoordinates, scale;
+const METHOD_ALL = 1;
+const METHOD_SHORT = 0;
+var viewportArea, changedCoordinates, scale, methodType;
 
 self.addEventListener("message", function (e) {
-  viewportArea = e.data[0];
-  changedCoordinates = e.data[1];
+  var scaledViewport;
+
+  methodType = e.data[0];
+  viewportArea = e.data[1];
   scale = e.data[2];
 
-  try {
-    Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea));
+  if (methodType === METHOD_ALL) {
+    changedCoordinates = e.data[3];
 
-    if (changedCoordinates.width < 0) {
-      Object.assign( viewportArea, getViewportsLeftSideCoordinates(viewportArea));
+    try {
+      Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea));
+
+      if (changedCoordinates.width < 0) {
+        Object.assign( viewportArea, getViewportsLeftSideCoordinates(viewportArea));
+      }
+      if (changedCoordinates.height < 0) {
+        Object.assign( viewportArea, getViewportsLeftSideCoordinates(viewportArea));
+      }
+      viewportArea.width += Math.round(Math.abs(changedCoordinates.width));
+      viewportArea.height += Math.round(Math.abs(changedCoordinates.height));
+
+      scaledViewport = Object.assign({} , applyScaleToViewport(viewportArea, scale) );
+
+      /* RESET */
+      changedCoordinates.width = 0;
+      changedCoordinates.height = 0;
+
+      postMessage([scaledViewport]);
+    } catch (ev) {
+      console.log("ISSUE: ", ev);
     }
-    if (changedCoordinates.height < 0) {
-      Object.assign( viewportArea, getViewportsLeftSideCoordinates(viewportArea));
-    }
-    viewportArea.width += Math.round(Math.abs(changedCoordinates.width));
-    viewportArea.height += Math.round(Math.abs(changedCoordinates.height));
-
-    scaledViewport = Object.assign({} , applyScaleToViewport(viewportArea, scale) );
-
-    /* RESET */
-    changedCoordinates.width = 0;
-    changedCoordinates.height = 0;
-
-    postMessage([scaledViewport]);
-  } catch (ev) {
-    console.log("ISSUE: ", ev);
   }
 });
 

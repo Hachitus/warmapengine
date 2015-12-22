@@ -1,5 +1,3 @@
-/* global performance */
-
 'use strict';
 
 /**
@@ -19,7 +17,7 @@ import { mapEvents } from '/components/map/core/mapEvents';
 ********* API **********
 ***********************/
 export var managingTileMapMovement = setupManagingTileMapMovement();
-var worker = new Worker("/components/map/extensions/dynamicMaps/managingTileMapMovement/managingGeneralWorker.js");
+var viewportWorker = new Worker("/components/map/extensions/dynamicMaps/managingTileMapMovement/managingGeneralWorker.js");
 
 /***********************
 ******* PUBLIC *********
@@ -40,12 +38,11 @@ function setupManagingTileMapMovement () {
   };
 
   function add(object, layer, map) {
-    var scale = map.getScale();
     var viewportArea;
 
     viewportArea = map.getViewportArea();
     Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
-    Object.assign( viewportArea , applyScaleToViewport(viewportArea, scale) );
+    Object.assign( viewportArea , applyScaleToViewport(viewportArea, map.getScale()) );
 
     object.visible = isObjectOutsideViewport(object, viewportArea, false) ? false : true;
 
@@ -78,7 +75,7 @@ function setupManagingTileMapMovement () {
 
       try {
         if (window.Worker) {
-          worker.onmessage = function(e) {
+          viewportWorker.onmessage = function(e) {
             var isOutside;
 
             let scaledViewport = e.data[0];
@@ -97,10 +94,11 @@ function setupManagingTileMapMovement () {
             queue.processing = false;
             map.drawOnNextTick();
           };
-          worker.postMessage([
+          viewportWorker.postMessage([
+            1,
             viewportArea,
-            changedCoordinates,
-            map.getScale()
+            map.getScale(),
+            changedCoordinates
           ]);
         } else {
           queue.processing = false;

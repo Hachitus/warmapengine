@@ -1,4 +1,5 @@
 /* global System, Q */
+
 'use strict';
 
 /**
@@ -41,12 +42,14 @@ var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer;
 ***********************/
 export class Map {
   /**
-   * @param {DOM Canvas element} canvas - Canvas used by the map
-   * @param {Object} options - different options for the map to be given. Format:
+   * @param {DOM Canvas element} canvas     Canvas used by the map
+   * @param {Object} options                different options for the map to be given. Format:
    * { bounds: { width: Number, height: Number}, renderer: {} }
+   * @param {object} subContainersConfig          { width: 500, height: 500, maxDetectionOffset: 100 }
+   *
    * @return Map instance
    */
-  constructor(canvasContainer = null, props = { startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true } }) {
+  constructor(canvasContainer = null, props = { startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true }, subContainersConfig: false}) {
     var { startCoord, bounds, options } = props;
 
     if (!canvasContainer) {
@@ -66,6 +69,7 @@ export class Map {
     this.canvas = _renderer.view;
     this.plugins = new Set();
     this._mapInMove = false;
+    this.subContainersConfig = options.subContainersConfig;
 
     /* These are the 2 topmost layers on the map:
      * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
@@ -163,10 +167,26 @@ export class Map {
    * All parameters are passed to Map_layer constructor
    * @return created Map_layer instance
    * */
-  addLayer(layer) {
-    _movableLayer.addChild(layer);
+  addLayer(LayerConstructor, layerOptions) {
+    var thisLayer;
 
-    return layer;
+    if (this.subContainerConfigs && layerOptions.subContainers !== false) {
+      layerOptions.subContainers = this.subContainerConfigs;
+    }
+
+    thisLayer = new LayerConstructor(layerOptions);
+    _movableLayer.addChild(thisLayer);
+
+    return thisLayer;
+  }
+  /**
+   * Does the map use subContainers
+   */
+  usesSubContainers() {
+    return this.subContainersConfig ? true : false;
+  }
+  getSubContainerConfigs() {
+    return this.subContainersConfig;
   }
   /**
    * Get the size of area that is shown to the player. Depends a bit if we want to show the maximum possible or current.
@@ -332,16 +352,26 @@ export class Map {
     // allCoords.localCoords.width = globalCoords.width;
     // allCoords.localCoords.height = globalCoords.height;
 
-    if (type) {
-      objects[type] = this.objectManager.retrieve(allCoords, type, { size: {
-        width: globalCoords.width,
-        height: globalCoords.height
-      }});
+    if (this.usesSubContainers()) {
+      let { width, height, maxDetectionOffset } = this.getSubContainerConfigs();
+      let xIndex = Math.floor( allCoords.localCoords.x / width );
+      let yIndex = Math.floor( allCoords.localCoords.y / height );
+
+      if (this._movableLayer.children.subContainersConfig) {
+JATKA TÄSTÄ
+      }
     } else {
-      objects = this.objectManager.retrieve(allCoords, type, { size: {
-        width: globalCoords.width,
-        height: globalCoords.height
-      }});
+      if (type) {
+        objects[type] = this.objectManager.retrieve(allCoords, type, { size: {
+          width: globalCoords.width,
+          height: globalCoords.height
+        }});
+      } else {
+        objects = this.objectManager.retrieve(allCoords, type, { size: {
+          width: globalCoords.width,
+          height: globalCoords.height
+        }});
+      }
     }
 
     return objects;

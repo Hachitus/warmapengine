@@ -19,16 +19,18 @@ var _baseContainerClass = _getBaseContainerClass();
 ***********************/
 export class Map_layer extends PIXI.Container {
   /**
-   * @param {String}				name layer property name, used for identifiying the layer, usefull in debugging, but used also
-   * otherwise too!
-   * @param {x: Number, y: Number} 	coord starting coords of layer. Relative to parent map layer.
-   * @param {PIXI renderer}			renderer Not really needed by the super class, but used elsewhere.
+   * @param {String}				                name layer property name, used for identifiying the layer, usefull in
+   * debugging, but used also otherwise too!
+   * @param {x: Number, y: Number} 	        coord starting coords of layer. Relative to parent map layer.
+   * @param {PIXI renderer}	renderer        renderer Not really needed by the super class, but used elsewhere.
+   * @param {PIXI renderer} movable         renderer Not really needed by the super class, but used elsewhere.
+   * @param {object} subContainers          { width: 500, height: 500, maxDetectionOffset: 100 }
    *
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false } ) {
-    var { name, coord, renderer, movable } = options;
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false, subContainers: false } ) {
+    var { name, coord, renderer, movable, subContainers } = options;
 
     super();
 
@@ -41,6 +43,8 @@ export class Map_layer extends PIXI.Container {
     this.zoomable = false;
     this.preventSelection = false;
     this.oldAddChild = super.addChild.bind(this);
+    this.subContainersConfig = subContainers;
+    this.subContainerList = [];
   }
 }
 Object.assign(Map_layer.prototype, _baseContainerClass);
@@ -142,10 +146,11 @@ function _getBaseContainerClass() {
   return {
     addChild,
     setCache,
+    hasSubContainers,
+    getSubContainerConfigs,
     getCurrentCache,
     getCacheEnabled,
     move,
-    getChildNamed,
     setScale,
     getScale,
     getUIObjects,
@@ -154,6 +159,13 @@ function _getBaseContainerClass() {
   };
 
   function addChild(displayObject) {
+    if (this.subContainers) {
+      let correctContainer;
+      correctContainer = setCorrectSubContainer(displayObject, this);
+      this.oldAddChild(correctContainer);
+      return;
+    }
+
     this.oldAddChild(displayObject);
 
     return displayObject;
@@ -164,6 +176,12 @@ function _getBaseContainerClass() {
     this.cacheAsBitmap = toCacheStatus;
 
     return toCacheStatus;
+  }
+  function hasSubContainers() {
+    return this.subContainers ? true : false;
+  }
+  function getSubContainerConfigs() {
+    return this.subContainersConfig;
   }
   function getCurrentCache() {
     return this.cacheAsBitmap;
@@ -181,21 +199,6 @@ function _getBaseContainerClass() {
     }
 
     return this;
-  }
-  /**
-   * gets child (layer or object - sprite etc.) from this layer
-	 * @param {string} name searches for a layer that has this name-property
-	 * @return the first layer that was found or false if nothing was found
-   * */
-  function getChildNamed(name) {
-    if (this.children[0] instanceof PIXI.DisplayObjectContainer ) {
-      for (let child of this.children) {
-        if (child.name.toLowerCase() === name.toLowerCase()) {
-          return child;
-        }
-      }
-    }
-    return false;
   }
   /**
    * set layer scale
@@ -262,4 +265,37 @@ function _getBaseContainerClass() {
   function getCacheEnabled() {
     return this._cacheEnabled;
   }
+}
+
+export class Map_subContainer extends PIXI.Container {
+  constructor(size) {
+    super();
+
+    this.size = size;
+  }
+}
+
+/***********************
+******* PRIVATE ********
+***********************/
+function setCorrectSubContainer(displayObject, parentLayer) {
+  var { subContainersConfig, subContainerList, size } = parentLayer;
+  var xIndex = Math.floor( displayObject.x / subContainersConfig.width );
+  var yIndex = Math.floor( displayObject.y / subContainersConfig.height );
+  var thisSubContainer;
+
+  if (subContainerList[xIndex][yIndex]) {
+    thisSubContainer = subContainerList[xIndex][yIndex];
+  } else if (subContainerList[xIndex]) {
+    thisSubContainer = new Map_subContainer(size);
+    subContainerList[xIndex][yIndex] = [thisSubContainer];
+  } else {
+    thisSubContainer = new Map_subContainer(size);
+    subContainerList[xIndex] = [];
+    subContainerList[xIndex][yIndex] = [thisSubContainer];
+  }
+
+  thisSubContainer.addChild(displayObject);
+
+  return thisSubContainer;
 }

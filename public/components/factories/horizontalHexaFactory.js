@@ -97,7 +97,7 @@ function createMap(canvasContainerElement, datas) {
     var objManager = map.objectManager;
     var LayerConstructor = layers[layerData.type];
     var renderer = map.getRenderer();
-    var layerOptions = { name: layerData.name, coord: layerData.coord, drawOutsideViewport: { x: renderer.width, y: renderer.height } };
+    var layerOptions = { name: layerData.name, coord: layerData.coord, drawOutsideViewport: { x: renderer.width, y: renderer.height }, subContainers: { width: 500, height: 500, maxDetectionOffset: 100 } };
     var thisLayer;
 
     try {
@@ -111,7 +111,7 @@ function createMap(canvasContainerElement, datas) {
         }, {
           objects: 10,
           levels: 6
-      });
+        });
 
       layerData.objectGroups.forEach( objectGroup => {
         let spritesheetType = objectGroup.typeImageData;

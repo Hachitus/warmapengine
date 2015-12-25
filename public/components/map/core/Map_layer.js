@@ -148,6 +148,7 @@ function _getBaseContainerClass() {
     setCache,
     hasSubContainers,
     getSubContainerConfigs,
+    getCorrectSubContainer,
     getCurrentCache,
     getCacheEnabled,
     move,
@@ -182,6 +183,21 @@ function _getBaseContainerClass() {
   }
   function getSubContainerConfigs() {
     return this.subContainersConfig;
+  }
+  function getSubContainersByCoordinates(coords) {
+    var correctSubcontainers;
+
+    correctSubcontainers = this.children.filter(thisSubContainer => {
+      throw new Error("undone");
+      if (coords.x < thisSubContainer.x &&
+          coords.x < thisSubContainer.x &&
+          coords.x < thisSubContainer.x &&
+          coords.x < thisSubContainer.x) {
+        return true;
+      }
+    });
+
+    return correctSubcontainers;
   }
   function getCurrentCache() {
     return this.cacheAsBitmap;

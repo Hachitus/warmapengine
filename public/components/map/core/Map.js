@@ -356,9 +356,22 @@ export class Map {
       let { width, height, maxDetectionOffset } = this.getSubContainerConfigs();
       let xIndex = Math.floor( allCoords.localCoords.x / width );
       let yIndex = Math.floor( allCoords.localCoords.y / height );
+      let allMatchingSubcontainers;
 
-      if (this._movableLayer.children.subContainersConfig) {
-JATKA TÄSTÄ
+      allMatchingSubcontainers = this._movableLayer.children.map(layers => {
+        return layers.getSubContainersByCoordinates(allCoords.localCoords);
+      });
+
+      if (type) {
+        objects[type] = this.objectManager.retrieve(allCoords, "subCont_" + type, { size: {
+          width: globalCoords.width,
+          height: globalCoords.height
+        }});
+      } else {
+        objects = this.objectManager.retrieve(allCoords, "subCont_" + type, { size: {
+          width: globalCoords.width,
+          height: globalCoords.height
+        }});
       }
     } else {
       if (type) {

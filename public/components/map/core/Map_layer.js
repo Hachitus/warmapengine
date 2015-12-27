@@ -379,7 +379,7 @@ function getClosestSubcontainers(layer, coordinates) {
   var subContainerList = layer.subContainerList;
 
   for (let thisXIndex = xIndex; thisXIndex <= widthIndex; thisXIndex++) {
-    if (thisXIndex >= 0 && subContainerList && layer.children[thisXIndex]) {
+    if (thisXIndex >= 0 && subContainerList && subContainerList[thisXIndex]) {
       for (let thisYIndex = yIndex; thisYIndex <= heightIndex; thisYIndex++) {
         if (thisYIndex >= 0 && subContainerList[thisXIndex][thisYIndex]) {
           allFoundSubcontainers.push(subContainerList[thisXIndex][thisYIndex]);
@@ -389,10 +389,4 @@ function getClosestSubcontainers(layer, coordinates) {
   }
 
   return allFoundSubcontainers;
-}
-function testRectangleIntersect(a, b) {
-  return (a.x <= b.x + b.width &&
-          b.x <= a.x + a.width &&
-          a.y <= b.y + b.height &&
-          b.y <= a.y + a.height);
 }

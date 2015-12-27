@@ -134,8 +134,7 @@ function setupManagingTileMapMovement () {
 
     globalCoords = object.getSubcontainerArea({ toGlobal: hasParent });
 
-    isIt = globalCoords.x < viewportArea.x || globalCoords.y < viewportArea.y ||
-            globalCoords.x > viewportArea.x2 || globalCoords.y > viewportArea.y2;
+    isIt = !testRectangleIntersect(globalCoords, viewportArea);
 
     return isIt;
   }
@@ -159,4 +158,13 @@ function setupManagingTileMapMovement () {
       height: Math.round( viewportArea.height / scale )
     };
   }
+}
+/***********************
+******* PRIVATE ********
+***********************/
+function testRectangleIntersect(a, b) {
+  return (a.x <= b.x + b.width &&
+          b.x <= a.x + a.width &&
+          a.y <= b.y + b.height &&
+          b.y <= a.y + a.height);
 }

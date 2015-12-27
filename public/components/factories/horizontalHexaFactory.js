@@ -60,9 +60,9 @@ function createMap(canvasContainerElement, datas) {
   var gameData = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
   var windowSize = resizeUtils.getWindowSize();
   var pixelRatio = environmentDetection.getPixelRatio();
+  var mapSize = gameData.mapSize;
 
   var mapProperties = {
-    mapSize: gameData.mapSize,
     bounds: {
       x: 0,
       y: 0,
@@ -74,11 +74,18 @@ function createMap(canvasContainerElement, datas) {
       autoResize: true,
       transparent: true,
       antialias: false // TEST. Only should work in chrome atm.?
+    },
+    subContainers: {
+      width: 500,
+      height: 500,
+      maxDetectionOffset: 100,
+      isHiddenByDefault: true
     }
   };
   var mapOptions = {
     refreshEventListeners: true
   };
+
   var map = new Map(canvasContainerElement, mapProperties, mapOptions ) ;
   var dialog_selection = document.getElementById("selectionDialog");
   var defaultUI = new UI_default(dialog_selection, map);
@@ -97,17 +104,23 @@ function createMap(canvasContainerElement, datas) {
     var objManager = map.objectManager;
     var LayerConstructor = layers[layerData.type];
     var renderer = map.getRenderer();
-    var layerOptions = { name: layerData.name, coord: layerData.coord, drawOutsideViewport: { x: renderer.width, y: renderer.height }, subContainers: { width: 500, height: 500, maxDetectionOffset: 100 } };
+    var layerOptions = {
+      name: layerData.name,
+      coord: layerData.coord,
+      drawOutsideViewport: {
+        x: renderer.width,
+        y: renderer.height
+      }
+    };
     var thisLayer;
 
     try {
-      thisLayer = new LayerConstructor(layerOptions);
-      map.addLayer(thisLayer);
+      thisLayer = map.addLayer(LayerConstructor, layerOptions);
       objManager.addLayer(layerGroup, {
           x: 0,
           y: 0,
-          width: +mapProperties.mapSize.x,
-          height: +mapProperties.mapSize.y
+          width: +mapSize.x,
+          height: +mapSize.y
         }, {
           objects: 10,
           levels: 6
@@ -153,7 +166,7 @@ function createMap(canvasContainerElement, datas) {
                 newObject
             );
 
-            managingTileMapMovement.add(newObject, thisLayer, map);
+            thisLayer.addChild(newObject);
           } catch (e) {
             console.log(e);
           }
@@ -164,6 +177,7 @@ function createMap(canvasContainerElement, datas) {
     }
   });
 
+  managingTileMapMovement.addAll(map);
   managingTileMapMovement.startEventListeners(map);
   map.moveMap(mapData.startPoint);
 

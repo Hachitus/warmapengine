@@ -32,21 +32,24 @@ function setupManagingTileMapMovement () {
   };
 
   return {
-    add,
+    addAll,
     check,
     startEventListeners
   };
 
-  function add(object, layer, map) {
-    var viewportArea;
+  function addAll(map) {
+    var viewportArea, movableLayer;
 
+    movableLayer = map.getMovableLayer();
     viewportArea = map.getViewportArea();
     Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
     Object.assign( viewportArea , applyScaleToViewport(viewportArea, map.getScale()) );
 
-    object.visible = isObjectOutsideViewport(object, viewportArea, false) ? false : true;
-
-    layer.addChild(object);
+    movableLayer.getPrimaryLayers().forEach( layer => {
+      layer.getObjects().forEach(object => {
+        object.visible = isObjectOutsideViewport(object, viewportArea, false) ? false : true;
+      });
+    });
   }
   /**
    * This one checks the that the objects that should currently be visible in the viewport area are visible and outside
@@ -79,15 +82,15 @@ function setupManagingTileMapMovement () {
             var isOutside;
 
             let scaledViewport = e.data[0];
-            let objectsUnderChangedArea = map.getObjectsUnderPoint(scaledViewport);
+            let containersUnderChangedArea = map.getSubcontainersUnderPoint(scaledViewport);
 
-            objectsUnderChangedArea.forEach((thisObject) => {
-              isOutside = isObjectOutsideViewport(thisObject, viewportArea);
+            containersUnderChangedArea.forEach((thisContainer) => {
+              isOutside = isObjectOutsideViewport(thisContainer, viewportArea);
 
-              if (thisObject.visible && isOutside) {
-                thisObject.visible = false;
-              } else if (!thisObject.visible && !isOutside ) {
-                thisObject.visible = true;
+              if (thisContainer.visible && isOutside) {
+                thisContainer.visible = false;
+              } else if (!thisContainer.visible && !isOutside ) {
+                thisContainer.visible = true;
               }
             });
 
@@ -129,7 +132,7 @@ function setupManagingTileMapMovement () {
   function isObjectOutsideViewport(object, viewportArea, hasParent = true) {
     var isIt, globalCoords;
 
-    globalCoords = object.getGraphicalArea({ toGlobal: hasParent });
+    globalCoords = object.getSubcontainerArea({ toGlobal: hasParent });
 
     isIt = globalCoords.x < viewportArea.x || globalCoords.y < viewportArea.y ||
             globalCoords.x > viewportArea.x2 || globalCoords.y > viewportArea.y2;

@@ -24,13 +24,15 @@ export class Map_layer extends PIXI.Container {
    * @param {x: Number, y: Number} 	        coord starting coords of layer. Relative to parent map layer.
    * @param {PIXI renderer}	renderer        renderer Not really needed by the super class, but used elsewhere.
    * @param {PIXI renderer} movable         renderer Not really needed by the super class, but used elsewhere.
-   * @param {object} subContainers          { width: 500, height: 500, maxDetectionOffset: 100 }
+   * @param {object} subContainers          width: Number. subcontainer width in pixels,
+   *                                        height: Number. subcontainer height in pixels,
+   *                                        maxDetectionOffset: Number. Amount of offset we detect outside the given area.
    *
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false, subContainers: false } ) {
-    var { name, coord, renderer, movable, subContainers } = options;
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false, subContainers: false, specialLayer: false } ) {
+    var { name, coord, renderer, movable, subContainers, specialLayer } = options;
 
     super();
 
@@ -42,6 +44,7 @@ export class Map_layer extends PIXI.Container {
     this.movable = movable;
     this.zoomable = false;
     this.preventSelection = false;
+    this.specialLayer = specialLayer;
     this.oldAddChild = super.addChild.bind(this);
     this.subContainersConfig = subContainers;
     this.subContainerList = [];
@@ -58,8 +61,8 @@ export class Map_spriteLayer extends PIXI.Container {
    * otherwise too!
    * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
    */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false } ) {
-    var { name, coord, renderer, movable } = options;
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false, subContainers: false, specialLayer: false } ) {
+    var { name, coord, renderer, movable, specialLayer, subContainers } = options;
 
     super();
 
@@ -71,7 +74,10 @@ export class Map_spriteLayer extends PIXI.Container {
     this.movable = movable;
     this.zoomable = false;
     this.preventSelection = false;
+    this.specialLayer = specialLayer;
     this.oldAddChild = super.addChild.bind(this);
+    this.subContainersConfig = subContainers;
+    this.subContainerList = [];
   }
 	/**
    * If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
@@ -105,8 +111,8 @@ export class Map_bigSpriteLayer extends PIXI.Container {
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false } ) {
-    var { name, coord, renderer, movable } = options;
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false, subContainers: false, specialLayer: false } ) {
+    var { name, coord, renderer, movable, specialLayer, subContainers } = options;
 
     super();
 
@@ -118,7 +124,10 @@ export class Map_bigSpriteLayer extends PIXI.Container {
     this.movable = movable;
     this.zoomable = false;
     this.preventSelection = false;
+    this.specialLayer = specialLayer;
     this.oldAddChild = super.addChild.bind(this);
+    this.subContainersConfig = subContainers;
+    this.subContainerList = [];
   }
 	/**
    * If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
@@ -148,7 +157,7 @@ function _getBaseContainerClass() {
     setCache,
     hasSubContainers,
     getSubContainerConfigs,
-    getCorrectSubContainer,
+    getSubContainersByCoordinates,
     getCurrentCache,
     getCacheEnabled,
     move,
@@ -156,18 +165,19 @@ function _getBaseContainerClass() {
     getScale,
     getUIObjects,
     emptyUIObjects,
-    addUIObjects
+    addUIObjects,
+    getPrimaryLayers,
+    getObjects
   };
 
   function addChild(displayObject) {
-    if (this.subContainers) {
+    if (this.hasSubContainers()) {
       let correctContainer;
       correctContainer = setCorrectSubContainer(displayObject, this);
       this.oldAddChild(correctContainer);
-      return;
+    } else {
+      this.oldAddChild(displayObject);
     }
-
-    this.oldAddChild(displayObject);
 
     return displayObject;
   }
@@ -179,25 +189,22 @@ function _getBaseContainerClass() {
     return toCacheStatus;
   }
   function hasSubContainers() {
-    return this.subContainers ? true : false;
+    return this.subContainersConfig ? true : false;
   }
   function getSubContainerConfigs() {
     return this.subContainersConfig;
   }
-  function getSubContainersByCoordinates(coords) {
-    var correctSubcontainers;
+  function getSubContainersByCoordinates(coordinates) {
+    if (!this.hasSubContainers()) {
+      throw new Error("tried to retrieve subContainers, when they are not present");
+    }
 
-    correctSubcontainers = this.children.filter(thisSubContainer => {
-      throw new Error("undone");
-      if (coords.x < thisSubContainer.x &&
-          coords.x < thisSubContainer.x &&
-          coords.x < thisSubContainer.x &&
-          coords.x < thisSubContainer.x) {
-        return true;
-      }
-    });
+    var { maxDetectionOffset } = this.getSubContainerConfigs();
+    var foundSubcontainers;
 
-    return correctSubcontainers;
+    foundSubcontainers = getClosestSubcontainers(this, coordinates);
+
+    return foundSubcontainers;
   }
   function getCurrentCache() {
     return this.cacheAsBitmap;
@@ -272,6 +279,7 @@ function _getBaseContainerClass() {
       //let newObj = general.deepCopy(objects);
       let newObj = objects;
 
+      newObj.specialLayer = true;
       this.addChild( newObj );
     }
     _UIObjects.push( objects );
@@ -281,13 +289,42 @@ function _getBaseContainerClass() {
   function getCacheEnabled() {
     return this._cacheEnabled;
   }
+  function getPrimaryLayers() {
+    return this.children.filter(thisChild => {
+      return !thisChild.specialLayer;
+    });
+  }
+  function getObjects() {
+    var allObjects = [];
+
+    if (this.hasSubContainers()) {
+      this.subContainerList.forEach(subcontainer => {
+        allObjects.concat(subcontainer.children);
+      });
+    }
+
+    return allObjects;
+  }
 }
 
 export class Map_subContainer extends PIXI.Container {
   constructor(size) {
     super();
 
+    this.specialLayer = true;
     this.size = size;
+  }
+  getSubcontainerArea (options = { toGlobal: true } ) {
+    var coordinates;
+
+    coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(0,0)) : this;
+
+    return {
+      x: Math.round( coordinates.x ),
+      y: Math.round( coordinates.y ),
+      width: Math.round( this.size.width ),
+      height: Math.round( this.size.height )
+    };
   }
 }
 
@@ -295,23 +332,67 @@ export class Map_subContainer extends PIXI.Container {
 ******* PRIVATE ********
 ***********************/
 function setCorrectSubContainer(displayObject, parentLayer) {
-  var { subContainersConfig, subContainerList, size } = parentLayer;
+  var { subContainersConfig, subContainerList } = parentLayer;
   var xIndex = Math.floor( displayObject.x / subContainersConfig.width );
   var yIndex = Math.floor( displayObject.y / subContainersConfig.height );
-  var thisSubContainer;
+  var thisSubcontainer;
 
-  if (subContainerList[xIndex][yIndex]) {
-    thisSubContainer = subContainerList[xIndex][yIndex];
-  } else if (subContainerList[xIndex]) {
-    thisSubContainer = new Map_subContainer(size);
-    subContainerList[xIndex][yIndex] = [thisSubContainer];
-  } else {
-    thisSubContainer = new Map_subContainer(size);
-    subContainerList[xIndex] = [];
-    subContainerList[xIndex][yIndex] = [thisSubContainer];
+  subContainerList[xIndex] = subContainerList[xIndex] || [];
+  thisSubcontainer = subContainerList[xIndex][yIndex] = subContainerList[xIndex][yIndex] || [];
+
+  if (subContainerList[xIndex][yIndex].length <= 0) {
+    thisSubcontainer = new Map_subContainer({
+      x: xIndex * subContainersConfig.width,
+      y: yIndex * subContainersConfig.height,
+      width: subContainersConfig.width,
+      height: subContainersConfig.height
+    });
+
+    subContainerList[xIndex][yIndex] = thisSubcontainer;
+    thisSubcontainer.x = xIndex * subContainersConfig.width;
+    thisSubcontainer.y = yIndex * subContainersConfig.height;
+    thisSubcontainer.visible = subContainersConfig.isHiddenByDefault ? false : true;
   }
 
-  thisSubContainer.addChild(displayObject);
+  displayObject.x -= thisSubcontainer.x;
+  displayObject.y -= thisSubcontainer.y;
+  subContainerList[xIndex][yIndex].addChild(displayObject);
 
-  return thisSubContainer;
+  return subContainerList[xIndex][yIndex];
+}
+/**
+ * Get the closest subcontainers of the given area.
+ * @param  {PIXI.Container} layer     The layer being used
+ * @param  {Number} xIndex            x / horizontal index.
+ * @param  {Number} yIndex            y / vertical index.
+ * @return {Array}                    Array of found subcontainers.
+ */
+function getClosestSubcontainers(layer, coordinates) {
+  var { width, height } = layer.getSubContainerConfigs();
+  var allFoundSubcontainers = [];
+  var xIndex = Math.floor( coordinates.x / width );
+  var yIndex = Math.floor( coordinates.y / height );
+  var x2 = coordinates.width ? coordinates.x + coordinates.width :  + coordinates.x;
+  var y2 = coordinates.height ? coordinates.y + coordinates.height :  + coordinates.y;
+  var widthIndex = Math.floor( x2 / width );
+  var heightIndex = Math.floor( y2 / height );
+  var subContainerList = layer.subContainerList;
+
+  for (let thisXIndex = xIndex; thisXIndex <= widthIndex; thisXIndex++) {
+    if (thisXIndex >= 0 && subContainerList && layer.children[thisXIndex]) {
+      for (let thisYIndex = yIndex; thisYIndex <= heightIndex; thisYIndex++) {
+        if (thisYIndex >= 0 && subContainerList[thisXIndex][thisYIndex]) {
+          allFoundSubcontainers.push(subContainerList[thisXIndex][thisYIndex]);
+        }
+      }
+    }
+  }
+
+  return allFoundSubcontainers;
+}
+function testRectangleIntersect(a, b) {
+  return (a.x <= b.x + b.width &&
+          b.x <= a.x + a.width &&
+          a.y <= b.y + b.height &&
+          b.y <= a.y + a.height);
 }

@@ -33,26 +33,42 @@ export class ObjectManager {
    * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to
    * detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn't be the issue.
    */
-  retrieve(allCoords, type, options = { size: { width: 0, height: 0 } }) {
-    var quadtreeObjs, foundObjs;
+  retrieve(allCoords, type, options = { quadtree: true, subcontainers: [], size: { width: 0, height: 0 } }) {
+    var { quadtree, subcontainers } = options;
     var { globalCoords, localCoords } = allCoords;
+    var foundObjs = [];
+    var quadtreeObjs;
 
-    if (!type) {
-      quadtreeObjs = Object.keys(this.quadtrees).map((thisIndex) => {
-        return this.quadtrees[thisIndex].retrieve(localCoords, options.size);
-      });
+    if (quadtree) {
+      if (!type) {
+        quadtreeObjs = Object.keys(this.quadtrees).map((thisIndex) => {
+          return this.quadtrees[thisIndex].retrieve(localCoords, options.size);
+        });
+      } else {
+        quadtreeObjs = this.quadtrees[type].retrieve(localCoords, options.size);
+      }
+
+      foundObjs = arrays.flatten2Levels(quadtreeObjs);
+
+      if (!options.size.width || !options.size.height) {
+        foundObjs = foundObjs.filter(obj => {
+          let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
+
+          return isHit;
+        });
+      }
     } else {
-      quadtreeObjs = this.quadtrees[type].retrieve(localCoords, options.size);
-    }
-
-    foundObjs = arrays.flatten2Levels(quadtreeObjs);
-
-    if (!options.size.width || !options.size.height) {
-      foundObjs = foundObjs.filter(obj => {
-        let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
-
-        return isHit;
+      subcontainers.forEach(container => {
+        foundObjs = foundObjs.concat(container.children);
       });
+
+      if (!options.size.width || !options.size.height) {
+        foundObjs = foundObjs.filter(obj => {
+          let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
+
+          return isHit;
+        });
+      }
     }
 
     return foundObjs;

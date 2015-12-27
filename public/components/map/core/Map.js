@@ -44,13 +44,15 @@ export class Map {
   /**
    * @param {DOM Canvas element} canvas     Canvas used by the map
    * @param {Object} options                different options for the map to be given. Format:
-   * { bounds: { width: Number, height: Number}, renderer: {} }
-   * @param {object} subContainersConfig          { width: 500, height: 500, maxDetectionOffset: 100 }
+   *                                        { bounds: { width: Number, height: Number}, renderer: {} }
+   * @param {object} subContainers          width: Number. subcontainer width in pixels,
+   *                                        height: Number. subcontainer height in pixels,
+   *                                        maxDetectionOffset: Number. Amount of offset we detect outside the given area.
    *
    * @return Map instance
    */
-  constructor(canvasContainer = null, props = { startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true }, subContainersConfig: false}) {
-    var { startCoord, bounds, options } = props;
+  constructor(canvasContainer = null, props = { startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true }, subContainers: false}) {
+    var { startCoord, bounds, options, subContainers } = props;
 
     if (!canvasContainer) {
       throw new Error(this.constructor.name + " needs canvasContainer!");
@@ -69,7 +71,7 @@ export class Map {
     this.canvas = _renderer.view;
     this.plugins = new Set();
     this._mapInMove = false;
-    this.subContainersConfig = options.subContainersConfig;
+    this.subContainersConfig = subContainers;
 
     /* These are the 2 topmost layers on the map:
      * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
@@ -170,8 +172,8 @@ export class Map {
   addLayer(LayerConstructor, layerOptions) {
     var thisLayer;
 
-    if (this.subContainerConfigs && layerOptions.subContainers !== false) {
-      layerOptions.subContainers = this.subContainerConfigs;
+    if (this.getSubContainerConfigs() && layerOptions.subContainers !== false) {
+      layerOptions.subContainers = this.getSubContainerConfigs();
     }
 
     thisLayer = new LayerConstructor(layerOptions);
@@ -336,6 +338,18 @@ export class Map {
 
     eventlisteners.toggleFullscreen(eventListenerCB);
   }
+  getSubcontainersUnderPoint(localCoords) {
+    var primaryLayers = this.getMovableLayer().getPrimaryLayers();
+    var allMatchingSubcontainers = [];
+    var thisLayersSubcontainers;
+
+    primaryLayers.forEach(layer => {
+      thisLayersSubcontainers = layer.getSubContainersByCoordinates(localCoords);
+      allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
+    });
+
+    return allMatchingSubcontainers;
+  }
   /**
    * Filter objects based on quadtree and then based on possible group provided
    *
@@ -353,37 +367,49 @@ export class Map {
     // allCoords.localCoords.height = globalCoords.height;
 
     if (this.usesSubContainers()) {
-      let { width, height, maxDetectionOffset } = this.getSubContainerConfigs();
-      let xIndex = Math.floor( allCoords.localCoords.x / width );
-      let yIndex = Math.floor( allCoords.localCoords.y / height );
-      let allMatchingSubcontainers;
+      let allMatchingSubcontainers = [];
+      let thisLayersSubcontainers = [];
+      let primaryLayers = this.getMovableLayer().getPrimaryLayers();
 
-      allMatchingSubcontainers = this._movableLayer.children.map(layers => {
-        return layers.getSubContainersByCoordinates(allCoords.localCoords);
+      primaryLayers.forEach(layer => {
+        thisLayersSubcontainers = layer.getSubContainersByCoordinates(allCoords.localCoords);
+        allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
       });
 
       if (type) {
-        objects[type] = this.objectManager.retrieve(allCoords, "subCont_" + type, { size: {
-          width: globalCoords.width,
-          height: globalCoords.height
-        }});
+        objects[type] = this.objectManager.retrieve(allCoords, type, {
+          subcontainers: allMatchingSubcontainers,
+          size: {
+            width: globalCoords.width,
+            height: globalCoords.height
+          }
+        });
       } else {
-        objects = this.objectManager.retrieve(allCoords, "subCont_" + type, { size: {
-          width: globalCoords.width,
-          height: globalCoords.height
-        }});
+        objects = this.objectManager.retrieve(allCoords, type, {
+          subcontainers: allMatchingSubcontainers,
+          size: {
+            width: globalCoords.width,
+            height: globalCoords.height
+          }
+        });
       }
     } else {
       if (type) {
-        objects[type] = this.objectManager.retrieve(allCoords, type, { size: {
-          width: globalCoords.width,
-          height: globalCoords.height
-        }});
+        objects[type] = this.objectManager.retrieve(allCoords, type, {
+            quadtree: true,
+            size: {
+              width: globalCoords.width,
+              height: globalCoords.height
+            }
+          });
       } else {
-        objects = this.objectManager.retrieve(allCoords, type, { size: {
-          width: globalCoords.width,
-          height: globalCoords.height
-        }});
+        objects = this.objectManager.retrieve(allCoords, type, {
+          quadtree: true,
+          size: {
+            width: globalCoords.width,
+            height: globalCoords.height
+          }
+        });
       }
     }
 

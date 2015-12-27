@@ -73,8 +73,8 @@ export class Object_sprite extends PIXI.Sprite {
     coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(0,0)) : this;
 
     return {
-      x: Math.round( coordinates.x + this.width ),
-      y: Math.round( coordinates.y + this.height ),
+      x: Math.round( coordinates.x ),
+      y: Math.round( coordinates.y ),
       width: Math.round( this.width ),
       height: Math.round( this.height )
     };

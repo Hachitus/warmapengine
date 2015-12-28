@@ -51,8 +51,8 @@ export class Map {
    *
    * @return Map instance
    */
-  constructor(canvasContainer = null, props = { startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true }, subContainers: false}) {
-    var { startCoord, bounds, options, subContainers } = props;
+  constructor(canvasContainer = null, props = { startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true }, subContainers: false, trackFPSCB: false}) {
+    var { startCoord, bounds, options, subContainers, trackFPSCB } = props;
 
     if (!canvasContainer) {
       throw new Error(this.constructor.name + " needs canvasContainer!");
@@ -72,6 +72,7 @@ export class Map {
     this.plugins = new Set();
     this._mapInMove = false;
     this.subContainersConfig = subContainers;
+    this.trackFPSCB = trackFPSCB;
 
     /* These are the 2 topmost layers on the map:
      * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
@@ -487,11 +488,37 @@ export class Map {
  * callback is always set and should not be removed or overruled
  */
 function _defaultTick(map, ticker) {
+  const ONE_SECOND = 1000;
+  var FPSCount = 0;
+  var fpsTimer = new Date().getTime();
+  var renderStart, totalRenderTime;
+
   ticker.add(function () {
     if (_drawMapOnNextTick === true) {
+      if (map.trackFPSCB) {
+        renderStart = new Date().getTime();
+      }
       _renderer.render(_staticLayer);
+      _drawMapOnNextTick = false;
+      if (map.trackFPSCB) {
+        totalRenderTime += Math.round( Math.abs( renderStart - new Date().getTime() ) );
+      }
     }
-    _drawMapOnNextTick = false;
+    if (map.trackFPSCB) {
+      FPSCount++;
+
+      if (fpsTimer + ONE_SECOND < new Date().getTime()) {
+        map.trackFPSCB( {
+          FPS: FPSCount,
+          FPStime: fpsTimer,
+          renderTime: totalRenderTime,
+          drawCount: _renderer.drawCount
+        });
+        FPSCount = 0;
+        totalRenderTime = 0;
+        fpsTimer = new Date().getTime();
+      }
+    }
   });
 }
 /**

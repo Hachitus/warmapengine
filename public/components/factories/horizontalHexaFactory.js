@@ -53,7 +53,7 @@ export var createMap = createMap;
  *                            game: More general game data (like turn number, map size etc.)
  *                            type: Type data such as different unit types and their graphics (tank, soldier etc.)
 */
-function createMap(canvasContainerElement, datas) {
+function createMap(canvasContainerElement, datas, options = { trackFPSCB: false }) {
   console.log("============== Map factory started =============");
   var mapData = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
   var typeData = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
@@ -76,11 +76,12 @@ function createMap(canvasContainerElement, datas) {
       antialias: false // TEST. Only should work in chrome atm.?
     },
     subContainers: {
-      width: 500,
-      height: 500,
+      width: 1500,
+      height: 1500,
       maxDetectionOffset: 100,
       isHiddenByDefault: true
-    }
+    },
+    trackFPSCB: options.trackFPSCB
   };
   var mapOptions = {
     refreshEventListeners: true

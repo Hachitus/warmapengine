@@ -181,13 +181,6 @@ function _getBaseContainerClass() {
 
     return displayObject;
   }
-  function setCache(status) {
-    var toCacheStatus = status ? true : false;
-
-    this.cacheAsBitmap = toCacheStatus;
-
-    return toCacheStatus;
-  }
   function hasSubContainers() {
     return this.subContainersConfig ? true : false;
   }
@@ -327,7 +320,15 @@ export class Map_subContainer extends PIXI.Container {
     };
   }
 }
+Map_subContainer.prototype.setCache = setCache;
 
+function setCache(status) {
+  var toCacheStatus = status ? true : false;
+
+  this.cacheAsBitmap = toCacheStatus;
+
+  return toCacheStatus;
+}
 /***********************
 ******* PRIVATE ********
 ***********************/

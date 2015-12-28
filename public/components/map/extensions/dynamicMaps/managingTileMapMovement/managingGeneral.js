@@ -67,7 +67,6 @@ function setupManagingTileMapMovement () {
     if (queue.processing) {
       return false;
     }
-
     queue.processing = true;
 
     let viewportFn = setupHandleViewportArea(queue, map, changedCoordinates);
@@ -92,9 +91,12 @@ function setupManagingTileMapMovement () {
               } else if (!thisContainer.visible && !isOutside ) {
                 thisContainer.visible = true;
               }
+              // thisContainer.setCache(false);
+              // thisContainer.setCache(true);
             });
 
             queue.processing = false;
+
             map.drawOnNextTick();
           };
           viewportWorker.postMessage([

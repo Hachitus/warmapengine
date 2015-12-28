@@ -19,6 +19,7 @@
   <script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
   <script src="/assets/lib/loglevel/loglevel.min.js"></script>
   <script>log.enableAll();</script>
+  <script src="/assets/lib/statsjs/stats.min.js"></script>
 	<script src="/jspm_packages/system.js"></script>
 	<script src="/config.js"></script>
   <script src="/assets/lib/pubsubjs/pubsub.js"></script>
@@ -62,6 +63,15 @@
 
       'use strict';
 
+      // align top-left
+      window.FPSElement = document.createElement("div");
+      window.FPSElement.style.position = 'absolute';
+      window.FPSElement.style.left = '0px';
+      window.FPSElement.style.top = '0px';
+      window.FPSElement.style.backgroundColor = 'white';
+
+      document.body.appendChild( window.FPSElement );
+
   		System.import('/tests/manual/stressTest.es6').then(function() {
         var mapsizeElement = document.getElementById("hexaTiles");
         var cacheElement = document.getElementById("cache");
@@ -80,7 +90,14 @@
           window.map = window.initMap(mapData, {
             mapsize: currentMapSize,
             cache: cacheMap,
-            canvasContainer: document.getElementById("mapCanvasContainer")
+            canvasContainer: document.getElementById("mapCanvasContainer"),
+            trackFPSCB: function (data) {
+              var totalFPS = data.FPS;
+              var totalTime = data.FPStime;
+              var totalRenderTime = data.renderTime;
+              var drawCount = data.drawCount;
+              window.FPSElement.innerHTML = totalFPS + " - " + Math.round( ( totalRenderTime / totalTime * 100 ) ) + "%" + " : " + drawCount;
+            }
           });
         });
   		});

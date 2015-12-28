@@ -23,7 +23,6 @@ const HEXAGON_DISTANCES = {
 };
 
 /* Do the map: */
-var mapsize;
 window.getMapData = getMapData;
 window.initMap = initMap;
 
@@ -54,7 +53,7 @@ function getMapData(mapsize) {
 }
 
 function initMap(mapData, options) {
-  var canvasContainerElement = options.canvasContainer;
+  var { mapsize, canvasContainer, trackFPSCB } = options;
   var map = {};
   var globalMap = {
     data: {}
@@ -67,9 +66,9 @@ function initMap(mapData, options) {
   /* works with:
   x: 8118,
   y: 8107*/
-  mapsize = {
-    x: options.mapsize || 1000,
-    y: options.mapsize || 1000
+  gameData.mapSize = {
+    x: mapsize || 1000,
+    y: mapsize || 1000
   };
 
   preload = new Preload( "", { crossOrigin: false } );
@@ -95,9 +94,7 @@ function initMap(mapData, options) {
   function onComplete() {
     var promises = [];
 
-    gameData.mapSize = mapsize;
-
-    map = globalMap.data = createMap(canvasContainerElement, { game: gameData, map: mapData, type: typeData });
+    map = globalMap.data = createMap(canvasContainer, { game: gameData, map: mapData, type: typeData }, { trackFPSCB: trackFPSCB });
 
     promises = map.init( gameData.pluginsToActivate.map, mapData.startPoint );
 

@@ -1,3 +1,4 @@
+/* global console */
 'use strict';
 
 /**
@@ -78,26 +79,34 @@ function setupManagingTileMapMovement () {
       try {
         if (window.Worker) {
           viewportWorker.onmessage = function(e) {
-            var isOutside;
+            try {
+              var scaledViewport = e.data[0];
+              var isOutside;
 
-            let scaledViewport = e.data[0];
-            let containersUnderChangedArea = map.getSubcontainersUnderPoint(scaledViewport);
+              /* RESET */
+              changedCoordinates.width = 0;
+              changedCoordinates.height = 0;
 
-            containersUnderChangedArea.forEach((thisContainer) => {
-              isOutside = isObjectOutsideViewport(thisContainer, viewportArea);
+              let containersUnderChangedArea = map.getSubcontainersUnderPoint(scaledViewport);
 
-              if (thisContainer.visible && isOutside) {
-                thisContainer.visible = false;
-              } else if (!thisContainer.visible && !isOutside ) {
-                thisContainer.visible = true;
-              }
-              // thisContainer.setCache(false);
-              // thisContainer.setCache(true);
-            });
+              containersUnderChangedArea.forEach((thisContainer) => {
+                isOutside = isObjectOutsideViewport(thisContainer, scaledViewport);
 
-            queue.processing = false;
+                if (thisContainer.visible && isOutside) {
+                  thisContainer.visible = false;
+                } else if (!thisContainer.visible && !isOutside ) {
+                  thisContainer.visible = true;
+                }
+                // thisContainer.setCache(false);
+                // thisContainer.setCache(true);
+              });
 
-            map.drawOnNextTick();
+              queue.processing = false;
+
+              map.drawOnNextTick();
+            } catch (ev) {
+              console.log("ERROR", ev);
+            }
           };
           viewportWorker.postMessage([
             1,
@@ -114,6 +123,8 @@ function setupManagingTileMapMovement () {
         console.log(e);
       }
     }
+
+    return;
   }
   function startEventListeners(map) {
     mapEvents.subscribe("mapMoved", moveCb);

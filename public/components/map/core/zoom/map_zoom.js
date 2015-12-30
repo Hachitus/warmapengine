@@ -108,21 +108,19 @@ function setupMap_zoom() {
    * @param {Number} amount how much map is zoomed in
    * */
   function zoomIn (amount) {
-    var zoomLayer = this.getZoomLayer();
-    var presentScale = zoomLayer.getScale();
+    var presentScale = this.getScale();
 
-    return _zoom(zoomLayer, presentScale, Math.abs(amount) || zoomModifier, true);
+    return _zoom(this, presentScale, Math.abs(amount) || zoomModifier, true);
   }
   /**
    * Zoom out of the map
    * @param {Number} amount how much map is zoomed out
    * */
   function zoomOut (amount) {
-    var zoomLayer = this.getZoomLayer();
-    var presentScale = zoomLayer.getScale();
+    var presentScale = this.getScale();
     amount = amount < 0 ? amount : -amount;
 
-    return _zoom(zoomLayer, presentScale, amount || -zoomModifier);
+    return _zoom(this, presentScale, amount || -zoomModifier);
   }
 
   /**********************************
@@ -164,11 +162,11 @@ function setupMap_zoom() {
 
     if (mouseWheelDelta > 0) {
       if (map.zoomIn()) {
-        map.moveMap(_calculateCenterMoveCoordinates(oldScale, true));
+        map.moveMap(_calculateCenterMoveCoordinates(oldScale, true), _calculateCenterMoveCoordinates(map.getScale(), true));
       }
     } else if (mouseWheelDelta < 0) {
       if (map.zoomOut()) {
-        map.moveMap(_calculateCenterMoveCoordinates(oldScale));
+        map.moveMap(_calculateCenterMoveCoordinates(oldScale), _calculateCenterMoveCoordinates(map.getScale()));
       }
     }
   }
@@ -250,11 +248,11 @@ function setupMap_zoom() {
 
     return realMovement;
   }
-  function _zoom(zoomLayer, presentScale, amount, isZoomIn) {
+  function _zoom(map, presentScale, amount, isZoomIn) {
     var newScale;
 
     if ( !_isOverZoomLimit(presentScale, isZoomIn) ) {
-      newScale = zoomLayer.setScale( amount ? presentScale + amount : presentScale + zoomModifier );
+      newScale = map.setScale( amount ? presentScale + amount : presentScale + zoomModifier );
     }
 
     return newScale;

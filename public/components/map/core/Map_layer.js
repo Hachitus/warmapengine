@@ -310,7 +310,7 @@ export class Map_subContainer extends PIXI.Container {
   getSubcontainerArea (options = { toGlobal: true } ) {
     var coordinates;
 
-    coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(0,0)) : this;
+    coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(this.x,this.y)) : this;
 
     return {
       x: Math.round( coordinates.x ),
@@ -368,7 +368,13 @@ function setCorrectSubContainer(displayObject, parentLayer) {
  * @param  {Number} yIndex            y / vertical index.
  * @return {Array}                    Array of found subcontainers.
  */
-function getClosestSubcontainers(layer, coordinates) {
+function getClosestSubcontainers(layer, givenCoordinates) {
+  var coordinates = {
+    x: givenCoordinates.x >= 0 ? givenCoordinates.x : 0,
+    y: givenCoordinates.y >= 0 ? givenCoordinates.y : 0,
+    width: givenCoordinates.width,
+    height: givenCoordinates.height
+  };
   var { width, height } = layer.getSubContainerConfigs();
   var allFoundSubcontainers = [];
   var xIndex = Math.floor( coordinates.x / width );

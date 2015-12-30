@@ -231,13 +231,13 @@ export class Map {
    * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
    * @return                                  this
    * */
-  moveMap(coord = { x: 0, y: 0 }) {
+  moveMap(coord = { x: 0, y: 0 }, informCoordinates = coord) {
     var realCoordinates = {
-      x: coord.x / _staticLayer.getScale(),
-      y: coord.y / _staticLayer.getScale()
+      x: Math.round(coord.x / _staticLayer.getScale()),
+      y: Math.round(coord.y / _staticLayer.getScale())
     };
     _movableLayer.move(realCoordinates);
-    mapEvents.publish("mapMoved", realCoordinates);
+    mapEvents.publish("mapMoved", informCoordinates || realCoordinates);
     this.drawOnNextTick();
 
     return this;
@@ -339,13 +339,20 @@ export class Map {
 
     eventlisteners.toggleFullscreen(eventListenerCB);
   }
-  getSubcontainersUnderPoint(localCoords) {
+  getSubcontainersUnderPoint(globalCoords) {
     var primaryLayers = this.getMovableLayer().getPrimaryLayers();
     var allMatchingSubcontainers = [];
+    var allCoords = {
+      globalCoords: globalCoords,
+      localCoords: this.getMovableLayer().toLocal(new PIXI.Point(globalCoords.x, globalCoords.y))
+    };
     var thisLayersSubcontainers;
 
+    allCoords.localCoords.width = globalCoords.width;
+    allCoords.localCoords.height = globalCoords.height;
+
     primaryLayers.forEach(layer => {
-      thisLayersSubcontainers = layer.getSubContainersByCoordinates(localCoords);
+      thisLayersSubcontainers = layer.getSubContainersByCoordinates(allCoords.localCoords);
       allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
     });
 
@@ -430,6 +437,9 @@ export class Map {
   }
   getZoomLayer() {
     return _staticLayer;
+  }
+  setScale(scale) {
+    return _staticLayer.setScale(scale);
   }
   getScale() {
     return _staticLayer.getScale();

@@ -380,7 +380,7 @@ export class Map {
       let primaryLayers = this.getMovableLayer().getPrimaryLayers();
 
       primaryLayers.forEach(layer => {
-        thisLayersSubcontainers = layer.getSubContainersByCoordinates(allCoords.localCoords);
+        thisLayersSubcontainers = layer.getSubContainersByCoordinates(allCoords.globalCoords);
         allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
       });
 

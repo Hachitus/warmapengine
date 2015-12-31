@@ -101,19 +101,12 @@ function setupManagingTileMapMovement () {
                 return layer.getSubContainersByCoordinates(scaledAndChangedViewport);
               });
               containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
-/*              map.getMovableLayer().getPrimaryLayers().forEach( thisLayer => {
-                containersUnderChangedArea = containersUnderChangedArea.concat(arrays.flatten2Levels(thisLayer.subContainerList));
-              });*/
 
               containersUnderChangedArea.forEach((thisContainer) => {
                 isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
 
                 thisContainer.visible = isOutside ? false : true;
-                // if (thisContainer.visible && isOutside) {
-                //   thisContainer.visible = false;
-                // } else if (!thisContainer.visible && !isOutside ) {
-                //   thisContainer.visible = true;
-                // }
+                // I do not know is caching between the moves better or not-caching.
                 // thisContainer.setCache(false);
                 // thisContainer.setCache(true);
               });

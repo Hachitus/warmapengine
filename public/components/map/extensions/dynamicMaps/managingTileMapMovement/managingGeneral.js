@@ -13,6 +13,7 @@
 ******* IMPORTS ********
 ***********************/
 import { mapEvents } from '/components/map/core/mapEvents';
+import { arrays } from '/components/utilities/general';
 
 /***********************
 ********* API **********
@@ -39,6 +40,7 @@ function setupManagingTileMapMovement () {
   };
 
   function addAll(map) {
+    var scale = map.getScale();
     var viewportArea, movableLayer;
 
     movableLayer = map.getMovableLayer();
@@ -48,7 +50,7 @@ function setupManagingTileMapMovement () {
 
     movableLayer.getPrimaryLayers().forEach( layer => {
       layer.getObjects().forEach(object => {
-        object.visible = isObjectOutsideViewport(object, viewportArea, false) ? false : true;
+        object.visible = isObjectOutsideViewport(object, viewportArea, false, scale) ? false : true;
       });
     });
   }
@@ -80,23 +82,38 @@ function setupManagingTileMapMovement () {
         if (window.Worker) {
           viewportWorker.onmessage = function(e) {
             try {
+              var scale = map.getScale();
               var scaledViewport = e.data[0];
-              var isOutside;
+              var smallerScaledViewport = e.data[1];
+              var containersUnderChangedArea = [];
+              var isOutside, scaledAndChangedViewport;
+
+              scaledAndChangedViewport = Object.assign({}, scaledViewport);
+
+              scaledAndChangedViewport.width += Math.round(Math.abs(changedCoordinates.width));
+              scaledAndChangedViewport.height += Math.round(Math.abs(changedCoordinates.height));
 
               /* RESET */
               changedCoordinates.width = 0;
               changedCoordinates.height = 0;
 
-              let containersUnderChangedArea = map.getSubcontainersUnderPoint(scaledViewport);
+              containersUnderChangedArea = map.getMovableLayer().getPrimaryLayers().map(layer => {
+                return layer.getSubContainersByCoordinates(scaledAndChangedViewport);
+              });
+              containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
+/*              map.getMovableLayer().getPrimaryLayers().forEach( thisLayer => {
+                containersUnderChangedArea = containersUnderChangedArea.concat(arrays.flatten2Levels(thisLayer.subContainerList));
+              });*/
 
               containersUnderChangedArea.forEach((thisContainer) => {
-                isOutside = isObjectOutsideViewport(thisContainer, scaledViewport);
+                isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
 
-                if (thisContainer.visible && isOutside) {
-                  thisContainer.visible = false;
-                } else if (!thisContainer.visible && !isOutside ) {
-                  thisContainer.visible = true;
-                }
+                thisContainer.visible = isOutside ? false : true;
+                // if (thisContainer.visible && isOutside) {
+                //   thisContainer.visible = false;
+                // } else if (!thisContainer.visible && !isOutside ) {
+                //   thisContainer.visible = true;
+                // }
                 // thisContainer.setCache(false);
                 // thisContainer.setCache(true);
               });
@@ -142,10 +159,10 @@ function setupManagingTileMapMovement () {
   /**************************************
   *********** PRIVATE *******************
   **************************************/
-  function isObjectOutsideViewport(object, viewportArea, hasParent = true) {
+  function isObjectOutsideViewport(object, viewportArea, hasParent = true, scale = 1) {
     var isIt, globalCoords;
 
-    globalCoords = object.getSubcontainerArea({ toGlobal: hasParent });
+    globalCoords = object.getSubcontainerArea(scale, { toGlobal: hasParent });
 
     isIt = !testRectangleIntersect(globalCoords, viewportArea);
 

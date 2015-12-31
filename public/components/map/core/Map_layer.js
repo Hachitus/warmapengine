@@ -192,10 +192,13 @@ function _getBaseContainerClass() {
       throw new Error("tried to retrieve subContainers, when they are not present");
     }
 
-    var { maxDetectionOffset } = this.getSubContainerConfigs();
-    var foundSubcontainers;
+    var foundSubcontainers, tempCoordinates;
 
-    foundSubcontainers = getClosestSubcontainers(this, coordinates);
+    tempCoordinates = this.toLocal(new PIXI.Point(coordinates.x, coordinates.y));
+    tempCoordinates.width = coordinates.width;
+    tempCoordinates.height = coordinates.height;
+
+    foundSubcontainers = getClosestSubcontainers(this, tempCoordinates);
 
     return foundSubcontainers;
   }
@@ -307,10 +310,14 @@ export class Map_subContainer extends PIXI.Container {
     this.specialLayer = true;
     this.size = size;
   }
-  getSubcontainerArea (options = { toGlobal: true } ) {
+  getSubcontainerArea (scale, options = { toGlobal: true } ) {
     var coordinates;
 
-    coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(this.x,this.y)) : this;
+    coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(0, 0)) : this;
+    if (scale) {
+      coordinates.x /= scale;
+      coordinates.y /= scale;
+    }
 
     return {
       x: Math.round( coordinates.x ),

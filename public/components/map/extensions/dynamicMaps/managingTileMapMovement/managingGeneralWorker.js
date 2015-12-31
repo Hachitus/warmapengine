@@ -34,42 +34,41 @@ if (typeof Object.assign != 'function') {
 const VIEWPORT_OFFSET = 0.1;
 const METHOD_ALL = 1;
 const METHOD_SHORT = 0;
-var viewportArea, changedCoordinates, scale, methodType;
+var viewportArea, scale, methodType, smallerViewportArea;
 
 self.addEventListener("message", function (e) {
-  var scaledViewport;
+  var scaledViewport, smallerScaledViewportArea;
 
   methodType = e.data[0];
   viewportArea = e.data[1];
   scale = e.data[2];
 
   if (methodType === METHOD_ALL) {
-    changedCoordinates = e.data[3];
-
     try {
+      smallerViewportArea = Object.assign( {}, getViewportCoordinates(viewportArea, 0.5));
       Object.assign( viewportArea, getViewportCoordinates(viewportArea));
-      viewportArea.width += Math.round(Math.abs(changedCoordinates.width));
-      viewportArea.height += Math.round(Math.abs(changedCoordinates.height));
 
       scaledViewport = Object.assign({} , applyScaleToViewport(viewportArea, scale) );
+      smallerScaledViewportArea = Object.assign({} , applyScaleToViewport(smallerViewportArea, scale) );
 
-      postMessage([scaledViewport]);
+      postMessage([scaledViewport, smallerScaledViewportArea]);
     } catch (ev) {
       console.log("ISSUE: ", ev);
     }
   }
 });
 
-function getViewportCoordinates(viewportArea) {
+function getViewportCoordinates(viewportArea, offsetQuantifier) {
   var offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET  );
+  offsetQuantifier = offsetQuantifier || 1;
 
   return {
-    x: Math.round( viewportArea.x - offsetSize ),
-    y: Math.round( viewportArea.y - offsetSize ),
-    x2: Math.round( viewportArea.x + Math.abs( viewportArea.width ) + offsetSize ),
-    y2: Math.round( viewportArea.y + Math.abs( viewportArea.height ) + offsetSize ),
-    width: Math.round( viewportArea.width + offsetSize * 2 ),
-    height: Math.round( viewportArea.height + offsetSize * 2 )
+    x: Math.round( viewportArea.x - offsetSize * offsetQuantifier ),
+    y: Math.round( viewportArea.y - offsetSize * offsetQuantifier ),
+    x2: Math.round( viewportArea.x + Math.abs( viewportArea.width ) + offsetSize * offsetQuantifier ),
+    y2: Math.round( viewportArea.y + Math.abs( viewportArea.height ) + offsetSize * offsetQuantifier ),
+    width: Math.round( viewportArea.width + offsetSize * 2 * offsetQuantifier ),
+    height: Math.round( viewportArea.height + offsetSize * 2 * offsetQuantifier )
   };
 }
 function applyScaleToViewport(viewportArea, scale) {

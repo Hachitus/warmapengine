@@ -45,6 +45,10 @@ Install jspm packages
 
     nodejs node_modules/jspm/jspm.js install
 
+Install bower packages
+
+    nodejs node_modules/bower/bower.js install
+
 ##Commanding the backend server
 
 start server

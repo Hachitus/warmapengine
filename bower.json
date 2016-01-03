@@ -1,0 +1,22 @@
+{
+  "name": "warMapEngine",
+  "description": "Game engine for 2D strategy games in browsers",
+  "main": "",
+  "authors": [
+    "Janne Hyytiä <janne.hyytia@saunalahti.fi>"
+  ],
+  "homepage": "https://github.com/Hachitus/warmapengine",
+  "moduleType": [
+    "es6"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "hamsterjs": "~1.1.0"
+  }
+}

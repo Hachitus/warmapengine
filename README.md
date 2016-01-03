@@ -86,3 +86,6 @@ module you want to use in the game. All UIThemes have to implement at least the 
 the API, which is naturally not encouraged).
 
 All UI templates need to extend the UI_templateBase @ '/components/map/core/UI_themeBase'
+
+# Credit
+Copyright (c) 2016 Janne Hyytiä

@@ -1,10 +1,11 @@
 /* global console, Q */
 
 'use strict';
-/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
+/* THIS POLYFILL IS NEEDED FOR IE11 FOR BABEL / JSPM, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
 
 /**
  * @requie Q for promises
+ * @todo Do it rather in ES6 style!
  */
 
 import { createMap } from '/components/factories/horizontalHexaFactory';

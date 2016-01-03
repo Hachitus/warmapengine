@@ -9,8 +9,6 @@
 ***********************/
 import { createMap } from '/components/factories/horizontalHexaFactory';
 import { polyfills } from '/components/utilities/polyfills';
-/* jshint unused: false */
-import { Q as q } from '/assets/lib/q/q';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';

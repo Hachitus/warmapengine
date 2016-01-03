@@ -16,6 +16,7 @@
     "mongoose": "^3.6.20",
     "node-uuid": "^1.4.3",
     "node.extend": "^1.0.10",
+    "pubsub-js": "^1.5.3",
     "q": "^1.4.1",
     "validator": "^2.0.0"
   },

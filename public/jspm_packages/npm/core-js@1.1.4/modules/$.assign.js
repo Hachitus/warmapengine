@@ -1,8 +1,8 @@
 /* */ 
-var toObject = require("./$.to-object"),
-    IObject = require("./$.iobject"),
-    enumKeys = require("./$.enum-keys");
-module.exports = require("./$.fails")(function() {
+var toObject = require('./$.to-object'),
+    IObject = require('./$.iobject'),
+    enumKeys = require('./$.enum-keys');
+module.exports = require('./$.fails')(function() {
   return Symbol() in Object.assign({});
 }) ? function assign(target, source) {
   var T = toObject(target),

@@ -33,4 +33,4 @@
       expect(md5('日本', '日本', true)).to.be('\xc7\x8b\x8csW\x92i\x81\xcc\x04t\x0b\xd3\xe9\xd0\x15');
     });
   });
-}(this.expect || require("expect.js"), this.md5 || require("../js/md5").md5));
+}(this.expect || require('expect.js'), this.md5 || require('../js/md5').md5));

@@ -19,6 +19,12 @@ import { Preload } from '/components/preloading/preloading';
 /* REQUIRED FOR IE11 */
 polyfills.arrayFind();
 
+var pluginsToActivate = [
+  "components/map/core/zoom/map_zoom",
+  "components/map/core/move/map_drag",
+  "components/map/extensions/hexagons/object_select/object_select_hexagon"
+];
+
 window.initMap = function (options) {
   var canvasElement = options.canvasContainer;
   var map = {};
@@ -54,7 +60,7 @@ window.initMap = function (options) {
 
     map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
 
-    promises = map.init( gameData.pluginsToActivate.map, mapData.startPoint );
+    promises = map.init( pluginsToActivate, mapData.startPoint );
 
     Promise.all(promises).then( () => {
       document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);

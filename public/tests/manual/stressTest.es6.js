@@ -21,6 +21,11 @@ const HEXAGON_DISTANCES = {
   x: 82,
   y: 94 * 0.75
 };
+var pluginsToActivate = [
+  "components/map/core/zoom/map_zoom",
+  "components/map/core/move/map_drag",
+  "components/map/extensions/hexagons/object_select/object_select_hexagon"
+];
 
 /* Do the map: */
 window.getMapData = getMapData;
@@ -96,7 +101,7 @@ function initMap(mapData, options) {
 
     map = globalMap.data = createMap(canvasContainer, { game: gameData, map: mapData, type: typeData }, { trackFPSCB: trackFPSCB });
 
-    promises = map.init( gameData.pluginsToActivate.map, mapData.startPoint );
+    promises = map.init( pluginsToActivate, mapData.startPoint );
 
     map.whenReady().then( () => {
       document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);

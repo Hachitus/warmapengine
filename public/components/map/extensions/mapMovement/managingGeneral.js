@@ -19,7 +19,7 @@ import { arrays } from '/components/utilities/general';
 ********* API **********
 ***********************/
 export var managingTileMapMovement = setupManagingTileMapMovement();
-var viewportWorker = new Worker("/components/map/extensions/dynamicMaps/managingTileMapMovement/managingGeneralWorker.js");
+var viewportWorker = new Worker("/components/map/extensions/mapMovement/managingGeneralWorker.js");
 
 /***********************
 ******* PUBLIC *********

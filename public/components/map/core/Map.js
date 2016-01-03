@@ -29,6 +29,7 @@ import { resizeUtils } from '/components/map/core/utils/utils';
 import { eventListeners } from '/components/map/core/eventlisteners';
 import { ObjectManager } from '/components/map/core/ObjectManager';
 import { mapEvents } from '/components/map/core/mapEvents';
+import * as Q from '/assets/lib/q/q';
 
 /***********************
 ****** VARIABLES *******

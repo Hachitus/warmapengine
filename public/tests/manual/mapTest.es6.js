@@ -1,9 +1,16 @@
 'use strict';
 
-/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
+/* POLYFILL (es6StringPolyfill)  IS NEEDED FOR IE11, maybe Symbol support or something missing:
+ * http://babeljs.io/docs/usage/polyfill/
+ * */
 
+/***********************
+******** IMPORT ********
+***********************/
 import { createMap } from '/components/factories/horizontalHexaFactory';
 import { polyfills } from '/components/utilities/polyfills';
+/* jshint unused: false */
+import { Q as q } from '/assets/lib/q/q';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';
@@ -21,6 +28,11 @@ window.initMap = function (options) {
     data: {}
   };
   var preload;
+
+  gameData.mapSize = {
+    x: 1000,
+    y: 1000
+  };
 
   preload = new Preload( "", { crossOrigin: false } );
   preload.addResource( typeData.graphicData.terrainBase.json );

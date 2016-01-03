@@ -1,15 +1,16 @@
-/* global console, Q */
+/* global console */
 
 'use strict';
-/* THIS POLYFILL IS NEEDED FOR IE11 FOR BABEL / JSPM, maybe Symbol support or something missing: http://babeljs.io/docs/usage/polyfill/ */
+/* POLYFILL (es6StringPolyfill)  IS NEEDED FOR IE11, maybe Symbol support or something missing:
+ * http://babeljs.io/docs/usage/polyfill/
+ * */
 
-/**
- * @requie Q for promises
- * @todo Do it rather in ES6 style!
- */
-
+/***********************
+******** IMPORT ********
+***********************/
 import { createMap } from '/components/factories/horizontalHexaFactory';
 import { polyfills } from '/components/utilities/polyfills';
+import * as Q from '/assets/lib/q/q';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';

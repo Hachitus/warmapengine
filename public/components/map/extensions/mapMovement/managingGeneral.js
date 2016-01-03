@@ -5,8 +5,7 @@
  * This module manages visibility of the objects, based on are they visible to the player (on the canvas / webgl) or
  * outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise.
  *
- * @todo  We can make this a bit more efficient still at least should work with static / fixed grid. Now we use
- * quadtree and that is not optimal
+ * @todo Finetune this through. Now it actually doesn't hide the subcontainers correctly!
  */
 
 /***********************

@@ -8,8 +8,8 @@ import { getHexagonPoints } from './hexagonMath';
 /***********************
 ********* API **********
 ***********************/
-export var createHexagon = createHexagon;
-export var createVisibleHexagon = createVisibleHexagon;
+export { createHexagon as createHexagon };
+export { createVisibleHexagon as createVisibleHexagon };
 
 /***********************
 ******* PUBLIC *********

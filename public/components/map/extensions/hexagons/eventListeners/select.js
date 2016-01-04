@@ -14,11 +14,12 @@ import { eventListeners as eventListenerMod } from '/components/map/core/eventli
 import { UI } from '/components/map/core/UI';
 import { mouseUtils } from '/components/map/core/utils/utils';
 import { mapObjects } from '/components/map/core/utils/dataManipulation';
+import { mapEvents } from '/components/map/core/mapEvents';
 
 /***********************
 ********* API **********
 ***********************/
-export var setupHexagonClick = _setupHexagonClick;
+export { _setupHexagonClick as setupHexagonClick };
 
 /***********************
 ******* PUBLIC *********
@@ -54,6 +55,11 @@ function _setupHexagonClick(map) {
     objects = map.getObjectsUnderPoint(globalCoords, "unit");
     objects = mapObjects.mapObjectsToArray(objects);
     objects = mapObjects.flattenArrayBy1Level(objects);
+
+    /* Throw a mapEvent if there are objects found. It might be required to throw this event later on, not yet here. */
+    if (objects.length) {
+      mapEvents.publish("objectsSelected", objects);
+    }
 
     ui.showSelections(objects);
   }

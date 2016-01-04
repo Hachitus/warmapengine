@@ -8,17 +8,12 @@
 /** ===== OWN imports ===== */
 import { resizeUtils } from "/components/map/core/utils/utils";
 import { eventListeners as eventListenerMod } from '/components/map/core/eventlisteners';
-
-/***********************
-****** VARIABLES *******
-***********************/
-var _pluginName = "map_zoom";
+import { mapEvents } from '/components/map/core/mapEvents';
 
 /***********************
 ********* API **********
 ***********************/
-/* Required by the plugin */
-export var pluginName = _pluginName;
+export const pluginName = "map_zoom";
 export var map_zoom = setupMap_zoom();
 
 /***********************
@@ -51,8 +46,7 @@ function setupMap_zoom() {
   ********** API **********
   ************************/
   return {
-    init,
-    pluginName: _pluginName // More for debugging
+    init
   };
 
   /************************
@@ -109,8 +103,11 @@ function setupMap_zoom() {
    * */
   function zoomIn (amount) {
     var presentScale = this.getScale();
+    const IS_ZOOM_IN = true;
 
-    return _zoom(this, presentScale, Math.abs(amount) || zoomModifier, true);
+    mapEvents.publish("mapZoomed", { presentScale: presentScale, amount: amount, isZoomIn: IS_ZOOM_IN } );
+
+    return _zoom(this, presentScale, Math.abs(amount) || zoomModifier, IS_ZOOM_IN);
   }
   /**
    * Zoom out of the map
@@ -118,9 +115,12 @@ function setupMap_zoom() {
    * */
   function zoomOut (amount) {
     var presentScale = this.getScale();
-    amount = amount < 0 ? amount : -amount;
+    const IS_ZOOM_IN = false;
 
-    return _zoom(this, presentScale, amount || -zoomModifier);
+    amount = amount < 0 ? amount : -amount;
+    mapEvents.publish("mapZoomed", { presentScale: presentScale, amount: amount, isZoomIn: IS_ZOOM_IN } );
+
+    return _zoom(this, presentScale, amount || -zoomModifier, IS_ZOOM_IN);
   }
 
   /**********************************
@@ -221,7 +221,6 @@ function setupMap_zoom() {
 
     } catch (ev) {
       console.log("Error! ", ev);
-      alert("error was thrown");
     }
   }
 

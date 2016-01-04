@@ -33,6 +33,7 @@ export { hexaHitTest as hexaHitTest };
  */
 function calcShortDiagonal(value, type = "radius", precision = 3) {
   var answer;
+
   precision = Math.round(precision);
 
   if (type === "radius") {
@@ -75,23 +76,22 @@ function calcSide(value, type = "radius", precision = 3) {
  * how many decimals to round
 */
 function getHexagonPoints(radius, options = { isFlatTop: false, precision: 3 }) {
-  var i = 0;
-  var offset = options.isFlatTop ? 0 : 0.5;
-  var angle = 2 * Math.PI / 6 * offset;
-  var center = {
+  const OFFSET = options.isFlatTop ? 0 : 0.5;
+  const CENTER = {
     x: radius,
     y: radius
   };
-  var x = center.x * Math.cos(angle);
-  var y = center.y * Math.sin(angle);
+  var angle = 2 * Math.PI / 6 * OFFSET;
+  var x = CENTER.x * Math.cos(angle);
+  var y = CENTER.y * Math.sin(angle);
   var points = [];
 
   points.push({x, y});
 
-  for (i = 1; i < 7; i++) {
-    angle = 2 * Math.PI / 6 * (i + offset);
-    x = center.x * Math.cos(angle);
-    y = center.y * Math.sin(angle);
+  for (let i = 1; i < 7; i++) {
+    angle = 2 * Math.PI / 6 * (i + OFFSET);
+    x = CENTER.x * Math.cos(angle);
+    y = CENTER.y * Math.sin(angle);
 
     points.push({x, y});
   }
@@ -108,14 +108,16 @@ function getHexagonPoints(radius, options = { isFlatTop: false, precision: 3 }) 
  * @return {Boolean}              Is the coordinate inside the hexagon or not
  */
 function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) {
-  var realPolygonPoints = points.map(point => {
+  var realPolygonPoints;
+
+  realPolygonPoints = points.map(point => {
     return {
       x: point.x + offsetCoords.x,
       y: point.y + offsetCoords.y
     };
   });
 
-  return _pointInPolygon(hitCoords, realPolygonPoints);
+  return pointInPolygon(hitCoords, realPolygonPoints);
 }
 
 /**************************
@@ -129,14 +131,18 @@ function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) 
  * @param  {Array} vs                         The points of the polygon to test [0] === x-point, [1] === y-point
  * @return {Boolean}                          Is the coordinate inside the hexagon or not
  */
-function _pointInPolygon(point, vs) {
-  var x = point.x, y = point.y;
-
+function pointInPolygon(point, vs) {
+  var x = point.x;
+  var y = point.y;
   var inside = false;
-  for (var i = 0, j = vs.length - 1; i < vs.length; j = i++) {
-    var xi = vs[i].x, yi = vs[i].y;
-    var xj = vs[j].x, yj = vs[j].y;
-    var intersect = ((yi > y) !== (yj > y)) &&
+  var xi, xj, yi, yj, intersect;
+
+  for (let i = 0, j = vs.length - 1; i < vs.length; j = i++) {
+    xi = vs[i].x;
+    yi = vs[i].y;
+    xj = vs[j].x;
+    yj = vs[j].y;
+    intersect = ((yi > y) !== (yj > y)) &&
         (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
 
     if (intersect) {

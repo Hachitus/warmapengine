@@ -7,6 +7,8 @@
  * - mapMoved
  * - mapMovedFinal
  * - mapResize
+ *
+ * @todo I want this to go the ES6 way, not the only global exception!
  */
 /***********************
 ******** IMPORT ********
@@ -16,7 +18,7 @@
 /***********************
 ********* API **********
 ***********************/
-export var mapEvents = setupMapEvents();
+export const mapEvents = setupMapEvents();
 
 /***********************
 ******** PUBLIC ********

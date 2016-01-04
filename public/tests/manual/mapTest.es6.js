@@ -1,5 +1,8 @@
 'use strict';
 
+/**
+ * Tests that the normal map initialization works and also: zoom, drag and hexaon object selections work.
+ */
 /* POLYFILL (es6StringPolyfill)  IS NEEDED FOR IE11, maybe Symbol support or something missing:
  * http://babeljs.io/docs/usage/polyfill/
  * */

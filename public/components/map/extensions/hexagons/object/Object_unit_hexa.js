@@ -18,7 +18,7 @@ import { Object_sprite_unit } from '/components/map/core/objects/Object_sprite_u
  */
 export class Object_unit extends Object_sprite_unit {
   constructor(coords, data, options) {
-    var { radius } = options;
+    const { radius } = options;
 
     super(coords, data, options);
 

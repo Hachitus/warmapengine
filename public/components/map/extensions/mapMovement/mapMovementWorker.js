@@ -33,9 +33,19 @@ if (typeof Object.assign != 'function') {
 
 const VIEWPORT_OFFSET = 0.1;
 const METHOD_ALL = 1;
-const METHOD_SHORT = 0;
 var viewportArea, scale, methodType, smallerViewportArea;
 
+/**
+ * Calculates the correct current viewport / window area. Arguments are received with postMessage using e.data property
+ *
+ * @param  {Number} e.data[0]                                         This defines what we want to generate. Now there is only METHOD_ALL
+ * @param  {x: Number, y: Number, width: Number, height: Number}      Current viewport area with global coordinates
+ * @param  {Number}                                                   Amount of scale / zoom on the map
+ * @return {Array}                                                    Array consists of normal calculated viewport and smaller scaled viewport. The properties for both are:
+ * {
+ *   x: Number, y: Number, x2: Number, y2: Number, width: Number, height: Number
+ * }
+ */
 self.addEventListener("message", function (e) {
   var scaledViewport, smallerScaledViewportArea;
 

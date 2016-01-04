@@ -23,7 +23,7 @@ import { Object_sprite_terrain } from '/components/map/core/objects/Object_sprit
  */
 export class Object_terrain extends Object_sprite_terrain {
   constructor(coords, data, options) {
-    var { radius } = options;
+    const { radius } = options;
 
     super(coords, data, options);
 

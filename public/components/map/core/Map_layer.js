@@ -158,6 +158,7 @@ function _getBaseContainerClass() {
     hasSubContainers,
     getSubContainerConfigs,
     getSubContainersByCoordinates,
+    getSubcontainers,
     getCurrentCache,
     getCacheEnabled,
     move,
@@ -201,6 +202,9 @@ function _getBaseContainerClass() {
     foundSubcontainers = getClosestSubcontainers(this, tempCoordinates);
 
     return foundSubcontainers;
+  }
+  function getSubcontainers() {
+    return this.subContainerList;
   }
   function getCurrentCache() {
     return this.cacheAsBitmap;

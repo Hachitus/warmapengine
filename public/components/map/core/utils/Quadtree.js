@@ -20,9 +20,6 @@ export class Quadtree {
    * @param {Object} options    options for the QuadModule
    * @param {Object} max        How many levels deep
    * @return                    Quadtree instance
-   *
-   * @todo  options should not be directly to the quadModule, they should be handled in this module and then the
-   * necessary options are passed to the "parent" quadtree module.
    */
   constructor(options, max) {
     var { objects: max_objects, levels: max_levels } = max;
@@ -59,7 +56,7 @@ export class Quadtree {
     refresh && this.quadtree.cleanup();
   }
   retrieve(coords, size = { width: 0, height: 0 } ) {
-    var hitDimensions = {
+    const hitDimensions = {
       x: coords.x,
       y: coords.y,
       width: size.width,
@@ -92,6 +89,7 @@ export class Quadtree {
       foundObject.y = to.y;
       this.quadtree.insert(foundObject);
       this.refreshAll();
+
       return true;
     }
 

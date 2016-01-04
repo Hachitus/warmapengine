@@ -7,7 +7,7 @@
 /***********************
 ********* API **********
 ***********************/
-export var mapObjects = setupMapObjects();
+export const mapObjects = setupMapObjects();
 
 /***********************
 ******** PUBLIC ********

@@ -23,7 +23,6 @@ import { Object_unit } from "/components/map/extensions/hexagons/object/Object_u
 import { resizeUtils, environmentDetection } from "/components/map/core/utils/utils";
 import { UI } from "/components/map/core/UI";
 import { UI_default } from "/components/map/UIs/default/default.js";
-import { managingTileMapMovement } from "/components/map/extensions/mapMovement/managingGeneral.js";
 
 /***********************
 ****** VARIABLES *******
@@ -178,8 +177,6 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
     }
   });
 
-  managingTileMapMovement.addAll(map);
-  managingTileMapMovement.startEventListeners(map);
   map.moveMap(mapData.startPoint);
 
   return map;

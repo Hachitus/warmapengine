@@ -16,9 +16,8 @@ import { mouseUtils } from '../utils/utils';
 /***********************
 ********* API **********
 ***********************/
-/* pluginName is always needed as export! */
-export var pluginName = "map_drag";
-export var map_drag = setupMap_drag();
+export const pluginName = "map_drag";
+export const map_drag = setupMap_drag();
 
 /***********************
 ******** PUBLIC ********
@@ -32,7 +31,6 @@ function setupMap_drag() {
   ********* API **********
   ***********************/
   return {
-    pluginName: pluginName, // More for debugging
     init,
     _startDragListener /* Function revealed for testing */
   };
@@ -64,10 +62,12 @@ function setupMap_drag() {
     var initialized = false;
 
     return function startDrag(e) {
+      var coords;
+
       if (eventListener.getState("zoom")) {
         return false;
       }
-      var coords = mouseUtils.eventData.getHAMMERPointerCoords(e);
+      coords = mouseUtils.eventData.getHAMMERPointerCoords(e);
 
       map.mapMoved(true);
 
@@ -137,9 +137,7 @@ function setupMap_drag() {
     };
 
     function setOffset(coords) {
-      offsetCoords = coords;
-
-      return offsetCoords;
+      return ( offsetCoords = coords );
     }
     function getOffset() {
       return offsetCoords;

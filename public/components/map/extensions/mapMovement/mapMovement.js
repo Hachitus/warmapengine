@@ -15,15 +15,20 @@ import { mapEvents } from '/components/map/core/mapEvents';
 import { arrays } from '/components/utilities/general';
 
 /***********************
+****** VARIABLES *******
+***********************/
+var viewportWorker = new Worker("/components/map/extensions/mapMovement/mapMovementWorker.js");
+
+/***********************
 ********* API **********
 ***********************/
-export var managingTileMapMovement = setupManagingTileMapMovement();
-var viewportWorker = new Worker("/components/map/extensions/mapMovement/managingGeneralWorker.js");
+export const pluginName = "mapMovement";
+export const mapMovement = setupMapMovement();
 
 /***********************
 ******* PUBLIC *********
 ***********************/
-function setupManagingTileMapMovement () {
+function setupMapMovement () {
   const VIEWPORT_OFFSET = 0.15;
   const CHECK_INTERVAL = 20;
   var queue = {};
@@ -33,23 +38,30 @@ function setupManagingTileMapMovement () {
   };
 
   return {
+    init,
     addAll,
     check,
     startEventListeners
   };
 
+  function init(map) {
+    addAll(map);
+    startEventListeners(map);
+    map.drawOnNextTick();
+  }
   function addAll(map) {
     var scale = map.getScale();
-    var viewportArea, movableLayer;
+    var viewportArea;
 
-    movableLayer = map.getMovableLayer();
     viewportArea = map.getViewportArea();
     Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
     Object.assign( viewportArea , applyScaleToViewport(viewportArea, map.getScale()) );
 
-    movableLayer.getPrimaryLayers().forEach( layer => {
-      layer.getObjects().forEach(object => {
-        object.visible = isObjectOutsideViewport(object, viewportArea, false, scale) ? false : true;
+    map.getMovableLayer().getPrimaryLayers().forEach( layer => {
+      var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
+
+      subcontainers.forEach(subcontainer => {
+        subcontainer.visible = isObjectOutsideViewport(subcontainer, viewportArea, false, scale) ? false : true;
       });
     });
   }
@@ -81,9 +93,9 @@ function setupManagingTileMapMovement () {
         if (window.Worker) {
           viewportWorker.onmessage = function(e) {
             try {
-              var scale = map.getScale();
-              var scaledViewport = e.data[0];
-              var smallerScaledViewport = e.data[1];
+              const scale = map.getScale();
+              const scaledViewport = e.data[0];
+              const smallerScaledViewport = e.data[1];
               var containersUnderChangedArea = [];
               var isOutside, scaledAndChangedViewport;
 
@@ -142,10 +154,10 @@ function setupManagingTileMapMovement () {
     function moveCb(type, movedCoordinates) {
       changedCoordinates.width += movedCoordinates.x;
       changedCoordinates.height += movedCoordinates.y;
-      managingTileMapMovement.check(map);
+      mapMovement.check(map);
     }
     function resizeCb() {
-      managingTileMapMovement.check(map);
+      mapMovement.check(map);
     }
   }
   /**************************************
@@ -161,7 +173,7 @@ function setupManagingTileMapMovement () {
     return isIt;
   }
   function getViewportsRightSideCoordinates(viewportArea) {
-    var offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET * 2 );
+    const offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET * 2 );
 
     return {
       x2: Math.round( viewportArea.x + Math.abs( viewportArea.width ) + offsetSize ),

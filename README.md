@@ -91,5 +91,14 @@ the API, which is naturally not encouraged).
 
 All UI templates need to extend the UI_templateBase @ '/components/map/core/UI_themeBase'
 
+##Events
+Unless overridden there are 3 map events fired currently (each in different file in the core or extensions files):
+* mapMoved
+** Data passed to event: Amount of movement being handled ({ x, y })
+* mapZoomed
+** Data passed to event: Last scale factor, amount of current zoom to be applied, is is zoom in or out (true / false)
+* objectsSelected
+** Data passed to event: array of objects selected as data
+
 # Credit
 Copyright (c) 2016 Janne Hyytiä

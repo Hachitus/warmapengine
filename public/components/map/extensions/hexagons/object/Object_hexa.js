@@ -9,7 +9,7 @@ import hexagonMath from '/components/map/extensions/hexagons/utils/hexagonMath';
 /***********************
 ********* API **********
 ***********************/
-export var object_sprite_hexa = setupObject_sprite_hexa();
+export const object_sprite_hexa = setupObject_sprite_hexa();
 
 /***********************
 ******* PUBLIC *********
@@ -18,6 +18,7 @@ export var object_sprite_hexa = setupObject_sprite_hexa();
  * Base class for hexagon objects. So basically choosing objects from map that is hexagon based.
  */
 function setupObject_sprite_hexa() {
+  /* create only once */
   var shape;
 
   /**************************

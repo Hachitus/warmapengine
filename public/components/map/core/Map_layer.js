@@ -2,9 +2,6 @@
 
 /**
  * @require the PIXI framework in global namespace
- *
- * @todo I don't think this class should be done in the new class-word, since it is much more efficient with normal
- * prototypal inheritance way.
  * */
 
 /***********************
@@ -17,161 +14,69 @@ var _baseContainerClass = _getBaseContainerClass();
 /***********************
 ******** EXPORT ********
 ***********************/
+/**
+ * Creates a basic layer for the Map. Can not hold subcontainers!
+ * @class
+ */
 export class Map_layer extends PIXI.Container {
   /**
-   * @param {String}				                name layer property name, used for identifiying the layer, usefull in
-   * debugging, but used also otherwise too!
-   * @param {x: Number, y: Number} 	        coord starting coords of layer. Relative to parent map layer.
-   * @param {PIXI renderer}	renderer        renderer Not really needed by the super class, but used elsewhere.
-   * @param {PIXI renderer} movable         renderer Not really needed by the super class, but used elsewhere.
+   * @constructs
+   * @param {Object} options          options
+   *                                  name: String. Layers name, used for identifying the layer, useful in debugging, but used also otherwise too!
+   * @param {x: Number, y: Number}          coord starting coords of layer. Relative to parent map layer.
    * @param {object} subContainers          width: Number. subcontainer width in pixels,
    *                                        height: Number. subcontainer height in pixels,
    *                                        maxDetectionOffset: Number. Amount of offset we detect outside the given area.
    *
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
-   */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false, subContainers: false, specialLayer: false } ) {
-    var { name, coord, renderer, movable, subContainers, specialLayer } = options;
+   * */
+  constructor(options = {
+      name: "",
+      coord: { x: 0, y: 0 },
+      specialLayer: false } ) {
+    var { name, coord, specialLayer } = options;
 
     super();
 
     Object.assign(this, coord);
-    this.renderer = renderer;
     this._cacheEnabled = true;
-    this.name = "" + name; // Used otherwise too, but good for debugging. Shows up in toString
+    /** @member Good for debugging (shows up in toString), but used otherwise too */
+    this.name = "" + name;
+    /** @member (is it used?) */
     this.drawThisChild = true;
-    this.movable = movable;
-    this.zoomable = false;
+    /** @member (is it used?) */
     this.preventSelection = false;
+    /** @member Boolean. When true, this layer is not counted as "PrimaryLayer". SpecialLayers can be e.g. dynamically modified UI-layers */
     this.specialLayer = specialLayer;
-    this.oldAddChild = super.addChild.bind(this);
-    this.subContainersConfig = subContainers;
-    this.subContainerList = [];
   }
 }
 Object.assign(Map_layer.prototype, _baseContainerClass);
 
-/* REMEMBER! PIXI.ParticleContainer has limited support for features (like filters etc.), at some point you have to use
-normal container too, but since this one is optimized for performance we use it here first */
-
-export class Map_spriteLayer extends PIXI.Container {
+/**
+ * Layer designed to hold subcontainers. But can handle objects too.
+ * @class
+ */
+export class Map_parentLayer extends Map_layer {
   /**
-   * @param {String} name layer property name, used for identifiying the layer, usefull in debugging, but used also
-   * otherwise too!
-   * @param {x: Number, y: Number} coord starting coords of layer. Relative to parent map layer.
-   */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false, subContainers: false, specialLayer: false } ) {
-    var { name, coord, renderer, movable, specialLayer, subContainers } = options;
-
-    super();
-
-    Object.assign(this, coord);
-    this.renderer = renderer;
-    this._cacheEnabled = true;
-    this.name = "" + name; // For debugging. Shows up in toString
-    this.drawThisChild = true;
-    this.movable = movable;
-    this.zoomable = false;
-    this.preventSelection = false;
-    this.specialLayer = specialLayer;
-    this.oldAddChild = super.addChild.bind(this);
-    this.subContainersConfig = subContainers;
-    this.subContainerList = [];
-  }
-	/**
-   * If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
-	 * the children too. I think this has been normally disabled to make the particleContainer as efficient as possible
-   * */
-	updateTransform() {
-  if (!this.visible)
-  {
-    return false;
-  }
-
-  this.displayObjectUpdateTransform();
-  for (var i = 0, j = this.children.length; i < j; ++i)
-  {
-    this.children[i].updateTransform();
-  }
-	}
-}
-Object.assign(Map_spriteLayer.prototype, _baseContainerClass);
-
-/* REMEMBER! PIXI.ParticleContainer has limited support for features (like filters etc.), at some point you have to use
-normal container too, but since this one is optimized for performance we use it here first */
-
-export class Map_bigSpriteLayer extends PIXI.Container {
-  /**
+   * @constructs
    * @param {String}        name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
    * @param {x: Number, y: Number}  coord starting coords of layer. Relative to parent map layer.
-   * @param {PIXI renderer}     renderer Not really needed by the super class, but used elsewhere.
    *
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, renderer: null, movable: false, subContainers: false, specialLayer: false } ) {
-    var { name, coord, renderer, movable, specialLayer, subContainers } = options;
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, subContainers: false, specialLayer: false } ) {
+    var { subContainers } = options;
 
-    super();
+    super(options);
 
-    Object.assign(this, coord);
-    this.renderer = renderer;
-    this._cacheEnabled = true;
-    this.name = "" + name; // For debugging. Shows up in toString
-    this.drawThisChild = true;
-    this.movable = movable;
-    this.zoomable = false;
-    this.preventSelection = false;
-    this.specialLayer = specialLayer;
     this.oldAddChild = super.addChild.bind(this);
     this.subContainersConfig = subContainers;
     this.subContainerList = [];
   }
-	/**
-   * If we want the interactive manager to work correctly for detecting coordinate clicks, we need correct worldTransform data, for
-	 * the children too. I think this has been normally disabled to make the particleContainer as efficient as possible
-   * */
-	updateTransform() {
-  if (!this.visible)
-  {
-    return false;
-  }
-
-  this.displayObjectUpdateTransform();
-  for (var i = 0, j = this.children.length; i < j; ++i)
-  {
-    this.children[i].updateTransform();
-  }
-	}
-}
-Object.assign(Map_bigSpriteLayer.prototype, _baseContainerClass);
-
-/***********************
-******* PRIVATE ********
-***********************/
-function _getBaseContainerClass() {
-  return {
-    addChild,
-    setCache,
-    hasSubContainers,
-    getSubContainerConfigs,
-    getSubContainersByCoordinates,
-    getSubcontainers,
-    getCurrentCache,
-    getCacheEnabled,
-    move,
-    setScale,
-    getScale,
-    getUIObjects,
-    emptyUIObjects,
-    addUIObjects,
-    getPrimaryLayers,
-    getObjects
-  };
-
-  function addChild(displayObject) {
+  addChild(displayObject) {
     if (this.hasSubContainers()) {
       let correctContainer;
       correctContainer = setCorrectSubContainer(displayObject, this);
@@ -182,13 +87,10 @@ function _getBaseContainerClass() {
 
     return displayObject;
   }
-  function hasSubContainers() {
-    return this.subContainersConfig ? true : false;
-  }
-  function getSubContainerConfigs() {
+  getSubContainerConfigs() {
     return this.subContainersConfig;
   }
-  function getSubContainersByCoordinates(coordinates) {
+  getSubContainersByCoordinates(coordinates) {
     if (!this.hasSubContainers()) {
       throw new Error("tried to retrieve subContainers, when they are not present");
     }
@@ -203,30 +105,96 @@ function _getBaseContainerClass() {
 
     return foundSubcontainers;
   }
-  function getSubcontainers() {
+  getSubcontainers() {
     return this.subContainerList;
   }
+}
+
+/**
+ * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend Map_layers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree.
+ *
+ * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
+ * @class
+ */
+class Map_subContainer extends PIXI.ParticleContainer {
+  /**
+   * @constructs
+   * @param  {Object} size          { width: Number, height: Number }
+   */
+  constructor(size) {
+    super();
+
+    this.specialLayer = true;
+    this.size = size;
+  }
+  getSubcontainerArea (scale, options = { toGlobal: true } ) {
+    var coordinates;
+
+    coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(0, 0)) : this;
+    if (scale) {
+      coordinates.x /= scale;
+      coordinates.y /= scale;
+    }
+
+    return {
+      x: Math.round( coordinates.x ),
+      y: Math.round( coordinates.y ),
+      width: Math.round( this.size.width ),
+      height: Math.round( this.size.height )
+    };
+  }
+}
+/**
+ * setCache method
+ * @method
+ */
+Map_subContainer.prototype.setCache = setCache;
+
+/***********************
+**** PUBLIC METHODS ****
+***********************/
+/**
+ * This extends the Map_layer classes as they share a lot of the same functionality
+ */
+function _getBaseContainerClass() {
+  return {
+    setCache,
+    hasSubContainers,
+    getCurrentCache,
+    getCacheEnabled,
+    move,
+    setScale,
+    getScale,
+    getUIObjects,
+    emptyUIObjects,
+    addUIObjects,
+    getPrimaryLayers,
+    getObjects
+  };
+
+  function hasSubContainers() {
+    return this.subContainersConfig ? true : false;
+  }
+
   function getCurrentCache() {
     return this.cacheAsBitmap;
   }
   /**
    * Move layer
    * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
-	 * @return this layer instance
+   * @return this layer instance
    * */
   function move(coord) {
-    if (this.movable) {
-      this.x += coord.x;
-      this.y += coord.y;
-      this.drawThisChild = true;
-    }
+    this.x += coord.x;
+    this.y += coord.y;
+    this.drawThisChild = true;
 
     return this;
   }
   /**
    * set layer scale
-	 * @param {Number} amount The amount that you want the layer to scale.
-	 * @amount that was given
+   * @param {Number} amount The amount that you want the layer to scale.
+   * @amount that was given
    * */
   function setScale(amount) {
     this.scale.x = this.scale.y = +amount.toFixed(2);
@@ -235,21 +203,21 @@ function _getBaseContainerClass() {
   }
   /**
    * get layer scale
-	 * @return current amount of scale
+   * @return current amount of scale
    * */
   function getScale() {
     return this.scale.x;
   }
   /**
    * get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
-	 * @return current UIObjects
+   * @return current UIObjects
    * */
   function getUIObjects() {
     return _UIObjects;
   }
   /**
    * Remove all the UIObjects from this layer
-	 * @return empty UIObjects array
+   * @return empty UIObjects array
    * */
   function emptyUIObjects() {
     _UIObjects.map(obj => {
@@ -261,8 +229,8 @@ function _getBaseContainerClass() {
   }
   /**
    * Add UIObjects to this layer
-	 * @param {Object || Array} objects Objects can be an object containing one object to add or an Array of objects to add.
-	 * @return All the UIObjects currently on this layer
+   * @param {Object || Array} objects Objects can be an object containing one object to add or an Array of objects to add.
+   * @return All the UIObjects currently on this layer
    * */
   function addUIObjects(objects) {
     _UIObjects = _UIObjects || [];
@@ -306,32 +274,6 @@ function _getBaseContainerClass() {
     return allObjects;
   }
 }
-
-export class Map_subContainer extends PIXI.Container {
-  constructor(size) {
-    super();
-
-    this.specialLayer = true;
-    this.size = size;
-  }
-  getSubcontainerArea (scale, options = { toGlobal: true } ) {
-    var coordinates;
-
-    coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(0, 0)) : this;
-    if (scale) {
-      coordinates.x /= scale;
-      coordinates.y /= scale;
-    }
-
-    return {
-      x: Math.round( coordinates.x ),
-      y: Math.round( coordinates.y ),
-      width: Math.round( this.size.width ),
-      height: Math.round( this.size.height )
-    };
-  }
-}
-Map_subContainer.prototype.setCache = setCache;
 
 function setCache(status) {
   var toCacheStatus = status ? true : false;

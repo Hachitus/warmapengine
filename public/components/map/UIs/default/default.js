@@ -87,7 +87,6 @@ export class UI_default extends UI_templateBase {
         });
 
         this.showModal(this.modal, cssClasses);
-        // _highlightSelectedObject(hightlightableObjects[0], UILayer);
         this.highlightSelectedObject(hightlightableObjects[0]);
         updateCB();
 
@@ -115,7 +114,7 @@ export class UI_default extends UI_templateBase {
     createHighlight = setupCreateHighlight(this.map);
 
     if (object.highlightable) {
-      highlightableObject = _highlightSelectedObject(object, this.map.getMovableLayer());
+      highlightableObject = _highlightSelectedObject(object, this.map.getMovableLayer(), this.map.getRenderer());
 
       highlightableObject.dropShadow({ color: "0x0000", distance: 5, alpha: 0.55, angle: 45, blur: 5 });
 
@@ -139,10 +138,10 @@ function _get$Element(which) {
 
   return $elements[which];
 }
-function _highlightSelectedObject(object, movableLayer) {
+function _highlightSelectedObject(object, movableLayer, renderer) {
   var clonedObject;
 
-  clonedObject = object.clone();
+  clonedObject = object.clone(renderer);
   clonedObject.__proto__ = object.__proto__;
 
   var jee = object.toGlobal(new PIXI.Point(0,0));
@@ -167,7 +166,7 @@ function _filterObjectsForHighlighting(objects) {
 function setupCreateHighlight(map) {
   return function createHighlight(object, movableLayer, options = { coords: new PIXI.Point(0, 0) }) {
     var radius = 47;
-    var container = new map.createLayer("UILayer");
+    var container = new map.createUILayer("UILayer");
     var objCoords = {
       x: Number(object.x),
       y: Number(object.y)

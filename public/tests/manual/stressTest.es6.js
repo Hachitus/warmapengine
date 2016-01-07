@@ -24,7 +24,7 @@ const HEXAGON_DISTANCES = {
 var pluginsToActivate = [
   "/components/map/core/zoom/map_zoom",
   "/components/map/core/move/map_drag",
-  "/components/map/extensions/hexagons/object_select/object_select_hexagon",
+  "/components/map/extensions/hexagons/object_select_hexagon",
   "/components/map/extensions/mapMovement/mapMovement.js"
 ];
 
@@ -125,7 +125,7 @@ function addBase_spriteLayerData(name, group, options = { interactive: true, cac
   var { interactive, cache } = options;
 
   return {
-    type: "Map_bigSpriteLayer",
+    type: "Map_parentLayer",
     coord: { x: 0, y: 0 },
     name: name,
     group: group, // For quadTrees

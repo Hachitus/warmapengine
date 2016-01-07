@@ -5,21 +5,16 @@
 /**
  * Factory where we construct a horizontal hexagon map for test and development purposes
  *
- * @require createjs framework in global namespace
- * @require canvas HTML5-element to work. This is more for node.js
- *
- * @todo Add documentation and refactor (maybe modularize / functionalize) the actual logic
+ * @require Some polyfills are needed and added for IE11 ( http://babeljs.io/docs/usage/polyfill/ ). These are found
+ * in utils
+ * @required PIXI in global space
  * */
-
-/* THIS POLYFILL IS NEEDED FOR IE11, maybe Symbol or something missing: http://babeljs.io/docs/usage/polyfill/ */
 
 /***********************
 ******* IMPORTS ********
 ***********************/
 import { Map } from "/components/map/core/Map";
-import { Map_layer, Map_spriteLayer, Map_bigSpriteLayer } from "/components/map/core/Map_layer";
-import { Object_terrain } from "/components/map/extensions/hexagons/object/Object_terrain_hexa";
-import { Object_unit } from "/components/map/extensions/hexagons/object/Object_unit_hexa";
+import { Object_terrain, Object_unit } from "/components/map/extensions/hexagons/Objects";
 import { resizeUtils, environmentDetection } from "/components/map/core/utils/utils";
 import { UI } from "/components/map/core/UI";
 import { UI_default } from "/components/map/UIs/default/default.js";
@@ -27,46 +22,44 @@ import { UI_default } from "/components/map/UIs/default/default.js";
 /***********************
 ****** VARIABLES *******
 ***********************/
-var functionsInObj = {
+const functionsInObj = {
   Object_terrain,
   Object_unit
-};
-var layers = {
-  Map_layer,
-  Map_spriteLayer,
-  Map_bigSpriteLayer
 };
 
 /***********************
 ********* API **********
 ***********************/
-export var createMap = createMap;
+export { createMap as createMap };
 
 /***********************
 ******* PUBLIC *********
 ***********************/
 /**
- * @param {DOMElement Canvas} canvasElement the canvas element for the map
- * @param {Object} datas      Object with mapDatas: { map, type, game }
- *                            map: Holds all the stage, layer and object data needed to construct a full map
- *                            game: More general game data (like turn number, map size etc.)
- *                            type: Type data such as different unit types and their graphics (tank, soldier etc.)
+ * @param {DOMElement Canvas} canvasContainerElement      Container which will hold the PIXI generated canvas element
+ * @param {Object} datas                                  Object with mapDatas: { map, type, game }
+ *                                                        map: Holds all the stage, layer and object data needed to construct a full map
+ *                                                        game: More general game data (like turn number, map size etc.)
+ *                                                        type: Type data such as different unit types and their graphics (tank, soldier etc.)
+ * @param {Object} options                                { trackFPSCB: Function | False, callback to track FPS }
 */
 function createMap(canvasContainerElement, datas, options = { trackFPSCB: false }) {
-  console.log("============== Map factory started =============");
-  var mapData = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
-  var typeData = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
-  var gameData = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
-  var windowSize = resizeUtils.getWindowSize();
-  var pixelRatio = environmentDetection.getPixelRatio();
-  var mapSize = gameData.mapSize;
-
+  console.log("============== Horizontal hexagonal Map factory started =============");
+  const pixelRatio = environmentDetection.getPixelRatio();
+  const DATA_MAP = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
+  const DATA_TYPE = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
+  const DATA_GAME = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
+  const WINDOW_SIZE = resizeUtils.getWindowSize();
+  const MAP_SIZE = DATA_GAME.mapSize;
+  const mapOptions = {
+    refreshEventListeners: true
+  };
   var mapProperties = {
     bounds: {
       x: 0,
       y: 0,
-      width: windowSize.x,
-      height: windowSize.y
+      width: WINDOW_SIZE.x,
+      height: WINDOW_SIZE.y
     },
     options: {
       resolution: pixelRatio, // We might need this later on, when doing mobile optimizations, for different pizel density devices
@@ -82,19 +75,16 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
     },
     trackFPSCB: options.trackFPSCB
   };
-  var mapOptions = {
-    refreshEventListeners: true
-  };
+  var map, dialog_selection, defaultUI;
 
-  var map = new Map(canvasContainerElement, mapProperties, mapOptions ) ;
-  var dialog_selection = document.getElementById("selectionDialog");
-  var defaultUI = new UI_default(dialog_selection, map);
+  map = new Map(canvasContainerElement, mapProperties, mapOptions );
+  dialog_selection = document.getElementById("selectionDialog");
+  defaultUI = new UI_default(dialog_selection, map);
 
   /* Initialize UI as singleton */
   UI(defaultUI, map);
-  /* We iterate through the given map data and create objects accordingly */
-  //for(let ia = 0; ia < 100; ia++) {
-  mapData.layers.forEach( layerData => {
+
+  DATA_MAP.layers.forEach( layerData => {
     if (typeof layerData !== "object") {
       console.log("Problem in horizontalHexaFactory, with layerData:", layerData);
       throw new Error("Problem in horizontalHexaFactory, with layerData:", layerData);
@@ -102,7 +92,6 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
 
     var layerGroup = layerData.group;
     var objManager = map.objectManager;
-    var LayerConstructor = layers[layerData.type];
     var renderer = map.getRenderer();
     var layerOptions = {
       name: layerData.name,
@@ -115,12 +104,12 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
     var thisLayer;
 
     try {
-      thisLayer = map.addLayer(LayerConstructor, layerOptions);
+      thisLayer = map.addLayer(layerOptions);
       objManager.addLayer(layerGroup, {
           x: 0,
           y: 0,
-          width: +mapSize.x,
-          height: +mapSize.y
+          width: +MAP_SIZE.x,
+          height: +MAP_SIZE.y
         }, {
           objects: 10,
           levels: 6
@@ -137,13 +126,13 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
         objectGroup.objects.forEach( object => {
           var objTypeData, objData, objectOptions, currentFrame, newObject;
 
-          objTypeData = typeData.objectData[spritesheetType][object.objType];
-          if (!objTypeData) {
-            console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
-            throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
-          }
-
           try {
+            objTypeData = DATA_TYPE.objectData[spritesheetType][object.objType];
+            if (!objTypeData) {
+              console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
+              throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
+            }
+
             objData = {
               typeData: objTypeData,
               activeData: object.data
@@ -151,20 +140,10 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
             currentFrame = PIXI.utils.TextureCache[objTypeData.image];
             objectOptions = {
               currentFrame,
-              radius: gameData.hexagonRadius
+              radius: DATA_GAME.hexagonRadius
             };
 
             newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
-
-            objManager.addObject(
-              layerGroup, {
-                x: newObject.x,
-                y: newObject.y,
-                width: newObject.width,
-                height: newObject.height
-              },
-                newObject
-            );
 
             thisLayer.addChild(newObject);
           } catch (e) {
@@ -177,7 +156,7 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
     }
   });
 
-  map.moveMap(mapData.startPoint);
+  map.moveMap(DATA_MAP.startPoint);
 
   return map;
 }

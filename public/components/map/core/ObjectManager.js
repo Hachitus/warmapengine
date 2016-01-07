@@ -1,5 +1,11 @@
 'use strict';
 
+/**
+ * This handles the selction of areas and objects in the map. Currently is uses subcontainers or quadtree to do the selection.
+ *
+ * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn't be the issue.
+ */
+
 /***********************
 ******** IMPORT ********
 ***********************/
@@ -25,16 +31,17 @@ export class ObjectManager {
   /**
    * Retrieve objects under certain coordinates or area, if size is given
    *
-   * @param {globalCoords: { x:Number, y:Number }, localCoords: { x:Number, y:Number } } coords the coordinates which we
-   * want to hitTest
-   * @param {string} type type of the object / layer that we want to retrieve
-   * @param {Object} size If we want to test rectangle, instead of just coordinates
-   *
-   * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to
-   * detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn't be the issue.
+   * @param {globalCoords: { x:Number, y:Number },
+   *        localCoords: { x:Number, y:Number } }         the coordinates which we want to hitTest
+   * @param {string} type                                 type of the object / layer that we want to retrieve
+   * @param {Object} options                              Holds options:
+   *                                                      quadtree: Boolean. Determines if we use quadtree or subcontainers
+   *                                                      subcontainers: Array. The subcontainers we match against
+   *                                                      size: { width: Number, height: Number }. Size of the rectangle area to match against, if we want to match rectangle instead of one point
+   * @return Array of matched objects
    */
-  retrieve(allCoords, type, options = { quadtree: true, subcontainers: [], size: { width: 0, height: 0 } }) {
-    var { quadtree, subcontainers } = options;
+  retrieve(allCoords, type, options = { quadtree: false, subcontainers: [], size: { width: 0, height: 0 } }) {
+    var { quadtree, subcontainers, size } = options;
     var { globalCoords, localCoords } = allCoords;
     var foundObjs = [];
     var quadtreeObjs;
@@ -42,15 +49,15 @@ export class ObjectManager {
     if (quadtree) {
       if (!type) {
         quadtreeObjs = Object.keys(this.quadtrees).map((thisIndex) => {
-          return this.quadtrees[thisIndex].retrieve(localCoords, options.size);
+          return this.quadtrees[thisIndex].retrieve(localCoords, size);
         });
       } else {
-        quadtreeObjs = this.quadtrees[type].retrieve(localCoords, options.size);
+        quadtreeObjs = this.quadtrees[type].retrieve(localCoords, size);
       }
 
       foundObjs = arrays.flatten2Levels(quadtreeObjs);
 
-      if (!options.size.width || !options.size.height) {
+      if (!size.width || !size.height) {
         foundObjs = foundObjs.filter(obj => {
           let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
 
@@ -62,7 +69,7 @@ export class ObjectManager {
         foundObjs = foundObjs.concat(container.children);
       });
 
-      if (!options.size.width || !options.size.height) {
+      if (!size.width || !size.height) {
         foundObjs = foundObjs.filter(obj => {
           let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
 
@@ -108,16 +115,5 @@ export class ObjectManager {
       });
 
     return this.quadtrees[type];
-  }
-  /**
-   * Get all quadtree layers
-   */
-  getLayers() {
-    return Object.keys(this.quadtrees).map(layerName => {
-      return {
-        name: layerName,
-        data: this.quadtrees[layerName]
-      };
-    });
   }
 }

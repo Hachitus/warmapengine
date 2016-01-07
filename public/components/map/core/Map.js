@@ -24,7 +24,7 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { Map_layer } from '/components/map/core/Map_layer';
+import { Map_layer, Map_parentLayer } from '/components/map/core/Map_layer';
 import { resizeUtils } from '/components/map/core/utils/utils';
 import { eventListeners } from '/components/map/core/eventlisteners';
 import { ObjectManager } from '/components/map/core/ObjectManager';
@@ -36,7 +36,7 @@ import * as Q from '/assets/lib/q/q';
 ***********************/
 var _drawMapOnNextTick = false;
 var isMapReadyPromises = [];
-var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer;
+var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, ParentLayerConstructor;
 
 /***********************
 ********* API **********
@@ -52,7 +52,13 @@ export class Map {
    *
    * @return Map instance
    */
-  constructor(canvasContainer = null, props = { startCoord: { x: 0, y: 0 }, bounds: { width: 0, height: 0 }, options: { refreshEventListeners: true }, subContainers: false, trackFPSCB: false}) {
+  constructor(canvasContainer = null,
+      props = {
+        startCoord: { x: 0, y: 0 },
+        bounds: { width: 0, height: 0 },
+        options: { refreshEventListeners: true },
+        subContainers: false,
+        trackFPSCB: false }) {
     var { startCoord, bounds, options, subContainers, trackFPSCB } = props;
 
     if (!canvasContainer) {
@@ -74,14 +80,16 @@ export class Map {
     this._mapInMove = false;
     this.subContainersConfig = subContainers;
     this.trackFPSCB = trackFPSCB;
+    /* This defines which class we use to generate layer on the map. Under movableLayer */
+    ParentLayerConstructor = subContainers ? Map_parentLayer : Map_layer;
 
     /* These are the 2 topmost layers on the map:
      * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
      * objects that do not move with the map.
      * - movableLayer: Moves the map, when the user commands. Can hold e.g. UI objects that move with the map. Like
      * graphics that show which area or object is currently selected. */
-    _staticLayer = new Map_layer({ name:"staticLayer", coord: { x: 0, y: 0 }, renderer: _renderer });
-    _movableLayer = new Map_layer({ name:"movableLayer", coord: startCoord, movable: true });
+    _staticLayer = new Map_layer({ name:"staticLayer", coord: { x: 0, y: 0 } });
+    _movableLayer = new Map_layer({ name:"movableLayer", coord: startCoord });
     _staticLayer.addChild(_movableLayer);
 
     /* InteractionManager is responsible for finding what objects are under certain coordinates. E.g. when selecting */
@@ -162,7 +170,7 @@ export class Map {
       return layer[attribute] === value;
     });
   }
-  createLayer(name = "", coord = { x: 0, y: 0 }) {
+  createUILayer(name = "default UI layer", coord = { x: 0, y: 0 }) {
     var layer = new Map_layer(name, coord);
 
     return layer;
@@ -171,14 +179,14 @@ export class Map {
    * All parameters are passed to Map_layer constructor
    * @return created Map_layer instance
    * */
-  addLayer(LayerConstructor, layerOptions) {
+  addLayer(layerOptions) {
     var thisLayer;
 
     if (this.getSubContainerConfigs() && layerOptions.subContainers !== false) {
       layerOptions.subContainers = this.getSubContainerConfigs();
     }
 
-    thisLayer = new LayerConstructor(layerOptions);
+    thisLayer = new ParentLayerConstructor(layerOptions);
     _movableLayer.addChild(thisLayer);
 
     return thisLayer;

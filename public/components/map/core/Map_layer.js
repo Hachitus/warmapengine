@@ -16,6 +16,7 @@ var _baseContainerClass = _getBaseContainerClass();
 ***********************/
 /**
  * Creates a basic layer for the Map. Can not hold subcontainers!
+ * @extends PIXI.Container
  * @class
  */
 export class Map_layer extends PIXI.Container {
@@ -56,6 +57,7 @@ Object.assign(Map_layer.prototype, _baseContainerClass);
 /**
  * Layer designed to hold subcontainers. But can handle objects too.
  * @class
+ * @extends PIXI.Container
  */
 export class Map_parentLayer extends Map_layer {
   /**
@@ -115,6 +117,7 @@ export class Map_parentLayer extends Map_layer {
  *
  * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
  * @class
+ * @extends PIXI.Container
  */
 class Map_subContainer extends PIXI.ParticleContainer {
   /**

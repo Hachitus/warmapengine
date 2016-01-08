@@ -41,6 +41,10 @@ var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, Parent
 /***********************
 ********* API **********
 ***********************/
+/**
+ * Main class for the whole engine
+ * @class
+ */
 export class Map {
   /**
    * @param {DOM Canvas element} canvas     Canvas used by the map

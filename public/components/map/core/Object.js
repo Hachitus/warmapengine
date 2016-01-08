@@ -1,26 +1,24 @@
 'use strict';
 
-/***********************
-******** IMPORT ********
-***********************/
+/**
+ * The actual objects used on the map (such as terrain and units), under containers. All of the objects need to have same argumentAPI for creating objects: coords, data, options
+ * @main Objects
+ */
+
+/*=======================
+========= IMPORT ========
+========================*/
 import { graphics } from '/components/map/core/utils/effects';
 
-/**
- * The actual objects used on the map (such as terrain and units), under containers.
- *
- * All of the objects need to have same argumentAPI for creating objects: coords, data, options
- */
-
-/***********************
-********* API **********
-***********************/
-/**
- * The base class of all sprite objects
- * @class
- */
+/*=======================
+========== API ==========
+========================*/
 export class Object_sprite extends PIXI.Sprite {
   /**
+   * The base class of all sprite objects
+   * @class Object_sprite
    * @constructs
+   * @extends PIXI.Sprite
    * @param {PIXI.Point} coords                  the coordinate where the object is located at, relative to it's parent
    * @param {Object} data                        objects data, that will be used in the game. It will not actually be mainly used in graphical but rather things  like unit-data and city-data presentations etc.
    * @param {currFrame: Object} options          Options for the object
@@ -52,8 +50,9 @@ export class Object_sprite extends PIXI.Sprite {
     this.mouseEnabled = false;
   }
   /**
-   * Drawing the object with createjs-methods
-   * @method
+   * Drawing the object
+   *
+   * @method innerDraw
    * @param {Number} x coordinate x
    * @param {Number} y coordinate y
    * @return this object instance
@@ -67,7 +66,8 @@ export class Object_sprite extends PIXI.Sprite {
   }
   /**
    * Draws new frame to animate or such
-   * @method
+   *
+   * @method drawNewFrame
    * @param {Number} x coordinate x
    * @param {Number} y coordinate y
    * @param {Number} newFrameNumber New frame number to animate to
@@ -80,7 +80,8 @@ export class Object_sprite extends PIXI.Sprite {
   }
   /**
    * Get the area that is reserved for the graphical presenation of this object as a rectangle.
-   * @method
+   *
+   * @method getGraphicalArea
    * @param  {Object} options       toGlobal: Boolean. Should the method return global coordinates or local (movableLayer)
    * @return {Object}               { x: Number, y: Number, width: Number, height: Number}
    */
@@ -98,7 +99,8 @@ export class Object_sprite extends PIXI.Sprite {
   }
   /**
    * Coordinate conversion: localToLocal
-   * @method
+   *
+   * @method localToLocal
    * @param  {Number} x                     X coordinate
    * @param  {Number} y                     Y coordinate
    * @param  {PIXI.DisplayObject} target    The DisplayObject where we should target the coordinates for
@@ -112,6 +114,8 @@ export class Object_sprite extends PIXI.Sprite {
   }
   /**
    * Clone object
+   *
+   * @method clone
    * @param  {PIXI renderer} renderer
    * @param  {Object} options               position: Boolean, anchor: Boolean
    * @return {cloned Object}                cloned object
@@ -132,13 +136,14 @@ export class Object_sprite extends PIXI.Sprite {
   }
 }
 
-/**
- * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
- * inherited, depending on the map type. For example you might want to add some click area for these
- * @class
- */
 export class Object_sprite_terrain extends Object_sprite {
   /**
+   * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
+   * inherited, depending on the map type. For example you might want to add some click area for these
+   *
+   * @class Object_sprite_terrain
+   * @constructor
+   * @extends Object_sprite
    * @param {x: Number, y: Number} coords format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
    * @param {object} data This units custom data
    * @param {object} options other specific options for constructing this terrain
@@ -153,13 +158,13 @@ export class Object_sprite_terrain extends Object_sprite {
   }
 }
 
-/**
- * Map unit like infantry or worker, usually something with actions or movable. Normally, but not necessarily, these are
- * inherited, depending on the map type. For example you might want to add some click area for these
- * @class
- */
 export class Object_sprite_unit extends Object_sprite {
   /**
+   * Map unit like infantry or worker, usually something with actions or movable. Normally, but not necessarily, these are
+   * inherited, depending on the map type. For example you might want to add some click area for these
+   *
+   * @class Object_sprite_unit
+   * @constructor
    * @param {x: Number, y: Number} coords Coordinates for the object relative to it's parent
    * @param {object} data This units data
    * @param {object} options other specific options for constructing this unit, like options.throwShadow
@@ -194,6 +199,7 @@ export class Object_sprite_unit extends Object_sprite {
 }
 /**
  * graphical effect that drops a shadow under this unit
- * @method
+ *
+ * @method dropShadow
  */
 Object_sprite_unit.prototype.dropShadow = graphics.dropShadow;

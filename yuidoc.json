@@ -1,0 +1,16 @@
+{
+    "name": "FlaTWorld",
+    "description": "2D game engine for the browsers",
+    "version": "0",
+    "url": "",
+    "options": {
+        "linkNatives": "true",
+        "nocode": true,
+        "attributesEmit": "true",
+        "selleck": "true",
+        "ignorePaths": [ "bundles" ],
+        "paths": "./public/components",
+        "outdir": "./documentation",
+        "markdown": "default"
+    }
+}

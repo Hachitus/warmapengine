@@ -1,0 +1,4 @@
+{
+  "source": "./public/components/map/core/",
+  "destination": "./public/esdoc"
+}

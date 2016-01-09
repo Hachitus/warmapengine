@@ -2,7 +2,6 @@
 
 /**
  * The actual objects used on the map (such as terrain and units), under containers. All of the objects need to have same argumentAPI for creating objects: coords, data, options
- * @main Objects
  */
 
 /************************
@@ -17,45 +16,82 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * The base class of all sprite objects
    *
-   * @class Object_sprite
-   * @memberof core
-   * @constructor
    * @extends PIXI.Sprite
-   * @requires core.graphics
-   * @param {PIXI.Point} coords                  the coordinate where the object is located at, relative to it's parent
-   * @param {Object} data                        objects data, that will be used in the game. It will not actually be mainly used in graphical but rather things  like unit-data and city-data presentations etc.
-   * @param {currFrame: Object} options          Options for the object
-   *                                             currFrame the current frames number. This is basically the initial image, we can change it later for animation or such
+   * @param {PIXI.Point} coords                         the coordinate where the object is located at, relative to it's parent
+   * @param {Object} data                               objects data, that will be used in the game. It will not actually be mainly used in graphical but rather things  like unit-data and city-data presentations etc.
+   * @param {Object} options.currFrame       currFrame the current frames number. This is basically the initial image, we can change it later for animation or such
    */
   constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {} }) {
     var { currentFrame } = options;
 
     super(currentFrame);
 
-    this.name = "Objects_sprite_" + this.id;
-    this.type = "None";
-    this.highlightable = true;
-    this.selectable = true;
-    /* Set data for the object next */
-    this.data = data;
-    this.currentFrame = currentFrame;
-
-    this.areaWidth = this.width;
-    this.areaHeight = this.height;
     /* We need to round the numbers. If there are decimal values, the graphics will get blurry */
     let exactCoords = {
       x: Math.round(coord.x),
       y: Math.round(coord.y)
     };
     this.position.set(exactCoords.x,  exactCoords.y);
-
-    this.tickEnabled = false;
-    this.mouseEnabled = false;
+    /**
+     * Name of the object. Used mostly for debugging
+     *
+     * @attribute
+     * @type {String}
+     */
+    this.name = "Objects_sprite_" + this.id;
+    /**
+     * Type of the object. Can be used for filtering, ordering or finding correct objects.
+     *
+     * @attribute
+     * @type {String}
+     */
+    this.type = "None";
+    /**
+     * Is the object highligtable.
+     *
+     * @attribute
+     * @type {Boolean}
+     */
+    this.highlightable = true;
+    /**
+     * Is the object selectable.
+     *
+     * @attribute
+     * @type {Boolean}
+     */
+    this.selectable = true;
+    /**
+     * Objects custom data. Holds unit statistics and most data. Like unit movement speed etc.
+     *
+     * @attribute
+     * @type {Object}
+     */
+    this.data = data;
+    /**
+     * Current frame (from spritesheet) we are showing.
+     *
+     * @attribute
+     * @type {Number}
+     */
+    this.currentFrame = currentFrame;
+    /**
+     * Object area width in pixels.
+     *
+     * @attribute
+     * @type {Number}
+     */
+    this.areaWidth = this.width;
+    /**
+     * Object area height in pixels.
+     *
+     * @attribute
+     * @type {Number}
+     */
+    this.areaHeight = this.height;
   }
   /**
    * Drawing the object
    *
-   * @method innerDraw
    * @param {Number} x coordinate x
    * @param {Number} y coordinate y
    * @return this object instance
@@ -70,10 +106,9 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Draws new frame to animate or such
    *
-   * @method drawNewFrame
-   * @param {Number} x coordinate x
-   * @param {Number} y coordinate y
-   * @param {Number} newFrameNumber New frame number to animate to
+   * @param {Number} x                coordinate x
+   * @param {Number} y                coordinate y
+   * @param {Number} newFrame         New frame number to animate to
    * @return this object instance
    */
   drawNewFrame(x, y, newFrame) {
@@ -84,7 +119,6 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Get the area that is reserved for the graphical presenation of this object as a rectangle.
    *
-   * @method getGraphicalArea
    * @param  {Object} options       toGlobal: Boolean. Should the method return global coordinates or local (movableLayer)
    * @return {Object}               { x: Number, y: Number, width: Number, height: Number}
    */
@@ -103,7 +137,6 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Coordinate conversion: localToLocal
    *
-   * @method localToLocal
    * @param  {Number} x                     X coordinate
    * @param  {Number} y                     Y coordinate
    * @param  {PIXI.DisplayObject} target    The DisplayObject where we should target the coordinates for
@@ -118,7 +151,6 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Clone object
    *
-   * @method clone
    * @param  {PIXI renderer} renderer
    * @param  {Object} options               position: Boolean, anchor: Boolean
    * @return {cloned Object}                cloned object
@@ -144,9 +176,6 @@ export class Object_sprite_terrain extends Object_sprite {
    * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
    * inherited, depending on the map type. For example you might want to add some click area for these
    *
-   * @class Object_sprite_terrain
-   * @memberof core
-   * @constructor
    * @extends Object_sprite
    * @param {x: Number, y: Number} coords format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
    * @param {object} data This units custom data
@@ -164,12 +193,8 @@ export class Object_sprite_terrain extends Object_sprite {
 
 export class Object_sprite_unit extends Object_sprite {
   /**
-   * Map unit like infantry or worker, usually something with actions or movable. Normally, but not necessarily, these are
-   * inherited, depending on the map type. For example you might want to add some click area for these
+   * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
    *
-   * @class Object_sprite_unit
-   * @memberof core
-   * @constructor
    * @extends Object_sprite
    * @requires core.graphics
    * @param {x: Number, y: Number} coords Coordinates for the object relative to it's parent
@@ -181,32 +206,45 @@ export class Object_sprite_unit extends Object_sprite {
 
     this.name = "DefaultUnitObjects";
     this.type = "unit";
-    this.highlightable = true;
-    this.selectable = true;
+    /**
+     * actions bound to this object. @todo THIS HAS NOT BEEN IMPLEMENTED YET!
+     *
+     * @attribute actions
+     * @type {Object}
+     */
     this.actions = {
       move: [],
       attack: []
     };
-    options.throwShadow = true;
   }
-  /* Implementations for the future: Execute action on units (move, attack etc.) */
+  /**
+   * Execute action on units (move, attack etc.). @todo THIS HAS NOT BEEN IMPLEMENTED YET!
+   *
+   * @param {String} type
+   */
   doAction(type) {
     this.actions[type].forEach(action => {
       action();
     });
   }
-  /* Implementations for the future: Add certain action type */
+  /**
+   * Add certain action type. @todo THIS HAS NOT BEEN IMPLEMENTED YET!
+   *
+   * @param {String} type
+   */
   addActionType(type) {
     this.actions[type] = this.actions[type] || [];
   }
-  /* Implementations for the future: Attach callback for the certain action type */
+  /**
+   * Attach callback for the certain action type. @todo THIS HAS NOT BEEN IMPLEMENTED YET!
+   *
+   * @param {String} type
+   * @param {Function} cb
+   */
   addCallbackToAction(type, cb) {
     this.actions[type].push(cb);
   }
+  dropShadow(...args) {
+    return utils.effects.dropShadow(...args);
+  }
 }
-/**
- * graphical effect that drops a shadow under this unit
- *
- * @method dropShadow
- */
-Object_sprite_unit.prototype.dropShadow = utils.effects.dropShadow;

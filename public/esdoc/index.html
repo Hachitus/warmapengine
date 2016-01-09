@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl">
+  <title data-ice="title">API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map_layers.js~Map_layer.html">Map_layer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map_layers.js~Map_parentLayer.html">Map_parentLayer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/ObjectManager.js~ObjectManager.html">ObjectManager</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite.html">Object_sprite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite_terrain.html">Object_sprite_terrain</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite_unit.html">Object_sprite_unit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/UI_themeBase.js~UI_templateBase.html">UI_templateBase</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-UI">UI</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-mapEvents">mapEvents</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">move</div><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-map_drag">map_drag</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pluginName">pluginName</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">utils</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/utils/Quadtree.js~Quadtree.html">Quadtree</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dataManipulation">dataManipulation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-effects">effects</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-utils">utils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-environmentDetection">environmentDetection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-general">general</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-mouse">mouse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-resize">resize</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">zoom</div><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-map_zoom">map_zoom</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pluginName">pluginName</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><div data-ice="index" class="github-markdown"><p><a href="https://www.gnu.org/licenses/agpl.html"><img src="http://img.shields.io/badge/license-LGPLv3-blue.svg" alt="GPLv3 Affero License"></a></p>
+<p>#NOTE, STILL IN DEVELOPMENT!
+This engine is still in development. It is not well tested for other uses than the current tests / example game. When the most critical development phase is over, the API will be more locked now. At this stage the API and structure can still change, so if you use the engine for something serious, please take that into account!</p>
+<p>Also I am very happy to get feedback on any projects or tests that might be using this engine and very eager to help with getting issues.</p>
+<p>#Introduction
+2D strategy game engine for browsers. Project will move forward at its own phase. Rough estimation for the bare functionality
+of the engine is during 2015.
+Development from that forward will still continue in the form of a 2D strategy game.</p>
+<p>The development is done in ES6, which should be well enough supported by the time the games made with this framework are done.</p>
+<p>If you are interested contact me (<a href="http://hyytia.level7.fi/">http://hyytia.level7.fi/</a>)</p>
+<p>#Development data</p>
+<p>##Requirements
+This is an example install for a fresh debian based virtual server (tested). You may naturally skip any step you wish, if there are alternatives on your server, step you want to perform differently or something you already have on your server.</p>
+<p>Install node.js and npm</p>
+<pre><code><code class="source-code prettyprint">apt-get install nodejs npm git</code>
+</code></pre><p>Rather install these packages as global</p>
+<pre><code><code class="source-code prettyprint">npm install -g forever</code>
+</code></pre><p>If you have issues with forever (type forever and enter on the cmd):</p>
+<pre><code><code class="source-code prettyprint">ln -s /usr/bin/nodejs /usr/bin/node</code>
+</code></pre><p>or</p>
+<pre><code><code class="source-code prettyprint">apt-get install nodejs-legacy</code>
+</code></pre><p>Clone the repository</p>
+<pre><code><code class="source-code prettyprint">git clone [url to this repository]</code>
+</code></pre><p>change to the repository</p>
+<pre><code><code class="source-code prettyprint">cd [installed repository path]</code>
+</code></pre><p>Install package.json packages</p>
+<pre><code><code class="source-code prettyprint">npm install</code>
+</code></pre><p>Install jspm packages</p>
+<pre><code><code class="source-code prettyprint">nodejs node_modules/jspm/jspm.js install</code>
+</code></pre><p>Install bower packages</p>
+<pre><code><code class="source-code prettyprint">nodejs node_modules/bower/bower.js install</code>
+</code></pre><p>##Commanding the backend server</p>
+<p>start server</p>
+<pre><code><code class="source-code prettyprint">npm run start</code>
+</code></pre><p>stop server</p>
+<pre><code><code class="source-code prettyprint">npm run stop</code>
+</code></pre><p>##Testing and development
+Tests can be found with index-file in tests/-folder. For example working example should be found in: <em><a href="http://warmapengine.level7.fi/tests/">http://warmapengine.level7.fi/tests/</a></em></p>
+<p>But naturally on your server it is <a href="http://server_address/tests/">http://server_address/tests/</a></p>
+<p>#How the Map engine works</p>
+<p>##How to setup simple map
+Unfortunately this instruction is not yet available. As the map is more finished and refactored, you will get the instructions. Now if you have the energy. See through the tests e.g. tests/pixi_manualTest.html or pixi_manualStressTest.html, which have the fully working map prototype.</p>
+<p>##Plugins
+Plugin objects have to have init method, in the format of:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">{
+  init: function(map) {
+    // All the functionality e.g. extend map prototype or activate eventListener etc.
+  }
+}</code>
+</code></pre>
+<p>Plugins need to export pluginName-variable, like so:</p>
+<pre><code class="lang-javascript"><code class="source-code prettyprint">export var pluginName = &quot;thisPluginName&quot;;</code>
+</code></pre>
+<p>Also the map engine uses it&apos;s own interface to use the normal map functionalities like moving the map (default dragging
+the map), selecting units and zooming the map. These are implemented via eventlisteners.js and UI.js core modules.</p>
+<p>UI interface is implemented so that map uses the UI.js module to implement API and to that API you pass in the UITheme
+module you want to use in the game. All UIThemes have to implement at least the core functionality API (or overwrite
+the API, which is naturally not encouraged).</p>
+<p>All UI templates need to extend the UI_templateBase @ &apos;/components/map/core/UI_themeBase&apos;</p>
+<p>##Events
+Unless overridden there are 3 map events fired currently (each in different file in the core or extensions files):</p>
+<ul>
+<li>mapMoved
+** Data passed to event: Amount of movement being handled ({ x, y })</li>
+<li>mapZoomed
+** Data passed to event: Last scale factor, amount of current zoom to be applied, is is zoom in or out (true / false)</li>
+<li>objectsSelected
+** Data passed to event: array of objects selected as data</li>
+</ul>
+<h1 id="credit">Credit</h1>
+<p>Copyright (c) 2016 Janne Hyyti&#xE4;</p>
+</div>
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

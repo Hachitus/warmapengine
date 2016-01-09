@@ -1,0 +1,1366 @@
+{
+  "type": "Program",
+  "body": [
+    {
+      "type": "ExpressionStatement",
+      "expression": {
+        "type": "Literal",
+        "value": "use strict",
+        "raw": "'use strict'",
+        "range": [
+          0,
+          12
+        ],
+        "loc": {
+          "start": {
+            "line": 1,
+            "column": 0
+          },
+          "end": {
+            "line": 1,
+            "column": 12
+          }
+        }
+      },
+      "range": [
+        0,
+        13
+      ],
+      "loc": {
+        "start": {
+          "line": 1,
+          "column": 0
+        },
+        "end": {
+          "line": 1,
+          "column": 13
+        }
+      },
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "*\r\n * This module handles map events. Like informing map movement, object selection and other changes.\r\n *\r\n * Events atm:\r\n * - mapMoved\r\n * - mapMovedFinal\r\n * - mapResize\r\n *\r\n * @todo I want this to go the ES6 way, not the only global exception!\r\n ",
+          "range": [
+            17,
+            273
+          ],
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "line": 12,
+              "column": 3
+            }
+          }
+        },
+        {
+          "type": "Block",
+          "value": "**********************\r\n******** IMPORT ********\r\n**********************",
+          "range": [
+            275,
+            351
+          ],
+          "loc": {
+            "start": {
+              "line": 13,
+              "column": 0
+            },
+            "end": {
+              "line": 15,
+              "column": 24
+            }
+          }
+        },
+        {
+          "type": "Line",
+          "value": " import { PubSub } from '/assets/lib/pubsub/pubsub';",
+          "range": [
+            353,
+            407
+          ],
+          "loc": {
+            "start": {
+              "line": 16,
+              "column": 0
+            },
+            "end": {
+              "line": 16,
+              "column": 54
+            }
+          }
+        },
+        {
+          "type": "Block",
+          "value": "**********************\r\n********* API **********\r\n**********************",
+          "range": [
+            411,
+            487
+          ],
+          "loc": {
+            "start": {
+              "line": 18,
+              "column": 0
+            },
+            "end": {
+              "line": 20,
+              "column": 24
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "ExportNamedDeclaration",
+      "declaration": {
+        "type": "VariableDeclaration",
+        "declarations": [
+          {
+            "type": "VariableDeclarator",
+            "id": {
+              "type": "Identifier",
+              "name": "mapEvents",
+              "range": [
+                502,
+                511
+              ],
+              "loc": {
+                "start": {
+                  "line": 21,
+                  "column": 13
+                },
+                "end": {
+                  "line": 21,
+                  "column": 22
+                }
+              }
+            },
+            "init": {
+              "type": "CallExpression",
+              "callee": {
+                "type": "Identifier",
+                "name": "setupMapEvents",
+                "range": [
+                  514,
+                  528
+                ],
+                "loc": {
+                  "start": {
+                    "line": 21,
+                    "column": 25
+                  },
+                  "end": {
+                    "line": 21,
+                    "column": 39
+                  }
+                }
+              },
+              "arguments": [],
+              "range": [
+                514,
+                530
+              ],
+              "loc": {
+                "start": {
+                  "line": 21,
+                  "column": 25
+                },
+                "end": {
+                  "line": 21,
+                  "column": 41
+                }
+              }
+            },
+            "range": [
+              502,
+              530
+            ],
+            "loc": {
+              "start": {
+                "line": 21,
+                "column": 13
+              },
+              "end": {
+                "line": 21,
+                "column": 41
+              }
+            }
+          }
+        ],
+        "kind": "const",
+        "range": [
+          496,
+          531
+        ],
+        "loc": {
+          "start": {
+            "line": 21,
+            "column": 7
+          },
+          "end": {
+            "line": 21,
+            "column": 42
+          }
+        },
+        "leadingComments": [
+          {
+            "type": "Block",
+            "value": "*\r\n * This module handles map events. Like informing map movement, object selection and other changes.\r\n *\r\n * Events atm:\r\n * - mapMoved\r\n * - mapMovedFinal\r\n * - mapResize\r\n *\r\n * @todo I want this to go the ES6 way, not the only global exception!\r\n ",
+            "range": [
+              17,
+              273
+            ],
+            "loc": {
+              "start": {
+                "line": 3,
+                "column": 0
+              },
+              "end": {
+                "line": 12,
+                "column": 3
+              }
+            }
+          },
+          {
+            "type": "Block",
+            "value": "**********************\r\n******** IMPORT ********\r\n**********************",
+            "range": [
+              275,
+              351
+            ],
+            "loc": {
+              "start": {
+                "line": 13,
+                "column": 0
+              },
+              "end": {
+                "line": 15,
+                "column": 24
+              }
+            }
+          },
+          {
+            "type": "Line",
+            "value": " import { PubSub } from '/assets/lib/pubsub/pubsub';",
+            "range": [
+              353,
+              407
+            ],
+            "loc": {
+              "start": {
+                "line": 16,
+                "column": 0
+              },
+              "end": {
+                "line": 16,
+                "column": 54
+              }
+            }
+          },
+          {
+            "type": "Block",
+            "value": "**********************\r\n********* API **********\r\n**********************",
+            "range": [
+              411,
+              487
+            ],
+            "loc": {
+              "start": {
+                "line": 18,
+                "column": 0
+              },
+              "end": {
+                "line": 20,
+                "column": 24
+              }
+            }
+          }
+        ],
+        "trailingComments": [
+          {
+            "type": "Block",
+            "value": "**********************\r\n******** PUBLIC ********\r\n**********************",
+            "range": [
+              535,
+              611
+            ],
+            "loc": {
+              "start": {
+                "line": 23,
+                "column": 0
+              },
+              "end": {
+                "line": 25,
+                "column": 24
+              }
+            }
+          }
+        ]
+      },
+      "specifiers": [],
+      "source": null,
+      "range": [
+        489,
+        531
+      ],
+      "loc": {
+        "start": {
+          "line": 21,
+          "column": 0
+        },
+        "end": {
+          "line": 21,
+          "column": 42
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "*\r\n * This module handles map events. Like informing map movement, object selection and other changes.\r\n *\r\n * Events atm:\r\n * - mapMoved\r\n * - mapMovedFinal\r\n * - mapResize\r\n *\r\n * @todo I want this to go the ES6 way, not the only global exception!\r\n ",
+          "range": [
+            17,
+            273
+          ],
+          "loc": {
+            "start": {
+              "line": 3,
+              "column": 0
+            },
+            "end": {
+              "line": 12,
+              "column": 3
+            }
+          }
+        },
+        {
+          "type": "Block",
+          "value": "**********************\r\n******** IMPORT ********\r\n**********************",
+          "range": [
+            275,
+            351
+          ],
+          "loc": {
+            "start": {
+              "line": 13,
+              "column": 0
+            },
+            "end": {
+              "line": 15,
+              "column": 24
+            }
+          }
+        },
+        {
+          "type": "Line",
+          "value": " import { PubSub } from '/assets/lib/pubsub/pubsub';",
+          "range": [
+            353,
+            407
+          ],
+          "loc": {
+            "start": {
+              "line": 16,
+              "column": 0
+            },
+            "end": {
+              "line": 16,
+              "column": 54
+            }
+          }
+        },
+        {
+          "type": "Block",
+          "value": "**********************\r\n********* API **********\r\n**********************",
+          "range": [
+            411,
+            487
+          ],
+          "loc": {
+            "start": {
+              "line": 18,
+              "column": 0
+            },
+            "end": {
+              "line": 20,
+              "column": 24
+            }
+          }
+        }
+      ],
+      "trailingComments": [
+        {
+          "type": "Block",
+          "value": "**********************\r\n******** PUBLIC ********\r\n**********************",
+          "range": [
+            535,
+            611
+          ],
+          "loc": {
+            "start": {
+              "line": 23,
+              "column": 0
+            },
+            "end": {
+              "line": 25,
+              "column": 24
+            }
+          }
+        }
+      ]
+    },
+    {
+      "type": "FunctionDeclaration",
+      "id": {
+        "type": "Identifier",
+        "name": "setupMapEvents",
+        "range": [
+          622,
+          636
+        ],
+        "loc": {
+          "start": {
+            "line": 26,
+            "column": 9
+          },
+          "end": {
+            "line": 26,
+            "column": 23
+          }
+        }
+      },
+      "params": [],
+      "body": {
+        "type": "BlockStatement",
+        "body": [
+          {
+            "type": "ReturnStatement",
+            "argument": {
+              "type": "ObjectExpression",
+              "properties": [
+                {
+                  "type": "Property",
+                  "key": {
+                    "type": "Identifier",
+                    "name": "subscribe",
+                    "range": [
+                      659,
+                      668
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 28,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 28,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "value": {
+                    "type": "Identifier",
+                    "name": "subscribe",
+                    "range": [
+                      659,
+                      668
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 28,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 28,
+                        "column": 13
+                      }
+                    }
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": true,
+                  "computed": false,
+                  "range": [
+                    659,
+                    668
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 28,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 28,
+                      "column": 13
+                    }
+                  }
+                },
+                {
+                  "type": "Property",
+                  "key": {
+                    "type": "Identifier",
+                    "name": "publish",
+                    "range": [
+                      675,
+                      682
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 29,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 29,
+                        "column": 11
+                      }
+                    }
+                  },
+                  "value": {
+                    "type": "Identifier",
+                    "name": "publish",
+                    "range": [
+                      675,
+                      682
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 29,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 29,
+                        "column": 11
+                      }
+                    }
+                  },
+                  "kind": "init",
+                  "method": false,
+                  "shorthand": true,
+                  "computed": false,
+                  "range": [
+                    675,
+                    682
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 29,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 29,
+                      "column": 11
+                    }
+                  }
+                }
+              ],
+              "range": [
+                652,
+                687
+              ],
+              "loc": {
+                "start": {
+                  "line": 27,
+                  "column": 9
+                },
+                "end": {
+                  "line": 30,
+                  "column": 3
+                }
+              }
+            },
+            "range": [
+              645,
+              688
+            ],
+            "loc": {
+              "start": {
+                "line": 27,
+                "column": 2
+              },
+              "end": {
+                "line": 30,
+                "column": 4
+              }
+            }
+          },
+          {
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "subscribe",
+              "range": [
+                703,
+                712
+              ],
+              "loc": {
+                "start": {
+                  "line": 32,
+                  "column": 11
+                },
+                "end": {
+                  "line": 32,
+                  "column": 20
+                }
+              }
+            },
+            "params": [
+              {
+                "type": "Identifier",
+                "name": "type",
+                "range": [
+                  713,
+                  717
+                ],
+                "loc": {
+                  "start": {
+                    "line": 32,
+                    "column": 21
+                  },
+                  "end": {
+                    "line": 32,
+                    "column": 25
+                  }
+                }
+              },
+              {
+                "type": "Identifier",
+                "name": "cb",
+                "range": [
+                  719,
+                  721
+                ],
+                "loc": {
+                  "start": {
+                    "line": 32,
+                    "column": 27
+                  },
+                  "end": {
+                    "line": 32,
+                    "column": 29
+                  }
+                }
+              }
+            ],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "CallExpression",
+                    "callee": {
+                      "type": "MemberExpression",
+                      "computed": false,
+                      "object": {
+                        "type": "Identifier",
+                        "name": "PubSub",
+                        "range": [
+                          730,
+                          736
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 33,
+                            "column": 4
+                          },
+                          "end": {
+                            "line": 33,
+                            "column": 10
+                          }
+                        }
+                      },
+                      "property": {
+                        "type": "Identifier",
+                        "name": "subscribe",
+                        "range": [
+                          737,
+                          746
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 33,
+                            "column": 11
+                          },
+                          "end": {
+                            "line": 33,
+                            "column": 20
+                          }
+                        }
+                      },
+                      "range": [
+                        730,
+                        746
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 33,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 33,
+                          "column": 20
+                        }
+                      }
+                    },
+                    "arguments": [
+                      {
+                        "type": "Identifier",
+                        "name": "type",
+                        "range": [
+                          747,
+                          751
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 33,
+                            "column": 21
+                          },
+                          "end": {
+                            "line": 33,
+                            "column": 25
+                          }
+                        }
+                      },
+                      {
+                        "type": "Identifier",
+                        "name": "cb",
+                        "range": [
+                          753,
+                          755
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 33,
+                            "column": 27
+                          },
+                          "end": {
+                            "line": 33,
+                            "column": 29
+                          }
+                        }
+                      }
+                    ],
+                    "range": [
+                      730,
+                      756
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 33,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 33,
+                        "column": 30
+                      }
+                    }
+                  },
+                  "range": [
+                    730,
+                    757
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 33,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 33,
+                      "column": 31
+                    }
+                  }
+                }
+              ],
+              "range": [
+                723,
+                762
+              ],
+              "loc": {
+                "start": {
+                  "line": 32,
+                  "column": 31
+                },
+                "end": {
+                  "line": 34,
+                  "column": 3
+                }
+              }
+            },
+            "generator": false,
+            "expression": false,
+            "range": [
+              694,
+              762
+            ],
+            "loc": {
+              "start": {
+                "line": 32,
+                "column": 2
+              },
+              "end": {
+                "line": 34,
+                "column": 3
+              }
+            }
+          },
+          {
+            "type": "FunctionDeclaration",
+            "id": {
+              "type": "Identifier",
+              "name": "publish",
+              "range": [
+                775,
+                782
+              ],
+              "loc": {
+                "start": {
+                  "line": 35,
+                  "column": 11
+                },
+                "end": {
+                  "line": 35,
+                  "column": 18
+                }
+              }
+            },
+            "params": [
+              {
+                "type": "Identifier",
+                "name": "type",
+                "range": [
+                  783,
+                  787
+                ],
+                "loc": {
+                  "start": {
+                    "line": 35,
+                    "column": 19
+                  },
+                  "end": {
+                    "line": 35,
+                    "column": 23
+                  }
+                }
+              },
+              {
+                "type": "RestElement",
+                "argument": {
+                  "type": "Identifier",
+                  "name": "data",
+                  "range": [
+                    792,
+                    796
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 35,
+                      "column": 28
+                    },
+                    "end": {
+                      "line": 35,
+                      "column": 32
+                    }
+                  }
+                },
+                "range": [
+                  789,
+                  796
+                ],
+                "loc": {
+                  "start": {
+                    "line": 35,
+                    "column": 25
+                  },
+                  "end": {
+                    "line": 35,
+                    "column": 32
+                  }
+                }
+              }
+            ],
+            "body": {
+              "type": "BlockStatement",
+              "body": [
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "CallExpression",
+                    "callee": {
+                      "type": "MemberExpression",
+                      "computed": false,
+                      "object": {
+                        "type": "Identifier",
+                        "name": "console",
+                        "range": [
+                          805,
+                          812
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 36,
+                            "column": 4
+                          },
+                          "end": {
+                            "line": 36,
+                            "column": 11
+                          }
+                        }
+                      },
+                      "property": {
+                        "type": "Identifier",
+                        "name": "log",
+                        "range": [
+                          813,
+                          816
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 36,
+                            "column": 12
+                          },
+                          "end": {
+                            "line": 36,
+                            "column": 15
+                          }
+                        }
+                      },
+                      "range": [
+                        805,
+                        816
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 36,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 36,
+                          "column": 15
+                        }
+                      }
+                    },
+                    "arguments": [
+                      {
+                        "type": "BinaryExpression",
+                        "operator": "+",
+                        "left": {
+                          "type": "Literal",
+                          "value": "EVENT: ",
+                          "raw": "\"EVENT: \"",
+                          "range": [
+                            817,
+                            826
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 36,
+                              "column": 16
+                            },
+                            "end": {
+                              "line": 36,
+                              "column": 25
+                            }
+                          }
+                        },
+                        "right": {
+                          "type": "Identifier",
+                          "name": "type",
+                          "range": [
+                            829,
+                            833
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 36,
+                              "column": 28
+                            },
+                            "end": {
+                              "line": 36,
+                              "column": 32
+                            }
+                          }
+                        },
+                        "range": [
+                          817,
+                          833
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 36,
+                            "column": 16
+                          },
+                          "end": {
+                            "line": 36,
+                            "column": 32
+                          }
+                        }
+                      }
+                    ],
+                    "range": [
+                      805,
+                      834
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 36,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 36,
+                        "column": 33
+                      }
+                    }
+                  },
+                  "range": [
+                    805,
+                    835
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 36,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 36,
+                      "column": 34
+                    }
+                  }
+                },
+                {
+                  "type": "ExpressionStatement",
+                  "expression": {
+                    "type": "CallExpression",
+                    "callee": {
+                      "type": "MemberExpression",
+                      "computed": false,
+                      "object": {
+                        "type": "Identifier",
+                        "name": "PubSub",
+                        "range": [
+                          841,
+                          847
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 37,
+                            "column": 4
+                          },
+                          "end": {
+                            "line": 37,
+                            "column": 10
+                          }
+                        }
+                      },
+                      "property": {
+                        "type": "Identifier",
+                        "name": "publish",
+                        "range": [
+                          848,
+                          855
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 37,
+                            "column": 11
+                          },
+                          "end": {
+                            "line": 37,
+                            "column": 18
+                          }
+                        }
+                      },
+                      "range": [
+                        841,
+                        855
+                      ],
+                      "loc": {
+                        "start": {
+                          "line": 37,
+                          "column": 4
+                        },
+                        "end": {
+                          "line": 37,
+                          "column": 18
+                        }
+                      }
+                    },
+                    "arguments": [
+                      {
+                        "type": "Identifier",
+                        "name": "type",
+                        "range": [
+                          856,
+                          860
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 37,
+                            "column": 19
+                          },
+                          "end": {
+                            "line": 37,
+                            "column": 23
+                          }
+                        }
+                      },
+                      {
+                        "type": "SpreadElement",
+                        "argument": {
+                          "type": "Identifier",
+                          "name": "data",
+                          "range": [
+                            865,
+                            869
+                          ],
+                          "loc": {
+                            "start": {
+                              "line": 37,
+                              "column": 28
+                            },
+                            "end": {
+                              "line": 37,
+                              "column": 32
+                            }
+                          }
+                        },
+                        "range": [
+                          862,
+                          869
+                        ],
+                        "loc": {
+                          "start": {
+                            "line": 37,
+                            "column": 25
+                          },
+                          "end": {
+                            "line": 37,
+                            "column": 32
+                          }
+                        }
+                      }
+                    ],
+                    "range": [
+                      841,
+                      870
+                    ],
+                    "loc": {
+                      "start": {
+                        "line": 37,
+                        "column": 4
+                      },
+                      "end": {
+                        "line": 37,
+                        "column": 33
+                      }
+                    }
+                  },
+                  "range": [
+                    841,
+                    871
+                  ],
+                  "loc": {
+                    "start": {
+                      "line": 37,
+                      "column": 4
+                    },
+                    "end": {
+                      "line": 37,
+                      "column": 34
+                    }
+                  }
+                }
+              ],
+              "range": [
+                798,
+                876
+              ],
+              "loc": {
+                "start": {
+                  "line": 35,
+                  "column": 34
+                },
+                "end": {
+                  "line": 38,
+                  "column": 3
+                }
+              }
+            },
+            "generator": false,
+            "expression": false,
+            "range": [
+              766,
+              876
+            ],
+            "loc": {
+              "start": {
+                "line": 35,
+                "column": 2
+              },
+              "end": {
+                "line": 38,
+                "column": 3
+              }
+            }
+          }
+        ],
+        "range": [
+          640,
+          879
+        ],
+        "loc": {
+          "start": {
+            "line": 26,
+            "column": 27
+          },
+          "end": {
+            "line": 39,
+            "column": 1
+          }
+        }
+      },
+      "generator": false,
+      "expression": false,
+      "range": [
+        613,
+        879
+      ],
+      "loc": {
+        "start": {
+          "line": 26,
+          "column": 0
+        },
+        "end": {
+          "line": 39,
+          "column": 1
+        }
+      },
+      "leadingComments": [
+        {
+          "type": "Block",
+          "value": "**********************\r\n******** PUBLIC ********\r\n**********************",
+          "range": [
+            535,
+            611
+          ],
+          "loc": {
+            "start": {
+              "line": 23,
+              "column": 0
+            },
+            "end": {
+              "line": 25,
+              "column": 24
+            }
+          }
+        }
+      ]
+    }
+  ],
+  "sourceType": "module",
+  "range": [
+    0,
+    879
+  ],
+  "loc": {
+    "start": {
+      "line": 1,
+      "column": 0
+    },
+    "end": {
+      "line": 39,
+      "column": 1
+    }
+  },
+  "comments": [
+    {
+      "type": "Block",
+      "value": "*\r\n * This module handles map events. Like informing map movement, object selection and other changes.\r\n *\r\n * Events atm:\r\n * - mapMoved\r\n * - mapMovedFinal\r\n * - mapResize\r\n *\r\n * @todo I want this to go the ES6 way, not the only global exception!\r\n ",
+      "range": [
+        17,
+        273
+      ],
+      "loc": {
+        "start": {
+          "line": 3,
+          "column": 0
+        },
+        "end": {
+          "line": 12,
+          "column": 3
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "**********************\r\n******** IMPORT ********\r\n**********************",
+      "range": [
+        275,
+        351
+      ],
+      "loc": {
+        "start": {
+          "line": 13,
+          "column": 0
+        },
+        "end": {
+          "line": 15,
+          "column": 24
+        }
+      }
+    },
+    {
+      "type": "Line",
+      "value": " import { PubSub } from '/assets/lib/pubsub/pubsub';",
+      "range": [
+        353,
+        407
+      ],
+      "loc": {
+        "start": {
+          "line": 16,
+          "column": 0
+        },
+        "end": {
+          "line": 16,
+          "column": 54
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "**********************\r\n********* API **********\r\n**********************",
+      "range": [
+        411,
+        487
+      ],
+      "loc": {
+        "start": {
+          "line": 18,
+          "column": 0
+        },
+        "end": {
+          "line": 20,
+          "column": 24
+        }
+      }
+    },
+    {
+      "type": "Block",
+      "value": "**********************\r\n******** PUBLIC ********\r\n**********************",
+      "range": [
+        535,
+        611
+      ],
+      "loc": {
+        "start": {
+          "line": 23,
+          "column": 0
+        },
+        "end": {
+          "line": 25,
+          "column": 24
+        }
+      }
+    }
+  ]
+}

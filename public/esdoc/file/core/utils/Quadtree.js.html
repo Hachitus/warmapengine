@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../../">
+  <title data-ice="title">core/utils/Quadtree.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map_layers.js~Map_layer.html">Map_layer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map_layers.js~Map_parentLayer.html">Map_parentLayer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/ObjectManager.js~ObjectManager.html">ObjectManager</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite.html">Object_sprite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite_terrain.html">Object_sprite_terrain</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite_unit.html">Object_sprite_unit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/UI_themeBase.js~UI_templateBase.html">UI_templateBase</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-UI">UI</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-mapEvents">mapEvents</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">move</div><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-map_drag">map_drag</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pluginName">pluginName</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">utils</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/utils/Quadtree.js~Quadtree.html">Quadtree</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dataManipulation">dataManipulation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-effects">effects</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-utils">utils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-environmentDetection">environmentDetection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-general">general</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-mouse">mouse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-resize">resize</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">zoom</div><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-map_zoom">map_zoom</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pluginName">pluginName</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">core/utils/Quadtree.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+
+/**
+ * This class handles the API for quadtree to search for the wanted objects on the certain coordinates. After this
+ * the map should do it&apos;s own - more precise - hit detections.
+ *
+ * @require Quadtree-js. Though this base library can be changed easily
+ */
+
+/***********************
+******** IMPORT ********
+***********************/
+import { Quadtree as QuadMod } from &quot;/assets/lib/quadtree-js/quadtree-js-hitman&quot;;
+
+/***********************
+********* API **********
+***********************/
+export class Quadtree {
+  /**
+   * @param {Object} options    options for the QuadModule
+   * @param {Object} max        How many levels deep
+   * @return                    Quadtree instance
+   */
+  constructor(options, max) {
+    var { objects: max_objects, levels: max_levels } = max;
+
+    this.quadtree = new QuadMod(options, max_objects, max_levels);
+  }
+  /**
+   * Add an object to the quadtree.
+   *
+   * @param {x: Number, y: Number} coords         Coordinates on the global / canvas element.
+   * @param {width:Number, height:Number} size    You can use bounds for the object &quot;hit&quot; detection
+   * @param {Object} data                         Objects extra custom data. This is optional.
+   * @return                                      Quadtree instance
+   */
+  add(coords, size, data) {
+    var objToAdd = _creteQuadtreeObject(coords, size, data);
+
+    this.quadtree.insert(objToAdd);
+  }
+  /**
+   * Remove an object from the quadtree.
+   *
+   * @param {x: Number, y: Number} coords         Coordinates on the global / canvas element.
+   * @param {width:Number, height:Number} size    You can use bounds for the object &quot;hit&quot; detection
+   * @param {Object} data                         Objects extra custom data. This is optional.
+   * @param {Boolean} refresh                     Should we refresh the quadtree setting, after removal. Can take some
+   * resources to execute. So we want this to be optional.
+   * @return                                      Quadtree instance
+   */
+  remove(coords, size, data, refresh) {
+    var objToRemove = _creteQuadtreeObject(coords, size, data);
+
+    this.quadtree.removeObject(objToRemove);
+    refresh &amp;&amp; this.quadtree.cleanup();
+  }
+  retrieve(coords, size = { width: 0, height: 0 } ) {
+    const hitDimensions = {
+      x: coords.x,
+      y: coords.y,
+      width: size.width,
+      height: size.height
+    };
+    var objects = [];
+
+    objects = this.quadtree.retrieve(hitDimensions).map((object) =&gt; {
+      return object.data;
+    });
+
+    return objects;
+  }
+  /**
+   * Move an object on the quadtree
+   *
+   * @param {x: Number, y: Number} coords         Coordinates on the global / canvas element.
+   * @param {width:Number, height:Number} size    You can use bounds for the object &quot;hit&quot; detection
+   * @param {Object} data                         Objects extra custom data. This is optional.
+   * @param {Boolean} to                          Should we refresh the quadtree setting, after removal. Can take some
+   * resources to execute. So we want this to be optional.
+   * @return {Boolean}                            True of false
+   */
+  move(coords, size, data, to) {
+    var foundObject = this.findObject(coords, size, data);
+
+    if (foundObject) {
+      this.quadtree.removeObject(foundObject);
+      foundObject.x = to.x;
+      foundObject.y = to.y;
+      this.quadtree.insert(foundObject);
+      this.refreshAll();
+
+      return true;
+    }
+
+    return false;
+  }
+  /**
+   * refresh the whole quadtree setting. Can spend some resources.
+   */
+  refreshAll() {
+    this.quadtree.cleanup();
+  }
+  /**
+   * Find an object by hitDetection from the quadtree setting.
+   *
+   * @param {x: Number, y: Number} coords         Coordinates on the global / canvas element.
+   * @param {width:Number, height:Number} size    You can use bounds for the object &quot;hit&quot; detection
+   * @param {Object} data                         Objects extra custom data. This is optional.
+   * @return {Object}                             Found object
+   */
+  findObject(coords, size, data) {
+    var foundObject = this.retrieve(coords, size).filter(function(object) {
+      return object.data === data ? true : false;
+    });
+
+    return foundObject;
+  }
+}
+
+/***********************
+******* PRIVATE ********
+***********************/
+/**
+ * [_creteQuadtreeObject description]
+ *
+ * @param  {x:Number, y:Number} coords          global coordinates on canvas
+ * @param  {width:Number, height:Number} size   You can use bounds for the object
+ * if you wish, instead of point / coordinates
+ * @param  {Object} data                        Extra data stored for the quadtree object
+ * @return {Object}                             Added quadtree object
+ */
+function _creteQuadtreeObject(coords, size = {width:0, height:0}, data = undefined) {
+  var objToAdd = coords;
+
+  if (coords.x === undefined &amp;&amp; coords.y === undefined) {
+    throw new Error(&quot;_createQuadtreeObject requires x and y coordinates as parameters&quot;);
+  }
+  objToAdd.width = size.width;
+  objToAdd.height = size.height;
+  objToAdd.data = data;
+
+  return objToAdd;
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

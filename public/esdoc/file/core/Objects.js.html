@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">core/Objects.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map_layers.js~Map_layer.html">Map_layer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map_layers.js~Map_parentLayer.html">Map_parentLayer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/ObjectManager.js~ObjectManager.html">ObjectManager</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite.html">Object_sprite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite_terrain.html">Object_sprite_terrain</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite_unit.html">Object_sprite_unit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/UI_themeBase.js~UI_templateBase.html">UI_templateBase</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-UI">UI</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-mapEvents">mapEvents</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">move</div><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-map_drag">map_drag</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pluginName">pluginName</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">utils</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/utils/Quadtree.js~Quadtree.html">Quadtree</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dataManipulation">dataManipulation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-effects">effects</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-utils">utils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-environmentDetection">environmentDetection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-general">general</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-mouse">mouse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-resize">resize</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">zoom</div><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-map_zoom">map_zoom</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pluginName">pluginName</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">core/Objects.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+
+/**
+ * The actual objects used on the map (such as terrain and units), under containers. All of the objects need to have same argumentAPI for creating objects: coords, data, options
+ */
+
+/************************
+********* IMPORT ********
+*************************/
+import { utils } from &apos;/components/bundles/coreBundle&apos;;
+
+/************************
+********** API **********
+*************************/
+export class Object_sprite extends PIXI.Sprite {
+  /**
+   * The base class of all sprite objects
+   *
+   * @extends PIXI.Sprite
+   * @param {PIXI.Point} coords                         the coordinate where the object is located at, relative to it&apos;s parent
+   * @param {Object} data                               objects data, that will be used in the game. It will not actually be mainly used in graphical but rather things  like unit-data and city-data presentations etc.
+   * @param {Object} options.currFrame       currFrame the current frames number. This is basically the initial image, we can change it later for animation or such
+   */
+  constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {} }) {
+    var { currentFrame } = options;
+
+    super(currentFrame);
+
+    /* We need to round the numbers. If there are decimal values, the graphics will get blurry */
+    let exactCoords = {
+      x: Math.round(coord.x),
+      y: Math.round(coord.y)
+    };
+    this.position.set(exactCoords.x,  exactCoords.y);
+    /**
+     * Name of the object. Used mostly for debugging
+     *
+     * @attribute
+     * @type {String}
+     */
+    this.name = &quot;Objects_sprite_&quot; + this.id;
+    /**
+     * Type of the object. Can be used for filtering, ordering or finding correct objects.
+     *
+     * @attribute
+     * @type {String}
+     */
+    this.type = &quot;None&quot;;
+    /**
+     * Is the object highligtable.
+     *
+     * @attribute
+     * @type {Boolean}
+     */
+    this.highlightable = true;
+    /**
+     * Is the object selectable.
+     *
+     * @attribute
+     * @type {Boolean}
+     */
+    this.selectable = true;
+    /**
+     * Objects custom data. Holds unit statistics and most data. Like unit movement speed etc.
+     *
+     * @attribute
+     * @type {Object}
+     */
+    this.data = data;
+    /**
+     * Current frame (from spritesheet) we are showing.
+     *
+     * @attribute
+     * @type {Number}
+     */
+    this.currentFrame = currentFrame;
+    /**
+     * Object area width in pixels.
+     *
+     * @attribute
+     * @type {Number}
+     */
+    this.areaWidth = this.width;
+    /**
+     * Object area height in pixels.
+     *
+     * @attribute
+     * @type {Number}
+     */
+    this.areaHeight = this.height;
+  }
+  /**
+   * Drawing the object
+   *
+   * @param {Number} x coordinate x
+   * @param {Number} y coordinate y
+   * @return this object instance
+   */
+  innerDraw(x, y) {
+    this.fromFrame ( this.currentFrame );
+    this.x = x;
+    this.y = y;
+
+    return this;
+  }
+  /**
+   * Draws new frame to animate or such
+   *
+   * @param {Number} x                coordinate x
+   * @param {Number} y                coordinate y
+   * @param {Number} newFrame         New frame number to animate to
+   * @return this object instance
+   */
+  drawNewFrame(x, y, newFrame) {
+    this.currentFrame = newFrame;
+
+    return this.innerDraw(x, y);
+  }
+  /**
+   * Get the area that is reserved for the graphical presenation of this object as a rectangle.
+   *
+   * @param  {Object} options       toGlobal: Boolean. Should the method return global coordinates or local (movableLayer)
+   * @return {Object}               { x: Number, y: Number, width: Number, height: Number}
+   */
+  getGraphicalArea(options = { toGlobal: true } ) {
+    var coordinates;
+
+    coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(0,0)) : this;
+
+    return {
+      x: Math.round( coordinates.x ),
+      y: Math.round( coordinates.y ),
+      width: Math.round( this.width ),
+      height: Math.round( this.height )
+    };
+  }
+  /**
+   * Coordinate conversion: localToLocal
+   *
+   * @param  {Number} x                     X coordinate
+   * @param  {Number} y                     Y coordinate
+   * @param  {PIXI.DisplayObject} target    The DisplayObject where we should target the coordinates for
+   * @return {PIXI.Point}                   Coordinates
+   */
+  localToLocal(x, y, target) {
+    var globalCoords = this.toGlobal( { x, y } );
+    var targetLocalCoords = target.toLocal( globalCoords );
+
+    return targetLocalCoords;
+  }
+  /**
+   * Clone object
+   *
+   * @param  {PIXI renderer} renderer
+   * @param  {Object} options               position: Boolean, anchor: Boolean
+   * @return {cloned Object}                cloned object
+   */
+  clone(renderer, options = { position: false, anchor: false }) {
+    var newSprite = new PIXI.Sprite();
+
+    newSprite.texture = this.generateTexture(renderer);
+
+    if (options.anchor) {
+      newSprite.anchor = Object.assign({}, this.anchor);
+    }
+    if (options.position) {
+      newSprite.position = Object.assign({}, this.position);
+    }
+
+    return newSprite;
+  }
+}
+
+export class Object_sprite_terrain extends Object_sprite {
+  /**
+   * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
+   * inherited, depending on the map type. For example you might want to add some click area for these
+   *
+   * @extends Object_sprite
+   * @param {x: Number, y: Number} coords format: {x: Number, y: Number}. Coordinates for the object relative to it&apos;s parent
+   * @param {object} data This units custom data
+   * @param {object} options other specific options for constructing this terrain
+   */
+  constructor(coords, data, options) {
+    super(coords, data, options);
+
+    this.name = &quot;DefaultTerrainObject&quot;;
+    this.type = &quot;terrain&quot;;
+    this.highlightable = false;
+    this.selectable = false;
+  }
+}
+
+export class Object_sprite_unit extends Object_sprite {
+  /**
+   * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
+   *
+   * @extends Object_sprite
+   * @requires core.graphics
+   * @param {x: Number, y: Number} coords Coordinates for the object relative to it&apos;s parent
+   * @param {object} data This units data
+   * @param {object} options other specific options for constructing this unit, like options.throwShadow
+   */
+  constructor(coords, data, options) {
+    super(coords, data, options);
+
+    this.name = &quot;DefaultUnitObjects&quot;;
+    this.type = &quot;unit&quot;;
+    /**
+     * actions bound to this object. @todo THIS HAS NOT BEEN IMPLEMENTED YET!
+     *
+     * @attribute actions
+     * @type {Object}
+     */
+    this.actions = {
+      move: [],
+      attack: []
+    };
+  }
+  /**
+   * Execute action on units (move, attack etc.). @todo THIS HAS NOT BEEN IMPLEMENTED YET!
+   *
+   * @param {String} type
+   */
+  doAction(type) {
+    this.actions[type].forEach(action =&gt; {
+      action();
+    });
+  }
+  /**
+   * Add certain action type. @todo THIS HAS NOT BEEN IMPLEMENTED YET!
+   *
+   * @param {String} type
+   */
+  addActionType(type) {
+    this.actions[type] = this.actions[type] || [];
+  }
+  /**
+   * Attach callback for the certain action type. @todo THIS HAS NOT BEEN IMPLEMENTED YET!
+   *
+   * @param {String} type
+   * @param {Function} cb
+   */
+  addCallbackToAction(type, cb) {
+    this.actions[type].push(cb);
+  }
+  dropShadow(...args) {
+    return utils.effects.dropShadow(...args);
+  }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

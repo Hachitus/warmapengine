@@ -39,6 +39,7 @@ function setupMap_drag() {
   **************************/
   /**
    * Required init functions for the plugin
+   *
    * @param {Map object} mapObj - the Map class object
    * */
   function init(map) {
@@ -55,6 +56,8 @@ function setupMap_drag() {
   /**
    * Mobile version. Starts the functionality, uses Hammer.js heavily for doing the drag. More simple and better than
    * desktop version, since we don't need to calculate the drag with several event listener, one is enough with Hammer
+   *
+   * @private
    * @param {Map Object} map        The current map object
    */
   function _startDragListener( map ) {
@@ -94,10 +97,10 @@ function setupMap_drag() {
    * This handles offset Changes and setting data has map been moved based on it. Also
    * sets basic settings like preventDefault etc.
    *
+   * @private
    * @param  {Event} e                        The event being dealt with
    * @param  {Map Object} map                 The map object
    * @param  {x: Number, y: Number} coords    Current pointer coordinates
-   * @return {[type]}                         Nothing
    */
   function _mapMovement(e, map, coords) {
     var offset, moved;

@@ -1,6 +1,6 @@
 'use strict';
 
-/**
+/*
  * This module will hold the most common graphical effects used in the map. It is still very stub as the development
  * hasn't proceeded to this stage yet.
  */
@@ -25,8 +25,7 @@ function setupEffects() {
   ******** PUBLIC ********
   ***********************/
   /**
-   * INHERIT THIS TO OBJECT
-   *
+   * @method  dropShadow
    * @param  {Object} options [description]
    * @return {[type]}         [description]
    */

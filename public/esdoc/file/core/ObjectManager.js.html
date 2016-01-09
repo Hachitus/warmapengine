@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <base data-ice="baseUrl" href="../../">
+  <title data-ice="title">core/ObjectManager.js | API Document</title>
+  <link type="text/css" rel="stylesheet" href="css/style.css">
+  <link type="text/css" rel="stylesheet" href="css/prettify-tomorrow.css">
+  <script src="script/prettify/prettify.js"></script>
+  
+  
+  <script src="script/manual.js"></script>
+</head>
+<body class="layout-container" data-ice="rootContainer">
+
+<header>
+  <a href="./">Home</a>
+  
+  <a href="identifiers.html">Reference</a>
+  <a href="source.html">Source</a>
+  
+  
+  <div class="search-box">
+  <span>
+    <img src="./image/search.png">
+    <span class="search-input-edge"></span><input class="search-input"><span class="search-input-edge"></span>
+  </span>
+    <ul class="search-result"></ul>
+  </div>
+</header>
+
+<nav class="navigation" data-ice="nav"><div>
+  <ul>
+    
+  <li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map.js~Map.html">Map</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map_layers.js~Map_layer.html">Map_layer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Map_layers.js~Map_parentLayer.html">Map_parentLayer</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/ObjectManager.js~ObjectManager.html">ObjectManager</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite.html">Object_sprite</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite_terrain.html">Object_sprite_terrain</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/Objects.js~Object_sprite_unit.html">Object_sprite_unit</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/UI_themeBase.js~UI_templateBase.html">UI_templateBase</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-function">F</span><span data-ice="name"><span><a href="function/index.html#static-function-UI">UI</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-mapEvents">mapEvents</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">move</div><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-map_drag">map_drag</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pluginName">pluginName</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">utils</div><span data-ice="kind" class="kind-class">C</span><span data-ice="name"><span><a href="class/core/utils/Quadtree.js~Quadtree.html">Quadtree</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-dataManipulation">dataManipulation</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-effects">effects</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-utils">utils</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-environmentDetection">environmentDetection</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-general">general</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-mouse">mouse</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-resize">resize</a></span></span></li>
+<li data-ice="doc"><div data-ice="dirPath" class="nav-dir-path">zoom</div><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-map_zoom">map_zoom</a></span></span></li>
+<li data-ice="doc"><span data-ice="kind" class="kind-variable">V</span><span data-ice="name"><span><a href="variable/index.html#static-variable-pluginName">pluginName</a></span></span></li>
+</ul>
+</div>
+</nav>
+
+<div class="content" data-ice="content"><h1 data-ice="title">core/ObjectManager.js</h1>
+<pre class="source-code line-number raw-source-code"><code class="prettyprint linenums" data-ice="content">&apos;use strict&apos;;
+
+/**
+ * This handles the selction of areas and objects in the map. Currently is uses subcontainers or quadtree to do the selection.
+ *
+ * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn&apos;t be the issue.
+ */
+
+/***********************
+******** IMPORT ********
+***********************/
+import { Quadtree } from &apos;./utils/Quadtree&apos;;
+import { arrays } from &apos;/components/utilities/general&apos;;
+
+/***********************
+********* API **********
+***********************/
+/**
+ * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or
+ * when objects or areas collide with each other.
+ * It uses quadtree for preliminary filtering of matching objects and then the framework specific collision detection
+ */
+export class ObjectManager {
+  /**
+   * @param {object} hitDetector Object or function that handles hit detection. This can be omitted in many cases
+   */
+  constructor(hitDetector) {
+    this.quadtrees = {};
+    this.hitDetector = hitDetector || {};
+  }
+  /**
+   * Retrieve objects under certain coordinates or area, if size is given
+   *
+   * @param {{ globalCoords: { x:Number, y:Number }, localCoords: { x:Number, y:Number } }} allCoords         the coordinates which we want to hitTest
+   * @param {string} type                                         type of the object / layer that we want to retrieve
+   * @param {Object} options                                      optional options
+   * @param {Object[]} options.subcontainers                      The subcontainers we match against
+   * @param {{ width: Integer, height: Integer }} options.size    Size of the rectangle area to match against, if we want to match rectangle instead of one point
+   * @return Array of matched objects
+   */
+  retrieve(allCoords, type, options = { quadtree: false, subcontainers: [], size: { width: 0, height: 0 } }) {
+    var { subcontainers, size } = options;
+    var { globalCoords, localCoords } = allCoords;
+    var foundObjs = [];
+    var quadtreeObjs;
+
+    if (subcontainers.length === 0) {
+      if (!type) {
+        quadtreeObjs = Object.keys(this.quadtrees).map((thisIndex) =&gt; {
+          return this.quadtrees[thisIndex].retrieve(localCoords, size);
+        });
+      } else {
+        quadtreeObjs = this.quadtrees[type].retrieve(localCoords, size);
+      }
+
+      foundObjs = arrays.flatten2Levels(quadtreeObjs);
+
+      if (!size.width || !size.height) {
+        foundObjs = foundObjs.filter(obj =&gt; {
+          let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
+
+          return isHit;
+        });
+      }
+    } else {
+      subcontainers.forEach(container =&gt; {
+        foundObjs = foundObjs.concat(container.children);
+      });
+
+      if (!size.width || !size.height) {
+        foundObjs = foundObjs.filter(obj =&gt; {
+          let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
+
+          return isHit;
+        });
+      }
+    }
+
+    return foundObjs;
+  }
+  /**
+   * Add object to hitDetection layer
+   *
+   * @param {string} type                                                 type of the object / layer that we want to add
+   * @param {x:Number, y:Number, width:Number, height:Number} hitArea     area that is hitTested
+   * @param {Object} obj                                                  object that we want to store. If hitTest succeeds this object is returned.
+   */
+  addObject(type, hitArea, obj) {
+    if (!this.quadtrees[type]) {
+      throw new Error(&quot;Could not add object to objectManager layer, layer not found! (&quot; + type + &quot;)&quot;);
+    }
+
+    return this.quadtrees[type].add({
+        x: hitArea.x,
+        y: hitArea.y
+      }, {
+        width: hitArea.width,
+        height: hitArea.height
+      },
+      obj
+    );
+  }
+  /**
+   * Add hitDetection layer. Basically you create layers for different object types, like for example one for the
+   * terrain, one for the units and one for the cities. The quadtree does not really require bounds, so we omit them.
+   *
+   * @param {string} type                                   Type of the layer that we want to add
+   * @param {{width: Integer, height: Integer}} bounds      Bounds for the quadtree layer
+   * @param {{objects: Number, levels: Number}} extra       quadtree-settings: maximum objects before we split and maximum levels of nested layers
+   */
+  addLayer(type, bounds, extra = {}) {
+    this.quadtrees[type] = new Quadtree(bounds, {
+        objects: extra.objects || 10,
+        levels: extra.levels || 5
+      });
+
+    return this.quadtrees[type];
+  }
+}</code></pre>
+
+</div>
+
+<footer class="footer">
+  Generated by <a href="https://esdoc.org">ESDoc<span data-ice="esdocVersion">(0.4.3)</span></a>
+</footer>
+
+<script src="script/search_index.js"></script>
+<script src="script/search.js"></script>
+<script src="script/pretty-print.js"></script>
+<script src="script/inherited-summary.js"></script>
+<script src="script/test-summary.js"></script>
+<script src="script/inner-link.js"></script>
+<script src="script/patch-for-local.js"></script>
+</body>
+</html>

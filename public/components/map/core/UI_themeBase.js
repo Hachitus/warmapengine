@@ -14,12 +14,23 @@ var styleSheetElement, allCSSClasses;
 ********* API **********
 ***********************/
 export class UI_templateBase {
+  /**
+   * The template base class for UI templates
+   *
+   * @param  {[type]} CSSClasses [description]
+   * @return {[type]}            [description]
+   */
   constructor(CSSClasses) {
     allCSSClasses = CSSClasses;
     styleSheetElement = this.addStyleElement();
     let createdCSS = createCSSRules(allCSSClasses);
     this.addCSSRulesToScriptTag(styleSheetElement, createdCSS);
   }
+  /**
+   * Get the stylesheet element. Where are the defined CSS is
+   *
+   * @return {HTML Element}
+   */
   getStyleSheetElement() {
     return styleSheetElement;
   }

@@ -1,9 +1,5 @@
 'use strict';
 
-/**
- * @module Map
- **/
-
 /***********************
 ****** VARIABLES *******
 ***********************/
@@ -16,18 +12,11 @@ export class Map_layer extends PIXI.Container {
   /**
    * Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.
    *
-   * @class Map_layer
-   * @memberof core
-   * @constructor
-   * @extends PIXI.Container
-   *
-   * @param {Object} options          options
-   *                                  name: String. Layers name, used for identifying the layer, useful in debugging, but used also otherwise too!
-   * @param {x: Number, y: Number}          coord starting coords of layer. Relative to parent map layer.
-   * @param {object} subContainers          width: Number. subcontainer width in pixels,
-   *                                        height: Number. subcontainer height in pixels,
-   *                                        maxDetectionOffset: Number. Amount of offset we detect outside the given area.
-   * */
+   * @param {Object} options                            optional options
+   * @param {String} options.name                       Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too
+   * @param {{x: Integer, y: Integer}} options.coord    coord starting coords of layer. Relative to parent map layer.
+   * @param {Boolean} options.specialLayer              Is this layer special (e.g. UILayer not included in normal operations)
+   **/
   constructor(options = {
       name: "",
       coord: { x: 0, y: 0 },
@@ -35,22 +24,26 @@ export class Map_layer extends PIXI.Container {
     var { name, coord, specialLayer } = options;
 
     super();
-
     Object.assign(this, coord);
-    this._cacheEnabled = true;
-    /** @member Good for debugging (shows up in toString), but used otherwise too */
+
+    /**
+     * Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too
+     *
+     * @attribute
+     * @type {String}
+     */
     this.name = "" + name;
-    /** @member (is it used?) */
-    this.drawThisChild = true;
-    /** @member (is it used?) */
-    this.preventSelection = false;
-    /** @member Boolean. When true, this layer is not counted as "PrimaryLayer". SpecialLayers can be e.g. dynamically modified UI-layers */
-    this.specialLayer = specialLayer;
+    /**
+     * Is this layer special (e.g. UILayer not included in normal operations)
+     *
+     * @attribute
+     * @type {Boolean}
+     */
+    this.specialLayer = !!specialLayer;
   }
   /**
    * Does this layer use subcontainers.
    *
-   * @method hasSubContainers
    * @return {Boolean} true = uses subcontainers.
    */
   hasSubContainers() {
@@ -59,30 +52,24 @@ export class Map_layer extends PIXI.Container {
   /**
    * Is this layer cached at the moment or not.
    *
-   * @method getCurrentCache
    * @return {Boolean} true = is cached
    */
   getCurrentCache() {
     return this.cacheAsBitmap;
   }
-    /**
+  /**
    * Move layer based on given amounts
    *
-   * @method move
-   * @param {x: Number, y: Number} coordinates        The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
-   * @return this layer instance
-   * */
+   * @param {{x: Integer, y: Integer}} coord        The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move the map 5 pixels horizontally and 0 pixels vertically
+   **/
   move(coord) {
     this.x += coord.x;
     this.y += coord.y;
     this.drawThisChild = true;
-
-    return this;
   }
   /**
    * set layer scale
    *
-   * @method setScale
    * @param {Number} amount The amount that you want the layer to scale.
    * @return {Number} The same amount that was given, except after transform to 2 decimals and type cast to Number
    * */
@@ -94,7 +81,6 @@ export class Map_layer extends PIXI.Container {
   /**
    * get layer scale
    *
-   * @method getScale
    * @return {Boolean} current amount of scale
    * */
   getScale() {
@@ -103,7 +89,6 @@ export class Map_layer extends PIXI.Container {
     /**
    * get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
    *
-   * @method getUIObjects
    * @return {Array} current UIObjects
    * */
   getUIObjects() {
@@ -112,7 +97,6 @@ export class Map_layer extends PIXI.Container {
   /**
    * Remove all the UIObjects from this layer
    *
-   * @method emptyUIObjects
    * @return {Array} empty UIObjects array
    * */
   emptyUIObjects() {
@@ -126,7 +110,6 @@ export class Map_layer extends PIXI.Container {
   /**
    * Add UIObjects to this layer
    *
-   * @method addUIObjects
    * @param {Object || Array} objects           Objects can be an object containing one object to add or an Array of objects to add.
    * @return {Array}                            All the UIObjects currently on this layer
    * */
@@ -153,18 +136,8 @@ export class Map_layer extends PIXI.Container {
     return _UIObjects;
   }
   /**
-   * Is cache enabled. I am not sure if this is used or where. So @TODO go through this.
-   *
-   * @method getCacheEnabled
-   * @return {Boolean}                          true = cache enabled
-   * */
-  getCacheEnabled() {
-    return this._cacheEnabled;
-  }
-  /**
    * Get primary layers, that this layer holds as children. So basically all children that are not special layers (such as UI layers etc.)
    *
-   * @method getPrimaryLayers
    * @return {Array}                            Primary children layers under this layer
    * */
   getPrimaryLayers() {
@@ -175,7 +148,6 @@ export class Map_layer extends PIXI.Container {
   /**
    * Get all objects that are this layers children or subcontainers children. Does not return layers, but the objects.
    *
-   * @method getObjects
    * @return {Array}                            All the objects (not layers) found under this layer
    * */
   getObjects() {
@@ -189,21 +161,24 @@ export class Map_layer extends PIXI.Container {
 
     return allObjects;
   }
+  /**
+   * @method setCache
+   *
+   * @param {Boolean} status      true = activate cache, false = disable cache
+   */
+  setCache(status) {
+    var toCacheStatus = status ? true : false;
+
+    this.cacheAsBitmap = toCacheStatus;
+
+    return toCacheStatus;
+  }
 }
-/**
- * @method setCache
- *
- * @param {Boolean} status      true = activate cache, false = disable cache
- */
-Map_layer.prototype.setCache = setCache;
 
 export class Map_parentLayer extends Map_layer {
   /**
    * Layer designed to hold subcontainers. But can handle objects too.
    *
-   * @class Map_parentLayer
-   * @constructs
-   * @extends Map_layer
    * @param {String}        name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
    * @param {x: Number, y: Number}  coord starting coords of layer. Relative to parent map layer.
@@ -260,19 +235,7 @@ class Map_subContainer extends PIXI.ParticleContainer {
    *
    * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
    *
-   * @class Map_subContainer
-   * @constructs
-   * @extends PIXI.ParticleContainer
-   * @param {String}        name layer property name, used for identifiying the layer, usefull in debugging, but used also
-   * otherwise too!
-   * @param {x: Number, y: Number}  coord starting coords of layer. Relative to parent map layer.
-   *
-   * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
-   * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
-   */
-  /**
-   * @constructs
-   * @param  {Object} size          { width: Number, height: Number }
+   * @param {{width: Integer, height: Integer}} size          Size of the subcontainer
    */
   constructor(size) {
     super();
@@ -280,6 +243,12 @@ class Map_subContainer extends PIXI.ParticleContainer {
     this.specialLayer = true;
     this.size = size;
   }
+  /**
+   * Gets this subcontainers coordinates and size
+   *
+   * @param {Number} scale                              The size of scale the map currently has
+   * @param {{toGlobal: Boolean}} options.toGlobal      Do we get the global coordinates or local
+   */
   getSubcontainerArea (scale, options = { toGlobal: true } ) {
     var coordinates;
 
@@ -296,27 +265,29 @@ class Map_subContainer extends PIXI.ParticleContainer {
       height: Math.round( this.size.height )
     };
   }
-}
-/**
- * @method setCache
- *
- * @param {Boolean} status      true = activate cache, false = disable cache
- */
-Map_subContainer.prototype.setCache = setCache;
+  /**
+   * Set cache on or off for this layer
+   *
+   * @param {Boolean} status      true = activate cache, false = disable cache
+   */
+  setCache(status) {
+    var toCacheStatus = status ? true : false;
 
-/***********************
-**** PUBLIC METHODS ****
-***********************/
-function setCache(status) {
-  var toCacheStatus = status ? true : false;
+    this.cacheAsBitmap = toCacheStatus;
 
-  this.cacheAsBitmap = toCacheStatus;
-
-  return toCacheStatus;
+    return toCacheStatus;
+  }
 }
 /***********************
 ******* PRIVATE ********
 ***********************/
+/**
+ * [setCorrectSubContainer description]
+ *
+ * @private
+ * @param {[type]} displayObject [description]
+ * @param {[type]} parentLayer   [description]
+ */
 function setCorrectSubContainer(displayObject, parentLayer) {
   var { subContainersConfig, subContainerList } = parentLayer;
   var xIndex = Math.floor( displayObject.x / subContainersConfig.width );
@@ -348,6 +319,8 @@ function setCorrectSubContainer(displayObject, parentLayer) {
 }
 /**
  * Get the closest subcontainers of the given area.
+ *
+ * @private
  * @param  {PIXI.Container} layer     The layer being used
  * @param  {Number} xIndex            x / horizontal index.
  * @param  {Number} yIndex            y / vertical index.

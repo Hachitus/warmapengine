@@ -5,9 +5,9 @@
 /**
  * Factory where we construct a horizontal hexagon map for test and development purposes
  *
- * @require Some polyfills are needed and added for IE11 ( http://babeljs.io/docs/usage/polyfill/ ). These are found
+ * @requires Some polyfills are needed and added for IE11 ( http://babeljs.io/docs/usage/polyfill/ ). These are found
  * in utils
- * @required PIXI in global space
+ * @requires PIXI in global space
  * */
 
 /***********************
@@ -59,7 +59,7 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
       width: WINDOW_SIZE.x,
       height: WINDOW_SIZE.y
     },
-    options: {
+    rendererOptions: {
       resolution: pixelRatio, // We might need this later on, when doing mobile optimizations, for different pizel density devices
       autoResize: true,
       transparent: true,

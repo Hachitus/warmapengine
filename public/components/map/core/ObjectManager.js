@@ -31,22 +31,20 @@ export class ObjectManager {
   /**
    * Retrieve objects under certain coordinates or area, if size is given
    *
-   * @param {globalCoords: { x:Number, y:Number },
-   *        localCoords: { x:Number, y:Number } }         the coordinates which we want to hitTest
-   * @param {string} type                                 type of the object / layer that we want to retrieve
-   * @param {Object} options                              Holds options:
-   *                                                      quadtree: Boolean. Determines if we use quadtree or subcontainers
-   *                                                      subcontainers: Array. The subcontainers we match against
-   *                                                      size: { width: Number, height: Number }. Size of the rectangle area to match against, if we want to match rectangle instead of one point
+   * @param {{ globalCoords: { x:Number, y:Number }, localCoords: { x:Number, y:Number } }} allCoords         the coordinates which we want to hitTest
+   * @param {string} type                                         type of the object / layer that we want to retrieve
+   * @param {Object} options                                      optional options
+   * @param {Object[]} options.subcontainers                      The subcontainers we match against
+   * @param {{ width: Integer, height: Integer }} options.size    Size of the rectangle area to match against, if we want to match rectangle instead of one point
    * @return Array of matched objects
    */
   retrieve(allCoords, type, options = { quadtree: false, subcontainers: [], size: { width: 0, height: 0 } }) {
-    var { quadtree, subcontainers, size } = options;
+    var { subcontainers, size } = options;
     var { globalCoords, localCoords } = allCoords;
     var foundObjs = [];
     var quadtreeObjs;
 
-    if (quadtree) {
+    if (subcontainers.length === 0) {
       if (!type) {
         quadtreeObjs = Object.keys(this.quadtrees).map((thisIndex) => {
           return this.quadtrees[thisIndex].retrieve(localCoords, size);
@@ -82,9 +80,10 @@ export class ObjectManager {
   }
   /**
    * Add object to hitDetection layer
-   * @param {string} type type of the object / layer that we want to add
-   * @param {x:Number, y:Number, width:Number, height:Number} area that is hitTested
-   * @param {Object} obj object that we want to store. If hitTest succeeds this object is returned.
+   *
+   * @param {string} type                                                 type of the object / layer that we want to add
+   * @param {x:Number, y:Number, width:Number, height:Number} hitArea     area that is hitTested
+   * @param {Object} obj                                                  object that we want to store. If hitTest succeeds this object is returned.
    */
   addObject(type, hitArea, obj) {
     if (!this.quadtrees[type]) {
@@ -105,8 +104,9 @@ export class ObjectManager {
    * Add hitDetection layer. Basically you create layers for different object types, like for example one for the
    * terrain, one for the units and one for the cities. The quadtree does not really require bounds, so we omit them.
    *
-   * @param {string} type type of the layer that we want to add
-   * @param {objects: Number, levels: Number} extra quadtree-settings: maximum objects before we split and maximum levels of nested layers
+   * @param {string} type                                   Type of the layer that we want to add
+   * @param {{width: Integer, height: Integer}} bounds      Bounds for the quadtree layer
+   * @param {{objects: Number, levels: Number}} extra       quadtree-settings: maximum objects before we split and maximum levels of nested layers
    */
   addLayer(type, bounds, extra = {}) {
     this.quadtrees[type] = new Quadtree(bounds, {

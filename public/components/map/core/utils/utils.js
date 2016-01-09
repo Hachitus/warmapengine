@@ -23,6 +23,7 @@ function setupMouseUtils() {
 
   /**
    * Detects if the mouse click has been the right mouse button
+   *
    * @param {Event} event The event where the click occured
    */
   function isRightClick( event ) {

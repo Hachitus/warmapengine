@@ -2,25 +2,6 @@
 
 'use strict';
 
-/**
- * Map is the main class for constructing 2D map for strategy games
- *
- * Map is instantiated and then initialized with init-method:
- * var map = new Map(canvasElement, mapOptions );
- * promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
- *
- * Plugins can be added with activatePlugins-method by prodiving init(map) method in the plugin. Plugins are always
- * functions, not objects that are instantiated. Plugins are supposed to extend the map object or anything in it via
- * it's public methods.
- *
- * @require createjs framework in global namespace
- * @require canvas HTML5-element to work.
- *
- * @require Plugins that use eventlistener by default, use pointer events polyfill, such as: https://github.com/jquery/PEP
- * Plugins and eventlistener can be overriden, but they user pointer events by default (either the browser must support
- * them or use polyfill)
- * */
-
 /***********************
 ******** IMPORT ********
 ***********************/
@@ -38,28 +19,48 @@ var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, Parent
 ********* API **********
 ***********************/
 /**
- * Main class for the whole engine
- * @class
- */
+ * Main class for the whole engine, which initializes the whole structure and plugins
+ *
+ * You use the class by instantiating it with new and then initialize with init-method:
+ * var map = new Map(canvasElement, mapOptions );
+ * promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
+ *
+ * Plugins can be added with activatePlugins-method by prodiving init(map) method in the plugin. Plugins are always
+ * functions, not objects that are instantiated. Plugins are supposed to extend the map object or anything in it via
+ * it's public methods.
+ *
+ * @requires PIXI.JS framework in global namespace
+ * @requires canvas (webGL support recommended) HTML5-element supported.
+ * @requires Hammer for touch events
+ * @requires Hamster for mouse scroll events
+ *
+ * @requires Plugins that use eventlistener by default, use pointer events polyfill, such as: https://github.com/jquery/PEP
+ * Plugins and eventlistener can be overriden, but they user pointer events by default (either the browser must support
+ * them or use polyfill)
+ **/
 export class Map {
   /**
-   * @param {DOM Canvas element} canvas     Canvas used by the map
-   * @param {Object} options                different options for the map to be given. Format:
-   *                                        { bounds: { width: Number, height: Number}, renderer: {} }
-   * @param {object} subContainers          width: Number. subcontainer width in pixels,
-   *                                        height: Number. subcontainer height in pixels,
-   *                                        maxDetectionOffset: Number. Amount of offset we detect outside the given area.
+   * @class Map
+   * @constructor
+   * @param {HTML element} canvasContainer                          HTML element which will be container for the created canvas element
+   * @param {Object} props                                           Extra properties
+   * @param {{x: Integer, y: Integer}} props.startCoord              Coordinates where the map starts at
+   * @param {{width: Integer, height: Integer}} props.bounds         Bounds of the map / mapSize
+   * @param {Object} props.rendererOptions                           Renderer options passed to PIXI.autoDetectRenderer
+   * @param {{width: Integer, height: Integer}} props.subContainers  Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.
+   * @param {function(FPS: Number, FPStime: Number, renderTime: Number, drawCount: Number): void} trackFPSCB                                   Callback function for tracking FPS in renderer. So this is used for debugging and optimizing.
    *
-   * @return Map instance
+   *
+   * @return {Map}                                            new Map instance
    */
   constructor(canvasContainer = null,
       props = {
         startCoord: { x: 0, y: 0 },
         bounds: { width: 0, height: 0 },
-        options: { refreshEventListeners: true },
+        rendererOptions: { refreshEventListeners: true },
         subContainers: false,
         trackFPSCB: false }) {
-    var { startCoord, bounds, options, subContainers, trackFPSCB } = props;
+    var { startCoord, bounds, rendererOptions, subContainers, trackFPSCB } = props;
 
     if (!canvasContainer) {
       throw new Error(this.constructor.name + " needs canvasContainer!");
@@ -69,17 +70,13 @@ export class Map {
       canvasContainer = document.querySelector(canvasContainer);
     }
 
-    _renderer = PIXI.autoDetectRenderer(bounds.width, bounds.height, options);
+    _renderer = PIXI.autoDetectRenderer(bounds.width, bounds.height, rendererOptions);
     /* We handle all the events ourselves through addEventListeners-method on canvas, so destroy pixi native method */
     _renderer.plugins.interaction.destroy();
     canvasContainer.innerHTML = "";
     canvasContainer.appendChild(_renderer.view, canvasContainer);
+    let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
 
-    this.canvas = _renderer.view;
-    this.plugins = new Set();
-    this._mapInMove = false;
-    this.subContainersConfig = subContainers;
-    this.trackFPSCB = trackFPSCB;
     /* This defines which class we use to generate layer on the map. Under movableLayer */
     ParentLayerConstructor = subContainers ? Map_parentLayer : Map_layer;
 
@@ -93,8 +90,6 @@ export class Map {
     _staticLayer.addChild(_movableLayer);
 
     /* InteractionManager is responsible for finding what objects are under certain coordinates. E.g. when selecting */
-    let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
-    this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
     eventlisteners = eventListeners(this.canvas, true);
 
     /* needed for fullsize canvas in PIXI */
@@ -104,17 +99,52 @@ export class Map {
     document.getElementsByTagName("body")[0].style.overflow = "hidden";
     _renderer.view.style.left = "0px";
     _renderer.view.style.top = "0px";
+
+    /**
+     * canvas element that was generated and is being used by this new generated Map instance.
+     *
+     * @type {Canvas element}
+     */
+    this.canvas = _renderer.view;
+    /**
+     * list of plugins that the map uses and are initialized
+     * @see class/core/Map.js~Map.html#instance-method-activatePlugins
+     *
+     * @type {Set}
+     */
+    this.plugins = new Set();
+    /**
+     * Subcontainers size that we want to generate, when layers use subcontainers
+     *
+     * @type {{width: Integer, height: Int}}
+     */
+    this.subContainersConfig = subContainers;
+    /**
+     * Callback function that gets the current FPS on the map and shows it in DOM
+     *
+     * @type {Function}
+     */
+    this.trackFPSCB = trackFPSCB;
+    /**
+     * ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks the map to select some object.
+     *
+     * @type {ObjectManager}
+     */
+    this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
+
+    /* PRIVATE */
+    this._mapInMove = false;
   }
   /**
    * initialization method
-   * @param {Array | String} plugins    Plugins to be activated for the map. Normally you should give the plugins here
+   *
+   * @method init
+   * @param {Array of Strings} plugins    Plugins to be activated for the map. Normally you should give the plugins here
    * instead of separately passing them to activatePlugins method. You can provide the module strings or module objects.
-   * @param {x: ? y:?} coord            Starting coordinates for the map
-   * @param {Function} tickCB           callback function for tick. Tick callback is initiated in every frame. So map
-   * draws happen during ticks
-   * @param {Object} options            Fullsize: Do we set fullsize canvas or not.
-   * @return {Array}                    Returns an array of Promises. If this is empty / zero. Then there is nothing to
-   * wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
+   * @param {x: ? y:?} coord              Starting coordinates for the map
+   * @param {Function} tickCB             callback function for tick. Tick callback is initiated in every frame. So map draws happen during ticks
+   * @param {Object} options              Fullsize: Do we set fullsize canvas or not.
+   * @return {Array}                      Returns an array of Promises. If this is empty / zero. Then there is nothing to wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
    * */
   init(plugins = [], coord = { x: 0, y: 0 }, tickCB = null, options = { fullsize: true }) {
     var allPromises = [];
@@ -231,15 +261,11 @@ export class Map {
     return _movableLayer.getChildNamed(name);
   }
   /**
-   * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount
-   * of movement that the map should move.
+   * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale).
    *
-   * Internally it moves the movableLayer, taking into account necessary properties (like scale).
-   *
-   * @param {x: Number, y: Number} coord      The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
-   * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
-   * @return                                  this
-   * */
+   * @param {{x: Number, y: Number}} coord      The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.
+   * @param {Object} informCoordinates          THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING
+   **/
   moveMap(coord = { x: 0, y: 0 }, informCoordinates = coord) {
     var realCoordinates = {
       x: Math.round(coord.x / _staticLayer.getScale()),
@@ -254,11 +280,7 @@ export class Map {
   /**
    * Cache the map. This provides significant performance boost, when used correctly. cacheMap iterates through all the
    * layer on the map and caches the ones that return true from getCacheEnabled-method.
-   *
-   * @param {x: Number, y: Number} coord - The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }
-   * with this we want the map to move horizontally 5 pizels and vertically stay at the same position.
-   * @return this map instance
-   * */
+   **/
   cacheMap() {
     _movableLayer.children.forEach(child => {
       child.setCache(child.getCacheEnabled());
@@ -281,7 +303,7 @@ export class Map {
   /**
    * Activate plugins for the map. Plugins need .pluginName property and .init-method
    *
-   * @param [Array] pluginsArray - Array that consists of the plugin modules
+   * @param {Object[]} pluginsArray         Array that consists the plugin modules to be activated
    * */
   activatePlugins(pluginsArray = []) {
     pluginsArray.forEach(plugin => {
@@ -293,7 +315,7 @@ export class Map {
   /**
    * Activate plugins for the map. Plugins need .pluginName property and .init-method
    *
-   * @param [String | Object] plugin        String to module or the module object.
+   * @param {Object} plugin        Plugin module instance.
    * */
   activatePlugin(plugin) {
     try {
@@ -310,6 +332,9 @@ export class Map {
   }
   /**
    * getter and setter for detecting if map is moved and setting the maps status as moved or not moved
+   *
+   * @param {Boolean} yesOrNo         Has the map moved, or not.
+   * @param {Boolean} isFinal         Is this the last time map has been moved with this event chain.
    * */
   mapMoved(yesOrNo, isFinal) {
     isFinal && mapEvents.publish("mapMovedFinal");
@@ -473,7 +498,7 @@ export class Map {
    ************************************/
   zoomIn() { return "notImplementedYet. Activate with plugin"; }
   zoomOut() { return "notImplementedYet. Activate with plugin"; }
-  /**
+  /*
    * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
    * Default uses quadtree
    * @param { x: Number, y: Number } coordinates to search from
@@ -481,15 +506,16 @@ export class Map {
    * @param { String } object The object to add
    * */
   addObjectsForSelection() { return "notImplementedYet"; }
-  /**
+  /*
    * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
    * Default uses quadtree
-   * @param { x: Number, y: Number } coordinates to search from
+   *
+   * @param {{x: Number, y: Number }} coordinates to search from
    * @param { String } type type of the objects to search for
    * @param { String } object The object to add
    * */
   removeObjectsForSelection() { return "notImplementedYet"; }
-  /**
+  /*
    * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
    * Default uses quadtree
    * @param { x: Number, y: Number } coordinates to search from
@@ -503,6 +529,7 @@ export class Map {
 ******* PRIVATE ********
 ***********************/
 /**
+ * @private
  * This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
  * callback is always set and should not be removed or overruled
  */
@@ -541,6 +568,7 @@ function _defaultTick(map, ticker) {
   });
 }
 /**
+ * @private
  * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
  */
 function _resizeCanvas() {
@@ -552,6 +580,7 @@ function _resizeCanvas() {
   this.drawOnNextTick();
 }
 /**
+ * @private
  * Activate the browsers fullScreen mode and expand the canvas to fullsize
  */
 function setFullScreen() {

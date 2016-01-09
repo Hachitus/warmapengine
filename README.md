@@ -1,5 +1,10 @@
 [![GPLv3 Affero License](http://img.shields.io/badge/license-LGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl.html)
 
+#NOTE, STILL IN DEVELOPMENT!
+This engine is still in development. It is not well tested for other uses than the current tests / example game. When the most critical development phase is over, the API will be more locked now. At this stage the API and structure can still change, so if you use the engine for something serious, please take that into account!
+
+Also I am very happy to get feedback on any projects or tests that might be using this engine and very eager to help with getting issues.
+
 #Introduction
 2D strategy game engine for browsers. Project will move forward at its own phase. Rough estimation for the bare functionality
 of the engine is during 2015.

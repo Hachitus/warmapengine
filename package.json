@@ -6,6 +6,7 @@
   "scripts": {
     "start": "echo 'starting instance in http://localhost:9001/' && forever start startGame.js --uid FlaTWorld",
     "stop": "forever stop startGame.js FlaTWorld",
+    "document": "esdoc -c .\\esdoc.json",
     "push": "git push && esdoc -c .\\esdoc.json"
   },
   "dependencies": {

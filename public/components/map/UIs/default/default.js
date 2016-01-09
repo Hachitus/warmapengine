@@ -52,6 +52,7 @@ export class UI_default extends UI_templateBase {
   }
   /**
    * Required by the map/core/UI.js API
+   *
    * @param  {Object} objects     Objects that have been selected. @todo: Should add object format to this documentation
    */
   showSelections(objects) {
@@ -106,7 +107,8 @@ export class UI_default extends UI_templateBase {
   }
   /**
    * Required by the map/core/UI.js API
-   * @param  {Object} objects       Objects that have been selected. @todo: Should add object format to this documentation
+   *
+   * @param  {Object} object       Object that has been selected. @todo: Should add object format to this documentation
    */
   highlightSelectedObject(object) {
     var highlightableObject;

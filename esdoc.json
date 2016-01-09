@@ -1,4 +1,4 @@
 {
-  "source": "./public/components/map/core/",
-  "destination": "./public/esdoc"
+  "source": "./public/components",
+  "destination": "./public/documentation"
 }

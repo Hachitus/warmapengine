@@ -34,13 +34,16 @@ export { createMap as createMap };
 ******* PUBLIC *********
 ***********************/
 /**
- * @param {DOMElement Canvas} canvasContainerElement      Container which will hold the PIXI generated canvas element
- * @param {Object} datas                                  Object with mapDatas: { map, type, game }
- *                                                        map: Holds all the stage, layer and object data needed to construct a full map
- *                                                        game: More general game data (like turn number, map size etc.)
- *                                                        type: Type data such as different unit types and their graphics (tank, soldier etc.)
- * @param {Object} options                                { trackFPSCB: Function | False, callback to track FPS }
-*/
+ * This constructs a whole horizontally aligned hexagonal map
+ *
+ * @param {HTML Element} canvasContainerElement       Container which will hold the PIXI generated canvas element
+ * @param {Object} datas                        Object with mapDatas to construct the map structure
+ * @param {Object} datas.map                    Holds all the stage, layer and object data needed to construct a full map
+ * @param {Object} datas.game                   More general game data (like turn number, map size etc.)
+ * @param {Object} datas.type                   Type data such as different unit types and their graphics (tank, soldier etc.)
+ * @param {Object} options                      Optional options
+ * @param {Function} options.trackFPSCB         Callback to track FPS
+ **/
 function createMap(canvasContainerElement, datas, options = { trackFPSCB: false }) {
   console.log("============== Horizontal hexagonal Map factory started =============");
   const pixelRatio = utils.environmentDetection.getPixelRatio();

@@ -13,10 +13,8 @@
 /***********************
 ******* IMPORTS ********
 ***********************/
-import { Map } from "/components/map/core/Map";
+import { Map, UI, utils } from "/components/bundles/coreBundle";
 import { Object_terrain, Object_unit } from "/components/map/extensions/hexagons/Objects";
-import { resizeUtils, environmentDetection } from "/components/map/core/utils/utils";
-import { UI } from "/components/map/core/UI";
 import { UI_default } from "/components/map/UIs/default/default.js";
 
 /***********************
@@ -45,11 +43,11 @@ export { createMap as createMap };
 */
 function createMap(canvasContainerElement, datas, options = { trackFPSCB: false }) {
   console.log("============== Horizontal hexagonal Map factory started =============");
-  const pixelRatio = environmentDetection.getPixelRatio();
+  const pixelRatio = utils.environmentDetection.getPixelRatio();
   const DATA_MAP = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
   const DATA_TYPE = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
   const DATA_GAME = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
-  const WINDOW_SIZE = resizeUtils.getWindowSize();
+  const WINDOW_SIZE = utils.resize.getWindowSize();
   const MAP_SIZE = DATA_GAME.mapSize;
   const mapOptions = {
     refreshEventListeners: true

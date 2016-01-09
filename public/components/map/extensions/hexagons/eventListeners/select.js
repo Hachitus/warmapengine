@@ -10,11 +10,7 @@
 /***********************
 ******* IMPORTS ********
 ***********************/
-import { eventListeners as eventListenerMod } from '/components/map/core/eventlisteners';
-import { UI } from '/components/map/core/UI';
-import { mouseUtils } from '/components/map/core/utils/utils';
-import { mapObjects } from '/components/map/core/utils/dataManipulation';
-import { mapEvents } from '/components/map/core/mapEvents';
+import { utils, mapEvents, UI, eventListeners as eventListenerMod } from '/components/bundles/coreBundle';
 
 /***********************
 ********* API **********
@@ -49,12 +45,12 @@ function _setupHexagonClick(map) {
   ********* PUBLIC *********
   *************************/
   function tapListener(e) {
-    var globalCoords = mouseUtils.eventData.getHAMMERPointerCoords(e);
+    var globalCoords = utils.mouse.eventData.getHAMMERPointerCoords(e);
     var objects;
 
     objects = map.getObjectsUnderPoint(globalCoords, "unit");
-    objects = mapObjects.mapObjectsToArray(objects);
-    objects = mapObjects.flattenArrayBy1Level(objects);
+    objects = utils.dataManipulation.mapObjectsToArray(objects);
+    objects = utils.dataManipulation.flattenArrayBy1Level(objects);
 
     /* Throw a mapEvent if there are objects found. It might be required to throw this event later on, not yet here. */
     if (objects.length) {

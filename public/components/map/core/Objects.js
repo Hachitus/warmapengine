@@ -8,7 +8,7 @@
 /************************
 ********* IMPORT ********
 *************************/
-import { graphics } from '/components/bundles/coreBundle';
+import { utils } from '/components/bundles/coreBundle';
 
 /************************
 ********** API **********
@@ -209,4 +209,4 @@ export class Object_sprite_unit extends Object_sprite {
  *
  * @method dropShadow
  */
-Object_sprite_unit.prototype.dropShadow = graphics.dropShadow;
+Object_sprite_unit.prototype.dropShadow = utils.effects.dropShadow;

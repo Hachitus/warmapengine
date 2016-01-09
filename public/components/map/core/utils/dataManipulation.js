@@ -7,12 +7,12 @@
 /***********************
 ********* API **********
 ***********************/
-export const mapObjects = setupMapObjects();
+export const dataManipulation = setupDataManipulation();
 
 /***********************
 ******** PUBLIC ********
 ***********************/
-function setupMapObjects() {
+function setupDataManipulation() {
   /***********************
   ********* API **********
   ***********************/

@@ -6,9 +6,7 @@
  */
 
 /** ===== OWN imports ===== */
-import { resizeUtils } from "/components/map/core/utils/utils";
-import { eventListeners as eventListenerMod } from '/components/map/core/eventlisteners';
-import { mapEvents } from '/components/map/core/mapEvents';
+import { eventListeners as eventListenerMod, utils, mapEvents } from '/components/bundles/coreBundle';
 
 /***********************
 ********* API **********
@@ -235,7 +233,7 @@ function setupMap_zoom() {
     return false;
   }
   function _calculateCenterMoveCoordinates(scale, isZoomIn) {
-    var windowSize = resizeUtils.getWindowSize();
+    var windowSize = utils.resize.getWindowSize();
     var halfWindowSize = {
       x: ( windowSize.x / 2 ) / scale,
       y: ( windowSize.y / 2 ) / scale

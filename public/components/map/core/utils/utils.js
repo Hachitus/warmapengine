@@ -3,8 +3,8 @@
 /***********************
 ********* API **********
 ***********************/
-export const mouseUtils = setupMouseUtils();
-export const resizeUtils = setupResizeUtils();
+export const mouse = setupMouseUtils();
+export const resize = setupResizeUtils();
 export const environmentDetection = setupEnvironmentDetection();
 export const general = setupGeneral();
 /**

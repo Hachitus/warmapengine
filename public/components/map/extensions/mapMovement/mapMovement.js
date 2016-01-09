@@ -11,7 +11,7 @@
 /***********************
 ******* IMPORTS ********
 ***********************/
-import { mapEvents } from '/components/map/core/mapEvents';
+import { mapEvents } from '/components/bundles/coreBundle';
 import { arrays } from '/components/utilities/general';
 
 /***********************

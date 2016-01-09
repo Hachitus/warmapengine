@@ -2,24 +2,19 @@
 
 /**
  * @module Map
- * @require the PIXI framework in global namespace
- * */
+ **/
 
 /***********************
 ****** VARIABLES *******
 ***********************/
 var _UIObjects = [];
-/* This will extend the layer-classes prototype */
-var _baseContainerClass = _getBaseContainerClass();
 
 /***********************
 ******** EXPORT ********
 ***********************/
 export class Map_layer extends PIXI.Container {
   /**
-   * Creates a basic layer for the Map. This type of layer can not hold subcontainers
-   *
-   * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
+   * Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.
    *
    * @class Map_layer
    * @memberof core
@@ -52,23 +47,163 @@ export class Map_layer extends PIXI.Container {
     /** @member Boolean. When true, this layer is not counted as "PrimaryLayer". SpecialLayers can be e.g. dynamically modified UI-layers */
     this.specialLayer = specialLayer;
   }
+  /**
+   * Does this layer use subcontainers.
+   *
+   * @method hasSubContainers
+   * @return {Boolean} true = uses subcontainers.
+   */
   hasSubContainers() {
     return this.subContainersConfig ? true : false;
   }
+  /**
+   * Is this layer cached at the moment or not.
+   *
+   * @method getCurrentCache
+   * @return {Boolean} true = is cached
+   */
   getCurrentCache() {
     return this.cacheAsBitmap;
   }
-}
-Object.assign(Map_layer.prototype, _baseContainerClass);
+    /**
+   * Move layer based on given amounts
+   *
+   * @method move
+   * @param {x: Number, y: Number} coordinates        The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
+   * @return this layer instance
+   * */
+  move(coord) {
+    this.x += coord.x;
+    this.y += coord.y;
+    this.drawThisChild = true;
 
+    return this;
+  }
+  /**
+   * set layer scale
+   *
+   * @method setScale
+   * @param {Number} amount The amount that you want the layer to scale.
+   * @return {Number} The same amount that was given, except after transform to 2 decimals and type cast to Number
+   * */
+  setScale(amount) {
+    this.scale.x = this.scale.y = +amount.toFixed(2);
+
+    return this.scale.x;
+  }
+  /**
+   * get layer scale
+   *
+   * @method getScale
+   * @return {Boolean} current amount of scale
+   * */
+  getScale() {
+    return this.scale.x;
+  }
+    /**
+   * get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
+   *
+   * @method getUIObjects
+   * @return {Array} current UIObjects
+   * */
+  getUIObjects() {
+    return _UIObjects;
+  }
+  /**
+   * Remove all the UIObjects from this layer
+   *
+   * @method emptyUIObjects
+   * @return {Array} empty UIObjects array
+   * */
+  emptyUIObjects() {
+    _UIObjects.map(obj => {
+      this.removeChild(obj);
+      obj = null;
+    });
+
+    return _UIObjects;
+  }
+  /**
+   * Add UIObjects to this layer
+   *
+   * @method addUIObjects
+   * @param {Object || Array} objects           Objects can be an object containing one object to add or an Array of objects to add.
+   * @return {Array}                            All the UIObjects currently on this layer
+   * */
+  addUIObjects(objects) {
+    _UIObjects = _UIObjects || [];
+    if (Array.isArray(objects)) {
+      objects.forEach( (/*thisObj*/) => {
+        /* We want to make a copy of the object, since if add existing child from another container to UI,
+         * it will get removed from the original container and messes up the hierarchy. Probably making a deep copy
+         * directly isn't the best way, but it's the easiest atm. */
+        //let newObj = utils.general.deepCopy(thisObj);
+
+        //this.addChild(newObj);
+      });
+    } else {
+      //let newObj = utils.general.deepCopy(objects);
+      let newObj = objects;
+
+      newObj.specialLayer = true;
+      this.addChild( newObj );
+    }
+    _UIObjects.push( objects );
+
+    return _UIObjects;
+  }
+  /**
+   * Is cache enabled. I am not sure if this is used or where. So @TODO go through this.
+   *
+   * @method getCacheEnabled
+   * @return {Boolean}                          true = cache enabled
+   * */
+  getCacheEnabled() {
+    return this._cacheEnabled;
+  }
+  /**
+   * Get primary layers, that this layer holds as children. So basically all children that are not special layers (such as UI layers etc.)
+   *
+   * @method getPrimaryLayers
+   * @return {Array}                            Primary children layers under this layer
+   * */
+  getPrimaryLayers() {
+    return this.children.filter(thisChild => {
+      return !thisChild.specialLayer;
+    });
+  }
+  /**
+   * Get all objects that are this layers children or subcontainers children. Does not return layers, but the objects.
+   *
+   * @method getObjects
+   * @return {Array}                            All the objects (not layers) found under this layer
+   * */
+  getObjects() {
+    var allObjects = [];
+
+    if (this.hasSubContainers()) {
+      this.subContainerList.forEach(subcontainer => {
+        allObjects.concat(subcontainer.children);
+      });
+    }
+
+    return allObjects;
+  }
+}
 /**
- * Layer designed to hold subcontainers. But can handle objects too.
- * @class
- * @extends PIXI.Container
+ * @method setCache
+ *
+ * @param {Boolean} status      true = activate cache, false = disable cache
  */
+Map_layer.prototype.setCache = setCache;
+
 export class Map_parentLayer extends Map_layer {
   /**
+   * Layer designed to hold subcontainers. But can handle objects too.
+   *
+   * @class Map_parentLayer
    * @constructs
+   * @extends Map_layer
    * @param {String}        name layer property name, used for identifiying the layer, usefull in debugging, but used also
    * otherwise too!
    * @param {x: Number, y: Number}  coord starting coords of layer. Relative to parent map layer.
@@ -119,14 +254,22 @@ export class Map_parentLayer extends Map_layer {
   }
 }
 
-/**
- * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend Map_layers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree.
- *
- * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
- * @class
- * @extends PIXI.Container
- */
 class Map_subContainer extends PIXI.ParticleContainer {
+  /**
+   * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend Map_layers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree.
+   *
+   * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
+   *
+   * @class Map_subContainer
+   * @constructs
+   * @extends PIXI.ParticleContainer
+   * @param {String}        name layer property name, used for identifiying the layer, usefull in debugging, but used also
+   * otherwise too!
+   * @param {x: Number, y: Number}  coord starting coords of layer. Relative to parent map layer.
+   *
+   * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
+   * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
+   */
   /**
    * @constructs
    * @param  {Object} size          { width: Number, height: Number }
@@ -155,126 +298,15 @@ class Map_subContainer extends PIXI.ParticleContainer {
   }
 }
 /**
- * setCache method
- * @method
+ * @method setCache
+ *
+ * @param {Boolean} status      true = activate cache, false = disable cache
  */
 Map_subContainer.prototype.setCache = setCache;
 
 /***********************
 **** PUBLIC METHODS ****
 ***********************/
-/**
- * This extends the Map_layer classes as they share a lot of the same functionality
- */
-function _getBaseContainerClass() {
-  return {
-    setCache,
-    getCacheEnabled,
-    move,
-    setScale,
-    getScale,
-    getUIObjects,
-    emptyUIObjects,
-    addUIObjects,
-    getPrimaryLayers,
-    getObjects
-  };
-  /**
-   * Move layer
-   * @param {x: Number, y: Number} coordinates The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }
-   * @return this layer instance
-   * */
-  function move(coord) {
-    this.x += coord.x;
-    this.y += coord.y;
-    this.drawThisChild = true;
-
-    return this;
-  }
-  /**
-   * set layer scale
-   * @param {Number} amount The amount that you want the layer to scale.
-   * @amount that was given
-   * */
-  function setScale(amount) {
-    this.scale.x = this.scale.y = +amount.toFixed(2);
-
-    return this.scale.x;
-  }
-  /**
-   * get layer scale
-   * @return current amount of scale
-   * */
-  function getScale() {
-    return this.scale.x;
-  }
-  /**
-   * get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
-   * @return current UIObjects
-   * */
-  function getUIObjects() {
-    return _UIObjects;
-  }
-  /**
-   * Remove all the UIObjects from this layer
-   * @return empty UIObjects array
-   * */
-  function emptyUIObjects() {
-    _UIObjects.map(obj => {
-      this.removeChild(obj);
-      obj = null;
-    });
-
-    return _UIObjects;
-  }
-  /**
-   * Add UIObjects to this layer
-   * @param {Object || Array} objects Objects can be an object containing one object to add or an Array of objects to add.
-   * @return All the UIObjects currently on this layer
-   * */
-  function addUIObjects(objects) {
-    _UIObjects = _UIObjects || [];
-    if (Array.isArray(objects)) {
-      objects.forEach( (/*thisObj*/) => {
-        /* We want to make a copy of the object, since if add existing child from another container to UI,
-         * it will get removed from the original container and messes up the hierarchy. Probably making a deep copy
-         * directly isn't the best way, but it's the easiest atm. */
-        //let newObj = general.deepCopy(thisObj);
-
-        //this.addChild(newObj);
-      });
-    } else {
-      //let newObj = general.deepCopy(objects);
-      let newObj = objects;
-
-      newObj.specialLayer = true;
-      this.addChild( newObj );
-    }
-    _UIObjects.push( objects );
-
-    return _UIObjects;
-  }
-  function getCacheEnabled() {
-    return this._cacheEnabled;
-  }
-  function getPrimaryLayers() {
-    return this.children.filter(thisChild => {
-      return !thisChild.specialLayer;
-    });
-  }
-  function getObjects() {
-    var allObjects = [];
-
-    if (this.hasSubContainers()) {
-      this.subContainerList.forEach(subcontainer => {
-        allObjects.concat(subcontainer.children);
-      });
-    }
-
-    return allObjects;
-  }
-}
-
 function setCache(status) {
   var toCacheStatus = status ? true : false;
 

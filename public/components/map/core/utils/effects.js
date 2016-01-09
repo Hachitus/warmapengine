@@ -8,12 +8,12 @@
 /***********************
 ********* API **********
 ***********************/
-export const graphics = setupGraphics();
+export const effects = setupEffects();
 
 /***********************
 ******** PUBLIC ********
 ***********************/
-function setupGraphics() {
+function setupEffects() {
   /***********************
   ********* API **********
   ***********************/

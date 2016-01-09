@@ -24,8 +24,7 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { Map_layer, Map_parentLayer, eventListeners, ObjectManager, mapEvents } from '/components/bundles/coreBundle';
-import { resizeUtils } from '/components/map/core/utils/utils';
+import { Map_layer, Map_parentLayer, eventListeners, ObjectManager, mapEvents, utils } from '/components/bundles/coreBundle';
 import * as Q from '/assets/lib/q/q';
 
 /***********************
@@ -545,7 +544,7 @@ function _defaultTick(map, ticker) {
  * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
  */
 function _resizeCanvas() {
-  let windowSize = resizeUtils.getWindowSize();
+  let windowSize = utils.resize.getWindowSize();
 
   _renderer.autoResize = true;
   _renderer.resize(windowSize.x, windowSize.y);
@@ -556,7 +555,7 @@ function _resizeCanvas() {
  * Activate the browsers fullScreen mode and expand the canvas to fullsize
  */
 function setFullScreen() {
-  resizeUtils.toggleFullScreen();
+  utils.resize.toggleFullScreen();
   mapEvents.publish("mapResized");
   _resizeCanvas.call(this);
 }

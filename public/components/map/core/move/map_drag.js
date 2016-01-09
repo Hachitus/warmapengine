@@ -10,8 +10,7 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { eventListeners as eventListenerMod } from '../eventlisteners';
-import { mouseUtils } from '../utils/utils';
+import { eventListeners as eventListenerMod, utils } from '/components/bundles/coreBundle';
 
 /***********************
 ********* API **********
@@ -67,7 +66,7 @@ function setupMap_drag() {
       if (eventListener.getState("zoom")) {
         return false;
       }
-      coords = mouseUtils.eventData.getHAMMERPointerCoords(e);
+      coords = utils.mouse.eventData.getHAMMERPointerCoords(e);
 
       map.mapMoved(true);
 

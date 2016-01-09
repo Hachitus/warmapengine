@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "start": "echo 'starting instance in http://localhost:9001/' && forever start startGame.js --uid FlaTWorld",
-    "stop": "forever stop startGame.js FlaTWorld"
+    "stop": "forever stop startGame.js FlaTWorld",
+    "push": "git push && yuidoc"
   },
   "dependencies": {
     "express": "^4.12.4",

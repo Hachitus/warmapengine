@@ -10,7 +10,7 @@
         "selleck": "true",
         "ignorePaths": [ "bundles" ],
         "paths": "./public/components",
-        "outdir": "./documentation",
+        "outdir": "./public/documentation",
         "markdown": "default"
     }
 }

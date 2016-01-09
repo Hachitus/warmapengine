@@ -24,11 +24,8 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { Map_layer, Map_parentLayer } from '/components/map/core/Map_layer';
+import { Map_layer, Map_parentLayer, eventListeners, ObjectManager, mapEvents } from '/components/bundles/coreBundle';
 import { resizeUtils } from '/components/map/core/utils/utils';
-import { eventListeners } from '/components/map/core/eventlisteners';
-import { ObjectManager } from '/components/map/core/ObjectManager';
-import { mapEvents } from '/components/map/core/mapEvents';
 import * as Q from '/assets/lib/q/q';
 
 /***********************

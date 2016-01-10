@@ -1,6 +1,10 @@
 'use strict';
 
 /**
+ * @module Map
+ */
+
+/**
  * The core plugin for the 2D map engine. Handles moving the map by dragging the map with mouse or touch event.
  * Core plugins can always be overwrote if needed.
  *
@@ -21,6 +25,12 @@ export const map_drag = setupMap_drag();
 /***********************
 ******** PUBLIC ********
 ***********************/
+/**
+ * [setupMap_drag description]
+ *
+ * @class mapDrag
+ * @return {Object}      init, _startDragListener
+ */
 function setupMap_drag() {
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
@@ -40,7 +50,7 @@ function setupMap_drag() {
   /**
    * Required init functions for the plugin
    *
-   * @param {Map object} mapObj - the Map class object
+   * @param {Map} mapObj        The current instance of Map class
    * */
   function init(map) {
     eventListener = eventListenerMod();
@@ -58,7 +68,7 @@ function setupMap_drag() {
    * desktop version, since we don't need to calculate the drag with several event listener, one is enough with Hammer
    *
    * @private
-   * @param {Map Object} map        The current map object
+   * @param {Map} map           The current instance of Map class
    */
   function _startDragListener( map ) {
     var initialized = false;
@@ -99,8 +109,8 @@ function setupMap_drag() {
    *
    * @private
    * @param  {Event} e                        The event being dealt with
-   * @param  {Map Object} map                 The map object
-   * @param  {x: Number, y: Number} coords    Current pointer coordinates
+   * @param  {Map} map                        The current instance of Map class
+   * @param  {Coordinates} coords             Current pointer coordinates
    */
   function _mapMovement(e, map, coords) {
     var offset, moved;

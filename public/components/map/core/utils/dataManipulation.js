@@ -1,6 +1,10 @@
 'use strict';
 
 /**
+ * @module Map
+ */
+
+/**
  * These are utils for manipulating the data, that our classes and functions use.
  */
 
@@ -12,6 +16,13 @@ export const dataManipulation = setupDataManipulation();
 /***********************
 ******** PUBLIC ********
 ***********************/
+/**
+ * [setupMap_zoom description]
+ *
+ * @class dataManipulation
+ * @memberof utils
+ * @return {Object}      mapObjectsToArray, flattenArrayBy1Level
+ */
 function setupDataManipulation() {
   /***********************
   ********* API **********

@@ -17,8 +17,7 @@ export class UI_templateBase {
   /**
    * The template base class for UI templates
    *
-   * @param  {[type]} CSSClasses [description]
-   * @return {[type]}            [description]
+   * @param  {*} CSSClasses
    */
   constructor(CSSClasses) {
     allCSSClasses = CSSClasses;
@@ -29,7 +28,7 @@ export class UI_templateBase {
   /**
    * Get the stylesheet element. Where are the defined CSS is
    *
-   * @return {HTML Element}
+   * @return {Object}       HTML Element
    */
   getStyleSheetElement() {
     return styleSheetElement;

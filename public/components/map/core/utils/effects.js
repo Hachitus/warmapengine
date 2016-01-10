@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @module Map
+ */
+
 /*
  * This module will hold the most common graphical effects used in the map. It is still very stub as the development
  * hasn't proceeded to this stage yet.
@@ -13,6 +17,13 @@ export const effects = setupEffects();
 /***********************
 ******** PUBLIC ********
 ***********************/
+/**
+ * [setupMap_drag description]
+ *
+ * @class effects
+ * @memberof utils
+ * @return {Object}      init, _startDragListener
+ */
 function setupEffects() {
   /***********************
   ********* API **********
@@ -25,9 +36,7 @@ function setupEffects() {
   ******** PUBLIC ********
   ***********************/
   /**
-   * @method  dropShadow
-   * @param  {Object} options [description]
-   * @return {[type]}         [description]
+   * @param  {Object} options       [description]
    */
   function dropShadow(options = { color: "#000000", distance: 5, alpha: 0.5, amgöe: 45, blur: 5 } ) {
       var shadow  = new PIXI.filters.DropShadowFilter();

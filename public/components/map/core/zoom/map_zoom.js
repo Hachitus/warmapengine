@@ -1,6 +1,10 @@
 'use strict';
 
 /**
+ * @module Map
+ */
+
+/**
  * The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed.
  * Zooming happens when the user scrolls the mousewheel or in mobile, pinches the screen
  */
@@ -17,6 +21,12 @@ export var map_zoom = setupMap_zoom();
 /***********************
 ******** PUBLIC ********
 ***********************/
+/**
+ * [setupMap_zoom description]
+ *
+ * @class mapZoom
+ * @return {Object}      init
+ */
 function setupMap_zoom() {
   /***********************
   ****** VARIABLES *******
@@ -28,7 +38,8 @@ function setupMap_zoom() {
   var map, eventListener;
   /**
    * Maximum and minimum amount, the player can zoom the map
-   * @type { farther: Number, closer: Number }
+   *
+   * @type {{ farther: Number, closer: Number }}
    */
   var zoomLimit = {
     farther: 0.4,
@@ -52,11 +63,12 @@ function setupMap_zoom() {
   ************************/
   /**
    * Required init functions for the plugin
-   * @param {Map object} mapObj - the Map class object
+   *
+   * @param {Map} mapObj       instantiated Map class object
    *
    * @todo think through should setZoomLimits and setZoomModifier be in map.prototype?
    * But zoomLimit and modifier need to be setable in creation, init or later with setters
-   * */
+   **/
   function init(thisMap) {
     eventListener = eventListenerMod();
     map = thisMap;
@@ -74,8 +86,9 @@ function setupMap_zoom() {
   ****************************************/
   /**
    * How much one mouse wheel step zooms
-   * @param {Number} amount How much one mouse wheel step zooms. Needs to be in between 0 - 0.5
-   * */
+   *
+   * @param {Number} amount           How much one mouse wheel step zooms. Needs to be in between 0 - 0.5
+   **/
   function setZoomModifier (amount) {
     if (! (amount > 0 || amount <= 0.5) ) {
       throw new Error("Wrong zoom modifier! (needs to be >0 and <=0.5, given:" + amount);
@@ -86,9 +99,10 @@ function setupMap_zoom() {
   }
   /**
    * How much can be zoomed in maximum and minimum
-   * @param {Number 1+} farther How much one mouse wheel step zooms out
-   * @param {Number 0 - 1} closer How much one mouse wheel step zooms in
-   * */
+   *
+   * @param {Number} farther          (>1) How much one mouse wheel step zooms out
+   * @param {Number} closer           (0 - 1) How much one mouse wheel step zooms in
+   **/
   function setZoomLimits (farther, closer) {
     zoomLimit.farther = farther;
     zoomLimit.closer = closer;
@@ -97,6 +111,7 @@ function setupMap_zoom() {
   }
   /**
    * Zoom in to the map
+   *
    * @param {Number} amount how much map is zoomed in
    * */
   function zoomIn (amount) {
@@ -109,6 +124,7 @@ function setupMap_zoom() {
   }
   /**
    * Zoom out of the map
+   *
    * @param {Number} amount how much map is zoomed out
    * */
   function zoomOut (amount) {
@@ -168,6 +184,11 @@ function setupMap_zoom() {
       }
     }
   }
+  /**
+   * handleZoomEventMobile
+   *
+   * @param  {Event} e
+   */
   function handleZoomEventMobile(e) {
     var pointers = e.pointers;
     var coords = [{
@@ -222,9 +243,14 @@ function setupMap_zoom() {
     }
   }
 
-  /* =================
-     Private functions
-     ================= */
+  /************************
+   ******* PRIVATE ********
+   ***********************/
+  /**
+   * _isOverZoomLimit
+   *
+   * @private
+   **/
   function _isOverZoomLimit(amount, isZoomIn) {
     if ( (isZoomIn && amount > zoomLimit.closer ) || (!isZoomIn && amount < zoomLimit.farther) ) {
       return true;
@@ -232,6 +258,11 @@ function setupMap_zoom() {
 
     return false;
   }
+  /**
+   * _calculateCenterMoveCoordinates
+   *
+   * @private
+   **/
   function _calculateCenterMoveCoordinates(scale, isZoomIn) {
     var windowSize = utils.resize.getWindowSize();
     var halfWindowSize = {
@@ -245,6 +276,11 @@ function setupMap_zoom() {
 
     return realMovement;
   }
+  /**
+   * _zoom
+   *
+   * @private
+   **/
   function _zoom(map, presentScale, amount, isZoomIn) {
     var newScale;
 

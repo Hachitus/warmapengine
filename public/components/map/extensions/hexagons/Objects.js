@@ -1,5 +1,15 @@
 'use strict';
 
+/**
+ * @typedef {Object}              Coordinates
+ * @property {Integer} x          X coordinate
+ * @property {Integer} y          Y coordinate
+ *
+ * @typedef {Object}             ObjectSize
+ * @property {Integer} width     Width
+ * @property {Integer} height    Height
+ */
+
 /** Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
  * inherited, depending on the map type. For example you might want to add some click area for these
  * @class
@@ -23,7 +33,7 @@ var shape;
 /**
  * @class
  *
- * @param {x: Number, y: Number} coords     Coordinates for the object relative to it's parent
+ * @param {Coordinates} coords              Coordinates for the object relative to it's parent
  * @param {object} data                     This units custom data
  * @param {Object} options                  options.radius REQUIRED. This is the radius of the game maps hexagon
  */
@@ -42,7 +52,7 @@ Object.assign(Object_terrain.prototype, calculateHexa);
 /**
  * @class
  *
- * @param {x: Number, y: Number} coords         This units coordinates, relative to it's parent container
+ * @param {Coordinates} coords                  This units coordinates, relative to it's parent container
  * @param {object} data                         This units custom data
  * @param {Object} options                      options.radius REQUIRED. This is the radius of the game maps hexagon
  */
@@ -60,6 +70,9 @@ export class Object_unit extends Object_sprite_unit {
 /***********************
 ******* PRIVATE ********
 ***********************/
+/**
+ * @private
+ */
 function calculateHexa(radius) {
   if (!radius) {
     throw new Error("Need radius!");
@@ -93,6 +106,9 @@ function calculateHexa(radius) {
     return isHit;
   };
 }
+/**
+ * @private
+ */
 function setAndGetShape(radius) {
   if (!shape) {
     shape = createHexagon(radius);

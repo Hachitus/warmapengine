@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @module Map
+ */
+
 /***********************
 ********* API **********
 ***********************/
@@ -8,9 +12,10 @@ export const resize = setupResizeUtils();
 export const environmentDetection = setupEnvironmentDetection();
 export const general = setupGeneral();
 /**
- * The core utils for the 2D map engine.
+ * @class mouse
+ * @memberof utils
+ * @return {Object}      isRightClick, eventData.getPointerCoords, eventData.getHAMMERPointerCoords, eventMouseCoords
  */
-
 function setupMouseUtils() {
   return {
     isRightClick,
@@ -74,6 +79,11 @@ function setupMouseUtils() {
     return pos;
   }
 }
+/**
+ * @class resize
+ * @memberof utils
+ * @return {Object}      toggleFullScreen, setToFullSize, getWindowSize
+ */
 function setupResizeUtils() {
   return {
     toggleFullScreen,
@@ -124,7 +134,8 @@ function setupResizeUtils() {
   }
   /**
    * Sets canvas size to maximum width and height on the browser, not using fullscreen
-   * @param {DOMElement Canvas context} context
+   *
+   * @param {Object} context        DOMElement Canvas context
    */
   function setToFullSize(context) {
     return function fullSize() {
@@ -141,6 +152,11 @@ function setupResizeUtils() {
     };
   }
 }
+/**
+ * @class environment
+ * @memberof utils
+ * @return {Object}      getPixelRatio
+ */
 function setupEnvironmentDetection() {
   return {
     getPixelRatio//,
@@ -152,8 +168,8 @@ function setupEnvironmentDetection() {
    * [getPixelRatio description]
    *
    * @require Canvas element in the DOM. This needs to be found
-   * @param  {[type]} canvasElement [description]
-   * @return {[type]}               [description]
+   * @param  {Object} canvasElement       HTML canvas element
+   * @return {Number}
    */
   function getPixelRatio(canvasElement) {
     const DPR = window.devicePixelRatio || 1;
@@ -165,7 +181,11 @@ function setupEnvironmentDetection() {
     return DPR / bsr;
   }
 }
-
+/**
+ * @class general
+ * @memberof utils
+ * @return {Object}      pixelEpsilonEquality
+ */
 function setupGeneral() {
   const PIXEL_EPSILON = 0.01;
 

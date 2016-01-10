@@ -1,6 +1,26 @@
 /* global System, Q */
 
+/**
+ * @module Map
+ */
+
 'use strict';
+
+/**
+ * @typedef {Object}              Coordinates
+ * @property {Integer} x          X coordinate
+ * @property {Integer} y          Y coordinate
+ *
+ * @typedef {Object}             ObjectSize
+ * @property {Integer} width     Width
+ * @property {Integer} height    Height
+ *
+ * @callback FPSCallback
+ * @param {Number} FPS
+ * @param {Number} FPStime
+ * @param {Number} renderTime
+ * @param {Number} drawCount
+ */
 
 /***********************
 ******** IMPORT ********
@@ -18,38 +38,31 @@ var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, Parent
 /***********************
 ********* API **********
 ***********************/
-/**
- * Main class for the whole engine, which initializes the whole structure and plugins
- *
- * You use the class by instantiating it with new and then initialize with init-method:
- * var map = new Map(canvasElement, mapOptions );
- * promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
- *
- * Plugins can be added with activatePlugins-method by prodiving init(map) method in the plugin. Plugins are always
- * functions, not objects that are instantiated. Plugins are supposed to extend the map object or anything in it via
- * it's public methods.
- *
- * @requires PIXI.JS framework in global namespace
- * @requires canvas (webGL support recommended) HTML5-element supported.
- * @requires Hammer for touch events
- * @requires Hamster for mouse scroll events
- *
- * @requires Plugins that use eventlistener by default, use pointer events polyfill, such as: https://github.com/jquery/PEP
- * Plugins and eventlistener can be overriden, but they user pointer events by default (either the browser must support
- * them or use polyfill)
- **/
 export class Map {
   /**
-   * @class Map
-   * @constructor
-   * @param {HTML element} canvasContainer                          HTML element which will be container for the created canvas element
-   * @param {Object} props                                           Extra properties
-   * @param {{x: Integer, y: Integer}} props.startCoord              Coordinates where the map starts at
-   * @param {{width: Integer, height: Integer}} props.bounds         Bounds of the map / mapSize
-   * @param {Object} props.rendererOptions                           Renderer options passed to PIXI.autoDetectRenderer
-   * @param {{width: Integer, height: Integer}} props.subContainers  Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.
-   * @param {function(FPS: Number, FPStime: Number, renderTime: Number, drawCount: Number): void} trackFPSCB                                   Callback function for tracking FPS in renderer. So this is used for debugging and optimizing.
    *
+   * Main class for the whole engine, which initializes the whole structure and plugins
+   *
+   * You use the class by instantiating it with new and then initialize with init-method:
+   * var map = new Map(canvasElement, mapOptions );
+   * promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
+   *
+   * Plugins can be added with activatePlugins-method by prodiving init(map) method in the plugin. Plugins are always
+   * functions, not objects that are instantiated. Plugins are supposed to extend the map object or anything in it via
+   * it's public methods.
+   *
+   * @requires PIXI.JS framework in global namespace
+   * @requires Canvas (webGL support recommended) HTML5-element supported.
+   * @requires Hammer for touch events
+   * @requires Hamster for mouse scroll events
+   *
+   * @param {Object} canvasContainer                      HTML element which will be container for the created canvas element
+   * @param {Object} props                                Extra properties
+   * @param {Coordinate} props.startCoord                 Coordinates where the map starts at
+   * @param {objectSize} props.bounds                     Bounds of the map / mapSize
+   * @param {Object} props.rendererOptions                Renderer options passed to PIXI.autoDetectRenderer
+   * @param {objectSize} props.subContainers              Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.
+   * @param {FPSCallback} trackFPSCB                      Callback function for tracking FPS in renderer. So this is used for debugging and optimizing.
    *
    * @return {Map}                                            new Map instance
    */
@@ -103,7 +116,7 @@ export class Map {
     /**
      * canvas element that was generated and is being used by this new generated Map instance.
      *
-     * @type {Canvas element}
+     * @type {Object}
      */
     this.canvas = _renderer.view;
     /**
@@ -139,12 +152,12 @@ export class Map {
    * initialization method
    *
    * @method init
-   * @param {Array of Strings} plugins    Plugins to be activated for the map. Normally you should give the plugins here
+   * @param {String[]} plugins    Plugins to be activated for the map. Normally you should give the plugins here
    * instead of separately passing them to activatePlugins method. You can provide the module strings or module objects.
-   * @param {x: ? y:?} coord              Starting coordinates for the map
-   * @param {Function} tickCB             callback function for tick. Tick callback is initiated in every frame. So map draws happen during ticks
-   * @param {Object} options              Fullsize: Do we set fullsize canvas or not.
-   * @return {Array}                      Returns an array of Promises. If this is empty / zero. Then there is nothing to wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
+   * @param {Coordinates} coord                      Starting coordinates for the map
+   * @param {Function} tickCB                        callback function for tick. Tick callback is initiated in every frame. So map draws happen during ticks
+   * @param {Object} options                         Fullsize: Do we set fullsize canvas or not.
+   * @return {Array}                                 Returns an array of Promises. If this is empty / zero. Then there is nothing to wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
    * */
   init(plugins = [], coord = { x: 0, y: 0 }, tickCB = null, options = { fullsize: true }) {
     var allPromises = [];
@@ -177,6 +190,7 @@ export class Map {
   }
   /**
    * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
+   *
    * @return the current map instance
    * */
   whenReady() {
@@ -184,6 +198,7 @@ export class Map {
   }
   /**
    * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
+   *
    * @return the current map instance
    * */
   drawOnNextTick() {
@@ -193,6 +208,9 @@ export class Map {
   }
   /**
    * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
+   *
+   * @param {String} attribute
+   * @param {*} value
    * @return the current map instance
    * */
   getLayersWithAttributes(attribute, value) {
@@ -263,8 +281,8 @@ export class Map {
   /**
    * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale).
    *
-   * @param {{x: Number, y: Number}} coord      The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.
-   * @param {Object} informCoordinates          THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING
+   * @param {Coordinates} coord      The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.
+   * @param {Coordinates} informCoordinates          THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING
    **/
   moveMap(coord = { x: 0, y: 0 }, informCoordinates = coord) {
     var realCoordinates = {
@@ -395,7 +413,7 @@ export class Map {
   /**
    * Filter objects based on quadtree and then based on possible group provided
    *
-   * @param  {x: Number, y: Number} globalCoords      The global coordinates on canvas, that is hitTested.
+   * @param {Coordinates} globalCoords                Starting coordinates for the map
    * @param  {String} type                            Type of the objects / layer to find.
    * @return {Array}                                  Array of object found on the map.
    */
@@ -458,7 +476,7 @@ export class Map {
     return objects;
   }
   /**
-   * @return { x: Number, y: Number }, current coordinates for the moved map
+   * @return {Coordinates}          current coordinates for the moved map
    * */
   getMapPosition() {
     return {
@@ -501,7 +519,7 @@ export class Map {
   /*
    * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
    * Default uses quadtree
-   * @param { x: Number, y: Number } coordinates to search from
+   * @param {Coordinates} coordinates to search from
    * @param { String } type type of the objects to search for
    * @param { String } object The object to add
    * */

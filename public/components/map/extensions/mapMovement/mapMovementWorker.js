@@ -3,6 +3,14 @@
 'use strict';
 
 /**
+ * @typedef {Object}              AreaSize
+ * @property {Integer} x          X coordinate
+ * @property {Integer} y          Y coordinate
+ * @property {Integer} Width      Width
+ * @property {Integer} Height     Height
+ **/
+
+/**
  * This webworker receives array as postMessage. The first index will determine what we do. First index is a value of
  * integer.
  */
@@ -35,13 +43,13 @@ const VIEWPORT_OFFSET = 0.1;
 const METHOD_ALL = 1;
 var viewportArea, scale, methodType, smallerViewportArea;
 
-/**
+/*
  * Calculates the correct current viewport / window area. Arguments are received with postMessage using e.data property
  *
- * @param  {Number} e.data[0]                                         This defines what we want to generate. Now there is only METHOD_ALL
- * @param  {x: Number, y: Number, width: Number, height: Number}      Current viewport area with global coordinates
- * @param  {Number}                                                   Amount of scale / zoom on the map
- * @return {Array}                                                    Array consists of normal calculated viewport and smaller scaled viewport. The properties for both are:
+ * @param  {Number} e.data[0]                             This defines what we want to generate. Now there is only METHOD_ALL
+ * @param  {AreaSize}                                     Current viewport area with global coordinates
+ * @param  {Number}                                       Amount of scale / zoom on the map
+ * @return {Array}                                        Array consists of normal calculated viewport and smaller scaled viewport. The properties for both are:
  * {
  *   x: Number, y: Number, x2: Number, y2: Number, width: Number, height: Number
  * }

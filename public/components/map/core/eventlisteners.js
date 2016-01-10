@@ -2,6 +2,10 @@
 
 'use strict';
 
+/**
+ * @module Map
+ */
+
 /***********************
 ****** VARIABLES *******
 ***********************/
@@ -24,9 +28,11 @@ export { eventListenerModule as eventListeners };
  *   zoom: function() {}
  * }
  *
+ * @class mapEvents
  * @requires Hammer.js (for touch events)
  * @requires Hamster.js (for good cross-browser mousewheel events)
- * @param {HTML element} canvasElement          The canvas element we listen events from. Will try to search the first canvas in the DOM, if none is provided
+ * @param {Object} canvasElement                The canvas element we listen events from. Will try to search the first canvas in the DOM, if none is provided
+ * @param {Boolean} refresh                     If you want to reset the singleton object, set this to true
  */
 function eventListenerModule(canvasElement = document.getElementsByTagName("canvas")[0], refresh = false) {
   var CBs = {};

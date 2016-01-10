@@ -46,7 +46,7 @@ function setupPolyfills() {
    * Object.assign IE11 polyfill. Credits to Mozillas folk:
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
    *
-   * @return {[type]} [description]
+   * @return {Object}
    */
   function objectAssign() {
     if (typeof Object.assign != 'function') {

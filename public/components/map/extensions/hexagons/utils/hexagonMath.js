@@ -1,6 +1,12 @@
 'use strict';
 
 /**
+ * @typedef {Object}              Coordinates
+ * @property {Integer} x          X coordinate
+ * @property {Integer} y          Y coordinate
+ **/
+
+/**
  * Utility module, for making different calculations and tests when hexagon based grid map in use
  */
 /***********************
@@ -127,7 +133,7 @@ function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) 
  * credits to: https://github.com/substack/point-in-polygon
  * Tests whether the given point / coordinate is inside the given points. Assuming the points form a polygon
  *
- * @param  {x: Number, y: Number} point       The point to test against
+ * @param  {Coordinates} point                The point to test against
  * @param  {Array} vs                         The points of the polygon to test [0] === x-point, [1] === y-point
  * @return {Boolean}                          Is the coordinate inside the hexagon or not
  */

@@ -1,7 +1,17 @@
 'use strict';
 
 /**
- * The actual objects used on the map (such as terrain and units), under containers. All of the objects need to have same argumentAPI for creating objects: coords, data, options
+ * @module Map
+ */
+
+/**
+ * @typedef {Object}              Coordinates
+ * @property {Integer} x          X coordinate
+ * @property {Integer} y          Y coordinate
+ *
+ * @typedef {Object}             ObjectSize
+ * @property {Integer} width     Width
+ * @property {Integer} height    Height
  */
 
 /************************
@@ -120,7 +130,7 @@ export class Object_sprite extends PIXI.Sprite {
    * Get the area that is reserved for the graphical presenation of this object as a rectangle.
    *
    * @param  {Object} options       toGlobal: Boolean. Should the method return global coordinates or local (movableLayer)
-   * @return {Object}               { x: Number, y: Number, width: Number, height: Number}
+   * @return {AreaSize}               { x: Number, y: Number, width: Number, height: Number}
    */
   getGraphicalArea(options = { toGlobal: true } ) {
     var coordinates;
@@ -139,8 +149,8 @@ export class Object_sprite extends PIXI.Sprite {
    *
    * @param  {Number} x                     X coordinate
    * @param  {Number} y                     Y coordinate
-   * @param  {PIXI.DisplayObject} target    The DisplayObject where we should target the coordinates for
-   * @return {PIXI.Point}                   Coordinates
+   * @param  {Object} target                PIXI.DisplayObject. The DisplayObject where we should target the coordinates for
+   * @return {Coordinates}                  PIXI.Point. Coordinates.
    */
   localToLocal(x, y, target) {
     var globalCoords = this.toGlobal( { x, y } );
@@ -151,9 +161,9 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Clone object
    *
-   * @param  {PIXI renderer} renderer
+   * @param  {Object} renderer              PIXI renderer
    * @param  {Object} options               position: Boolean, anchor: Boolean
-   * @return {cloned Object}                cloned object
+   * @return {Object}                       cloned object
    */
   clone(renderer, options = { position: false, anchor: false }) {
     var newSprite = new PIXI.Sprite();
@@ -177,9 +187,9 @@ export class Object_sprite_terrain extends Object_sprite {
    * inherited, depending on the map type. For example you might want to add some click area for these
    *
    * @extends Object_sprite
-   * @param {x: Number, y: Number} coords format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
-   * @param {object} data This units custom data
-   * @param {object} options other specific options for constructing this terrain
+   * @param {Coordinates} coords        format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
+   * @param {object} data               This units custom data
+   * @param {object} options            other specific options for constructing this terrain
    */
   constructor(coords, data, options) {
     super(coords, data, options);
@@ -197,9 +207,9 @@ export class Object_sprite_unit extends Object_sprite {
    *
    * @extends Object_sprite
    * @requires core.graphics
-   * @param {x: Number, y: Number} coords Coordinates for the object relative to it's parent
-   * @param {object} data This units data
-   * @param {object} options other specific options for constructing this unit, like options.throwShadow
+   * @param {Coordinates} coords          Coordinates for the object relative to it's parent
+   * @param {object} data                 This units data
+   * @param {object} options              other specific options for constructing this unit, like options.throwShadow
    */
   constructor(coords, data, options) {
     super(coords, data, options);

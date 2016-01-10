@@ -1,0 +1,13 @@
+{
+  "source": {
+    "include": [ "public/components/" ],
+    "includePattern": ".+\\.js$",
+    "excludePattern": "(^|\\/|\\\\)_"
+  },
+  "opts": {
+    "template": "templates/default",
+    "encoding": "utf8",
+    "destination": "./public/documentation/",
+    "recurse": true
+  }
+}

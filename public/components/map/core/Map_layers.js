@@ -1,5 +1,19 @@
 'use strict';
 
+/**
+ * @module Map
+ */
+
+/**
+ * @typedef {Object}              Coordinates
+ * @property {Integer} x          X coordinate
+ * @property {Integer} y          Y coordinate
+ *
+ * @typedef {Object}             ObjectSize
+ * @property {Integer} width     Width
+ * @property {Integer} height    Height
+ */
+
 /***********************
 ****** VARIABLES *******
 ***********************/
@@ -14,7 +28,7 @@ export class Map_layer extends PIXI.Container {
    *
    * @param {Object} options                            optional options
    * @param {String} options.name                       Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too
-   * @param {{x: Integer, y: Integer}} options.coord    coord starting coords of layer. Relative to parent map layer.
+   * @param {Coordinates} options.coord                 coord starting coords of layer. Relative to parent map layer.
    * @param {Boolean} options.specialLayer              Is this layer special (e.g. UILayer not included in normal operations)
    **/
   constructor(options = {
@@ -60,7 +74,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * Move layer based on given amounts
    *
-   * @param {{x: Integer, y: Integer}} coord        The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move the map 5 pixels horizontally and 0 pixels vertically
+   * @param {Coordinates} coord        The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move the map 5 pixels horizontally and 0 pixels vertically
    **/
   move(coord) {
     this.x += coord.x;
@@ -110,8 +124,8 @@ export class Map_layer extends PIXI.Container {
   /**
    * Add UIObjects to this layer
    *
-   * @param {Object || Array} objects           Objects can be an object containing one object to add or an Array of objects to add.
-   * @return {Array}                            All the UIObjects currently on this layer
+   * @param {Object|Array} objects           Objects can be an object containing one object to add or an Array of objects to add.
+   * @return {Array}                         All the UIObjects currently on this layer
    * */
   addUIObjects(objects) {
     _UIObjects = _UIObjects || [];
@@ -179,9 +193,11 @@ export class Map_parentLayer extends Map_layer {
   /**
    * Layer designed to hold subcontainers. But can handle objects too.
    *
-   * @param {String}        name layer property name, used for identifiying the layer, usefull in debugging, but used also
-   * otherwise too!
-   * @param {x: Number, y: Number}  coord starting coords of layer. Relative to parent map layer.
+   * @param {Object} options
+   * @param {String} options.name                name layer property name, used for identifiying the layer, usefull in debugging, but used also otherwise too
+   * @param {Coordinates} options.coord          starting coords of layer. Relative to parent map layer.
+   * @param {ObjectSize} options.subContainers   Subontainer size. If given activated subcontainers, otherwise not.
+   * @param {Boolean} options.specialLayer       Is this special layer or not.
    *
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
@@ -235,7 +251,8 @@ class Map_subContainer extends PIXI.ParticleContainer {
    *
    * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
    *
-   * @param {{width: Integer, height: Integer}} size          Size of the subcontainer
+   * @private
+   * @param {ObjectSize} size          Size of the subcontainer
    */
   constructor(size) {
     super();
@@ -247,7 +264,7 @@ class Map_subContainer extends PIXI.ParticleContainer {
    * Gets this subcontainers coordinates and size
    *
    * @param {Number} scale                              The size of scale the map currently has
-   * @param {{toGlobal: Boolean}} options.toGlobal      Do we get the global coordinates or local
+   * @param {Boolean} options.toGlobal                  Do we get the global coordinates or local
    */
   getSubcontainerArea (scale, options = { toGlobal: true } ) {
     var coordinates;
@@ -285,8 +302,8 @@ class Map_subContainer extends PIXI.ParticleContainer {
  * [setCorrectSubContainer description]
  *
  * @private
- * @param {[type]} displayObject [description]
- * @param {[type]} parentLayer   [description]
+ * @param {Object} displayObject [description]
+ * @param {Object} parentLayer   [description]
  */
 function setCorrectSubContainer(displayObject, parentLayer) {
   var { subContainersConfig, subContainerList } = parentLayer;
@@ -321,7 +338,7 @@ function setCorrectSubContainer(displayObject, parentLayer) {
  * Get the closest subcontainers of the given area.
  *
  * @private
- * @param  {PIXI.Container} layer     The layer being used
+ * @param  {Object} layer             Instance of PIXI.Container - The layer being used
  * @param  {Number} xIndex            x / horizontal index.
  * @param  {Number} yIndex            y / vertical index.
  * @return {Array}                    Array of found subcontainers.

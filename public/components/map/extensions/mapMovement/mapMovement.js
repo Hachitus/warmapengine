@@ -73,9 +73,8 @@ function setupMapMovement () {
    *
    * NOTE! This uses webWorkers. They seemed to speed up the check, when timing with performance.now.
    *
-   * @param  {[type]} layer [description]
-   * @param  {[type]} map   [description]
-   * @return {[type]}       [description]
+   * @param  {Map} map        The current Map instance
+   * @return {Boolean}        True
    */
   function check(map) {
     if (queue.processing) {
@@ -163,6 +162,9 @@ function setupMapMovement () {
   /**************************************
   *********** PRIVATE *******************
   **************************************/
+  /**
+   * @private
+   */
   function isObjectOutsideViewport(object, viewportArea, hasParent = true, scale = 1) {
     var isIt, globalCoords;
 
@@ -172,6 +174,9 @@ function setupMapMovement () {
 
     return isIt;
   }
+  /**
+   * @private
+   */
   function getViewportsRightSideCoordinates(viewportArea) {
     const offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET * 2 );
 
@@ -182,6 +187,9 @@ function setupMapMovement () {
       height: Math.round( viewportArea.height + offsetSize )
     };
   }
+  /**
+   * @private
+   */
   function applyScaleToViewport(viewportArea, scale) {
     return {
       x: Math.round( viewportArea.x / scale ),
@@ -196,6 +204,9 @@ function setupMapMovement () {
 /***********************
 ******* PRIVATE ********
 ***********************/
+/**
+ * @private
+ */
 function testRectangleIntersect(a, b) {
   return (a.x <= b.x + b.width &&
           b.x <= a.x + a.width &&

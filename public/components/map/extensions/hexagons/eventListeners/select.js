@@ -23,7 +23,7 @@ export { _setupHexagonClick as setupHexagonClick };
 /**
  * Curries the detection of clicking on the map and selecting the correct hexagon area.
  * @param  {Map} map      The currently use Map instance
- * @return {[type]}       -
+ * @return {Boolean}      True
  */
 function _setupHexagonClick(map) {
   var eventlisteners, ui;

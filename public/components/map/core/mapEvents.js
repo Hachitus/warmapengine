@@ -1,6 +1,10 @@
 'use strict';
 
 /**
+ * @module Map
+ */
+
+/**
  * This module handles map events. Like informing map movement, object selection and other changes.
  *
  * Events atm:
@@ -23,6 +27,12 @@ export const mapEvents = setupMapEvents();
 /***********************
 ******** PUBLIC ********
 ***********************/
+/**
+ * [mapEvents description]
+ *
+ * @class mapEvents
+ * @return {Object}     subsribe and publish
+ */
 function setupMapEvents () {
   return {
     subscribe,

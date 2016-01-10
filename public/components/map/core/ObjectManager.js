@@ -1,6 +1,20 @@
 'use strict';
 
 /**
+ * @typedef {Object}              AreaSize
+ * @property {Integer} x          X coordinate
+ * @property {Integer} y          Y coordinate
+ * @property {Integer} Width      Width
+ * @property {Integer} Height     Height
+ *
+ * @typedef {Object}             ObjectSize
+ * @property {Integer} width     Width
+ * @property {Integer} height    Height
+ *
+ * {width: Integer, height: Integer}
+ */
+
+/**
  * This handles the selction of areas and objects in the map. Currently is uses subcontainers or quadtree to do the selection.
  *
  * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn't be the issue.
@@ -35,7 +49,7 @@ export class ObjectManager {
    * @param {string} type                                         type of the object / layer that we want to retrieve
    * @param {Object} options                                      optional options
    * @param {Object[]} options.subcontainers                      The subcontainers we match against
-   * @param {{ width: Integer, height: Integer }} options.size    Size of the rectangle area to match against, if we want to match rectangle instead of one point
+   * @param {ObjectSize} options.size                             Size of the rectangle area to match against, if we want to match rectangle instead of one point
    * @return Array of matched objects
    */
   retrieve(allCoords, type, options = { quadtree: false, subcontainers: [], size: { width: 0, height: 0 } }) {
@@ -82,7 +96,7 @@ export class ObjectManager {
    * Add object to hitDetection layer
    *
    * @param {string} type                                                 type of the object / layer that we want to add
-   * @param {x:Number, y:Number, width:Number, height:Number} hitArea     area that is hitTested
+   * @param {AreaSize} hitArea                                            area that is hitTested
    * @param {Object} obj                                                  object that we want to store. If hitTest succeeds this object is returned.
    */
   addObject(type, hitArea, obj) {
@@ -104,9 +118,9 @@ export class ObjectManager {
    * Add hitDetection layer. Basically you create layers for different object types, like for example one for the
    * terrain, one for the units and one for the cities. The quadtree does not really require bounds, so we omit them.
    *
-   * @param {string} type                                   Type of the layer that we want to add
-   * @param {{width: Integer, height: Integer}} bounds      Bounds for the quadtree layer
-   * @param {{objects: Number, levels: Number}} extra       quadtree-settings: maximum objects before we split and maximum levels of nested layers
+   * @param {string} type             Type of the layer that we want to add
+   * @param {ObjectSize} bounds       Bounds for the quadtree layer
+   * @param {Object} extra            {objects: Number, levels: Number}. quadtree-settings: maximum objects before we split and maximum levels of nested layers
    */
   addLayer(type, bounds, extra = {}) {
     this.quadtrees[type] = new Quadtree(bounds, {

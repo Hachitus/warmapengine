@@ -2,6 +2,7 @@
 
 /**
  * @module Map
+ * @submodule core
  */
 
 /**
@@ -26,6 +27,9 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * The base class of all sprite objects
    *
+   * @class Object_sprite
+   * @memberOf Map.core
+   * @constructor
    * @extends PIXI.Sprite
    * @param {PIXI.Point} coords                         the coordinate where the object is located at, relative to it's parent
    * @param {Object} data                               objects data, that will be used in the game. It will not actually be mainly used in graphical but rather things  like unit-data and city-data presentations etc.
@@ -186,6 +190,9 @@ export class Object_sprite_terrain extends Object_sprite {
    * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
    * inherited, depending on the map type. For example you might want to add some click area for these
    *
+   * @class
+   * @memberOf Map.core
+   * @constructor
    * @extends Object_sprite
    * @param {Coordinates} coords        format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
    * @param {object} data               This units custom data
@@ -205,6 +212,9 @@ export class Object_sprite_unit extends Object_sprite {
   /**
    * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
    *
+   * @class
+   * @memberOf Map.core
+   * @constructor
    * @extends Object_sprite
    * @requires core.graphics
    * @param {Coordinates} coords          Coordinates for the object relative to it's parent

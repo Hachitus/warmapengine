@@ -8,6 +8,12 @@ export var arrays = setupArrays();
 /***********************
 ******** PUBLIC ********
 ***********************/
+/**
+ * Array manipulation
+ *
+ * @class arrays
+ * @memberOf Utilities
+ */
 function setupArrays() {
   return {
     flatten2Levels

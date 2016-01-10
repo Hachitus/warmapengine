@@ -2,6 +2,7 @@
 
 /**
  * @module Map
+ * @submodule core
  */
 
 /***********************
@@ -23,7 +24,9 @@ export { UI as UI };
  *
  * @todo Not implemented fully yet and probably need refactoring
  *
- * @class
+ * @class UI
+ * @memberOf Map.core
+ * @constructor
  * @param {Object} UITheme        Module that will be used for the UI theme
  * @param {Map} givenMap          Map instance that is used
  * @return {Object}               UI module

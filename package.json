@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "bower": "^1.7.2",
+    "ink-docstrap": "^1.1.0",
     "jscs": "^2.3.0",
     "jshint": "^2.8.0",
     "jspm": "^0.16.19",

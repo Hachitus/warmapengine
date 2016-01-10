@@ -12,6 +12,13 @@ export var polyfills = setupPolyfills();
 /***********************
 ******** PUBLIC ********
 ***********************/
+/**
+ * [setupPolyfills description]
+ *
+ * @class polyfills
+ * @memberOf Utilities
+ * @return {Object} arrayFind, objectAssign
+ */
 function setupPolyfills() {
   return {
     arrayFind,

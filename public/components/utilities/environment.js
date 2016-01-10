@@ -8,6 +8,13 @@ export var environmentDetection = setupEnvironmentDetection();
 /***********************
 ******** PUBLIC ********
 ***********************/
+/**
+ * [setupEnvironmentDetection description]
+ *
+ * @class environmentDetections
+ * @memberOf Utilities
+ * @return {Object} isMobile, isMobile_detectUserAgent
+ */
 function setupEnvironmentDetection() {
   return {
     isMobile,

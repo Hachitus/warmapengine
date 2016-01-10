@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * @module Map
+ * @submodule core
+ */
+
 /***********************
 ******** IMPORT ********
 ***********************/
@@ -17,6 +22,9 @@ export class UI_templateBase {
   /**
    * The template base class for UI templates
    *
+   * @class UI_templateBase
+   * @memberOf Map.core
+   * @constructor
    * @param  {*} CSSClasses
    */
   constructor(CSSClasses) {

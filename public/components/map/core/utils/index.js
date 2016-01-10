@@ -1,9 +1,5 @@
 'use strict';
 
-/**
- * @namespace utils
- */
-
 /* Bundle utils in utils-parent and export them */
 import { dataManipulation } from './dataManipulation';
 import { Quadtree } from './Quadtree';

@@ -1,10 +1,11 @@
 /* global System, Q */
 
+'use strict';
+
 /**
  * @module Map
+ * @submodule core
  */
-
-'use strict';
 
 /**
  * @typedef {Object}              Coordinates
@@ -40,17 +41,18 @@ var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, Parent
 ***********************/
 export class Map {
   /**
-   *
    * Main class for the whole engine, which initializes the whole structure and plugins
    *
    * You use the class by instantiating it with new and then initialize with init-method:
-   * var map = new Map(canvasElement, mapOptions );
-   * promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
+   *     var map = new Map(canvasElement, mapOptions );
+   *     promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
    *
    * Plugins can be added with activatePlugins-method by prodiving init(map) method in the plugin. Plugins are always
    * functions, not objects that are instantiated. Plugins are supposed to extend the map object or anything in it via
    * it's public methods.
    *
+   * @class Map
+   * @constructor
    * @requires PIXI.JS framework in global namespace
    * @requires Canvas (webGL support recommended) HTML5-element supported.
    * @requires Hammer for touch events

@@ -2,6 +2,7 @@
 
 /**
  * @module Map
+ * @submodule core
  */
 
 /**
@@ -31,6 +32,7 @@ export const mapEvents = setupMapEvents();
  * [mapEvents description]
  *
  * @class mapEvents
+ * @memberOf Map.core
  * @return {Object}     subsribe and publish
  */
 function setupMapEvents () {

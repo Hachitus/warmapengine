@@ -1,6 +1,11 @@
 'use strict';
 
 /**
+ * @module Map
+ * @submodule core
+ */
+
+/**
  * @typedef {Object}              AreaSize
  * @property {Integer} x          X coordinate
  * @property {Integer} y          Y coordinate
@@ -15,8 +20,6 @@
  */
 
 /**
- * This handles the selction of areas and objects in the map. Currently is uses subcontainers or quadtree to do the selection.
- *
  * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn't be the issue.
  */
 
@@ -29,13 +32,13 @@ import { arrays } from '/components/utilities/general';
 /***********************
 ********* API **********
 ***********************/
-/**
- * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or
- * when objects or areas collide with each other.
- * It uses quadtree for preliminary filtering of matching objects and then the framework specific collision detection
- */
 export class ObjectManager {
   /**
+   * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or when objects or areas collide with each other. It uses quadtree for preliminary filtering of matching objects and then the framework specific collision detection
+   *
+   * @class ObjectManager
+   * @memberOf Map.core
+   * @constructor
    * @param {object} hitDetector Object or function that handles hit detection. This can be omitted in many cases
    */
   constructor(hitDetector) {

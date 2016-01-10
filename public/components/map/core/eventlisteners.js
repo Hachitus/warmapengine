@@ -4,6 +4,7 @@
 
 /**
  * @module Map
+ * @submodule core
  */
 
 /***********************
@@ -28,7 +29,8 @@ export { eventListenerModule as eventListeners };
  *   zoom: function() {}
  * }
  *
- * @class mapEvents
+ * @class eventListeners
+ * @memberOf Map.core
  * @requires Hammer.js (for touch events)
  * @requires Hamster.js (for good cross-browser mousewheel events)
  * @param {Object} canvasElement                The canvas element we listen events from. Will try to search the first canvas in the DOM, if none is provided

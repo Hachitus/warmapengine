@@ -2,6 +2,7 @@
 
 /**
  * @module Map
+ * @submodule core
  */
 
 /***********************
@@ -13,7 +14,7 @@ export const environmentDetection = setupEnvironmentDetection();
 export const general = setupGeneral();
 /**
  * @class mouse
- * @memberof utils
+ * @memberof Map.core.utils
  * @return {Object}      isRightClick, eventData.getPointerCoords, eventData.getHAMMERPointerCoords, eventMouseCoords
  */
 function setupMouseUtils() {
@@ -81,7 +82,7 @@ function setupMouseUtils() {
 }
 /**
  * @class resize
- * @memberof utils
+ * @memberof Map.core.utils
  * @return {Object}      toggleFullScreen, setToFullSize, getWindowSize
  */
 function setupResizeUtils() {
@@ -154,7 +155,7 @@ function setupResizeUtils() {
 }
 /**
  * @class environment
- * @memberof utils
+ * @memberof Map.core.utils
  * @return {Object}      getPixelRatio
  */
 function setupEnvironmentDetection() {
@@ -183,7 +184,7 @@ function setupEnvironmentDetection() {
 }
 /**
  * @class general
- * @memberof utils
+ * @memberof Map.core.utils
  * @return {Object}      pixelEpsilonEquality
  */
 function setupGeneral() {

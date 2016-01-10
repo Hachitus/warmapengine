@@ -2,14 +2,12 @@
 
 /**
  * @module Map
+ * @submodule core
  */
 
-/**
- * The core plugin for the 2D map engine. Handles zooming for the map. Core plugins can always be overwrote if needed.
- * Zooming happens when the user scrolls the mousewheel or in mobile, pinches the screen
- */
-
-/** ===== OWN imports ===== */
+/***********************
+******** IMPORT ********
+***********************/
 import { eventListeners as eventListenerMod, utils, mapEvents } from '/components/bundles/coreBundle';
 
 /***********************
@@ -22,9 +20,10 @@ export var map_zoom = setupMap_zoom();
 ******** PUBLIC ********
 ***********************/
 /**
- * [setupMap_zoom description]
+ * Core plugin for the engine. Handles zooming for the map. Core plugins can always be overwrote if needed. Zooming happens when the user scrolls the mousewheel or in mobile, pinches the screen.
  *
  * @class mapZoom
+ * @memberOf Map.core
  * @return {Object}      init
  */
 function setupMap_zoom() {

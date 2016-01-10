@@ -8,7 +8,7 @@
  * @requires Some polyfills are needed and added for IE11 ( http://babeljs.io/docs/usage/polyfill/ ). These are found
  * in utils
  * @requires PIXI in global space
- * */
+ **/
 
 /***********************
 ******* IMPORTS ********
@@ -36,6 +36,8 @@ export { createMap as createMap };
 /**
  * This constructs a whole horizontally aligned hexagonal map
  *
+ * @class horizontalHexaFactory
+ * @memberOf Map.factories
  * @param {Object} canvasContainerElement       HTML Element. Container which will hold the generated canvas element
  * @param {Object} datas                        Object with mapDatas to construct the map structure
  * @param {Object} datas.map                    Holds all the stage, layer and object data needed to construct a full map

@@ -2,11 +2,7 @@
 
 /**
  * @module Map
- */
-
-/*
- * This module will hold the most common graphical effects used in the map. It is still very stub as the development
- * hasn't proceeded to this stage yet.
+ * @submodule core
  */
 
 /***********************
@@ -18,10 +14,11 @@ export const effects = setupEffects();
 ******** PUBLIC ********
 ***********************/
 /**
- * [setupMap_drag description]
+ * This module will hold the most common graphical effects used in the map. It is still very stub as the development
+ * hasn't proceeded to this stage yet.
  *
  * @class effects
- * @memberof utils
+ * @memberof Map.core.utils
  * @return {Object}      init, _startDragListener
  */
 function setupEffects() {

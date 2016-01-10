@@ -1,15 +1,6 @@
 'use strict';
 
-/**
- * @module Map
- */
 
-/**
- * The core plugin for the 2D map engine. Handles moving the map by dragging the map with mouse or touch event.
- * Core plugins can always be overwrote if needed.
- *
- * @require Mobile part requires Hammer.js
- * */
 
 /***********************
 ******** IMPORT ********
@@ -26,9 +17,11 @@ export const map_drag = setupMap_drag();
 ******** PUBLIC ********
 ***********************/
 /**
- * [setupMap_drag description]
+ * Core plugin for the engine. Handles moving the map by dragging the map with mouse or touch event. Core plugins can always be overwrote if needed.
  *
  * @class mapDrag
+ * @memberOf Map.core
+ * @requires Mobile part requires Hammer.js
  * @return {Object}      init, _startDragListener
  */
 function setupMap_drag() {

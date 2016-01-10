@@ -2,10 +2,7 @@
 
 /**
  * @module Map
- */
-
-/**
- * These are utils for manipulating the data, that our classes and functions use.
+ * @submodule core
  */
 
 /***********************
@@ -17,10 +14,9 @@ export const dataManipulation = setupDataManipulation();
 ******** PUBLIC ********
 ***********************/
 /**
- * [setupMap_zoom description]
+ * These are utils for manipulating the data, that our classes and functions use.
  *
  * @class dataManipulation
- * @memberof utils
  * @return {Object}      mapObjectsToArray, flattenArrayBy1Level
  */
 function setupDataManipulation() {
@@ -49,6 +45,7 @@ function setupDataManipulation() {
    *   }]
    * ]
    *
+   * @memberOf dataManipulation
    * @param  {Object} objects       Object that holds objects
    * @return {Array}                Returns the transformed array
    */

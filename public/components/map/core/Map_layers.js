@@ -2,6 +2,7 @@
 
 /**
  * @module Map
+ * @submodule core
  */
 
 /**
@@ -26,6 +27,8 @@ export class Map_layer extends PIXI.Container {
   /**
    * Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.
    *
+   * @class Map_layer
+   * @constructor
    * @param {Object} options                            optional options
    * @param {String} options.name                       Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too
    * @param {Coordinates} options.coord                 coord starting coords of layer. Relative to parent map layer.
@@ -193,6 +196,9 @@ export class Map_parentLayer extends Map_layer {
   /**
    * Layer designed to hold subcontainers. But can handle objects too.
    *
+   * @class
+   * @constructor
+   * @memberof Map.core
    * @param {Object} options
    * @param {String} options.name                name layer property name, used for identifiying the layer, usefull in debugging, but used also otherwise too
    * @param {Coordinates} options.coord          starting coords of layer. Relative to parent map layer.
@@ -252,6 +258,9 @@ class Map_subContainer extends PIXI.ParticleContainer {
    * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
    *
    * @private
+   * @class
+   * @constructor
+   * @memberof Map.core
    * @param {ObjectSize} size          Size of the subcontainer
    */
   constructor(size) {

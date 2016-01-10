@@ -9,10 +9,7 @@ export var environmentDetection = setupEnvironmentDetection();
 --------- PUBLIC --------
 -----------------------*/
 /**
- * [setupEnvironmentDetection description]
- *
  * @class utilities.environmentDetections
- * @memberOf Utilities
  * @return {Object}                         Holds methods in this class
  */
 function setupEnvironmentDetection() {

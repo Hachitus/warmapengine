@@ -1,15 +1,5 @@
 'use strict';
 
-/**
- * @typedef {Object}              Coordinates
- * @property {Integer} x          X coordinate
- * @property {Integer} y          Y coordinate
- *
- * @typedef {Object}             ObjectSize
- * @property {Integer} width     Width
- * @property {Integer} height    Height
- */
-
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
@@ -23,7 +13,6 @@ export class Object_sprite extends PIXI.Sprite {
    * The base class of all sprite objects
    *
    * @class core.Object_sprite
-   * @memberOf Map.core
    * @constructor
    * @extends PIXI.Sprite
    * @param {PIXI.Point} coords                         the coordinate where the object is located at, relative to it's parent
@@ -150,10 +139,11 @@ export class Object_sprite extends PIXI.Sprite {
    * Coordinate conversion: localToLocal
    *
    * @method localToLocal
-   * @param  {Number} x                     X coordinate
-   * @param  {Number} y                     Y coordinate
-   * @param  {Object} target                PIXI.DisplayObject. The DisplayObject where we should target the coordinates for
-   * @return {Coordinates}                  PIXI.Point. Coordinates.
+   * @param  {Number} x                  X coordinate
+   * @param  {Number} y                  Y coordinate
+   * @param  {Object} target             PIXI.DisplayObject. The DisplayObject where we should target the coordinates for
+   * @return  {{PIXI.Point}} point       PIXI.Point. Coordinates.
+   * @return {Coordinates}
    */
   localToLocal(x, y, target) {
     var globalCoords = this.toGlobal( { x, y } );
@@ -191,7 +181,6 @@ export class Object_sprite_terrain extends Object_sprite {
    * inherited, depending on the map type. For example you might want to add some click area for these
    *
    * @class
-   * @memberOf Map.core
    * @constructor
    * @extends Object_sprite
    * @param {Coordinates} coords        format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
@@ -213,13 +202,15 @@ export class Object_sprite_unit extends Object_sprite {
    * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
    *
    * @class
-   * @memberOf Map.core
    * @constructor
    * @extends Object_sprite
    * @requires core.graphics
-   * @param {Coordinates} coords          Coordinates for the object relative to it's parent
+   * @param {Object} coords               Coordinates for the object relative to it's parent
+   * @param {Integer} coords.x            X coordinate
+   * @param {Integer} coords.y            Y coordinate
    * @param {object} data                 This units data
    * @param {object} options              other specific options for constructing this unit, like options.throwShadow
+   * @param {object} options.throwShadow  Can we throw a shadow under this object
    */
   constructor(coords, data, options) {
     super(coords, data, options);

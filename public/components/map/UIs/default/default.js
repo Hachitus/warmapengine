@@ -2,15 +2,6 @@
 
 'use strict';
 
-/** The simplest default UI implementation. Implement UI functionalities for:
- * showSelections
- * highlightSelectedObject
- *
- * @require Handlebars
- * @require jQuery
- * @todo  should take jQuery away from this, as soon as we refactor the animations and graphics for selections
- * */
-
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
@@ -33,6 +24,18 @@ var createHighlight;
 --------- API ---------
 ----------------------*/
 export class UI_default extends UI_templateBase {
+  /**
+   * The simplest default UI implementation. Implemented UI functionalities for: showSelections, highlightSelectedObject
+   *
+   * @class UI_default
+   * @constructor
+   * @requires Handlebars
+   * @requires jQuery
+   * @todo  should take jQuery away from this, as soon as we refactor the animations and graphics for selections
+   * @param  {HTMLElement} modal
+   * @param  {Map} map
+   * @param  {Object} options
+   */
   constructor(modal, map, options = { styles: "#F0F0F0" }) {
     super(cssClasses);
 
@@ -45,6 +48,7 @@ export class UI_default extends UI_templateBase {
     this.styles = options.styles;
   }
   /**
+   * @method getTemplates
    * Required by the map/core/UI.js API
    */
   getTemplates() {
@@ -53,6 +57,7 @@ export class UI_default extends UI_templateBase {
   /**
    * Required by the map/core/UI.js API
    *
+   * @method showSelections
    * @param  {Object} objects     Objects that have been selected. @todo: Should add object format to this documentation
    */
   showSelections(objects) {
@@ -108,6 +113,7 @@ export class UI_default extends UI_templateBase {
   /**
    * Required by the map/core/UI.js API
    *
+   * @method highlightSelectedObject
    * @param  {Object} object       Object that has been selected. @todo: Should add object format to this documentation
    */
   highlightSelectedObject(object) {
@@ -123,7 +129,13 @@ export class UI_default extends UI_templateBase {
       return highlightableObject;
     }
   }
+  /**
+   * @method showUnitMovement
+   */
   showUnitMovement() {}
+  /**
+   * @method init
+   */
   init() {}
 
 }
@@ -131,6 +143,13 @@ export class UI_default extends UI_templateBase {
 /*----------------------
 ------- PRIVATE --------
 ----------------------*/
+/**
+ * @private
+ * @static
+ * @method _get$Element
+ * @param  {[type]} which [description]
+ * @return {[type]}       [description]
+ */
 function _get$Element(which) {
   /* Set the jQuery element to collection only once */
   if (!$elements[which]) {
@@ -140,6 +159,14 @@ function _get$Element(which) {
 
   return $elements[which];
 }
+/**
+ * @private
+ * @static
+ * @method _highlightSelectedObject
+ * @param  {Object} object
+ * @param  {Map_layer} movableLayer
+ * @param  {PIXI.Renderer} renderer
+ */
 function _highlightSelectedObject(object, movableLayer, renderer) {
   var clonedObject;
 
@@ -156,6 +183,12 @@ function _highlightSelectedObject(object, movableLayer, renderer) {
 
   return clonedObject;
 }
+/**
+ * @private
+ * @static
+ * @method _filterObjectsForHighlighting
+ * @param  {Array} objects
+ */
 function _filterObjectsForHighlighting(objects) {
   var newObjects = objects.filter(obj => {
     return obj.highlightable === true ? true : false;
@@ -164,7 +197,12 @@ function _filterObjectsForHighlighting(objects) {
   return newObjects;
 }
 
-/* @todo This whole damn system and logic needs to be changed and moved elsewhere, stupid stupid stupid atm. */
+/**
+ * @private
+ * @static
+ * @method setupCreateHighlight
+ * @param  {Map} map
+ */
 function setupCreateHighlight(map) {
   return function createHighlight(object, movableLayer, options = { coords: new PIXI.Point(0, 0) }) {
     var radius = 47;

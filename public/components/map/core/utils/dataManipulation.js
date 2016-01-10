@@ -12,7 +12,6 @@ export const dataManipulation = setupDataManipulation();
  * These are utils for manipulating the data, that our classes and functions use.
  *
  * @class core.utils.dataManipulation
- * @memberOf Map.core.utils
  * @return {Object}      mapObjectsToArray, flattenArrayBy1Level
  */
 function setupDataManipulation() {
@@ -42,7 +41,6 @@ function setupDataManipulation() {
    * ]
    *
    * @method mapObjectsToArray
-   * @memberOf dataManipulation
    * @param  {Object} objects       Object that holds objects
    * @return {Array}                Returns the transformed array
    */

@@ -1,15 +1,5 @@
 'use strict';
 
-/**
- * @typedef {Object}              Coordinates
- * @property {Integer} x          X coordinate
- * @property {Integer} y          Y coordinate
- *
- * @typedef {Object}             ObjectSize
- * @property {Integer} width     Width
- * @property {Integer} height    Height
- */
-
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
@@ -25,8 +15,7 @@ export class Quadtree {
    *
    * @class core.utils.Quadtree
    * @constructor
-   * @memberof Map.core.utils
-   * @require Quadtree-js. Though this base library can be changed easily
+   * @requires Quadtree-js. Though this base library can be changed easily
    *
    * @param {Object} options    options for the QuadModule
    * @param {Object} max        How many levels deep
@@ -40,8 +29,13 @@ export class Quadtree {
   /**
    * Add an object to the quadtree.
    *
-   * @param {Coordinates} coords                  Coordinates on the global / canvas element.
-   * @param {ObjectSize} size                     You can use bounds for the object "hit" detection
+   * @method add
+   * @param {Object} coords                       Coordinates on the global / canvas element.
+   * @param {Integer} coords.x                    X coordinate
+   * @param {Integer} coords.y                    Y coordinate
+   * @param {Object} size                         You can use bounds for the object "hit" detection
+   * @param {Integer} size.width                  Width (in pixels)
+   * @param {Integer} size.height                 Height (in pixels)
    * @param {Object} data                         Objects extra custom data. This is optional.
    * @return                                      Quadtree instance
    */
@@ -53,8 +47,13 @@ export class Quadtree {
   /**
    * Remove an object from the quadtree.
    *
-   * @param {Coordinates} coords                  Coordinates on the global / canvas element.
-   * @param {ObjectSize} size                     You can use bounds for the object "hit" detection
+   * @method remove
+   * @param {Object} coords                       Coordinates on the global / canvas element.
+   * @param {Integer} coords.x                    X coordinate
+   * @param {Integer} coords.y                    Y coordinate
+   * @param {Object} size                         You can use bounds for the object "hit" detection
+   * @param {Integer} size.width                  Width (in pixels)
+   * @param {Integer} size.height                 Height (in pixels)
    * @param {Object} data                         Objects extra custom data. This is optional.
    * @param {Boolean} refresh                     Should we refresh the quadtree setting, after removal. Can take some
    * resources to execute. So we want this to be optional.
@@ -66,6 +65,15 @@ export class Quadtree {
     this.quadtree.removeObject(objToRemove);
     refresh && this.quadtree.cleanup();
   }
+  /**
+   * @method retrieve
+   * @param {Object} coords                       Coordinates on the global / canvas element.
+   * @param {Integer} coords.x                    X coordinate
+   * @param {Integer} coords.y                    Y coordinate
+   * @param {Object} size                         You can use bounds for the object "hit" detection
+   * @param {Integer} size.width                  Width (in pixels)
+   * @param {Integer} size.height                 Height (in pixels)
+   */
   retrieve(coords, size = { width: 0, height: 0 } ) {
     const hitDimensions = {
       x: coords.x,
@@ -84,8 +92,13 @@ export class Quadtree {
   /**
    * Move an object on the quadtree
    *
-   * @param {Coordinates} coords                  Coordinates on the global / canvas element.
-   * @param {ObjectSize} size                     You can use bounds for the object "hit" detection
+   * @method move
+   * @param {Object} coords                       Coordinates on the global / canvas element.
+   * @param {Integer} coords.x                    X coordinate
+   * @param {Integer} coords.y                    Y coordinate
+   * @param {Object} size                         You can use bounds for the object "hit" detection
+   * @param {Integer} size.width                  Width (in pixels)
+   * @param {Integer} size.height                 Height (in pixels)
    * @param {Object} data                         Objects extra custom data. This is optional.
    * @param {Boolean} to                          Should we refresh the quadtree setting, after removal. Can take some
    * resources to execute. So we want this to be optional.
@@ -108,6 +121,8 @@ export class Quadtree {
   }
   /**
    * refresh the whole quadtree setting. Can spend some resources.
+   *
+   * @method refreshAll
    */
   refreshAll() {
     this.quadtree.cleanup();
@@ -115,8 +130,13 @@ export class Quadtree {
   /**
    * Find an object by hitDetection from the quadtree setting.
    *
-   * @param {Coordinates} coords                  Coordinates on the global / canvas element.
-   * @param {ObjectSize} size                     You can use bounds for the object "hit" detection
+   * @method findObject
+   * @param {Object} coords                       Coordinates on the global / canvas element.
+   * @param {Integer} coords.x                    X coordinate
+   * @param {Integer} coords.y                    Y coordinate
+   * @param {Object} size                         You can use bounds for the object "hit" detection
+   * @param {Integer} size.width                  Width (in pixels)
+   * @param {Integer} size.height                 Height (in pixels)
    * @param {Object} data                         Objects extra custom data. This is optional.
    * @return {Object}                             Found object
    */
@@ -133,13 +153,17 @@ export class Quadtree {
 ------- PRIVATE --------
 ----------------------*/
 /**
- * [_creteQuadtreeObject description]
- *
- * @param  {Coordinates} coords                 global coordinates on canvas
- * @param  {ObjectSize} size                    You can use bounds for the object
- * if you wish, instead of point / coordinates
- * @param  {Object} data                        Extra data stored for the quadtree object
- * @return {Object}                             Added quadtree object
+ * @private
+ * @static
+ * @method _creteQuadtreeObject
+   * @param {Object} coords             Coordinates on the global / canvas element.
+   * @param {Integer} coords.x          X coordinate
+   * @param {Integer} coords.y          Y coordinate
+ * @param  {Object} size                You can use bounds for the object if you wish, instead of point / coordinates
+ * @param  {Integer} size.width         Width (in pixels)
+ * @param  {Integer} size.height        Height (in pixels)
+ * @param  {Object} data                Extra data stored for the quadtree object
+ * @return {Object}                     Added quadtree object
  */
 function _creteQuadtreeObject(coords, size = {width:0, height:0}, data = undefined) {
   var objToAdd = coords;

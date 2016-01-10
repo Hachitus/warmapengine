@@ -12,7 +12,6 @@ export var arrays = setupArrays();
  * Array manipulation
  *
  * @class utilities.arrays
- * @memberOf Utilities
  */
 function setupArrays() {
   return {

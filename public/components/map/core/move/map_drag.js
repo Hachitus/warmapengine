@@ -18,8 +18,7 @@ export const map_drag = setupMap_drag();
  * Core plugin for the engine. Handles moving the map by dragging the map with mouse or touch event. Core plugins can always be overwrote if needed.
  *
  * @class core.mapDrag
- * @memberOf Map.core
- * @requires Mobile part requires Hammer.js
+ * @requires Hammer.js - Mobile part requires
  * @return {Object}      init, _startDragListener
  */
 function setupMap_drag() {
@@ -60,7 +59,8 @@ function setupMap_drag() {
    * desktop version, since we don't need to calculate the drag with several event listener, one is enough with Hammer
    *
    * @private
-   * @function _startDragListener
+   * @static
+   * @method _startDragListener
    * @param {Map} map           The current instance of Map class
    */
   function _startDragListener( map ) {
@@ -101,7 +101,8 @@ function setupMap_drag() {
    * sets basic settings like preventDefault etc.
    *
    * @private
-   * @function _mapMovement
+   * @static
+   * @method _mapMovement
    * @param  {Event} e                        The event being dealt with
    * @param  {Map} map                        The current instance of Map class
    * @param  {Coordinates} coords             Current pointer coordinates
@@ -134,12 +135,12 @@ function setupMap_drag() {
    * last known mouse coordinates
    *
    * @private
-   * @function _offsetCoords
+   * @static
+   * @method _offsetCoords
    */
   function _offsetCoords() {
     var offsetCoords;
 
-    /****** API ******/
     return {
       setOffset,
       getOffset

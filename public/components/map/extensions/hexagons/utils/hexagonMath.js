@@ -1,24 +1,16 @@
 'use strict';
 
-/**
- * @typedef {Object}              Coordinates
- * @property {Integer} x          X coordinate
- * @property {Integer} y          Y coordinate
- **/
-
 /*-----------------------
 ---------- API ----------
 -----------------------*/
 export default {
   calcShortDiagonal: calcShortDiagonal,
   calcLongDiagonal: calcLongDiagonal,
-  calcSide: calcSide,
   getHexagonPoints: getHexagonPoints,
   hexaHitTest: hexaHitTest
 };
 export { calcShortDiagonal as calcShortDiagonal };
 export { calcLongDiagonal as calcShortDiagonal};
-export { calcSide as calcSide };
 export { getHexagonPoints as getHexagonPoints };
 export { hexaHitTest as hexaHitTest };
 
@@ -36,7 +28,8 @@ export { hexaHitTest as hexaHitTest };
  * - Vertical / Flat hexagons height
  * - Horizontal / pointy hexagons width
  *
- * @function calcLongDiagonal
+ * @method calcLongDiagonal
+ * @static
  * @param {float} value - Usually the radius of the hexagon
  * @param {string} type - If you provide something else than radius, where the calculation is based from
  * @param {integer} precision - How many decimals to round
@@ -57,7 +50,8 @@ function calcShortDiagonal(value, type = "radius", precision = 3) {
  * - Vertical / Flat hexagons width
  * - Horizontal / pointy hexagons height
  *
- * @function calcLongDiagonal
+ * @method calcLongDiagonal
+ * @static
  * @param {float} value					Usually the radius of the hexagon
  * @param {string} type					If you provide something else than radius, where the calculation is based from
  * @param {integer} precision 	How many decimals to round
@@ -71,18 +65,9 @@ function calcLongDiagonal(value, type = "radius", precision = 3) {
 
   return Number( answer.toFixed(precision) );
 }
-/** This is used, but might be considered for scrap, unless we want to calculate side from some other value */
-function calcSide(value, type = "radius", precision = 3) {
-  var answer;
-
-  if (type === "radius") {
-    answer = value;
-  }
-
-  return answer.toFixed(precision);
-}
 /**
- * @function getHexagonPoints
+ * @method getHexagonPoints
+ * @static
  * @param {Float} radius			radius of the hexagon
  * @param {object} options		extra options, like generating horizontal hexagon points and
  * how many decimals to round
@@ -113,13 +98,18 @@ function getHexagonPoints(radius, options = { isFlatTop: false, precision: 3 }) 
 /**
  * Test do the given coordinates hit the hexagon, given by the points container / array
  *
- * @function hexaHitTest
- * @param  {Array} points         Array of PIXI.points
- * @param  {Object} hitCoords     The coordinates to test against
- * @param  {Object} offsetCoords  offsetCoordinates that are added to the hitCoordinates. Separate because these are
- *                                outside the given array.
- * @return {Boolean}              Is the coordinate inside the hexagon or not
+ * @static
+ * @method hexaHitTest
+ * @param  {PIXI.Point[]} points             Array of PIXI.points
+ * @param  {Object} hitCoords         The coordinates to test against
+ * @param  {Integer} hitCoords.x      X coordinate
+ * @param  {Integer} hitCoords.y      Y coordinate
+ * @param  {Object} offsetCoords      offsetCoordinates that are added to the hitCoordinates. Separate because these are outside the given array.
+ * @param  {Integer} offsetCoords.x   X coordinate
+ * @param  {Integer} offsetCoords.y   Y coordinate
+ * @return {Boolean}                  Is the coordinate inside the hexagon or not
  */
+
 function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) {
   var realPolygonPoints;
 
@@ -140,10 +130,14 @@ function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) 
  * credits to: https://github.com/substack/point-in-polygon
  * Tests whether the given point / coordinate is inside the given points. Assuming the points form a polygon
  *
- * @function pointInPolygon
- * @param  {Coordinates} point                The point to test against
- * @param  {Array} vs                         The points of the polygon to test [0] === x-point, [1] === y-point
- * @return {Boolean}                          Is the coordinate inside the hexagon or not
+ * @static
+ * @private
+ * @method pointInPolygon
+ * @param  {Object} point             The coordinates to test against
+ * @param  {Integer} hitCoords.x      X coordinate
+ * @param  {Integer} hitCoords.y      Y coordinate
+ * @param  {Integer[]} vs             The points of the polygon to test [0] === x-point, [1] === y-point
+ * @return {Boolean}                  Is the coordinate inside the hexagon or not
  */
 function pointInPolygon(point, vs) {
   var x = point.x;

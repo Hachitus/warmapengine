@@ -13,7 +13,6 @@ export const effects = setupEffects();
  * hasn't proceeded to this stage yet.
  *
  * @class core.utils.effects
- * @memberof Map.core.utils
  * @return {Object}      init, _startDragListener
  */
 function setupEffects() {
@@ -28,7 +27,8 @@ function setupEffects() {
   ------- PUBLIC ---------
   ----------------------*/
   /**
-   * @param  {Object} options       [description]
+   * @method dropShadow
+   * @param  {Object} options
    */
   function dropShadow(options = { color: "#000000", distance: 5, alpha: 0.5, amgöe: 45, blur: 5 } ) {
       var shadow  = new PIXI.filters.DropShadowFilter();

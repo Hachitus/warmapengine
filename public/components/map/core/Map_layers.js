@@ -1,15 +1,5 @@
 'use strict';
 
-/**
- * @typedef {Object}              Coordinates
- * @property {Integer} x          X coordinate
- * @property {Integer} y          Y coordinate
- *
- * @typedef {Object}             ObjectSize
- * @property {Integer} width     Width
- * @property {Integer} height    Height
- */
-
 /*---------------------
 ------ VARIABLES ------
 ---------------------*/
@@ -23,12 +13,15 @@ export class Map_layer extends PIXI.Container {
    * Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.
    *
    * @class core.Map_layer
-   * @memberOf Map.core
    * @constructor
    * @param {Object} options                            optional options
    * @param {String} options.name                       Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too
-   * @param {Coordinates} options.coord                 coord starting coords of layer. Relative to parent map layer.
-   * @param {Boolean} options.specialLayer              Is this layer special (e.g. UILayer not included in normal operations)
+   * @param  {Object} options.coord                   coord starting coords of layer. Relative to parent map layer.
+   * @param  {Integer} options.coord.x         X coordinate
+   * @param  {Integer} options.coord.y         Y coordinate
+   * @param  {Object} options.specialLayer            Is this layer special (e.g. UILayer not included in normal operations)
+   * @param  {Integer} options.specialLayer.x         X coordinate
+   * @param  {Integer} options.specialLayer.y         Y coordinate
    **/
   constructor(options = {
       name: "",
@@ -76,7 +69,9 @@ export class Map_layer extends PIXI.Container {
    * Move layer based on given amounts
    *
    * @method move
-   * @param {Coordinates} coord        The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move the map 5 pixels horizontally and 0 pixels vertically
+   * @param  {Object} coord            The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move the map 5 pixels horizontally and 0 pixels vertically
+   * @param  {Integer} coord.x         X coordinate
+   * @param  {Integer} coord.y         Y coordinate
    **/
   move(coord) {
     this.x += coord.x;
@@ -203,12 +198,15 @@ export class Map_parentLayer extends Map_layer {
    *
    * @class core.Map_parentLayer
    * @constructor
-   * @memberof Map.core
    * @param {Object} options
-   * @param {String} options.name                name layer property name, used for identifiying the layer, usefull in debugging, but used also otherwise too
-   * @param {Coordinates} options.coord          starting coords of layer. Relative to parent map layer.
-   * @param {ObjectSize} options.subContainers   Subontainer size. If given activated subcontainers, otherwise not.
-   * @param {Boolean} options.specialLayer       Is this special layer or not.
+   * @param {String} options.name                    name layer property name, used for identifiying the layer, usefull in debugging, but used also otherwise too
+   * @param  {Object} options.coord                  starting coords of layer. Relative to parent map layer.
+   * @param  {Integer} options.coord.x               X coordinate
+   * @param  {Integer} options.coord.y               Y coordinate
+   * @param  {Object} options.subContainers          Subontainer size. If given activated subcontainers, otherwise not.
+   * @param  {Integer} options.subContainers.width   width (in pixels)
+   * @param  {Integer} options.subContainers.height  height (in pixels)
+   * @param {Boolean} options.specialLayer           Is this special layer or not.
    *
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
@@ -245,7 +243,9 @@ export class Map_parentLayer extends Map_layer {
   }
   /**
    * @method getSubContainersByCoordinates
-   * @param {Coordinates} coordinates
+   * @param  {Object} coordinates
+   * @param  {Integer} coordinates.x         X coordinate
+   * @param  {Integer} coordinates.y         Y coordinate
    */
   getSubContainersByCoordinates(coordinates) {
     if (!this.hasSubContainers()) {
@@ -279,8 +279,9 @@ class Map_subContainer extends PIXI.ParticleContainer {
    * @private
    * @class core.Map_subContainer
    * @constructor
-   * @memberof Map.core
-   * @param {ObjectSize} size          Size of the subcontainer
+   * @param  {Object} size              Subontainer size. If given activated subcontainers, otherwise not.
+   * @param  {Integer} size.width       width (in pixels)
+   * @param  {Integer} size.height      height (in pixels)
    */
   constructor(size) {
     super();
@@ -332,9 +333,10 @@ class Map_subContainer extends PIXI.ParticleContainer {
  * [setCorrectSubContainer description]
  *
  * @private
- * @function setCorrectSubContainer
- * @param {Object} displayObject [description]
- * @param {Object} parentLayer   [description]
+ * @static
+ * @method setCorrectSubContainer
+ * @param {PIXI.DisplayObject} displayObject
+ * @param {Object} parentLayer
  */
 function setCorrectSubContainer(displayObject, parentLayer) {
   var { subContainersConfig, subContainerList } = parentLayer;
@@ -369,7 +371,8 @@ function setCorrectSubContainer(displayObject, parentLayer) {
  * Get the closest subcontainers of the given area.
  *
  * @private
- * @function getClosestSubcontainers
+ * @static
+ * @method getClosestSubcontainers
  * @param  {Object} layer             Instance of PIXI.Container - The layer being used
  * @param  {Number} xIndex            x / horizontal index.
  * @param  {Number} yIndex            y / vertical index.

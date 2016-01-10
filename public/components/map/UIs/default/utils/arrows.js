@@ -6,7 +6,7 @@ export var drawShapes = (function() {
     arced: drawArcedArrow
   };
 
-  /** =============== Functions for drawing arrows ================ */
+  /* =============== Functions for drawing arrows ================ */
 
   // From the website: http://www.dbp-consulting.com/tutorials/canvas/CanvasArrow.html
   /*

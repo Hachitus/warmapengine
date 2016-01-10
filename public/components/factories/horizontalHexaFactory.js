@@ -1,14 +1,5 @@
 /* global PIXI */
-
 'use strict';
-
-/**
- * Factory where we construct a horizontal hexagon map for test and development purposes
- *
- * @requires Some polyfills are needed and added for IE11 ( http://babeljs.io/docs/usage/polyfill/ ). These are found
- * in utils
- * @requires PIXI in global space
- **/
 
 /*---------------------
 ------- IMPORT --------
@@ -34,11 +25,11 @@ export { createMap as createMap };
 ------- PUBLIC --------
 ----------------------*/
 /**
- * This constructs a whole horizontally aligned hexagonal map
+ * This constructs a whole horizontally aligned hexagonal map. Some polyfills are needed and added for IE11 ( http://babeljs.io/docs/usage/polyfill/ ). These are found in utils
  *
- * @class horizontalHexaFactory
- * @memberOf Map.factories
- * @param {Object} canvasContainerElement       HTML Element. Container which will hold the generated canvas element
+ * @class factories.horizontalHexaFactory
+ * @requires PIXI in global space
+ * @param {HTMLElement} canvasContainerElement  HTML Element. Container which will hold the generated canvas element
  * @param {Object} datas                        Object with mapDatas to construct the map structure
  * @param {Object} datas.map                    Holds all the stage, layer and object data needed to construct a full map
  * @param {Object} datas.game                   More general game data (like turn number, map size etc.)

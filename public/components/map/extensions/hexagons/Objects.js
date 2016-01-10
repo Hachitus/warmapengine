@@ -1,20 +1,5 @@
 'use strict';
 
-/**
- * @typedef {Object}              Coordinates
- * @property {Integer} x          X coordinate
- * @property {Integer} y          Y coordinate
- *
- * @typedef {Object}             ObjectSize
- * @property {Integer} width     Width
- * @property {Integer} height    Height
- */
-
-/** Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
- * inherited, depending on the map type. For example you might want to add some click area for these
- * @class
- */
-
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
@@ -32,11 +17,16 @@ var shape;
 -----------------------*/
 export class Object_terrain extends Object_sprite_terrain {
   /**
+   * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are inherited, depending on the map type. For example you might want to add some click area for these
+   *
    * @class Object_terrains
    * @constructor
-   * @param {Coordinates} coords              Coordinates for the object relative to it's parent
-   * @param {object} data                     This units custom data
-   * @param {Object} options                  options.radius REQUIRED. This is the radius of the game maps hexagon
+   * @param  {Object} coords
+   * @param  {Integer} coords.x         X coordinate
+   * @param  {Integer} coords.y         Y coordinate
+   * @param {object} data               This units custom data
+   * @param {Object} options            options.radius REQUIRED.
+   * @param {Number} options.radius     REQUIRED. This is the radius of the game maps hexagon.
    */
   constructor(coords, data, options) {
     const { radius } = options;
@@ -51,12 +41,16 @@ Object.assign(Object_terrain.prototype, calculateHexa);
 
 export class Object_unit extends Object_sprite_unit {
   /**
+   * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
    *
    * @class Object_unit
    * @constructor
-   * @param {Coordinates} coords                  This units coordinates, relative to it's parent container
-   * @param {object} data                         This units custom data
-   * @param {Object} options                      options.radius REQUIRED. This is the radius of the game maps hexagon
+   * @param {Object} coords            This units coordinates, relative to it's parent container
+   * @param {Integer} coords.x         X coordinate
+   * @param {Integer} coords.y         Y coordinate
+   * @param {object} data               This units custom data
+   * @param {Object} options            options.radius REQUIRED
+   * @param {Object} options.radius     REQUIRED. This is the radius of the game maps hexagon
    */
   constructor(coords, data, options) {
     const { radius } = options;
@@ -73,7 +67,9 @@ export class Object_unit extends Object_sprite_unit {
 -----------------------*/
 /**
  * @private
- * @function calculateHexa
+ * @static
+ * @method calculateHexa
+ * @param {Number} radius       Hexagon radius
  */
 function calculateHexa(radius) {
   if (!radius) {
@@ -82,7 +78,7 @@ function calculateHexa(radius) {
 
   const HEIGHT = Math.round(hexagonMath.calcLongDiagonal(radius));
   const WIDTH = Math.round(hexagonMath.calcShortDiagonal(radius));
-  const SIDE = Math.round(hexagonMath.calcSide(radius));
+  const SIDE = Math.round(radius.toFixed(3));
 
   this.anchor.set(0.5, 0.5);
   this.areaHeight = this.HEIGHT = HEIGHT;
@@ -110,7 +106,9 @@ function calculateHexa(radius) {
 }
 /**
  * @private
- * @function setAndGetShape
+ * @static
+ * @method setAndGetShape
+ * @param {Number} radius       Hexagon radius
  */
 function setAndGetShape(radius) {
   if (!shape) {

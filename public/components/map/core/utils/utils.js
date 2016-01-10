@@ -9,7 +9,6 @@ export const environmentDetection = setupEnvironmentDetection();
 export const general = setupGeneral();
 /**
  * @class core.utils.mouse
- * @memberof Map.core.utils
  * @return {Object}      isRightClick, eventData.getPointerCoords, eventData.getHAMMERPointerCoords, eventMouseCoords
  */
 function setupMouseUtils() {
@@ -93,7 +92,6 @@ function setupMouseUtils() {
 }
 /**
  * @class core.utils.resize
- * @memberof Map.core.utils
  * @return {Object}      toggleFullScreen, setToFullSize, getWindowSize
  */
 function setupResizeUtils() {
@@ -117,7 +115,9 @@ function setupResizeUtils() {
 
     return false;
 
-    /*********** PRIVATE ************/
+    /*-------------------------
+    --------- PRIVATE ---------
+    -------------------------*/
     /* global ActiveXObject */
     function cancelFullScreen( el ) {
       var requestMethod = el.cancelFullScreen ||
@@ -151,7 +151,7 @@ function setupResizeUtils() {
    * Sets canvas size to maximum width and height on the browser, not using fullscreen
    *
    * @method setToFullSize
-   * @param {Object} context        DOMElement Canvas context
+   * @param {HTMLElement} context        DOMElement Canvas context
    */
   function setToFullSize(context) {
     return function fullSize() {
@@ -165,7 +165,7 @@ function setupResizeUtils() {
    * Get browser windows size
    *
    * @method getWindowSize
-   * @param {Object} context        DOMElement Canvas context
+   * @param {HTMLElement} context        DOMElement Canvas context
    */
   function getWindowSize() {
     return {
@@ -176,7 +176,6 @@ function setupResizeUtils() {
 }
 /**
  * @class core.utils.environment
- * @memberof Map.core.utils
  * @return {Object}      getPixelRatio
  */
 function setupEnvironmentDetection() {
@@ -188,8 +187,8 @@ function setupEnvironmentDetection() {
 
   /**
    * @method getPixelRatio
-   * @require Canvas element in the DOM. This needs to be found
-   * @param  {Object} canvasElement       HTML canvas element
+   * @requires Canvas element in the DOM. This needs to be found
+   * @param  {HTMLElement} canvasElement       HTML canvas element
    * @return {Number}
    */
   function getPixelRatio(canvasElement) {
@@ -204,7 +203,6 @@ function setupEnvironmentDetection() {
 }
 /**
  * @class core.utils.general
- * @memberof Map.core.utils
  * @return {Object}      pixelEpsilonEquality
  */
 function setupGeneral() {

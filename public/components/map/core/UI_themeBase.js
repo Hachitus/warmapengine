@@ -18,7 +18,6 @@ export class UI_templateBase {
    * The template base class for UI templates
    *
    * @class core.UI_templateBase
-   * @memberOf Map.core
    * @constructor
    * @param  {*} CSSClasses
    */
@@ -32,7 +31,7 @@ export class UI_templateBase {
    * Get the stylesheet element. Where are the defined CSS is
    *
    * @method getStyleSheetElement
-   * @return {Object}       HTML Element
+   * @return {HTMLElement}
    */
   getStyleSheetElement() {
     return styleSheetElement;
@@ -66,11 +65,11 @@ export class UI_templateBase {
   /**
    * @method showModal
    *
-   * @param {Element} modalElem
+   * @param {HTMLElement} modalElem
    * @param {Object} cssClasses
+   * @todo make sure / check, that modalElem.classList.add gets added only once
    */
   showModal(modalElem, cssClasses) {
-    /** @todo make sure / check, that this gets added only once */
     modalElem.classList.add(cssClasses.select);
     /* Would be HTML 5.1 standard, but that might be a long way
       this.modal.show();*/

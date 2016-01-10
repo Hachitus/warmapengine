@@ -2,22 +2,6 @@
 
 'use strict';
 
-/**
- * @typedef {Object}              AreaSize
- * @property {Integer} x          X coordinate
- * @property {Integer} y          Y coordinate
- * @property {Integer} Width      Width
- * @property {Integer} Height     Height
- *
- * @typedef {Object}              totalViewportArea
- * @property {Integer} x          X coordinate
- * @property {Integer} y          Y coordinate
- * @property {Integer} x2         X coordinate of the right side edge of rectangle
- * @property {Integer} y2         Y coordinate of the right side edge of rectangle
- * @property {Integer} Width      Width
- * @property {Integer} Height     Height
- **/
-
 /* object.assign polyfill for IE11 */
 if (typeof Object.assign != 'function') {
   (function () {
@@ -51,13 +35,10 @@ var viewportArea, scale, methodType, smallerViewportArea;
  *
  * @private
  * @function anonymous
- * @param  {Number} e.data[0]                             This defines what we want to generate. Now there is only METHOD_ALL
- * @param  {AreaSize}                                     Current viewport area with global coordinates
- * @param  {Number}                                       Amount of scale / zoom on the map
- * @return {Array}                                        Array consists of normal calculated viewport and smaller scaled viewport. The properties for both are:
- * {
- *   x: Number, y: Number, x2: Number, y2: Number, width: Number, height: Number
- * }
+ * @param  {Number} e.data[0]               This defines what we want to generate. Now there is only METHOD_ALL
+ * @param  {AreaSize}                       Current viewport area with global coordinates
+ * @param  {Number}                         Amount of scale / zoom on the map
+ * @return {totalViewportArea[]}            Array consists of normal calculated viewport and smaller scaled viewport.
  */
 self.addEventListener("message", function (e) {
   var scaledViewport, smallerScaledViewportArea;
@@ -84,6 +65,9 @@ self.addEventListener("message", function (e) {
 /**
  * forms the total viewport parameters based on the given ones.
  *
+ * @private
+ * @static
+ * @method getViewportCoordinates
  * @param  {AreaSize} viewportArea          Given viewport area
  * @param  {Number} offsetQuantifier        How big offset we match against
  * @return {totalViewportArea}              The total viewportArea
@@ -101,6 +85,14 @@ function getViewportCoordinates(viewportArea, offsetQuantifier) {
     height: Math.round( viewportArea.height + offsetSize * 2 * offsetQuantifier )
   };
 }
+/**
+ * @private
+ * @static
+ * @method applyScaleToViewport
+ * @param  {AreaSize} viewportArea
+ * @param  {Number} scale             Map scale atm.
+ * @return {totalViewportArea}        The total viewportArea
+ */
 function applyScaleToViewport(viewportArea, scale) {
   return {
     x: Math.round( viewportArea.x / scale ),

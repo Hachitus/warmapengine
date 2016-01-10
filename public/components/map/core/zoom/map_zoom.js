@@ -18,7 +18,6 @@ export var map_zoom = setupMap_zoom();
  * Core plugin for the engine. Handles zooming for the map. Core plugins can always be overwrote if needed. Zooming happens when the user scrolls the mousewheel or in mobile, pinches the screen.
  *
  * @class core.mapZoom
- * @memberOf Map.core
  * @return {Object}      init
  */
 function setupMap_zoom() {
@@ -255,7 +254,8 @@ function setupMap_zoom() {
    * _isOverZoomLimit
    *
    * @private
-   * @function _isOverZoomLimit
+   * @static
+   * @method _isOverZoomLimit
    **/
   function _isOverZoomLimit(amount, isZoomIn) {
     if ( (isZoomIn && amount > zoomLimit.closer ) || (!isZoomIn && amount < zoomLimit.farther) ) {
@@ -266,7 +266,8 @@ function setupMap_zoom() {
   }
   /**
    * @private
-   * @function _calculateCenterMoveCoordinates
+   * @static
+   * @method _calculateCenterMoveCoordinates
    **/
   function _calculateCenterMoveCoordinates(scale, isZoomIn) {
     var windowSize = utils.resize.getWindowSize();
@@ -283,7 +284,8 @@ function setupMap_zoom() {
   }
   /**
    * @private
-   * @function _zoom
+   * @static
+   * @method _zoom
    **/
   function _zoom(map, presentScale, amount, isZoomIn) {
     var newScale;

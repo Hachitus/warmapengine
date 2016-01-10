@@ -1,8 +1,4 @@
 /* global PIXI, Q */
-
-/**
- * @todo should you use PIXI here or just https://github.com/englercj/resource-loader straight?
- */
 "use strict";
 
 /*-----------------------
@@ -19,6 +15,7 @@ export class Preload {
    *
    * @class Preload
    * @constructor
+   * @todo should you use PIXI here or just https://github.com/englercj/resource-loader straight?
    */
   constructor (baseUrl) {
     this.preloaderClass = new PIXI.loaders.Loader();

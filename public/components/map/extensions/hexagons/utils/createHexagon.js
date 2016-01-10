@@ -15,10 +15,17 @@ export { createVisibleHexagon as createVisibleHexagon };
 --------- PUBLIC --------
 -----------------------*/
 /**
+ * This manages some utility functionalities for creating hexagons
+ *
+ * @class createHexagons
+ */
+/**
  * Credits belong to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js
  * Creates a hex shaped polygon that is used for the hex's hit area.
  *
- * @function createHexagon
+ * @private
+ * @static
+ * @method createHexagon
  * @param {Number} radius       Radius of the hexagon
  * @param {Object} options      Options, such as: isFlatTop (Boolean), is the heaxgon flat-topped
  * @return {PIXI.Polygon}       Hexagon shaped PIXI.Polygon object. That houses the hexagons corner points.
@@ -31,7 +38,9 @@ function createHexagon(radius, options = { isFlatTop: false }) {
   return new PIXI.Polygon(points);
 }
 /**
- * @function createVisibleHexagon
+ * @private
+ * @static
+ * @method createVisibleHexagon
  * @param {Number} radius       Radius of the hexagon
  * @param {Object} options      Options, such as:
  *                              color: The fill color of the hexagon
@@ -56,7 +65,8 @@ function createVisibleHexagon(radius, options = { color: "#000000", isFlatTop: f
  * Converts Array of x- and y-coordinates to new PIXI.Point coordinates
  *
  * @private
- * @function coordsToPixiPoints
+ * @static
+ * @method coordsToPixiPoints
  * @param  {Number} radius        Hexagons radius
  * @return {Array}                Array of PIXI.Point coordinates
  */

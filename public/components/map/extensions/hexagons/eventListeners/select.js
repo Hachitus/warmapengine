@@ -1,11 +1,5 @@
 'use strict';
 
-/**
-
- *
- * @require Hammer.js. Some events are done with Hammer.js, so we need it to handle those events correctly
- */
-
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
@@ -24,6 +18,7 @@ export { _setupHexagonClick as setupHexagonClick };
  * etc. are in object_select_hexagon
  *
  * @class setupHexagonClick
+ * @requires Hammer.js. Some events are done with Hammer.js, so we need it to handle those events correctly
  * @param  {Map} map      The currently use Map instance
  * @return {Boolean}      True
  */

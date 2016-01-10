@@ -21,7 +21,6 @@ export const mapEvents = setupMapEvents();
  * - mapResize
  *
  * @class core.mapEvents
- * @memberOf Map.core
  * @return {Object}     subsribe and publish
  * @todo I want the pubsub module to go the ES6 way, not the only global exception!
  */

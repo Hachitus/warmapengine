@@ -1,19 +1,5 @@
 'use strict';
 
-/**
- * @typedef {Object}              AreaSize
- * @property {Integer} x          X coordinate
- * @property {Integer} y          Y coordinate
- * @property {Integer} Width      Width
- * @property {Integer} Height     Height
- *
- * @typedef {Object}             ObjectSize
- * @property {Integer} width     Width
- * @property {Integer} height    Height
- *
- * {width: Integer, height: Integer}
- */
-
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
@@ -28,7 +14,6 @@ export class ObjectManager {
    * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or when objects or areas collide with each other. It uses quadtree for preliminary filtering of matching objects and then the framework specific collision detection
    *
    * @class core.ObjectManager
-   * @memberOf Map.core
    * @constructor
    * @param {object} hitDetector Object or function that handles hit detection. This can be omitted in many cases
    * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn't be the issue.
@@ -42,10 +27,12 @@ export class ObjectManager {
    *
    * @method retrieve
    * @param {{ globalCoords: { x:Number, y:Number }, localCoords: { x:Number, y:Number } }} allCoords         the coordinates which we want to hitTest
-   * @param {string} type                                         type of the object / layer that we want to retrieve
-   * @param {Object} options                                      optional options
-   * @param {Object[]} options.subcontainers                      The subcontainers we match against
-   * @param {ObjectSize} options.size                             Size of the rectangle area to match against, if we want to match rectangle instead of one point
+   * @param {string} type                                     type of the object / layer that we want to retrieve
+   * @param {Object} options                                  optional options
+   * @param {Object[]} options.subcontainers                  The subcontainers we match against
+   * @param {Object} options.size                             Size of the rectangle area to match against, if we want to match rectangle instead of one point
+   * @param {Integer} options.size.width
+   * @param {Integer} options.size.height
    * @return Array of matched objects
    */
   retrieve(allCoords, type, options = { quadtree: false, subcontainers: [], size: { width: 0, height: 0 } }) {
@@ -92,9 +79,13 @@ export class ObjectManager {
    * Add object to hitDetection layer
    *
    * @method addObject
-   * @param {string} type                                                 type of the object / layer that we want to add
-   * @param {AreaSize} hitArea                                            area that is hitTested
-   * @param {Object} obj                                                  object that we want to store. If hitTest succeeds this object is returned.
+   * @param {string} type                         Type of the object / layer that we want to add
+   * @param {Object} hitArea                      X coordinate
+   * @param {Integer} hitArea.x                   X coordinate
+   * @param {Integer} hitArea.y                   Y coordinate
+   * @param {Integer} hitArea.width               Viewports width (in pixels)
+   * @param {Integer} hitArea.height              Viewports height (in pixels)
+   * @param {Object} obj                          Object that we want to store. If hitTest succeeds this object is returned.
    */
   addObject(type, hitArea, obj) {
     if (!this.quadtrees[type]) {
@@ -117,7 +108,9 @@ export class ObjectManager {
    *
    * @method addLayer
    * @param {string} type             Type of the layer that we want to add
-   * @param {ObjectSize} bounds       Bounds for the quadtree layer
+   * @param {Object} Bounds           Bounds for the quadtree layer
+   * @param {Integer} bounds.width    Bound width
+   * @param {Integer} bounds.height   Bound height
    * @param {Object} extra            {objects: Number, levels: Number}. quadtree-settings: maximum objects before we split and maximum levels of nested layers
    */
   addLayer(type, bounds, extra = {}) {

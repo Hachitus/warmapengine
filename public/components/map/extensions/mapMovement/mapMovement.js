@@ -1,10 +1,6 @@
 /* global console */
 'use strict';
 
-/**
- * @todo Finetune this through. Now it actually doesn't hide the subcontainers correctly!
- */
-
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
@@ -83,7 +79,7 @@ function setupMapMovement () {
    * set a check in the future based on the given intervalCheck milliseconds. And immediately after it we check if there
    * is another map movement. If there is we set another timeout. This works better with timeouts.
    *
-   * NOTE! This uses webWorkers. They seemed to speed up the check, when timing with performance.now.
+   * This uses webWorkers. They seemed to speed up the check, when timing with performance.now.
    *
    * @method check
    * @param  {Map} map        The current Map instance
@@ -181,7 +177,17 @@ function setupMapMovement () {
   -----------------------*/
   /**
    * @private
-   * @function isObjectOutsideViewport
+   * @static
+   * @method isObjectOutsideViewport
+   * @param  {Object}  object                 Object / layer we are testing
+   * @param  {Object} viewportArea            ViewportArea location and size
+   * @param  {Integer} viewportArea.x         X coordinate
+   * @param  {Integer} viewportArea.y         Y coordinate
+   * @param  {Integer} viewportArea.width     Viewports width (in pixels)
+   * @param  {Integer} viewportArea.height    Viewports height (in pixels)
+   * @param  {Boolean} hasParent              default = true
+   * @param  {Number}  scale                  default = 1 (equals to no defaul scale / no scale)
+   * @return {Boolean}
    */
   function isObjectOutsideViewport(object, viewportArea, hasParent = true, scale = 1) {
     var isIt, globalCoords;
@@ -194,7 +200,14 @@ function setupMapMovement () {
   }
   /**
    * @private
-   * @function getViewportsRightSideCoordinates
+   * @static
+   * @method getViewportsRightSideCoordinates
+   * @private
+   * @param  {Object} viewportArea            ViewportArea location and size
+   * @param  {Integer} viewportArea.x         X coordinate
+   * @param  {Integer} viewportArea.y         Y coordinate
+   * @param  {Integer} viewportArea.width     Viewports width (in pixels)
+   * @param  {Integer} viewportArea.height    Viewports height (in pixels)
    */
   function getViewportsRightSideCoordinates(viewportArea) {
     const offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET * 2 );
@@ -207,8 +220,18 @@ function setupMapMovement () {
     };
   }
   /**
+   * Calculates and modifies coordinates and size according to current scale / zoom on the map.
+   *
    * @private
-   * @function applyScaleToViewport
+   * @static
+   * @method applyScaleToViewport
+   * @private
+   * @param  {Object} viewportArea            ViewportArea location and size
+   * @param  {Integer} viewportArea.x         X coordinate
+   * @param  {Integer} viewportArea.y         Y coordinate
+   * @param  {Integer} viewportArea.width     Viewports width (in pixels)
+   * @param  {Integer} viewportArea.height    Viewports height (in pixels)
+   * @param {Number} scale
    */
   function applyScaleToViewport(viewportArea, scale) {
     return {
@@ -226,7 +249,8 @@ function setupMapMovement () {
 -----------------------*/
 /**
  * @private
- * @function testRectangleIntersect
+ * @static
+ * @method testRectangleIntersect
  */
 function testRectangleIntersect(a, b) {
   return (a.x <= b.x + b.width &&

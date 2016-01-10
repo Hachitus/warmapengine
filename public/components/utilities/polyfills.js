@@ -1,8 +1,5 @@
+/* jshint ignore:start */
 'use strict';
-
-/**
- * Polyfills for the map, as necessary. Easy to drop out.
- */
 
 /*-----------------------
 ---------- API ----------
@@ -13,10 +10,9 @@ export var polyfills = setupPolyfills();
 -------- PUBLIC ---------
 -----------------------*/
 /**
- * [setupPolyfills description]
+ * Add polyfills for the map, as necessary. Easy to drop out.
  *
  * @class utilities.polyfills
- * @memberOf Utilities
  * @return {Object} arrayFind, objectAssign
  */
 function setupPolyfills() {
@@ -25,6 +21,10 @@ function setupPolyfills() {
     objectAssign
   };
 
+  /**
+   * @static
+   * @method arrayFind
+   */
   function arrayFind() {
     if (!Array.prototype.find) {
       Array.prototype.find = function(predicate) {
@@ -49,11 +49,13 @@ function setupPolyfills() {
       };
     }
   }
+
   /**
    * Object.assign IE11 polyfill. Credits to Mozillas folk:
    * https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign
    *
-   * @return {Object}
+   * @method objectAssign
+   * @static
    */
   function objectAssign() {
     if (typeof Object.assign != 'function') {
@@ -80,3 +82,4 @@ function setupPolyfills() {
     }
   }
 }
+/* jshint ignore:end */

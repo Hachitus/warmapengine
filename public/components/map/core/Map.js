@@ -1,22 +1,5 @@
 /* global System, Q */
-
 'use strict';
-
-/**
- * @typedef {Object}              Coordinates
- * @property {Integer} x          X coordinate
- * @property {Integer} y          Y coordinate
- *
- * @typedef {Object}             ObjectSize
- * @property {Integer} width     Width
- * @property {Integer} height    Height
- *
- * @callback FPSCallback
- * @param {Number} FPS
- * @param {Number} FPStime
- * @param {Number} renderTime
- * @param {Number} drawCount
- */
 
 /*---------------------
 ------- IMPORT --------
@@ -47,19 +30,24 @@ export class Map {
    * it's public methods.
    *
    * @class core.Map
-   * @memberOf Map.core
    * @constructor
    * @requires PIXI.JS framework in global namespace
    * @requires Canvas (webGL support recommended) HTML5-element supported.
    * @requires Hammer for touch events
    * @requires Hamster for mouse scroll events
    *
-   * @param {Object} canvasContainer                      HTML element which will be container for the created canvas element
+   * @param {HTMLElement} canvasContainer                 HTML element which will be container for the created canvas element
    * @param {Object} props                                Extra properties
-   * @param {Coordinate} props.startCoord                 Coordinates where the map starts at
-   * @param {objectSize} props.bounds                     Bounds of the map / mapSize
+   * @param {Object} props.startCoord                     Coordinates where the map starts at
+   * @param {Integer} props.startCoord.x                  X coordinate
+   * @param {Integer} props.startCoord.y                  Y coordinate
+   * @param {Object} props.bounds                         Bounds of the map / mapSize
+   * @param {Integer} props.bounds.width                  Bound width
+   * @param {Integer} props.bounds.height                 Bound height
    * @param {Object} props.rendererOptions                Renderer options passed to PIXI.autoDetectRenderer
-   * @param {objectSize} props.subContainers              Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.
+   * @param {Object} props.subContainers                  Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.
+   * @param {Integer} props.subContainers.width           Subcontainer width
+   * @param {Integer} props.subContainers.height          Subcontainer height
    * @param {FPSCallback} trackFPSCB                      Callback function for tracking FPS in renderer. So this is used for debugging and optimizing.
    *
    * @return {Map}                                            new Map instance
@@ -115,7 +103,7 @@ export class Map {
      * canvas element that was generated and is being used by this new generated Map instance.
      *
      * @attribute canvas
-     * @type {Object}
+     * @type {HTMLElement}
      */
     this.canvas = _renderer.view;
     /**
@@ -157,7 +145,9 @@ export class Map {
    * @method init
    * @param {String[]} plugins    Plugins to be activated for the map. Normally you should give the plugins here
    * instead of separately passing them to activatePlugins method. You can provide the module strings or module objects.
-   * @param {Coordinates} coord                      Starting coordinates for the map
+   * @param  {Object} coord                          Starting coordinates for the map
+   * @param  {Integer} coord.x                       X coordinate
+   * @param  {Integer} coord.y                       Y coordinate
    * @param {Function} tickCB                        callback function for tick. Tick callback is initiated in every frame. So map draws happen during ticks
    * @param {Object} options                         Fullsize: Do we set fullsize canvas or not.
    * @return {Array}                                 Returns an array of Promises. If this is empty / zero. Then there is nothing to wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
@@ -229,7 +219,9 @@ export class Map {
    *
    * @method createUILayer
    * @param  {String} name          name of the layer
-   * @param  {Coordinates} coord    Coordinates of the layer
+   * @param  {Object} coord         Coordinates of the layer
+   * @param  {Integer} coord.x      X coordinate
+   * @param  {Integer} coord.y      Y coordinate
    * @return {Map_layer}            The created UI layer
    */
   createUILayer(name = "default UI layer", coord = { x: 0, y: 0 }) {
@@ -309,8 +301,13 @@ export class Map {
    * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale).
    *
    * @method moveMap
-   * @param {Coordinates} coord      The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.
-   * @param {Coordinates} informCoordinates          THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING
+   * @param {Object} coord                 The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.
+   * @param {Integer} coord.x              X coordinate
+   * @param {Integer} coord.y              Y coordinate
+   * @param {Object} informCoordinates     THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING
+   * @param {Integer} informCoordinates.x  X coordinate
+   * @param {Integer} informCoordinates.y  Y coordinate
+   * @param {{x: Integer, y: Integer}}
    **/
   moveMap(coord = { x: 0, y: 0 }, informCoordinates = coord) {
     var realCoordinates = {
@@ -461,9 +458,11 @@ export class Map {
    * Filter objects based on quadtree and then based on possible group provided
    *
    * @method getObjectsUnderPoint
-   * @param {Coordinates} globalCoords                Starting coordinates for the map
-   * @param  {String} type                            Type of the objects / layer to find.
-   * @return {Array}                                  Array of object found on the map.
+   * @param  {Object} globalCoords            Starting coordinates for the map
+   * @param  {Integer} globalCoords.x         X coordinate
+   * @param  {Integer} globalCoords.y         Y coordinate
+   * @param  {String} type                    Type of the objects / layer to find.
+   * @return {Array}                          Array of object found on the map.
    */
   getObjectsUnderPoint(globalCoords = { x: 0, y: 0, width: 0, height: 0 }, type = undefined) {
     var objects = {};
@@ -525,7 +524,7 @@ export class Map {
   }
   /**
    * @method getMapPosition
-   * @return {Coordinates}          current coordinates for the moved map
+   * @return {{x: Integer, y: Integer}}          current coordinates for the moved map
    * */
   getMapPosition() {
     return {
@@ -594,12 +593,10 @@ export class Map {
    -----------------------------------*/
    /**
     * @method zoomIn
-    * @abstract
     */
   zoomIn() { return "notImplementedYet. Activate with plugin"; }
    /**
     * @method zoomOut
-    * @abstract
     */
   zoomOut() { return "notImplementedYet. Activate with plugin"; }
   /*
@@ -607,8 +604,9 @@ export class Map {
    * Default uses quadtree
    *
    * @method addObjectsForSelection
-   * @abstract
-   * @param {Coordinates} coordinates to search from
+   * @param  {Object} coord            ViewportArea location and size
+   * @param  {Integer} coord.x         X coordinate
+   * @param  {Integer} coord.y         Y coordinate
    * @param { String } type type of the objects to search for
    * @param { String } object The object to add
    * */
@@ -618,7 +616,6 @@ export class Map {
    * Default uses quadtree
    *
    * @method removeObjectsForSelection
-   * @abstract
    * @param {{x: Number, y: Number }} coordinates to search from
    * @param { String } type type of the objects to search for
    * @param { String } object The object to add
@@ -629,7 +626,6 @@ export class Map {
    * Default uses quadtree
    *
    * @method getObjectsUnderShape
-   * @abstract
    * @param { x: Number, y: Number } coordinates to search from
    * @param { String } shape The shape to match against
    * @param { String } type type of the objects to search for
@@ -645,7 +641,8 @@ export class Map {
  * callback is always set and should not be removed or overruled
  *
  * @private
- * @function _defaultTick
+ * @static
+ * @method _defaultTick
  */
 function _defaultTick(map, ticker) {
   const ONE_SECOND = 1000;
@@ -685,7 +682,8 @@ function _defaultTick(map, ticker) {
  * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
  *
  * @private
- * @function _resizeCanvas
+ * @static
+ * @method _resizeCanvas
  */
 function _resizeCanvas() {
   let windowSize = utils.resize.getWindowSize();
@@ -699,7 +697,8 @@ function _resizeCanvas() {
  * Activate the browsers fullScreen mode and expand the canvas to fullsize
  *
  * @private
- * @function setFullScreen
+ * @static
+ * @method setFullScreen
  */
 function setFullScreen() {
   utils.resize.toggleFullScreen();

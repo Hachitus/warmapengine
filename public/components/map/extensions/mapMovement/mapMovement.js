@@ -2,32 +2,33 @@
 'use strict';
 
 /**
- * This module manages visibility of the objects, based on are they visible to the player (on the canvas / webgl) or
- * outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise.
- *
  * @todo Finetune this through. Now it actually doesn't hide the subcontainers correctly!
  */
 
-/***********************
-******* IMPORTS ********
-***********************/
+/*-----------------------
+--------- IMPORT --------
+-----------------------*/
 import { mapEvents } from '/components/bundles/coreBundle';
 import { arrays } from '/components/utilities/general';
 
-/***********************
-****** VARIABLES *******
-***********************/
+/*-----------------------
+------- VARIABLES -------
+-----------------------*/
 var viewportWorker = new Worker("/components/map/extensions/mapMovement/mapMovementWorker.js");
 
-/***********************
-********* API **********
-***********************/
+/*-----------------------
+---------- API ----------
+-----------------------*/
 export const pluginName = "mapMovement";
 export const mapMovement = setupMapMovement();
 
-/***********************
-******* PUBLIC *********
-***********************/
+/*-----------------------
+-------- PUBLIC ---------
+-----------------------*/
+/** This module manages visibility of the objects, based on are they visible to the player (on the canvas / webgl) or outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise.
+ *
+ * @class mapMovement
+ **/
 function setupMapMovement () {
   const VIEWPORT_OFFSET = 0.15;
   const CHECK_INTERVAL = 20;
@@ -43,12 +44,23 @@ function setupMapMovement () {
     check,
     startEventListeners
   };
-
+  /**
+   * Ínitialize as a plugin
+   *
+   * @method init
+   * @param  {Map} map     Instance of Map
+   */
   function init(map) {
     addAll(map);
     startEventListeners(map);
     map.drawOnNextTick();
   }
+  /**
+   * Ínitialize as a plugin
+   *
+   * @method addAll
+   * @param  {Map} map     Instance of Map
+   */
   function addAll(map) {
     var scale = map.getScale();
     var viewportArea;
@@ -73,6 +85,7 @@ function setupMapMovement () {
    *
    * NOTE! This uses webWorkers. They seemed to speed up the check, when timing with performance.now.
    *
+   * @method check
    * @param  {Map} map        The current Map instance
    * @return {Boolean}        True
    */
@@ -146,6 +159,10 @@ function setupMapMovement () {
 
     return;
   }
+  /**
+   * @method startEventListeners
+   * @param  {Map} map     Instance of Map
+   */
   function startEventListeners(map) {
     mapEvents.subscribe("mapMoved", moveCb);
     mapEvents.subscribe("mapResized", resizeCb);
@@ -159,11 +176,12 @@ function setupMapMovement () {
       mapMovement.check(map);
     }
   }
-  /**************************************
-  *********** PRIVATE *******************
-  **************************************/
+  /*-----------------------
+  -------- PRIVATE --------
+  -----------------------*/
   /**
    * @private
+   * @function isObjectOutsideViewport
    */
   function isObjectOutsideViewport(object, viewportArea, hasParent = true, scale = 1) {
     var isIt, globalCoords;
@@ -176,6 +194,7 @@ function setupMapMovement () {
   }
   /**
    * @private
+   * @function getViewportsRightSideCoordinates
    */
   function getViewportsRightSideCoordinates(viewportArea) {
     const offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET * 2 );
@@ -189,6 +208,7 @@ function setupMapMovement () {
   }
   /**
    * @private
+   * @function applyScaleToViewport
    */
   function applyScaleToViewport(viewportArea, scale) {
     return {
@@ -201,11 +221,12 @@ function setupMapMovement () {
     };
   }
 }
-/***********************
-******* PRIVATE ********
-***********************/
+/*-----------------------
+-------- PRIVATE --------
+-----------------------*/
 /**
  * @private
+ * @function testRectangleIntersect
  */
 function testRectangleIntersect(a, b) {
   return (a.x <= b.x + b.width &&

@@ -1,30 +1,25 @@
 'use strict';
 
-/**
- * @module Map
- * @submodule core
- */
-
-/***********************
-****** VARIABLES *******
-***********************/
+/*---------------------
+------ VARIABLES ------
+----------------------*/
 var scope;
 
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export { UI as UI };
 
-/***********************
-******** PUBLIC ********
-***********************/
+/*---------------------
+-------- PUBLIC -------
+----------------------*/
 /**
  * Main class for showing UI on the map. Like unit selections and such. Has nothing to do with showing off-map data.
  * Good examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit) and bringing the unit on top in the map. UI themes must implement this core UI module
  *
  * @todo Not implemented fully yet and probably need refactoring
  *
- * @class UI
+ * @class core.UI
  * @memberOf Map.core
  * @constructor
  * @param {Object} UITheme        Module that will be used for the UI theme

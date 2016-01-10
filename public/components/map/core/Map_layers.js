@@ -1,11 +1,6 @@
 'use strict';
 
 /**
- * @module Map
- * @submodule core
- */
-
-/**
  * @typedef {Object}              Coordinates
  * @property {Integer} x          X coordinate
  * @property {Integer} y          Y coordinate
@@ -15,19 +10,20 @@
  * @property {Integer} height    Height
  */
 
-/***********************
-****** VARIABLES *******
-***********************/
+/*---------------------
+------ VARIABLES ------
+---------------------*/
 var _UIObjects = [];
 
-/***********************
-******** EXPORT ********
-***********************/
+/*---------------------
+-------- EXPORT -------
+---------------------*/
 export class Map_layer extends PIXI.Container {
   /**
    * Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.
    *
-   * @class Map_layer
+   * @class core.Map_layer
+   * @memberOf Map.core
    * @constructor
    * @param {Object} options                            optional options
    * @param {String} options.name                       Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too
@@ -61,6 +57,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * Does this layer use subcontainers.
    *
+   * @method hasSubContainers
    * @return {Boolean} true = uses subcontainers.
    */
   hasSubContainers() {
@@ -69,6 +66,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * Is this layer cached at the moment or not.
    *
+   * @method getCurrentCache
    * @return {Boolean} true = is cached
    */
   getCurrentCache() {
@@ -77,6 +75,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * Move layer based on given amounts
    *
+   * @method move
    * @param {Coordinates} coord        The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move the map 5 pixels horizontally and 0 pixels vertically
    **/
   move(coord) {
@@ -87,6 +86,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * set layer scale
    *
+   * @method setScale
    * @param {Number} amount The amount that you want the layer to scale.
    * @return {Number} The same amount that was given, except after transform to 2 decimals and type cast to Number
    * */
@@ -98,6 +98,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * get layer scale
    *
+   * @method getScale
    * @return {Boolean} current amount of scale
    * */
   getScale() {
@@ -106,6 +107,7 @@ export class Map_layer extends PIXI.Container {
     /**
    * get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active
    *
+   * @method getUIObjects
    * @return {Array} current UIObjects
    * */
   getUIObjects() {
@@ -114,6 +116,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * Remove all the UIObjects from this layer
    *
+   * @method emptyUIObjects
    * @return {Array} empty UIObjects array
    * */
   emptyUIObjects() {
@@ -127,6 +130,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * Add UIObjects to this layer
    *
+   * @method addUIObjects
    * @param {Object|Array} objects           Objects can be an object containing one object to add or an Array of objects to add.
    * @return {Array}                         All the UIObjects currently on this layer
    * */
@@ -155,6 +159,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * Get primary layers, that this layer holds as children. So basically all children that are not special layers (such as UI layers etc.)
    *
+   * @method getPrimaryLayers
    * @return {Array}                            Primary children layers under this layer
    * */
   getPrimaryLayers() {
@@ -165,6 +170,7 @@ export class Map_layer extends PIXI.Container {
   /**
    * Get all objects that are this layers children or subcontainers children. Does not return layers, but the objects.
    *
+   * @method getObjects
    * @return {Array}                            All the objects (not layers) found under this layer
    * */
   getObjects() {
@@ -180,7 +186,6 @@ export class Map_layer extends PIXI.Container {
   }
   /**
    * @method setCache
-   *
    * @param {Boolean} status      true = activate cache, false = disable cache
    */
   setCache(status) {
@@ -196,7 +201,7 @@ export class Map_parentLayer extends Map_layer {
   /**
    * Layer designed to hold subcontainers. But can handle objects too.
    *
-   * @class
+   * @class core.Map_parentLayer
    * @constructor
    * @memberof Map.core
    * @param {Object} options
@@ -217,6 +222,10 @@ export class Map_parentLayer extends Map_layer {
     this.subContainersConfig = subContainers;
     this.subContainerList = [];
   }
+  /**
+   * @method addChild
+   * @param {PIXI.DisplayObject} displayObject      PIXI.DisplayObject
+   */
   addChild(displayObject) {
     if (this.hasSubContainers()) {
       let correctContainer;
@@ -228,9 +237,16 @@ export class Map_parentLayer extends Map_layer {
 
     return displayObject;
   }
+  /**
+   * @method getSubContainerConfigs
+   */
   getSubContainerConfigs() {
     return this.subContainersConfig;
   }
+  /**
+   * @method getSubContainersByCoordinates
+   * @param {Coordinates} coordinates
+   */
   getSubContainersByCoordinates(coordinates) {
     if (!this.hasSubContainers()) {
       throw new Error("tried to retrieve subContainers, when they are not present");
@@ -246,6 +262,9 @@ export class Map_parentLayer extends Map_layer {
 
     return foundSubcontainers;
   }
+  /**
+   * @method getSubcontainers
+   */
   getSubcontainers() {
     return this.subContainerList;
   }
@@ -258,7 +277,7 @@ class Map_subContainer extends PIXI.ParticleContainer {
    * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
    *
    * @private
-   * @class
+   * @class core.Map_subContainer
    * @constructor
    * @memberof Map.core
    * @param {ObjectSize} size          Size of the subcontainer
@@ -272,6 +291,7 @@ class Map_subContainer extends PIXI.ParticleContainer {
   /**
    * Gets this subcontainers coordinates and size
    *
+   * @method getSubcontainerArea
    * @param {Number} scale                              The size of scale the map currently has
    * @param {Boolean} options.toGlobal                  Do we get the global coordinates or local
    */
@@ -294,6 +314,7 @@ class Map_subContainer extends PIXI.ParticleContainer {
   /**
    * Set cache on or off for this layer
    *
+   * @method setCache
    * @param {Boolean} status      true = activate cache, false = disable cache
    */
   setCache(status) {
@@ -304,13 +325,14 @@ class Map_subContainer extends PIXI.ParticleContainer {
     return toCacheStatus;
   }
 }
-/***********************
-******* PRIVATE ********
-***********************/
+/*---------------------
+------- PRIVATE -------
+----------------------*/
 /**
  * [setCorrectSubContainer description]
  *
  * @private
+ * @function setCorrectSubContainer
  * @param {Object} displayObject [description]
  * @param {Object} parentLayer   [description]
  */
@@ -347,6 +369,7 @@ function setCorrectSubContainer(displayObject, parentLayer) {
  * Get the closest subcontainers of the given area.
  *
  * @private
+ * @function getClosestSubcontainers
  * @param  {Object} layer             Instance of PIXI.Container - The layer being used
  * @param  {Number} xIndex            x / horizontal index.
  * @param  {Number} yIndex            y / vertical index.

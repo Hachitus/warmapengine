@@ -1,6 +1,5 @@
 'use strict';
 
-
 /**
  * @typedef {Object}              Coordinates
  * @property {Integer} x          X coordinate
@@ -11,20 +10,20 @@
  * @property {Integer} height    Height
  */
 
-/***********************
-******** IMPORT ********
-***********************/
+/*---------------------
+------- IMPORT --------
+----------------------*/
 import { Quadtree as QuadMod } from "/assets/lib/quadtree-js/quadtree-js-hitman";
 
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export class Quadtree {
   /**
    * This class handles the API for quadtree to search for the wanted objects on the certain coordinates. After this
    * the map should do it's own - more precise - hit detections.
    *
-   * @class
+   * @class core.utils.Quadtree
    * @constructor
    * @memberof Map.core.utils
    * @require Quadtree-js. Though this base library can be changed easily
@@ -130,9 +129,9 @@ export class Quadtree {
   }
 }
 
-/***********************
-******* PRIVATE ********
-***********************/
+/*----------------------
+------- PRIVATE --------
+----------------------*/
 /**
  * [_creteQuadtreeObject description]
  *

@@ -10,5 +10,17 @@
     "encoding": "utf8",
     "destination": "./public/documentation/",
     "recurse": true
+  },
+  "templates": {
+    "systemName"            : "FlaTWorld",
+    "copyright"             : "",
+    "theme"                 : "cerulean",
+    "includeDate"           : true,
+    "navType"               : "vertical",
+    "linenums"              : true,
+    "outputSourceFiles"     : true,
+    "outputSourcePath"      : true,
+    "syntaxTheme"           : "default",
+    "inverseNav"            : true
   }
 }

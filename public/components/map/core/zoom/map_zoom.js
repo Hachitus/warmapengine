@@ -1,35 +1,30 @@
 'use strict';
 
-/**
- * @module Map
- * @submodule core
- */
-
-/***********************
-******** IMPORT ********
-***********************/
+/*---------------------
+------- IMPORT --------
+----------------------*/
 import { eventListeners as eventListenerMod, utils, mapEvents } from '/components/bundles/coreBundle';
 
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export const pluginName = "map_zoom";
 export var map_zoom = setupMap_zoom();
 
-/***********************
-******** PUBLIC ********
-***********************/
+/*---------------------
+-------- PUBLIC -------
+----------------------*/
 /**
  * Core plugin for the engine. Handles zooming for the map. Core plugins can always be overwrote if needed. Zooming happens when the user scrolls the mousewheel or in mobile, pinches the screen.
  *
- * @class mapZoom
+ * @class core.mapZoom
  * @memberOf Map.core
  * @return {Object}      init
  */
 function setupMap_zoom() {
-  /***********************
-  ****** VARIABLES *******
-  ***********************/
+  /*---------------------
+  ------ VARIABLES ------
+  ----------------------*/
   const TIMEOUT_AFTER_ZOOM = 40;
   var initialized = false;
   var mobileInitialized = false;
@@ -38,6 +33,7 @@ function setupMap_zoom() {
   /**
    * Maximum and minimum amount, the player can zoom the map
    *
+   * @attribute zoomLimit
    * @type {{ farther: Number, closer: Number }}
    */
   var zoomLimit = {
@@ -46,23 +42,26 @@ function setupMap_zoom() {
   };
   /**
    * How much one step of zooming affects
+   *
+   * @attribute zoomModifier
    * @type {Number}
    */
   var zoomModifier = 0.1;
 
-  /************************
-  ********** API **********
-  ************************/
+  /*---------------------
+  --------- API ---------
+  ---------------------*/
   return {
     init
   };
 
-  /************************
-  ********* PUBLIC ********
-  ************************/
+  /*---------------------
+  ------- PUBLIC --------
+  ----------------------*/
   /**
    * Required init functions for the plugin
    *
+   * @method init
    * @param {Map} mapObj       instantiated Map class object
    *
    * @todo think through should setZoomLimits and setZoomModifier be in map.prototype?
@@ -80,12 +79,13 @@ function setupMap_zoom() {
     eventListener.toggleZoomListener(unifiedEventCB);
   }
 
-  /****************************************
-  ***** PROTOTYPE extensions for map ******
-  ****************************************/
+  /*----------------------------------------
+  ------ PROTOTYPE extensions for map ------
+  ----------------------------------------*/
   /**
    * How much one mouse wheel step zooms
    *
+   * @method setZoomModifier
    * @param {Number} amount           How much one mouse wheel step zooms. Needs to be in between 0 - 0.5
    **/
   function setZoomModifier (amount) {
@@ -99,6 +99,7 @@ function setupMap_zoom() {
   /**
    * How much can be zoomed in maximum and minimum
    *
+   * @method setZoomLimits
    * @param {Number} farther          (>1) How much one mouse wheel step zooms out
    * @param {Number} closer           (0 - 1) How much one mouse wheel step zooms in
    **/
@@ -111,6 +112,7 @@ function setupMap_zoom() {
   /**
    * Zoom in to the map
    *
+   * @method zoomIn
    * @param {Number} amount how much map is zoomed in
    * */
   function zoomIn (amount) {
@@ -124,6 +126,7 @@ function setupMap_zoom() {
   /**
    * Zoom out of the map
    *
+   * @method zoomOut
    * @param {Number} amount how much map is zoomed out
    * */
   function zoomOut (amount) {
@@ -136,13 +139,14 @@ function setupMap_zoom() {
     return _zoom(this, presentScale, amount || -zoomModifier, IS_ZOOM_IN);
   }
 
-  /**********************************
-  ********* Event functions *********
-  **********************************/
+  /*---------------------------
+  ------ EVENT FUNCTIONS ------
+  ---------------------------*/
   /**
    * This starts the correct eventListener for the current environment. Mousewheel and pinch differ quite dramatically
    * so we keep them as separate functions.
    *
+   * @method unifiedEventCB
    * @param  {Event} e             Event object
    * @param  {Integer} delta       Hamster.js provided delta
    * @param  {Integer} deltaX      Hamster.js provided delta
@@ -163,6 +167,7 @@ function setupMap_zoom() {
    * Setup desktop zoomEvent by currying. Internally: Sets up correct scale + moves map accordingly to zoom to the
    * current center coordinates
    *
+   * @method handleZoomEventDesktop
    * @param  {Map} map             Map instance
    */
   function handleZoomEventDesktop(e, delta, deltaX, deltaY) {
@@ -186,6 +191,7 @@ function setupMap_zoom() {
   /**
    * handleZoomEventMobile
    *
+   * @method handleZoomEventMobile
    * @param  {Event} e
    */
   function handleZoomEventMobile(e) {
@@ -242,13 +248,14 @@ function setupMap_zoom() {
     }
   }
 
-  /************************
-   ******* PRIVATE ********
-   ***********************/
+  /*---------------------
+  ------- PRIVATE -------
+  ---------------------*/
   /**
    * _isOverZoomLimit
    *
    * @private
+   * @function _isOverZoomLimit
    **/
   function _isOverZoomLimit(amount, isZoomIn) {
     if ( (isZoomIn && amount > zoomLimit.closer ) || (!isZoomIn && amount < zoomLimit.farther) ) {
@@ -258,9 +265,8 @@ function setupMap_zoom() {
     return false;
   }
   /**
-   * _calculateCenterMoveCoordinates
-   *
    * @private
+   * @function _calculateCenterMoveCoordinates
    **/
   function _calculateCenterMoveCoordinates(scale, isZoomIn) {
     var windowSize = utils.resize.getWindowSize();
@@ -276,9 +282,8 @@ function setupMap_zoom() {
     return realMovement;
   }
   /**
-   * _zoom
-   *
    * @private
+   * @function _zoom
    **/
   function _zoom(map, presentScale, amount, isZoomIn) {
     var newScale;

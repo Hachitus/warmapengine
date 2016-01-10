@@ -4,18 +4,18 @@
  * Polyfills for the map, as necessary. Easy to drop out.
  */
 
-/***********************
-********* API **********
-***********************/
+/*-----------------------
+---------- API ----------
+-----------------------*/
 export var polyfills = setupPolyfills();
 
-/***********************
-******** PUBLIC ********
-***********************/
+/*-----------------------
+-------- PUBLIC ---------
+-----------------------*/
 /**
  * [setupPolyfills description]
  *
- * @class polyfills
+ * @class utilities.polyfills
  * @memberOf Utilities
  * @return {Object} arrayFind, objectAssign
  */

@@ -6,12 +6,9 @@
  * @property {Integer} y          Y coordinate
  **/
 
-/**
- * Utility module, for making different calculations and tests when hexagon based grid map in use
- */
-/***********************
-********* API **********
-***********************/
+/*-----------------------
+---------- API ----------
+-----------------------*/
 export default {
   calcShortDiagonal: calcShortDiagonal,
   calcLongDiagonal: calcLongDiagonal,
@@ -25,14 +22,21 @@ export { calcSide as calcSide };
 export { getHexagonPoints as getHexagonPoints };
 export { hexaHitTest as hexaHitTest };
 
-/***********************
-******* PUBLIC *********
-***********************/
-/** Calculates the hexagons:
+/**
+ * Utility module, for making different calculations and tests when hexagon based grid map in use
+ *
+ * @class hexagonMath
+ */
+/*-----------------------
+--------- PUBLIC --------
+-----------------------*/
+/**
+ * Calculates the hexagons:
  * innerDiameter
  * - Vertical / Flat hexagons height
  * - Horizontal / pointy hexagons width
  *
+ * @function calcLongDiagonal
  * @param {float} value - Usually the radius of the hexagon
  * @param {string} type - If you provide something else than radius, where the calculation is based from
  * @param {integer} precision - How many decimals to round
@@ -53,6 +57,7 @@ function calcShortDiagonal(value, type = "radius", precision = 3) {
  * - Vertical / Flat hexagons width
  * - Horizontal / pointy hexagons height
  *
+ * @function calcLongDiagonal
  * @param {float} value					Usually the radius of the hexagon
  * @param {string} type					If you provide something else than radius, where the calculation is based from
  * @param {integer} precision 	How many decimals to round
@@ -77,6 +82,7 @@ function calcSide(value, type = "radius", precision = 3) {
   return answer.toFixed(precision);
 }
 /**
+ * @function getHexagonPoints
  * @param {Float} radius			radius of the hexagon
  * @param {object} options		extra options, like generating horizontal hexagon points and
  * how many decimals to round
@@ -107,6 +113,7 @@ function getHexagonPoints(radius, options = { isFlatTop: false, precision: 3 }) 
 /**
  * Test do the given coordinates hit the hexagon, given by the points container / array
  *
+ * @function hexaHitTest
  * @param  {Array} points         Array of PIXI.points
  * @param  {Object} hitCoords     The coordinates to test against
  * @param  {Object} offsetCoords  offsetCoordinates that are added to the hitCoordinates. Separate because these are
@@ -126,13 +133,14 @@ function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) 
   return pointInPolygon(hitCoords, realPolygonPoints);
 }
 
-/**************************
-********* PRIVATE *********
-**************************/
+/*-----------------------
+--------- PRIVATE -------
+-----------------------*/
 /**
  * credits to: https://github.com/substack/point-in-polygon
  * Tests whether the given point / coordinate is inside the given points. Assuming the points form a polygon
  *
+ * @function pointInPolygon
  * @param  {Coordinates} point                The point to test against
  * @param  {Array} vs                         The points of the polygon to test [0] === x-point, [1] === y-point
  * @return {Boolean}                          Is the coordinate inside the hexagon or not

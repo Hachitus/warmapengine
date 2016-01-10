@@ -1,17 +1,17 @@
 'use strict';
 
-/***********************
-********* API **********
-***********************/
+/*-----------------------
+---------- API ----------
+-----------------------*/
 export var arrays = setupArrays();
 
-/***********************
-******** PUBLIC ********
-***********************/
+/*-----------------------
+--------- PUBLIC --------
+-----------------------*/
 /**
  * Array manipulation
  *
- * @class arrays
+ * @class utilities.arrays
  * @memberOf Utilities
  */
 function setupArrays() {
@@ -22,6 +22,7 @@ function setupArrays() {
   /**
    * Flattern 2 levels deep, 2-dimensional arrays. Credits: http://stackoverflow.com/a/15030117/1523545
    *
+   * @method flatten2Levels
    * @param  {Array} arr        Array to flatten
    * @return {Array}            Flattened array
    */

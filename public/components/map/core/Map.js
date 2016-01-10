@@ -3,11 +3,6 @@
 'use strict';
 
 /**
- * @module Map
- * @submodule core
- */
-
-/**
  * @typedef {Object}              Coordinates
  * @property {Integer} x          X coordinate
  * @property {Integer} y          Y coordinate
@@ -23,22 +18,22 @@
  * @param {Number} drawCount
  */
 
-/***********************
-******** IMPORT ********
-***********************/
+/*---------------------
+------- IMPORT --------
+----------------------*/
 import { Map_layer, Map_parentLayer, eventListeners, ObjectManager, mapEvents, utils } from '/components/bundles/coreBundle';
 import * as Q from '/assets/lib/q/q';
 
-/***********************
-****** VARIABLES *******
-***********************/
+/*---------------------
+------ VARIABLES ------
+----------------------*/
 var _drawMapOnNextTick = false;
 var isMapReadyPromises = [];
 var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, ParentLayerConstructor;
 
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export class Map {
   /**
    * Main class for the whole engine, which initializes the whole structure and plugins
@@ -51,7 +46,8 @@ export class Map {
    * functions, not objects that are instantiated. Plugins are supposed to extend the map object or anything in it via
    * it's public methods.
    *
-   * @class Map
+   * @class core.Map
+   * @memberOf Map.core
    * @constructor
    * @requires PIXI.JS framework in global namespace
    * @requires Canvas (webGL support recommended) HTML5-element supported.
@@ -118,6 +114,7 @@ export class Map {
     /**
      * canvas element that was generated and is being used by this new generated Map instance.
      *
+     * @attribute canvas
      * @type {Object}
      */
     this.canvas = _renderer.view;
@@ -125,24 +122,28 @@ export class Map {
      * list of plugins that the map uses and are initialized
      * @see class/core/Map.js~Map.html#instance-method-activatePlugins
      *
+     * @attribute plugins
      * @type {Set}
      */
     this.plugins = new Set();
     /**
      * Subcontainers size that we want to generate, when layers use subcontainers
      *
+     * @attribute subContainersConfig
      * @type {{width: Integer, height: Int}}
      */
     this.subContainersConfig = subContainers;
     /**
      * Callback function that gets the current FPS on the map and shows it in DOM
      *
+     * @attribute trackFPSCB
      * @type {Function}
      */
     this.trackFPSCB = trackFPSCB;
     /**
      * ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks the map to select some object.
      *
+     * @attribute objectManager
      * @type {ObjectManager}
      */
     this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
@@ -193,6 +194,7 @@ export class Map {
   /**
    * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
    *
+   * @method whenReady
    * @return the current map instance
    * */
   whenReady() {
@@ -201,6 +203,7 @@ export class Map {
   /**
    * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
    *
+   * @method drawOnNextTick
    * @return the current map instance
    * */
   drawOnNextTick() {
@@ -211,6 +214,7 @@ export class Map {
   /**
    * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
    *
+   * @method getLayersWithAttributes
    * @param {String} attribute
    * @param {*} value
    * @return the current map instance
@@ -220,13 +224,24 @@ export class Map {
       return layer[attribute] === value;
     });
   }
+  /**
+   * Create a special layer, that has UI effect in it.
+   *
+   * @method createUILayer
+   * @param  {String} name          name of the layer
+   * @param  {Coordinates} coord    Coordinates of the layer
+   * @return {Map_layer}            The created UI layer
+   */
   createUILayer(name = "default UI layer", coord = { x: 0, y: 0 }) {
     var layer = new Map_layer(name, coord);
+    layer.specialLayer = true;
 
     return layer;
   }
   /**
    * All parameters are passed to Map_layer constructor
+   *
+   * @method addLayer
    * @return created Map_layer instance
    * */
   addLayer(layerOptions) {
@@ -242,17 +257,25 @@ export class Map {
     return thisLayer;
   }
   /**
-   * Does the map use subContainers
+   * I think we don't need this when we have getSubcontainerConfigs?
+   *
+   * @method usesSubContainers
    */
   usesSubContainers() {
     return this.subContainersConfig ? true : false;
   }
+  /**
+   * Does the map use subContainers
+   *
+   * @method getSubContainerConfigs
+   */
   getSubContainerConfigs() {
     return this.subContainersConfig;
   }
   /**
    * Get the size of area that is shown to the player. Depends a bit if we want to show the maximum possible or current.
    *
+   * @method getViewportArea
    * @param  {Boolean} isLocal       Do we want to use moving layer or static (global) coordinates
    * @return {Object}                x- and y-coordinates and the width and height of the viewport
    */
@@ -267,6 +290,7 @@ export class Map {
     };
   }
   /**
+   * @method removeLayer
    * @param {Map_layer} layer - the layer object to be removed
    * */
   removeLayer(layer) {
@@ -275,6 +299,7 @@ export class Map {
     return layer;
   }
   /**
+   * @method getLayerNamed
    * @return layer with the passed layer name
    * */
   getLayerNamed(name) {
@@ -283,6 +308,7 @@ export class Map {
   /**
    * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale).
    *
+   * @method moveMap
    * @param {Coordinates} coord      The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.
    * @param {Coordinates} informCoordinates          THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING
    **/
@@ -300,6 +326,8 @@ export class Map {
   /**
    * Cache the map. This provides significant performance boost, when used correctly. cacheMap iterates through all the
    * layer on the map and caches the ones that return true from getCacheEnabled-method.
+   *
+   * @method cacheMap
    **/
   cacheMap() {
     _movableLayer.children.forEach(child => {
@@ -311,6 +339,7 @@ export class Map {
   /**
    * unCache the map.
    *
+   * @method unCacheMap
    * @return this map instance
    * */
   unCacheMap() {
@@ -323,6 +352,7 @@ export class Map {
   /**
    * Activate plugins for the map. Plugins need .pluginName property and .init-method
    *
+   * @method pluginsArray
    * @param {Object[]} pluginsArray         Array that consists the plugin modules to be activated
    * */
   activatePlugins(pluginsArray = []) {
@@ -335,6 +365,7 @@ export class Map {
   /**
    * Activate plugins for the map. Plugins need .pluginName property and .init-method
    *
+   * @method activatePlugin
    * @param {Object} plugin        Plugin module instance.
    * */
   activatePlugin(plugin) {
@@ -353,6 +384,7 @@ export class Map {
   /**
    * getter and setter for detecting if map is moved and setting the maps status as moved or not moved
    *
+   * @method mapMoved
    * @param {Boolean} yesOrNo         Has the map moved, or not.
    * @param {Boolean} isFinal         Is this the last time map has been moved with this event chain.
    * */
@@ -366,15 +398,21 @@ export class Map {
 
     return this._mapInMove;
   }
+  /**
+   * @method setPrototype
+   * @param {String} property
+   * @param {*} value
+   */
   setPrototype(property, value) {
     var thisPrototype = Object.getPrototypeOf(this);
 
     thisPrototype[property] = value;
   }
   /**
-   * Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite
-   * the eventlistener callback use this.eventCBs
-   */
+   * Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite the eventlistener callback use this.eventCBs
+   *
+   * @method toggleFullsize
+   **/
   toggleFullsize() {
     if (!boundResizer) {
       boundResizer = _resizeCanvas.bind(this);
@@ -387,12 +425,19 @@ export class Map {
   /**
    * Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
    * the eventlistener callback use this.eventCBs
-   * */
+   *
+   * @method toggleFullScreen
+   **/
   toggleFullScreen () {
     var eventListenerCB = setFullScreen.bind(this);
 
     eventlisteners.toggleFullscreen(eventListenerCB);
   }
+  /**
+   * @method getSubcontainersUnderPoint
+   * @param  {[type]} globalCoords [description]
+   * @return {[type]}              [description]
+   */
   getSubcontainersUnderPoint(globalCoords) {
     var primaryLayers = this.getMovableLayer().getPrimaryLayers();
     var allMatchingSubcontainers = [];
@@ -415,6 +460,7 @@ export class Map {
   /**
    * Filter objects based on quadtree and then based on possible group provided
    *
+   * @method getObjectsUnderPoint
    * @param {Coordinates} globalCoords                Starting coordinates for the map
    * @param  {String} type                            Type of the objects / layer to find.
    * @return {Array}                                  Array of object found on the map.
@@ -478,6 +524,7 @@ export class Map {
     return objects;
   }
   /**
+   * @method getMapPosition
    * @return {Coordinates}          current coordinates for the moved map
    * */
   getMapPosition() {
@@ -486,41 +533,81 @@ export class Map {
       y: _movableLayer.y
     };
   }
+  /**
+   * @method getCanvas
+   */
   getCanvas() {
     return this.canvas;
   }
+  /**
+   * @method getZoomLayer
+   * @return {[type]} [description]
+   */
   getZoomLayer() {
     return _staticLayer;
   }
+  /**
+   * @method setScale
+   * @param {Number} scale
+   */
   setScale(scale) {
     return _staticLayer.setScale(scale);
   }
+  /**
+   * @method getScale
+   */
   getScale() {
     return _staticLayer.getScale();
   }
+  /**
+   * @method getUILayer
+   */
   getUILayer() {
     return _staticLayer;
   }
+  /**
+   * @method getMovableLayer
+   */
   getMovableLayer() {
     return _movableLayer;
   }
+  /**
+   * @method getRenderer
+   */
   getRenderer() {
     return _renderer;
   }
+  /**
+   * @method getStage
+   */
   getStage() {
     return _staticLayer;
   }
+  /**
+   * @method getStaticLayer
+   */
   getStaticLayer() {
     return _staticLayer;
   }
-  /*************************************
-   ******* APIS THROUGH PLUGINS ********
-   ************************************/
+  /*------------------------------------
+   ------- APIS THROUGH PLUGINS --------
+   -----------------------------------*/
+   /**
+    * @method zoomIn
+    * @abstract
+    */
   zoomIn() { return "notImplementedYet. Activate with plugin"; }
+   /**
+    * @method zoomOut
+    * @abstract
+    */
   zoomOut() { return "notImplementedYet. Activate with plugin"; }
   /*
    * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
    * Default uses quadtree
+   *
+   * @method addObjectsForSelection
+   * @abstract
    * @param {Coordinates} coordinates to search from
    * @param { String } type type of the objects to search for
    * @param { String } object The object to add
@@ -530,6 +617,8 @@ export class Map {
    * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
    * Default uses quadtree
    *
+   * @method removeObjectsForSelection
+   * @abstract
    * @param {{x: Number, y: Number }} coordinates to search from
    * @param { String } type type of the objects to search for
    * @param { String } object The object to add
@@ -538,6 +627,9 @@ export class Map {
   /*
    * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
    * Default uses quadtree
+   *
+   * @method getObjectsUnderShape
+   * @abstract
    * @param { x: Number, y: Number } coordinates to search from
    * @param { String } shape The shape to match against
    * @param { String } type type of the objects to search for
@@ -545,13 +637,15 @@ export class Map {
   getObjectsUnderShape() { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
 }
 
-/***********************
-******* PRIVATE ********
-***********************/
+/*---------------------
+------- PRIVATE -------
+----------------------*/
 /**
- * @private
  * This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
  * callback is always set and should not be removed or overruled
+ *
+ * @private
+ * @function _defaultTick
  */
 function _defaultTick(map, ticker) {
   const ONE_SECOND = 1000;
@@ -588,8 +682,10 @@ function _defaultTick(map, ticker) {
   });
 }
 /**
- * @private
  * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
+ *
+ * @private
+ * @function _resizeCanvas
  */
 function _resizeCanvas() {
   let windowSize = utils.resize.getWindowSize();
@@ -600,8 +696,10 @@ function _resizeCanvas() {
   this.drawOnNextTick();
 }
 /**
- * @private
  * Activate the browsers fullScreen mode and expand the canvas to fullsize
+ *
+ * @private
+ * @function setFullScreen
  */
 function setFullScreen() {
   utils.resize.toggleFullScreen();

@@ -1,36 +1,32 @@
 'use strict';
 
-/**
- * @module Map
- * @submodule core
- */
-
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export const dataManipulation = setupDataManipulation();
 
-/***********************
-******** PUBLIC ********
-***********************/
+/*---------------------
+-------- PUBLIC -------
+----------------------*/
 /**
  * These are utils for manipulating the data, that our classes and functions use.
  *
- * @class dataManipulation
+ * @class core.utils.dataManipulation
+ * @memberOf Map.core.utils
  * @return {Object}      mapObjectsToArray, flattenArrayBy1Level
  */
 function setupDataManipulation() {
-  /***********************
-  ********* API **********
-  ***********************/
+  /*---------------------
+  ------- API ----------
+  --------------------*/
   return {
     mapObjectsToArray,
     flattenArrayBy1Level
   };
 
-  /***********************
-  ******** PUBLIC ********
-  ***********************/
+  /*----------------------
+  ------- PUBLIC ---------
+  ----------------------*/
   /**
    * Changes the data from e.g. getting objects from the map based on coordinate. The data is like this normally:
    * {
@@ -45,6 +41,7 @@ function setupDataManipulation() {
    *   }]
    * ]
    *
+   * @method mapObjectsToArray
    * @memberOf dataManipulation
    * @param  {Object} objects       Object that holds objects
    * @return {Array}                Returns the transformed array
@@ -54,6 +51,10 @@ function setupDataManipulation() {
       return objects[objGroup];
     });
   }
+  /**
+   * @method flattenArrayBy1Level
+   * @param  {Array} objects
+   */
   function flattenArrayBy1Level(objects) {
     let merged = [];
 

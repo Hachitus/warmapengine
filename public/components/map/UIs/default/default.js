@@ -11,17 +11,17 @@
  * @todo  should take jQuery away from this, as soon as we refactor the animations and graphics for selections
  * */
 
-/***********************
-******* IMPORT *********
-***********************/
+/*---------------------
+------- IMPORT --------
+----------------------*/
 import { templates } from '/components/map/UIs/default/layout/templates';
 import { createVisibleHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
 import { UI_templateBase } from '/components/bundles/coreBundle';
 //import { drawShapes } from '/components/map/UIs/default/utils/arrows';
 
-/***********************
-****** VARIABLES *******
-***********************/
+/*---------------------
+------ VARIABLES ------
+----------------------*/
 var cssClasses = {
   select: "#dialog_select"
 };
@@ -29,9 +29,9 @@ var fadeAnimation = "slow";
 var $elements = {};
 var createHighlight;
 
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export class UI_default extends UI_templateBase {
   constructor(modal, map, options = { styles: "#F0F0F0" }) {
     super(cssClasses);
@@ -128,9 +128,9 @@ export class UI_default extends UI_templateBase {
 
 }
 
-/***********************
-******* PRIVATE ********
-***********************/
+/*----------------------
+------- PRIVATE --------
+----------------------*/
 function _get$Element(which) {
   /* Set the jQuery element to collection only once */
   if (!$elements[which]) {

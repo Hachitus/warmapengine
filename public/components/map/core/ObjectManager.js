@@ -1,11 +1,6 @@
 'use strict';
 
 /**
- * @module Map
- * @submodule core
- */
-
-/**
  * @typedef {Object}              AreaSize
  * @property {Integer} x          X coordinate
  * @property {Integer} y          Y coordinate
@@ -19,27 +14,24 @@
  * {width: Integer, height: Integer}
  */
 
-/**
- * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn't be the issue.
- */
-
-/***********************
-******** IMPORT ********
-***********************/
+/*---------------------
+------- IMPORT --------
+----------------------*/
 import { Quadtree } from './utils/Quadtree';
 import { arrays } from '/components/utilities/general';
 
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export class ObjectManager {
   /**
    * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or when objects or areas collide with each other. It uses quadtree for preliminary filtering of matching objects and then the framework specific collision detection
    *
-   * @class ObjectManager
+   * @class core.ObjectManager
    * @memberOf Map.core
    * @constructor
    * @param {object} hitDetector Object or function that handles hit detection. This can be omitted in many cases
+   * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms. Since we do most work with quadtree, resources shouldn't be the issue.
    */
   constructor(hitDetector) {
     this.quadtrees = {};
@@ -48,6 +40,7 @@ export class ObjectManager {
   /**
    * Retrieve objects under certain coordinates or area, if size is given
    *
+   * @method retrieve
    * @param {{ globalCoords: { x:Number, y:Number }, localCoords: { x:Number, y:Number } }} allCoords         the coordinates which we want to hitTest
    * @param {string} type                                         type of the object / layer that we want to retrieve
    * @param {Object} options                                      optional options
@@ -98,6 +91,7 @@ export class ObjectManager {
   /**
    * Add object to hitDetection layer
    *
+   * @method addObject
    * @param {string} type                                                 type of the object / layer that we want to add
    * @param {AreaSize} hitArea                                            area that is hitTested
    * @param {Object} obj                                                  object that we want to store. If hitTest succeeds this object is returned.
@@ -121,6 +115,7 @@ export class ObjectManager {
    * Add hitDetection layer. Basically you create layers for different object types, like for example one for the
    * terrain, one for the units and one for the cities. The quadtree does not really require bounds, so we omit them.
    *
+   * @method addLayer
    * @param {string} type             Type of the layer that we want to add
    * @param {ObjectSize} bounds       Bounds for the quadtree layer
    * @param {Object} extra            {objects: Number, levels: Number}. quadtree-settings: maximum objects before we split and maximum levels of nested layers

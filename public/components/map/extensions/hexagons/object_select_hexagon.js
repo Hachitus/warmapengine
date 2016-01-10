@@ -1,34 +1,34 @@
 'use strict';
 
-/**
- * Handles the selection of hexagons on the map
-*/
-
-/***********************
-******* IMPORTS ********
-***********************/
+/*-----------------------
+--------- IMPORT --------
+-----------------------*/
 import { setupHexagonClick } from '/components/map/extensions/hexagons/eventListeners/select';
 
-/***********************
-********* API **********
-***********************/
+/*-----------------------
+---------- API ----------
+-----------------------*/
 export const pluginName = "object_select";
 export const object_select = setupObject_select_hexagon();
 
-/***********************
-******* PUBLIC *********
-***********************/
+/*-----------------------
+-------- PUBLIC ---------
+-----------------------*/
+/**
+ * Handles the selection of hexagons on the map
+ *
+ * @class object_select
+ * @return {Object}       Return methods inside object
+ */
 function setupObject_select_hexagon() {
   var map = {};
 
-  /***********************
-  ********** API *********
-  ***********************/
   return {
     init
   };
 
   /**
+   * @method  init
    * @param {Map} givenMap         Instantiated Map class object
    */
   function init(givenMap) {
@@ -37,10 +37,11 @@ function setupObject_select_hexagon() {
     startClickListener(map);
   }
 
-  /***********************
-  ******* PRIVATE ********
-  ***********************/
+/*-----------------------
+-------- PRIVATE --------
+-----------------------*/
   /**
+   * @method startClickListener
    * @param {Map} map              Instantiated Map class object
    */
   function startClickListener(map) {

@@ -1,19 +1,14 @@
 'use strict';
 
-/**
- * @module Map
- * @submodule core
- */
-
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export const mouse = setupMouseUtils();
 export const resize = setupResizeUtils();
 export const environmentDetection = setupEnvironmentDetection();
 export const general = setupGeneral();
 /**
- * @class mouse
+ * @class core.utils.mouse
  * @memberof Map.core.utils
  * @return {Object}      isRightClick, eventData.getPointerCoords, eventData.getHAMMERPointerCoords, eventMouseCoords
  */
@@ -30,6 +25,7 @@ function setupMouseUtils() {
   /**
    * Detects if the mouse click has been the right mouse button
    *
+   * @method isRightClick
    * @param {Event} event The event where the click occured
    */
   function isRightClick( event ) {
@@ -50,15 +46,30 @@ function setupMouseUtils() {
 
     return false;
   }
+  /**
+   * @method getPointerCoords
+   * @param  {Event} e    Event object
+   * @return {Object}
+   */
   function getPointerCoords(e) {
     return {
       x: e.offsetX,
       y: e.offsetY
     };
   }
+  /**
+   * @method getHAMMERPointerCoords
+   * @param  {Event} e    Event object
+   * @return {Object}
+   */
   function getHAMMERPointerCoords(e) {
     return e.center;
   }
+  /**
+   * @method eventMouseCoords
+   * @param  {Event} e    Event object
+   * @return {Object}
+   */
   function eventMouseCoords(e) {
     var pos = {
       x:0,
@@ -81,7 +92,7 @@ function setupMouseUtils() {
   }
 }
 /**
- * @class resize
+ * @class core.utils.resize
  * @memberof Map.core.utils
  * @return {Object}      toggleFullScreen, setToFullSize, getWindowSize
  */
@@ -92,6 +103,9 @@ function setupResizeUtils() {
     getWindowSize
   };
 
+  /**
+   * @method toggleFullScreen
+   */
   function toggleFullScreen() {
     var elem = document.body; // Make the body go full screen.
     var isInFullScreen = ( document.fullScreenElement && document.fullScreenElement !== null ) ||
@@ -136,6 +150,7 @@ function setupResizeUtils() {
   /**
    * Sets canvas size to maximum width and height on the browser, not using fullscreen
    *
+   * @method setToFullSize
    * @param {Object} context        DOMElement Canvas context
    */
   function setToFullSize(context) {
@@ -146,6 +161,12 @@ function setupResizeUtils() {
       context.canvas.height = size.y;
     };
   }
+  /**
+   * Get browser windows size
+   *
+   * @method getWindowSize
+   * @param {Object} context        DOMElement Canvas context
+   */
   function getWindowSize() {
     return {
       x: window.innerWidth,
@@ -154,7 +175,7 @@ function setupResizeUtils() {
   }
 }
 /**
- * @class environment
+ * @class core.utils.environment
  * @memberof Map.core.utils
  * @return {Object}      getPixelRatio
  */
@@ -166,8 +187,7 @@ function setupEnvironmentDetection() {
   };
 
   /**
-   * [getPixelRatio description]
-   *
+   * @method getPixelRatio
    * @require Canvas element in the DOM. This needs to be found
    * @param  {Object} canvasElement       HTML canvas element
    * @return {Number}
@@ -183,23 +203,22 @@ function setupEnvironmentDetection() {
   }
 }
 /**
- * @class general
+ * @class core.utils.general
  * @memberof Map.core.utils
  * @return {Object}      pixelEpsilonEquality
  */
 function setupGeneral() {
   const PIXEL_EPSILON = 0.01;
 
-  /**************************
-  *********** API ***********
-  **************************/
   return {
     pixelEpsilonEquality: epsilonEquality
   };
 
-  /**************************
-  ********* PUBLIC **********
-  **************************/
+  /**
+   * @method epsilonEquality
+   * @param  {Number} x
+   * @param  {Number} y
+   */
   function epsilonEquality(x, y) {
     return ( Math.abs(x) - Math.abs(y) ) < PIXEL_EPSILON;
   }

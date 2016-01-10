@@ -10,29 +10,29 @@
  * @requires PIXI in global space
  **/
 
-/***********************
-******* IMPORTS ********
-***********************/
+/*---------------------
+------- IMPORT --------
+----------------------*/
 import { Map, UI, utils } from "/components/bundles/coreBundle";
 import { Object_terrain, Object_unit } from "/components/map/extensions/hexagons/Objects";
 import { UI_default } from "/components/map/UIs/default/default.js";
 
-/***********************
-****** VARIABLES *******
-***********************/
+/*---------------------
+------ VARIABLES ------
+----------------------*/
 const functionsInObj = {
   Object_terrain,
   Object_unit
 };
 
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export { createMap as createMap };
 
-/***********************
-******* PUBLIC *********
-***********************/
+/*---------------------
+------- PUBLIC --------
+----------------------*/
 /**
  * This constructs a whole horizontally aligned hexagonal map
  *

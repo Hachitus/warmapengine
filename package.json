@@ -6,8 +6,8 @@
   "scripts": {
     "start": "echo 'starting instance in http://localhost:9001/' && forever start startGame.js --uid FlaTWorld",
     "stop": "forever stop startGame.js FlaTWorld",
-    "document": "jsdoc -c .\\JSDocConf.json",
-    "push": "git push && esdoc -c .\\esdoc.json"
+    "document": "yuidoc -t node_modules/yuidoc-theme-blue",
+    "push": "git push && yuidoc -t node_modules/yuidoc-theme-blue"
   },
   "dependencies": {
     "express": "^4.12.4",
@@ -23,9 +23,9 @@
     "bower": "^1.7.2",
     "ink-docstrap": "^1.1.0",
     "jscs": "^2.3.0",
+    "jsdoc": "^3.4.0",
     "jshint": "^2.8.0",
-    "jspm": "^0.16.19",
-    "yuidocjs": "^0.9.0"
+    "jspm": "^0.16.19"
   },
   "jspm": {
     "directories": {

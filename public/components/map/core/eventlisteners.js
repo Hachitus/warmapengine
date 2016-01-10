@@ -2,25 +2,20 @@
 
 'use strict';
 
-/**
- * @module Map
- * @submodule core
- */
-
-/***********************
-****** VARIABLES *******
-***********************/
+/*-----------------------
+------- VARIABLES -------
+-----------------------*/
 var stateOfEvents = {};
 var singletonScope;
 
-/***********************
-********* API **********
-***********************/
+/*-----------------------
+---------- API ----------
+-----------------------*/
 export { eventListenerModule as eventListeners };
 
-/***********************
-******** PUBLIC ********
-***********************/
+/*-----------------------
+-------- PUBLIC ---------
+-----------------------*/
 /**
  * Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for the eventlistener management. This way all the eventlisteners are in the same object, conveniently.
  * eventListeners is a singleton that needs to be initialized with an object, that holds all the callbacks used in this class. I.e.
@@ -29,7 +24,7 @@ export { eventListenerModule as eventListeners };
  *   zoom: function() {}
  * }
  *
- * @class eventListeners
+ * @class core.eventListeners
  * @memberOf Map.core
  * @requires Hammer.js (for touch events)
  * @requires Hamster.js (for good cross-browser mousewheel events)
@@ -63,6 +58,7 @@ function eventListenerModule(canvasElement = document.getElementsByTagName("canv
   /**
    * Sets the state of the event. State is so far very important for fluent dragging and selecting. When we start to drag, we avoid selecting units and vice versa, when we keep an event state tracking through this.
    *
+   * @method setState
    * @param {String} type         Event name we are following
    * @param {Boolean} state       The state we want to set (true or false)
    */
@@ -72,6 +68,7 @@ function eventListenerModule(canvasElement = document.getElementsByTagName("canv
   /**
    * Gets the current state of the event
    *
+   * @method getState
    * @param  {String} type         Event name we are following
    * @return {Boolean}             returns true of false
    */
@@ -82,6 +79,7 @@ function eventListenerModule(canvasElement = document.getElementsByTagName("canv
   /**
    * Sets the canvas to fullsize as in the same size of the window / content area. But not fullscreen
    *
+   * @method toggleFullSizeListener
    * @param {Function} cb     Callback that fires when this event activates
    * @return {Boolean}        Return the state of this event
    */
@@ -101,6 +99,7 @@ function eventListenerModule(canvasElement = document.getElementsByTagName("canv
   /**
    * Sets the canvas to fullsize (as in fullSizeListener) and sets the browser in fullscreen mode
    *
+   * @method toggleFullscreen
    * @param {Function} cb     Callback that fires when this event activates
    * @return {Boolean}        Return the state of this event
    */
@@ -112,6 +111,7 @@ function eventListenerModule(canvasElement = document.getElementsByTagName("canv
   /**
    * Zoom the map. Mousewheel (desktop) and pinch (mobile)
    *
+   * @method toggleZoomListener
    * @param {Function} cb     Callback that fires when this event activates
    * @return {Boolean}        Return the state of this event
    */
@@ -136,6 +136,7 @@ function eventListenerModule(canvasElement = document.getElementsByTagName("canv
   /**
    * DragListener (normally used for moving the map)
    *
+   * @method toggleDragListener
    * @param {Function} cb     Callback that fires when this event activates
    * @return {Boolean}        Return the state of this event
    */
@@ -162,6 +163,7 @@ function eventListenerModule(canvasElement = document.getElementsByTagName("canv
   /**
    * Selecting something from the map
    *
+   * @method toggleSelectListener
    * @param {Function} cb     Callback that fires when this event activates
    * @return {Boolean}        Return the state of this event
    */

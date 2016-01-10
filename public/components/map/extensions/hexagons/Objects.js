@@ -15,29 +15,29 @@
  * @class
  */
 
-/***********************
-******* IMPORTS ********
-***********************/
+/*-----------------------
+--------- IMPORT --------
+-----------------------*/
 import { Object_sprite_terrain, Object_sprite_unit } from '/components/bundles/coreBundle';
 import { createHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
 import hexagonMath from '/components/map/extensions/hexagons/utils/hexagonMath';
 
-/***********************
-****** VARIABLES *******
-***********************/
+/*-----------------------
+-------- VARIABLES ------
+-----------------------*/
 var shape;
 
-/***********************
-********* API **********
-***********************/
-/**
- * @class
- *
- * @param {Coordinates} coords              Coordinates for the object relative to it's parent
- * @param {object} data                     This units custom data
- * @param {Object} options                  options.radius REQUIRED. This is the radius of the game maps hexagon
- */
+/*-----------------------
+---------- API ----------
+-----------------------*/
 export class Object_terrain extends Object_sprite_terrain {
+  /**
+   * @class Object_terrains
+   * @constructor
+   * @param {Coordinates} coords              Coordinates for the object relative to it's parent
+   * @param {object} data                     This units custom data
+   * @param {Object} options                  options.radius REQUIRED. This is the radius of the game maps hexagon
+   */
   constructor(coords, data, options) {
     const { radius } = options;
 
@@ -49,14 +49,15 @@ export class Object_terrain extends Object_sprite_terrain {
 }
 Object.assign(Object_terrain.prototype, calculateHexa);
 
-/**
- * @class
- *
- * @param {Coordinates} coords                  This units coordinates, relative to it's parent container
- * @param {object} data                         This units custom data
- * @param {Object} options                      options.radius REQUIRED. This is the radius of the game maps hexagon
- */
 export class Object_unit extends Object_sprite_unit {
+  /**
+   *
+   * @class Object_unit
+   * @constructor
+   * @param {Coordinates} coords                  This units coordinates, relative to it's parent container
+   * @param {object} data                         This units custom data
+   * @param {Object} options                      options.radius REQUIRED. This is the radius of the game maps hexagon
+   */
   constructor(coords, data, options) {
     const { radius } = options;
 
@@ -67,11 +68,12 @@ export class Object_unit extends Object_sprite_unit {
     calculateHexa.call(this, radius);
   }
 }
-/***********************
-******* PRIVATE ********
-***********************/
+/*-----------------------
+--------- PRIVATE -------
+-----------------------*/
 /**
  * @private
+ * @function calculateHexa
  */
 function calculateHexa(radius) {
   if (!radius) {
@@ -108,6 +110,7 @@ function calculateHexa(radius) {
 }
 /**
  * @private
+ * @function setAndGetShape
  */
 function setAndGetShape(radius) {
   if (!shape) {

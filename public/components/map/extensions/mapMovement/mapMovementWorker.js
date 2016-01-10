@@ -8,12 +8,15 @@
  * @property {Integer} y          Y coordinate
  * @property {Integer} Width      Width
  * @property {Integer} Height     Height
+ *
+ * @typedef {Object}              totalViewportArea
+ * @property {Integer} x          X coordinate
+ * @property {Integer} y          Y coordinate
+ * @property {Integer} x2         X coordinate of the right side edge of rectangle
+ * @property {Integer} y2         Y coordinate of the right side edge of rectangle
+ * @property {Integer} Width      Width
+ * @property {Integer} Height     Height
  **/
-
-/**
- * This webworker receives array as postMessage. The first index will determine what we do. First index is a value of
- * integer.
- */
 
 /* object.assign polyfill for IE11 */
 if (typeof Object.assign != 'function') {
@@ -44,8 +47,10 @@ const METHOD_ALL = 1;
 var viewportArea, scale, methodType, smallerViewportArea;
 
 /*
- * Calculates the correct current viewport / window area. Arguments are received with postMessage using e.data property
+ * Calculates the correct current viewport / window area. Arguments are received with postMessage using e.data property. This webworker receives array as postMessage. The first index will determine what we do. First index is a value of integer.
  *
+ * @private
+ * @function anonymous
  * @param  {Number} e.data[0]                             This defines what we want to generate. Now there is only METHOD_ALL
  * @param  {AreaSize}                                     Current viewport area with global coordinates
  * @param  {Number}                                       Amount of scale / zoom on the map
@@ -76,6 +81,13 @@ self.addEventListener("message", function (e) {
   }
 });
 
+/**
+ * forms the total viewport parameters based on the given ones.
+ *
+ * @param  {AreaSize} viewportArea          Given viewport area
+ * @param  {Number} offsetQuantifier        How big offset we match against
+ * @return {totalViewportArea}              The total viewportArea
+ */
 function getViewportCoordinates(viewportArea, offsetQuantifier) {
   var offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET  );
   offsetQuantifier = offsetQuantifier || 1;

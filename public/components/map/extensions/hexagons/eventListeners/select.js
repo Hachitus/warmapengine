@@ -1,34 +1,35 @@
 'use strict';
 
 /**
- * Handles the eventlistner for selecting objects on the map. THe actual logic for detecting the objects under mouse
- * etc. are in object_select_hexagon
+
  *
  * @require Hammer.js. Some events are done with Hammer.js, so we need it to handle those events correctly
  */
 
-/***********************
-******* IMPORTS ********
-***********************/
+/*---------------------
+------- IMPORT --------
+----------------------*/
 import { utils, mapEvents, UI, eventListeners as eventListenerMod } from '/components/bundles/coreBundle';
 
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export { _setupHexagonClick as setupHexagonClick };
 
-/***********************
-******* PUBLIC *********
-***********************/
+/*---------------------
+------- PUBLIC --------
+----------------------*/
 /**
- * Curries the detection of clicking on the map and selecting the correct hexagon area.
+ * Handles the eventlistner for selecting objects on the map. THe actual logic for detecting the objects under mouse
+ * etc. are in object_select_hexagon
+ *
+ * @class setupHexagonClick
  * @param  {Map} map      The currently use Map instance
  * @return {Boolean}      True
  */
 function _setupHexagonClick(map) {
   var eventlisteners, ui;
 
-  /********** Required **********/
   if (!map) {
     throw new Error("eventlisteners initialization require map arguments");
   }
@@ -41,9 +42,15 @@ function _setupHexagonClick(map) {
 
   return true;
 
-  /*************************
-  ********* PUBLIC *********
-  *************************/
+  /*----------------------
+  ------- PUBLIC ---------
+  ----------------------*/
+  /**
+   * the listener that received the event object
+   *
+   * @method tapListener
+   * @param  {Event} e      Event object
+   */
   function tapListener(e) {
     var globalCoords = utils.mouse.eventData.getHAMMERPointerCoords(e);
     var objects;

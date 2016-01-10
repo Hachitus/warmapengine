@@ -1,11 +1,6 @@
 'use strict';
 
 /**
- * @module Map
- * @submodule core
- */
-
-/**
  * @typedef {Object}              Coordinates
  * @property {Integer} x          X coordinate
  * @property {Integer} y          Y coordinate
@@ -15,19 +10,19 @@
  * @property {Integer} height    Height
  */
 
-/************************
-********* IMPORT ********
-*************************/
+/*-----------------------
+--------- IMPORT --------
+-----------------------*/
 import { utils } from '/components/bundles/coreBundle';
 
-/************************
-********** API **********
-*************************/
+/*-----------------------
+---------- API ----------
+-----------------------*/
 export class Object_sprite extends PIXI.Sprite {
   /**
    * The base class of all sprite objects
    *
-   * @class Object_sprite
+   * @class core.Object_sprite
    * @memberOf Map.core
    * @constructor
    * @extends PIXI.Sprite
@@ -106,6 +101,7 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Drawing the object
    *
+   * @method innerDraw
    * @param {Number} x coordinate x
    * @param {Number} y coordinate y
    * @return this object instance
@@ -120,6 +116,7 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Draws new frame to animate or such
    *
+   * @method drawNewFrame
    * @param {Number} x                coordinate x
    * @param {Number} y                coordinate y
    * @param {Number} newFrame         New frame number to animate to
@@ -133,6 +130,7 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Get the area that is reserved for the graphical presenation of this object as a rectangle.
    *
+   * @method getGraphicalArea
    * @param  {Object} options       toGlobal: Boolean. Should the method return global coordinates or local (movableLayer)
    * @return {AreaSize}               { x: Number, y: Number, width: Number, height: Number}
    */
@@ -151,6 +149,7 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Coordinate conversion: localToLocal
    *
+   * @method localToLocal
    * @param  {Number} x                     X coordinate
    * @param  {Number} y                     Y coordinate
    * @param  {Object} target                PIXI.DisplayObject. The DisplayObject where we should target the coordinates for
@@ -165,6 +164,7 @@ export class Object_sprite extends PIXI.Sprite {
   /**
    * Clone object
    *
+   * @method clone
    * @param  {Object} renderer              PIXI renderer
    * @param  {Object} options               position: Boolean, anchor: Boolean
    * @return {Object}                       cloned object
@@ -240,6 +240,7 @@ export class Object_sprite_unit extends Object_sprite {
   /**
    * Execute action on units (move, attack etc.). @todo THIS HAS NOT BEEN IMPLEMENTED YET!
    *
+   * @method  doAction
    * @param {String} type
    */
   doAction(type) {
@@ -250,6 +251,7 @@ export class Object_sprite_unit extends Object_sprite {
   /**
    * Add certain action type. @todo THIS HAS NOT BEEN IMPLEMENTED YET!
    *
+   * @method addActionType
    * @param {String} type
    */
   addActionType(type) {
@@ -258,12 +260,16 @@ export class Object_sprite_unit extends Object_sprite {
   /**
    * Attach callback for the certain action type. @todo THIS HAS NOT BEEN IMPLEMENTED YET!
    *
+   * @method addCallbackToAction
    * @param {String} type
    * @param {Function} cb
    */
   addCallbackToAction(type, cb) {
     this.actions[type].push(cb);
   }
+  /**
+   * @method dropShadow
+   */
   dropShadow(...args) {
     return utils.effects.dropShadow(...args);
   }

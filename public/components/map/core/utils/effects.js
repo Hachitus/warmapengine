@@ -1,37 +1,32 @@
 'use strict';
 
-/**
- * @module Map
- * @submodule core
- */
-
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export const effects = setupEffects();
 
-/***********************
-******** PUBLIC ********
-***********************/
+/*---------------------
+-------- PUBLIC -------
+----------------------*/
 /**
  * This module will hold the most common graphical effects used in the map. It is still very stub as the development
  * hasn't proceeded to this stage yet.
  *
- * @class effects
+ * @class core.utils.effects
  * @memberof Map.core.utils
  * @return {Object}      init, _startDragListener
  */
 function setupEffects() {
-  /***********************
-  ********* API **********
-  ***********************/
+  /*---------------------
+  ------- API ----------
+  --------------------*/
   return {
     dropShadow
   };
 
-  /***********************
-  ******** PUBLIC ********
-  ***********************/
+  /*----------------------
+  ------- PUBLIC ---------
+  ----------------------*/
   /**
    * @param  {Object} options       [description]
    */

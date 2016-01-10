@@ -1,25 +1,23 @@
 'use strict';
 
-
-
-/***********************
-******** IMPORT ********
-***********************/
+/*---------------------
+------- IMPORT --------
+----------------------*/
 import { eventListeners as eventListenerMod, utils } from '/components/bundles/coreBundle';
 
-/***********************
-********* API **********
-***********************/
+/*---------------------
+--------- API ---------
+----------------------*/
 export const pluginName = "map_drag";
 export const map_drag = setupMap_drag();
 
-/***********************
-******** PUBLIC ********
-***********************/
+/*---------------------
+-------- PUBLIC -------
+----------------------*/
 /**
  * Core plugin for the engine. Handles moving the map by dragging the map with mouse or touch event. Core plugins can always be overwrote if needed.
  *
- * @class mapDrag
+ * @class core.mapDrag
  * @memberOf Map.core
  * @requires Mobile part requires Hammer.js
  * @return {Object}      init, _startDragListener
@@ -29,20 +27,21 @@ function setupMap_drag() {
   var offsetCoords = _offsetCoords();
   var eventListenerCB, eventListener;
 
-  /***********************
-  ********* API **********
-  ***********************/
+  /*--------------------
+  ------- API ----------
+  --------------------*/
   return {
     init,
     _startDragListener /* Function revealed for testing */
   };
 
-  /**************************
-  ********* PUBLIC **********
-  **************************/
+  /*---------------------
+  -------- PUBLIC -------
+  ----------------------*/
   /**
    * Required init functions for the plugin
    *
+   * @method init
    * @param {Map} mapObj        The current instance of Map class
    * */
   function init(map) {
@@ -53,14 +52,15 @@ function setupMap_drag() {
     eventListener.toggleDragListener(eventListenerCB);
   }
 
-  /*****************************
-  ********** PRIVATE ***********
-  *****************************/
+  /*---------------------
+  -------- PRIVATE ------
+  ----------------------*/
   /**
    * Mobile version. Starts the functionality, uses Hammer.js heavily for doing the drag. More simple and better than
    * desktop version, since we don't need to calculate the drag with several event listener, one is enough with Hammer
    *
    * @private
+   * @function _startDragListener
    * @param {Map} map           The current instance of Map class
    */
   function _startDragListener( map ) {
@@ -101,6 +101,7 @@ function setupMap_drag() {
    * sets basic settings like preventDefault etc.
    *
    * @private
+   * @function _mapMovement
    * @param  {Event} e                        The event being dealt with
    * @param  {Map} map                        The current instance of Map class
    * @param  {Coordinates} coords             Current pointer coordinates
@@ -131,6 +132,9 @@ function setupMap_drag() {
    * Function for setting and getting the mouse offset.
    * Offset is the distance from the left upper coordinates (global 0, 0 coordinates) on the canvas, to the current /
    * last known mouse coordinates
+   *
+   * @private
+   * @function _offsetCoords
    */
   function _offsetCoords() {
     var offsetCoords;

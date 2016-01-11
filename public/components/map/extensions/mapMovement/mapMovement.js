@@ -58,12 +58,12 @@ function setupMapMovement () {
    * @param  {Map} map     Instance of Map
    */
   function addAll(map) {
-    var scale = map.getScale();
+    var scale = map.getZoom();
     var viewportArea;
 
     viewportArea = map.getViewportArea();
     Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
-    Object.assign( viewportArea , applyScaleToViewport(viewportArea, map.getScale()) );
+    Object.assign( viewportArea , applyScaleToViewport(viewportArea, map.getZoom()) );
 
     map.getMovableLayer().getPrimaryLayers().forEach( layer => {
       var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
@@ -101,7 +101,7 @@ function setupMapMovement () {
         if (window.Worker) {
           viewportWorker.onmessage = function(e) {
             try {
-              const scale = map.getScale();
+              const scale = map.getZoom();
               const scaledViewport = e.data[0];
               const smallerScaledViewport = e.data[1];
               var containersUnderChangedArea = [];
@@ -117,7 +117,7 @@ function setupMapMovement () {
               changedCoordinates.height = 0;
 
               containersUnderChangedArea = map.getMovableLayer().getPrimaryLayers().map(layer => {
-                return layer.getSubContainersByCoordinates(scaledAndChangedViewport);
+                return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
               });
               containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
 
@@ -140,7 +140,7 @@ function setupMapMovement () {
           viewportWorker.postMessage([
             1,
             viewportArea,
-            map.getScale(),
+            map.getZoom(),
             changedCoordinates
           ]);
         } else {

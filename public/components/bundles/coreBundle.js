@@ -9,6 +9,7 @@ export * from '/components/map/core/utils/index';
 export * from '/components/map/core/Objects';
 export * from '/components/map/core/eventListeners';
 export * from '/components/map/core/map';
+export * from '/components/map/core/MapDataManipulator';
 export * from '/components/map/core/Map_layers';
 export * from '/components/map/core/mapEvents';
 export * from '/components/map/core/ObjectManager';

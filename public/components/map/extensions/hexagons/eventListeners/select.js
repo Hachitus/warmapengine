@@ -3,7 +3,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { utils, mapEvents, UI, eventListeners as eventListenerMod } from '/components/bundles/coreBundle';
+import { utils, mapEvents, UI, MapDataManipulator, eventListeners as eventListenerMod } from '/components/bundles/coreBundle';
 
 /*---------------------
 --------- API ---------
@@ -48,9 +48,16 @@ function _setupHexagonClick(map) {
    */
   function tapListener(e) {
     var globalCoords = utils.mouse.eventData.getHAMMERPointerCoords(e);
-    var objects;
+    var objects, filter;
 
-    objects = map.getObjectsUnderPoint(globalCoords, "unit");
+    filter = new MapDataManipulator({
+      type: "filter",
+      object: "container",
+      property: "name",
+      value: "unitLayer"
+    });
+
+    objects = map.getObjectsUnderArea(globalCoords, filter);
     objects = utils.dataManipulation.mapObjectsToArray(objects);
     objects = utils.dataManipulation.flattenArrayBy1Level(objects);
 

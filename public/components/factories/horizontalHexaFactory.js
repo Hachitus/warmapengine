@@ -93,7 +93,8 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
       drawOutsideViewport: {
         x: renderer.width,
         y: renderer.height
-      }
+      },
+      selectable: layerData.name === "unitLayer" ? true : false
     };
     var thisLayer;
 

@@ -4,7 +4,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { Map_layer, Map_parentLayer, eventListeners, ObjectManager, mapEvents, utils } from '/components/bundles/coreBundle';
+import { Map_layer, Map_parentLayer, eventListeners, ObjectManager, mapEvents, utils, MapDataManipulator } from '/components/bundles/coreBundle';
 import * as Q from '/assets/lib/q/q';
 
 /*---------------------
@@ -19,15 +19,22 @@ var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, Parent
 ----------------------*/
 export class Map {
   /**
-   * Main class for the whole engine, which initializes the whole structure and plugins
+   * Main class for the engine, which initializes the whole structure and plugins
    *
-   * You use the class by instantiating it with new and then initialize with init-method:
+   * You use the class by instantiating it (new) and then finishing initialization with init-method:
    *     var map = new Map(canvasElement, mapOptions );
    *     promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
    *
-   * Plugins can be added with activatePlugins-method by prodiving init(map) method in the plugin. Plugins are always
-   * functions, not objects that are instantiated. Plugins are supposed to extend the map object or anything in it via
-   * it's public methods.
+   * The biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the tests/data-folder, but that data structure could still change or the way we implement creation of it!
+   *
+   * The map consists of layer on top of each other. The example is best understood when thinking typical war strategy game. The structure is this:
+   * 1. StaticLayer: Handles things like scaling / zooming the map
+   * 2. MovableLayer: Obviously handles movement of the map. Also is a good place to get map coordinates. Since getting global coordinates won't help you much, half of the time.
+   * 3. Different layers: like units, terrain, fog of war, UIs etc. Can also contains special layers like dynamically changed UIlayers.
+   * 4. possible subcontainers (used for optimized object selection and map movement). Can also contains special layers like dynamically changed UIlayers.
+   * 5. Individual objects, like units, terrains, cities etc...
+   *
+   * Plugins can be added with activatePlugins-method by sending them to the class. Plugins must always implement init-method, which receives Map instance. Plugins are not yet restricted what they can do and can add functionality without touching map or can modify objects or their prototypes through access to Map instance.
    *
    * @class core.Map
    * @constructor
@@ -36,11 +43,8 @@ export class Map {
    * @requires Hammer for touch events
    * @requires Hamster for mouse scroll events
    *
-   * @param {HTMLElement} canvasContainer                 HTML element which will be container for the created canvas element
+   * @param {HTMLElement} canvasContainer                 HTML element which will be container for the created canvas element. REQUIRED
    * @param {Object} props                                Extra properties
-   * @param {Object} props.startCoord                     Coordinates where the map starts at
-   * @param {Integer} props.startCoord.x                  X coordinate
-   * @param {Integer} props.startCoord.y                  Y coordinate
    * @param {Object} props.bounds                         Bounds of the map / mapSize
    * @param {Integer} props.bounds.width                  Bound width
    * @param {Integer} props.bounds.height                 Bound height
@@ -54,29 +58,30 @@ export class Map {
    */
   constructor(canvasContainer = null,
       props = {
-        startCoord: { x: 0, y: 0 },
         bounds: { width: 0, height: 0 },
         rendererOptions: { refreshEventListeners: true },
         subContainers: false,
         trackFPSCB: false }) {
-    var { startCoord, bounds, rendererOptions, subContainers, trackFPSCB } = props;
+    var { bounds, rendererOptions, subContainers, trackFPSCB } = props;
 
+    /* Check for the required parameters! */
     if (!canvasContainer) {
       throw new Error(this.constructor.name + " needs canvasContainer!");
     }
-
+    /* If the constructor was passed canvasContainer as a string and not as an Element, we get the element */
     if (typeof canvasContainer === "string") {
       canvasContainer = document.querySelector(canvasContainer);
     }
 
+    /* Create PIXI renderer. Practically PIXI creates its own canvas and does its magic to it */
     _renderer = PIXI.autoDetectRenderer(bounds.width, bounds.height, rendererOptions);
     /* We handle all the events ourselves through addEventListeners-method on canvas, so destroy pixi native method */
     _renderer.plugins.interaction.destroy();
+    /* Make sure the canvasContainer is empty. So there are no nasty surprises */
     canvasContainer.innerHTML = "";
+    /* Add the canvas Element PIXI created inside the given canvasContainer */
     canvasContainer.appendChild(_renderer.view, canvasContainer);
-    let interactionManager = new PIXI.interaction.InteractionManager(_renderer);
-
-    /* This defines which class we use to generate layer on the map. Under movableLayer */
+    /* This defines which Map_layer class we use to generate layers on the map. Under movableLayer. These are layers like: Units, terrain, fog of war, UIs etc. */
     ParentLayerConstructor = subContainers ? Map_parentLayer : Map_layer;
 
     /* These are the 2 topmost layers on the map:
@@ -85,26 +90,27 @@ export class Map {
      * - movableLayer: Moves the map, when the user commands. Can hold e.g. UI objects that move with the map. Like
      * graphics that show which area or object is currently selected. */
     _staticLayer = new Map_layer({ name:"staticLayer", coord: { x: 0, y: 0 } });
-    _movableLayer = new Map_layer({ name:"movableLayer", coord: startCoord });
+    _movableLayer = new Map_layer({ name:"movableLayer", coord: { x: 0, y: 0 } });
     _staticLayer.addChild(_movableLayer);
 
     /* InteractionManager is responsible for finding what objects are under certain coordinates. E.g. when selecting */
     eventlisteners = eventListeners(this.canvas, true);
 
-    /* needed for fullsize canvas in PIXI */
+    /* needed to make the canvas fullsize canvas with PIXI */
     _renderer.view.style.position = "absolute";
     _renderer.view.style.display = "block";
-    /* stop scrollbars of showing */
-    document.getElementsByTagName("body")[0].style.overflow = "hidden";
     _renderer.view.style.left = "0px";
     _renderer.view.style.top = "0px";
+    /* stop scrollbars of showing */
+    document.getElementsByTagName("body")[0].style.overflow = "hidden";
 
     /**
      * canvas element that was generated and is being used by this new generated Map instance.
      *
      * @attribute canvas
      * @type {HTMLElement}
-     */
+     * @required
+     **/
     this.canvas = _renderer.view;
     /**
      * list of plugins that the map uses and are initialized
@@ -112,51 +118,58 @@ export class Map {
      *
      * @attribute plugins
      * @type {Set}
-     */
+     **/
     this.plugins = new Set();
     /**
      * Subcontainers size that we want to generate, when layers use subcontainers
      *
      * @attribute subContainersConfig
      * @type {{width: Integer, height: Int}}
-     */
+     **/
     this.subContainersConfig = subContainers;
     /**
      * Callback function that gets the current FPS on the map and shows it in DOM
      *
      * @attribute trackFPSCB
      * @type {Function}
-     */
+     **/
     this.trackFPSCB = trackFPSCB;
     /**
-     * ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks the map to select some object.
+     * ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks the map to select some object. Fill this with quadtrees or such or just use subcontainers, in which case the ObjectManager uses them automatically.
      *
      * @attribute objectManager
      * @type {ObjectManager}
-     */
-    this.objectManager = new ObjectManager(interactionManager); // Fill this with quadtrees or such
+     **/
+    this.objectManager = new ObjectManager(new PIXI.interaction.InteractionManager(_renderer));
 
-    /* PRIVATE */
+    /**
+     * Is map in move at the moment.
+     *
+     * @private
+     * @type {Boolean}
+     */
     this._mapInMove = false;
   }
   /**
-   * initialization method
+   * This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since normally the plugins have to be activated before the map is shown.
    *
    * @method init
-   * @param {String[]} plugins    Plugins to be activated for the map. Normally you should give the plugins here
+   * @param {String[]|Object[]} plugins                  Plugins to be activated for the map. Normally you should give the plugins here
    * instead of separately passing them to activatePlugins method. You can provide the module strings or module objects.
-   * @param  {Object} coord                          Starting coordinates for the map
-   * @param  {Integer} coord.x                       X coordinate
-   * @param  {Integer} coord.y                       Y coordinate
-   * @param {Function} tickCB                        callback function for tick. Tick callback is initiated in every frame. So map draws happen during ticks
-   * @param {Object} options                         Fullsize: Do we set fullsize canvas or not.
-   * @return {Array}                                 Returns an array of Promises. If this is empty / zero. Then there is nothing to wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
-   * */
+   * @param  {Object} coord                     Starting coordinates for the map.
+   * @param  {Integer} coord.x                  X coordinate.
+   * @param  {Integer} coord.y                  Y coordinate.
+   * @param {Function} tickCB                   callback function for tick. Tick callback is initiated in every frame. So map draws happen during ticks.
+   * @param {Object} options                    Extra options.
+   * @param {Boolean} options.fullsize          Do we set fullsize canvas or not at the beginning. Default: true
+   * @return {Array}                            Returns an array of Promises. If this is empty / zero. Then there is nothing to wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
+   **/
   init(plugins = [], coord = { x: 0, y: 0 }, tickCB = null, options = { fullsize: true }) {
     var allPromises = [];
 
     options.fullsize && this.toggleFullsize();
 
+    /* Iterates over given plugins Array and calls their init-method, depeding if it is String or Object */
     if (plugins.length && typeof plugins[0] === "object") {
       this.activatePlugins(plugins);
     } else if (plugins.length && typeof plugins[0] === "string") {
@@ -171,22 +184,24 @@ export class Map {
       });
     }
 
+    /* Sets the correct Map starting coordinates */
     coord && Object.assign(_movableLayer, coord);
 
-    this.drawOnNextTick();
+    /* We activate the default tick for the map, but if custom tick callback has been given, we activate it too */
     _defaultTick(this, PIXI.ticker.shared);
     tickCB && this.customTickOn(tickCB);
-
     isMapReadyPromises = allPromises;
+
+    this.drawOnNextTick();
 
     return allPromises;
   }
   /**
-   * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
+   * Returns a promise that resolves after the map is fully initialized
    *
    * @method whenReady
-   * @return the current map instance
-   * */
+   * @return {Promise}        Promise that holds all the individual plugin loading promises
+   **/
   whenReady() {
     return Q.all(isMapReadyPromises);
   }
@@ -194,28 +209,12 @@ export class Map {
    * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
    *
    * @method drawOnNextTick
-   * @return the current map instance
-   * */
+   **/
   drawOnNextTick() {
     _drawMapOnNextTick = true;
-
-    return this;
   }
   /**
-   * The correct way to update / redraw the map. Check happens at every tick and thus in every frame.
-   *
-   * @method getLayersWithAttributes
-   * @param {String} attribute
-   * @param {*} value
-   * @return the current map instance
-   * */
-  getLayersWithAttributes(attribute, value) {
-    return _staticLayer.children[0].children.filter(layer => {
-      return layer[attribute] === value;
-    });
-  }
-  /**
-   * Create a special layer, that has UI effect in it.
+   * Create a special layer, that holds UI effects in it.
    *
    * @method createUILayer
    * @param  {String} name          name of the layer
@@ -223,7 +222,7 @@ export class Map {
    * @param  {Integer} coord.x      X coordinate
    * @param  {Integer} coord.y      Y coordinate
    * @return {Map_layer}            The created UI layer
-   */
+   **/
   createUILayer(name = "default UI layer", coord = { x: 0, y: 0 }) {
     var layer = new Map_layer(name, coord);
     layer.specialLayer = true;
@@ -231,74 +230,70 @@ export class Map {
     return layer;
   }
   /**
-   * All parameters are passed to Map_layer constructor
+   * All parameters are passed to ParentLayerConstructor (normally constructor of Map_layer.
    *
    * @method addLayer
-   * @return created Map_layer instance
-   * */
+   * @see Map_layer
+   * @return {Map_layer}          created Map_layer instance
+   **/
   addLayer(layerOptions) {
-    var thisLayer;
+    var newLayer;
 
     if (this.getSubContainerConfigs() && layerOptions.subContainers !== false) {
       layerOptions.subContainers = this.getSubContainerConfigs();
     }
 
-    thisLayer = new ParentLayerConstructor(layerOptions);
-    _movableLayer.addChild(thisLayer);
+    newLayer = new ParentLayerConstructor(layerOptions);
+    this.getMovableLayer().addChild(newLayer);
 
-    return thisLayer;
+    return newLayer;
   }
   /**
-   * I think we don't need this when we have getSubcontainerConfigs?
+   * Just a convenience function (for usability and readability), for solving if the map uses subcontainers
    *
    * @method usesSubContainers
-   */
+   **/
   usesSubContainers() {
-    return this.subContainersConfig ? true : false;
+    return this.getSubContainerConfigs() ? true : false;
   }
   /**
-   * Does the map use subContainers
+   * Returns current subcontainers configurations (like subcontainers size)
    *
    * @method getSubContainerConfigs
-   */
+   **/
   getSubContainerConfigs() {
     return this.subContainersConfig;
   }
   /**
-   * Get the size of area that is shown to the player. Depends a bit if we want to show the maximum possible or current.
+   * Get the size of the area that is shown to the player.
    *
    * @method getViewportArea
-   * @param  {Boolean} isLocal       Do we want to use moving layer or static (global) coordinates
-   * @return {Object}                x- and y-coordinates and the width and height of the viewport
-   */
+   * @param  {Boolean} isLocal                                                  Do we want to use Map coordinates or global / canvas coordinates. Default = false
+   * @return {{x: Integer, y: Integer, width: Integer, height: Integer}}        x- and y-coordinates and the width and height of the viewport
+   **/
   getViewportArea(isLocal = false) {
     var layer = isLocal ? this.getMovableLayer() : this.getStaticLayer();
 
     return {
       x: layer.x,
       y: layer.y,
-      width: window.innerWidth,
-      height: window.innerHeight
+      width: Math.round(window.innerWidth),
+      height: Math.round(window.innerHeight)
     };
   }
   /**
+   * Remove a layer from the map
+   *
    * @method removeLayer
-   * @param {Map_layer} layer - the layer object to be removed
-   * */
+   * @param {Map_layer|PIXI.Container|PIXI.ParticleContainer} layer       The layer object to be removed
+   **/
   removeLayer(layer) {
     _movableLayer.removeChild(layer);
 
     return layer;
   }
   /**
-   * @method getLayerNamed
-   * @return layer with the passed layer name
-   * */
-  getLayerNamed(name) {
-    return _movableLayer.getChildNamed(name);
-  }
-  /**
-   * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale).
+   * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale). Draws map after movement.
    *
    * @method moveMap
    * @param {Object} coord                 The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.
@@ -307,47 +302,40 @@ export class Map {
    * @param {Object} informCoordinates     THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING
    * @param {Integer} informCoordinates.x  X coordinate
    * @param {Integer} informCoordinates.y  Y coordinate
-   * @param {{x: Integer, y: Integer}}
    **/
   moveMap(coord = { x: 0, y: 0 }, informCoordinates = coord) {
     var realCoordinates = {
-      x: Math.round(coord.x / _staticLayer.getScale()),
-      y: Math.round(coord.y / _staticLayer.getScale())
+      x: Math.round(coord.x / this.getStaticLayer().getZoom()),
+      y: Math.round(coord.y / this.getStaticLayer().getZoom())
     };
     _movableLayer.move(realCoordinates);
     mapEvents.publish("mapMoved", informCoordinates || realCoordinates);
     this.drawOnNextTick();
-
-    return this;
   }
   /**
-   * Cache the map. This provides significant performance boost, when used correctly. cacheMap iterates through all the
-   * layer on the map and caches the ones that return true from getCacheEnabled-method.
+   * Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches the ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.
    *
    * @method cacheMap
+   * @param {Object}          filters. TO BE IMPLEMENTED. Filter to cache only specific matching layers
    **/
-  cacheMap() {
+  cacheMap(filters) {
     _movableLayer.children.forEach(child => {
-      child.setCache(child.getCacheEnabled());
+      child.setCache(child.isCached());
     });
-
-    return this;
   }
   /**
-   * unCache the map.
+   * unCache the map. NOT WORKING ATM. IMPLEMENTED SOON!
    *
    * @method unCacheMap
-   * @return this map instance
+   * @return {Map}        this map instance
    * */
   unCacheMap() {
     _movableLayer.children.forEach(child => {
       child.setCache(false);
     });
-
-    return this;
   }
   /**
-   * Activate plugins for the map. Plugins need .pluginName property and .init-method
+   * Activate plugins for the map. Plugins need .pluginName property and .init-method. They receive this (Map instance) as parameter.
    *
    * @method pluginsArray
    * @param {Object[]} pluginsArray         Array that consists the plugin modules to be activated
@@ -356,14 +344,12 @@ export class Map {
     pluginsArray.forEach(plugin => {
       this.activatePlugin(plugin);
     });
-
-    return this;
   }
   /**
-   * Activate plugins for the map. Plugins need .pluginName property and .init-method
+   * Activate plugin for the map. Plugins need .pluginName property and .init-method. They receive this (Map instance) as parameter.
    *
    * @method activatePlugin
-   * @param {Object} plugin        Plugin module instance.
+   * @param {Object} plugin        Plugin module
    * */
   activatePlugin(plugin) {
     try {
@@ -379,26 +365,11 @@ export class Map {
     }
   }
   /**
-   * getter and setter for detecting if map is moved and setting the maps status as moved or not moved
+   * Setting new prototype methods for the Map instance
    *
-   * @method mapMoved
-   * @param {Boolean} yesOrNo         Has the map moved, or not.
-   * @param {Boolean} isFinal         Is this the last time map has been moved with this event chain.
-   * */
-  mapMoved(yesOrNo, isFinal) {
-    isFinal && mapEvents.publish("mapMovedFinal");
-
-    if (yesOrNo !== undefined) {
-      this._mapInMove = yesOrNo;
-      return yesOrNo;
-    }
-
-    return this._mapInMove;
-  }
-  /**
    * @method setPrototype
-   * @param {String} property
-   * @param {*} value
+   * @param {String} property         The property you want to set
+   * @param {*} value                 Value for the property
    */
   setPrototype(property, value) {
     var thisPrototype = Object.getPrototypeOf(this);
@@ -411,13 +382,11 @@ export class Map {
    * @method toggleFullsize
    **/
   toggleFullsize() {
-    if (!boundResizer) {
-      boundResizer = _resizeCanvas.bind(this);
-    }
+    /* We set this only once */
+    boundResizer = boundResizer || _resizeCanvas.bind(this);
 
+    eventlisteners.toggleFullSizeListener(boundResizer);
     mapEvents.publish("mapResized");
-
-    return eventlisteners.toggleFullSizeListener(boundResizer);
   }
   /**
    * Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
@@ -429,149 +398,122 @@ export class Map {
     var eventListenerCB = setFullScreen.bind(this);
 
     eventlisteners.toggleFullscreen(eventListenerCB);
+    mapEvents.publish("mapFullscreeActivated");
   }
   /**
-   * @method getSubcontainersUnderPoint
-   * @param  {[type]} globalCoords [description]
-   * @return {[type]}              [description]
-   */
-  getSubcontainersUnderPoint(globalCoords) {
-    var primaryLayers = this.getMovableLayer().getPrimaryLayers();
-    var allMatchingSubcontainers = [];
-    var allCoords = {
-      globalCoords: globalCoords,
-      localCoords: this.getMovableLayer().toLocal(new PIXI.Point(globalCoords.x, globalCoords.y))
-    };
-    var thisLayersSubcontainers;
-
-    allCoords.localCoords.width = globalCoords.width;
-    allCoords.localCoords.height = globalCoords.height;
-
-    primaryLayers.forEach(layer => {
-      thisLayersSubcontainers = layer.getSubContainersByCoordinates(allCoords.localCoords);
-      allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
-    });
-
-    return allMatchingSubcontainers;
-  }
-  /**
-   * Filter objects based on quadtree and then based on possible group provided
+   * Gets object under specific map coordinates. Uses the ObjectManagers retrieve method. Using subcontainers if they exist, other methods if not. If you provide type parameter, the method returns only object types that match it.
    *
-   * @method getObjectsUnderPoint
-   * @param  {Object} globalCoords            Starting coordinates for the map
+   * @method getObjectsUnderArea
+   * @param  {Object} globalCoords            Event coordinates on the staticLayer / canvas.
    * @param  {Integer} globalCoords.x         X coordinate
    * @param  {Integer} globalCoords.y         Y coordinate
    * @param  {String} type                    Type of the objects / layer to find.
    * @return {Array}                          Array of object found on the map.
    */
-  getObjectsUnderPoint(globalCoords = { x: 0, y: 0, width: 0, height: 0 }, type = undefined) {
+  getObjectsUnderArea(globalCoords = { x: 0, y: 0, width: 0, height: 0 }, type = undefined) {
     var objects = {};
+    /* We need both coordinates later on and it's logical to do the work here */
     var allCoords = {
       globalCoords: globalCoords,
       localCoords: this.getMovableLayer().toLocal(new PIXI.Point(globalCoords.x, globalCoords.y))
     };
-    // allCoords.localCoords.width = globalCoords.width;
-    // allCoords.localCoords.height = globalCoords.height;
+    var filter;
 
-    if (this.usesSubContainers()) {
-      let allMatchingSubcontainers = [];
-      let thisLayersSubcontainers = [];
-      let primaryLayers = this.getMovableLayer().getPrimaryLayers();
-
-      primaryLayers.forEach(layer => {
-        thisLayersSubcontainers = layer.getSubContainersByCoordinates(allCoords.globalCoords);
-        allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
+    allCoords.localCoords.width = globalCoords.width;
+    allCoords.localCoords.height = globalCoords.height;
+    filter = new MapDataManipulator({
+        type: "filter",
+        object: "container",
+        property: "selectable",
+        value: true
       });
 
+    if (this.usesSubContainers()) {
+      let allMatchingSubcontainers = this._getSubcontainersUnderArea(allCoords, { filter } );
+
       if (type) {
-        objects[type] = this.objectManager.retrieve(allCoords, type, {
-          subcontainers: allMatchingSubcontainers,
-          size: {
-            width: globalCoords.width,
-            height: globalCoords.height
-          }
+        objects[type] = this._retrieveObjects(allCoords, {
+          type,
+          subcontainers: allMatchingSubcontainers
         });
       } else {
-        objects = this.objectManager.retrieve(allCoords, type, {
-          subcontainers: allMatchingSubcontainers,
-          size: {
-            width: globalCoords.width,
-            height: globalCoords.height
-          }
+        objects = this._retrieveObjects(allCoords, {
+          subcontainers: allMatchingSubcontainers
         });
       }
     } else {
       if (type) {
-        objects[type] = this.objectManager.retrieve(allCoords, type, {
-            quadtree: true,
-            size: {
-              width: globalCoords.width,
-              height: globalCoords.height
-            }
-          });
+        objects[type] = this._retrieveObjects(allCoords, { type });
       } else {
-        objects = this.objectManager.retrieve(allCoords, type, {
-          quadtree: true,
-          size: {
-            width: globalCoords.width,
-            height: globalCoords.height
-          }
-        });
+        objects = this._retrieveObjects(allCoords);
       }
     }
 
     return objects;
   }
   /**
-   * @method getMapPosition
+   * Get current map coordinates. Basically the same as movable layers position.
+   *
+   * @method getMapCoordinates
    * @return {{x: Integer, y: Integer}}          current coordinates for the moved map
    * */
-  getMapPosition() {
+  getMapCoordinates() {
     return {
-      x: _movableLayer.x,
-      y: _movableLayer.y
+      x: this.getMovableLayer().x,
+      y: this.getMovableLayer().y
     };
   }
   /**
+   * Get the map canvas Element.
+   *
    * @method getCanvas
+   * @return {HTMLElement}
    */
   getCanvas() {
     return this.canvas;
   }
   /**
+   * This returns the layer that is responsible for map zoom
+   *
    * @method getZoomLayer
-   * @return {[type]} [description]
+   * @return {Map_layer|PIXI.Container|PIXI.ParticleContainer}
    */
   getZoomLayer() {
-    return _staticLayer;
+    return this.getStaticLayer();
   }
   /**
-   * @method setScale
-   * @param {Number} scale
+   * Set map zoom. 1 = no zoom. <1 zoom out, >1 zoom in.
+   *
+   * @method setZoom
+   * @param {Number} scale    The amount of zoom you want to set
+   * @return {Number}         The amount of zoom applied
    */
-  setScale(scale) {
-    return _staticLayer.setScale(scale);
+  setZoom(scale) {
+    return this.getZoomLayer().setZoom(scale);
   }
   /**
-   * @method getScale
+   * Get map zoom. 1 = no zoom. <1 zoom out, >1 zoom in.
+   *
+   * @method getZoom
+   * @return {Map_layer|PIXI.Container|PIXI.ParticleContainer}
    */
-  getScale() {
-    return _staticLayer.getScale();
+  getZoom() {
+    return this.getZoomLayer().getZoom();
   }
   /**
-   * @method getUILayer
-   */
-  getUILayer() {
-    return _staticLayer;
-  }
-  /**
+   * Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative to the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI elements, like effect that happen on certain point on the map.
+   *
    * @method getMovableLayer
+   * @return {Map_layer|PIXI.Container|PIXI.ParticleContainer}
    */
   getMovableLayer() {
     return _movableLayer;
   }
   /**
+   * Returns the PIXI renderer. Some situations might need this. For more advanced or PIXI specific cases.
+   *
    * @method getRenderer
+   * @return {PIXI.Renderer}
    */
   getRenderer() {
     return _renderer;
@@ -631,6 +573,74 @@ export class Map {
    * @param { String } type type of the objects to search for
    * */
   getObjectsUnderShape() { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
+  /*-------------------------
+  --------- PRIVATE ---------
+  -------------------------*/
+  /**
+   * Retrieves the objects from ObjectManager, with the given parameters. Mostly helper functionality for getObjectsUnderArea
+   *
+   * @private
+   * @method _retrieveObjects
+   * @param {Object} allCoords                        REQUIRED
+   * @param {Object} allCoords.globalCoords           REQUIRED
+   * @param {Integer} allCoords.globalCoords.x        REQUIRED
+   * @param {Integer} allCoords.globalCoords.y        REQUIRED
+   * @param {Integer} allCoords.globalCoords.width    REQUIRED
+   * @param {Integer} allCoords.globalCoords.height   REQUIRED
+   * @param {Object} allCoords.localCoords            REQUIRED
+   * @param {Integer} allCoords.localCoords.x         REQUIRED
+   * @param {Integer} allCoords.localCoords.y         REQUIRED
+   * @param {Object} options                          Optional options
+   * @param {String} options.type                     The type of objects we want
+   * @param {Array} options.subcontainers             Array of the subcontainers we will search
+   * @return {Array}                                  Found objects
+   */
+  _retrieveObjects(allCoords, options = { type: "", subcontainers: [] }) {
+    return this.objectManager.retrieve(allCoords, {
+      type: options.type,
+      subcontainers: options.subcontainers,
+      size: {
+        width: allCoords.globalCoords.width,
+        height: allCoords.globalCoords.height
+      }
+    });
+  }
+  /**
+   * This returns layers by filtering them based on certain attribute. Can be used with more higher order filtering
+   *
+   * @private
+   * @method _getLayersWithAttributes
+   * @param {String} attribute
+   * @param {*} value
+   * @return the current map instance
+   **/
+  _getLayersWithAttributes(attribute, value) {
+    return this.getMovableLayer().children[0].children.filter(layer => {
+      return layer[attribute] === value;
+    });
+  }
+  /**
+   * Get subcontainers under certain point or rectangle
+   *
+   * @private
+   * @method _getSubcontainersUnderPoint
+   * @param  {[type]} globalCoords
+   * @param {Object} options              Optional options.
+   * @return {Array}                        All subcontainers that matched the critea
+   */
+  _getSubcontainersUnderArea(allCoords, options = { filter: undefined } ) {
+    var primaryLayers = this.getMovableLayer().getPrimaryLayers();
+    var allMatchingSubcontainers = [];
+    var { filter } = options;
+    var thisLayersSubcontainers;
+
+    primaryLayers.forEach(layer => {
+      thisLayersSubcontainers = layer.getSubcontainersByCoordinates(allCoords.localCoords, { filter: filter });
+      allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
+    });
+
+    return allMatchingSubcontainers;
+  }
 }
 
 /*---------------------

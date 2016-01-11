@@ -35,13 +35,13 @@ export class ObjectManager {
    * @param {Integer} options.size.height
    * @return Array of matched objects
    */
-  retrieve(allCoords, type, options = { quadtree: false, subcontainers: [], size: { width: 0, height: 0 } }) {
-    var { subcontainers, size } = options;
+  retrieve(allCoords, options = { type: false, subcontainers: [], size: { width: 0, height: 0 } }) {
+    var { subcontainers, size, type } = options;
     var { globalCoords, localCoords } = allCoords;
     var foundObjs = [];
     var quadtreeObjs;
 
-    if (subcontainers.length === 0) {
+    if (subcontainers.length === 0 && Object.keys(this.quadtrees).length) {
       if (!type) {
         quadtreeObjs = Object.keys(this.quadtrees).map((thisIndex) => {
           return this.quadtrees[thisIndex].retrieve(localCoords, size);

@@ -24,6 +24,7 @@ export const map_drag = setupMap_drag();
 function setupMap_drag() {
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
+  var mapMoved = false;
   var eventListenerCB, eventListener;
 
   /*--------------------
@@ -74,7 +75,7 @@ function setupMap_drag() {
       }
       coords = utils.mouse.eventData.getHAMMERPointerCoords(e);
 
-      map.mapMoved(true);
+      mapMoved = true;
 
       coords.x = Math.round( coords.x );
       coords.y = Math.round( coords.y );
@@ -89,7 +90,7 @@ function setupMap_drag() {
         return;
       } else if (e.isFinal === true) {
         initialized = false;
-        map.mapMoved(false, true);
+        mapMoved = false;
       }
 
       _mapMovement(e, map, coords);
@@ -119,7 +120,7 @@ function setupMap_drag() {
     if (moved.x > 0 || moved.y > 0 || moved.x < 0 || moved.y < 0) {
       map.moveMap(moved);
     } else {
-      map.mapMoved(false);
+      mapMoved = false;
     }
 
     offsetCoords.setOffset({

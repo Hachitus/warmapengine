@@ -26,8 +26,9 @@ export class Map_layer extends PIXI.Container {
   constructor(options = {
       name: "",
       coord: { x: 0, y: 0 },
-      specialLayer: false } ) {
-    var { name, coord, specialLayer } = options;
+      specialLayer: false,
+      selectable: false } ) {
+    var { name, coord, specialLayer, selectable } = options;
 
     super();
     Object.assign(this, coord);
@@ -35,17 +36,24 @@ export class Map_layer extends PIXI.Container {
     /**
      * Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too
      *
-     * @attribute
+     * @attribute name
      * @type {String}
      */
     this.name = "" + name;
     /**
      * Is this layer special (e.g. UILayer not included in normal operations)
      *
-     * @attribute
+     * @attribute specialLayer
      * @type {Boolean}
      */
     this.specialLayer = !!specialLayer;
+    /**
+     * Can you select objects from this layer. For example with Map.getObjectsUnderArea
+     *
+     * @attribute selectable
+     * @type {Boolean}
+     */
+    this.selectable = selectable;
   }
   /**
    * Does this layer use subcontainers.
@@ -59,10 +67,10 @@ export class Map_layer extends PIXI.Container {
   /**
    * Is this layer cached at the moment or not.
    *
-   * @method getCurrentCache
+   * @method isCached
    * @return {Boolean} true = is cached
    */
-  getCurrentCache() {
+  isCached() {
     return this.cacheAsBitmap;
   }
   /**
@@ -79,24 +87,24 @@ export class Map_layer extends PIXI.Container {
     this.drawThisChild = true;
   }
   /**
-   * set layer scale
+   * set layer zoom
    *
-   * @method setScale
-   * @param {Number} amount The amount that you want the layer to scale.
+   * @method setZoom
+   * @param {Number} amount The amount that you want the layer to zoom.
    * @return {Number} The same amount that was given, except after transform to 2 decimals and type cast to Number
    * */
-  setScale(amount) {
+  setZoom(amount) {
     this.scale.x = this.scale.y = +amount.toFixed(2);
 
     return this.scale.x;
   }
   /**
-   * get layer scale
+   * get layer zoom
    *
-   * @method getScale
-   * @return {Boolean} current amount of scale
+   * @method getZoom
+   * @return {Boolean} current amount of zoom
    * */
-  getScale() {
+  getZoom() {
     return this.scale.x;
   }
     /**
@@ -180,6 +188,8 @@ export class Map_layer extends PIXI.Container {
     return allObjects;
   }
   /**
+   * @todo TAKE SUBCONTAINERS INTO ACCOUNT!
+   *
    * @method setCache
    * @param {Boolean} status      true = activate cache, false = disable cache
    */
@@ -242,23 +252,26 @@ export class Map_parentLayer extends Map_layer {
     return this.subContainersConfig;
   }
   /**
-   * @method getSubContainersByCoordinates
+   * @method getSubcontainersByCoordinates
    * @param  {Object} coordinates
-   * @param  {Integer} coordinates.x         X coordinate
-   * @param  {Integer} coordinates.y         Y coordinate
+   * @param  {Integer} coordinates.x                  X coordinate
+   * @param  {Integer} coordinates.y                  Y coordinate
+   * @param  {Object} options                         Optional options.
+   * @param  {MapDataManipulator} options.filter      Filter for selecting only certain subcontainers
    */
-  getSubContainersByCoordinates(coordinates) {
+  getSubcontainersByCoordinates(coordinates, options = { filter: undefined }) {
     if (!this.hasSubContainers()) {
       throw new Error("tried to retrieve subContainers, when they are not present");
     }
 
     var foundSubcontainers, tempCoordinates;
+    var { filter } = options;
 
     tempCoordinates = this.toLocal(new PIXI.Point(coordinates.x, coordinates.y));
     tempCoordinates.width = coordinates.width;
     tempCoordinates.height = coordinates.height;
 
-    foundSubcontainers = getClosestSubcontainers(this, tempCoordinates);
+    foundSubcontainers = getClosestSubcontainers(this, tempCoordinates, { filter });
 
     return foundSubcontainers;
   }
@@ -373,12 +386,15 @@ function setCorrectSubContainer(displayObject, parentLayer) {
  * @private
  * @static
  * @method getClosestSubcontainers
- * @param  {Object} layer             Instance of PIXI.Container - The layer being used
- * @param  {Number} xIndex            x / horizontal index.
- * @param  {Number} yIndex            y / vertical index.
- * @return {Array}                    Array of found subcontainers.
+ * @param  {Object} layer                         Instance of PIXI.Container - The layer being used
+ * @param  {Number} xIndex                        x / horizontal index.
+ * @param  {Number} yIndex                        y / vertical index.
+ * @param  {Object} options                       Optional options.
+ * @param  {MapDataManipulator} options.filter    Filter for selecting only wanted subcontainers
+ * @return {Array}                                Array of found subcontainers.
  */
-function getClosestSubcontainers(layer, givenCoordinates) {
+function getClosestSubcontainers(layer, givenCoordinates, options = { filter: undefined }) {
+  var { filter } = options;
   var coordinates = {
     x: givenCoordinates.x >= 0 ? givenCoordinates.x : 0,
     y: givenCoordinates.y >= 0 ? givenCoordinates.y : 0,
@@ -399,6 +415,9 @@ function getClosestSubcontainers(layer, givenCoordinates) {
     if (thisXIndex >= 0 && subContainerList && subContainerList[thisXIndex]) {
       for (let thisYIndex = yIndex; thisYIndex <= heightIndex; thisYIndex++) {
         if (thisYIndex >= 0 && subContainerList[thisXIndex][thisYIndex]) {
+          if (filter && !filter.filterSubcontainers(subContainerList[thisXIndex][thisYIndex])) {
+            continue;
+          }
           allFoundSubcontainers.push(subContainerList[thisXIndex][thisYIndex]);
         }
       }

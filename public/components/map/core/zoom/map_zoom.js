@@ -115,7 +115,7 @@ function setupMap_zoom() {
    * @param {Number} amount how much map is zoomed in
    * */
   function zoomIn (amount) {
-    var presentScale = this.getScale();
+    var presentScale = this.getZoom();
     const IS_ZOOM_IN = true;
 
     mapEvents.publish("mapZoomed", { presentScale: presentScale, amount: amount, isZoomIn: IS_ZOOM_IN } );
@@ -129,7 +129,7 @@ function setupMap_zoom() {
    * @param {Number} amount how much map is zoomed out
    * */
   function zoomOut (amount) {
-    var presentScale = this.getScale();
+    var presentScale = this.getZoom();
     const IS_ZOOM_IN = false;
 
     amount = amount < 0 ? amount : -amount;
@@ -172,18 +172,18 @@ function setupMap_zoom() {
   function handleZoomEventDesktop(e, delta, deltaX, deltaY) {
     var mouseWheelDelta = deltaY;
     /* Scale changes when the map is drawn. We make calculations with the old scale before draw */
-    var oldScale = map.getScale();
+    var oldScale = map.getZoom();
 
     /* No nasty scrolling side-effects */
     e.preventDefault();
 
     if (mouseWheelDelta > 0) {
       if (map.zoomIn()) {
-        map.moveMap(_calculateCenterMoveCoordinates(oldScale, true), _calculateCenterMoveCoordinates(map.getScale(), true));
+        map.moveMap(_calculateCenterMoveCoordinates(oldScale, true), _calculateCenterMoveCoordinates(map.getZoom(), true));
       }
     } else if (mouseWheelDelta < 0) {
       if (map.zoomOut()) {
-        map.moveMap(_calculateCenterMoveCoordinates(oldScale), _calculateCenterMoveCoordinates(map.getScale()));
+        map.moveMap(_calculateCenterMoveCoordinates(oldScale), _calculateCenterMoveCoordinates(map.getZoom()));
       }
     }
   }
@@ -229,11 +229,11 @@ function setupMap_zoom() {
 
       if (difference.x + difference.y < changeX + changeY) {
         if (map.zoomIn()) {
-          map.moveMap(_calculateCenterMoveCoordinates(map.getScale(), true));
+          map.moveMap(_calculateCenterMoveCoordinates(map.getZoom(), true));
         }
       } else {
         if (map.zoomOut()) {
-          map.moveMap(_calculateCenterMoveCoordinates(map.getScale()));
+          map.moveMap(_calculateCenterMoveCoordinates(map.getZoom()));
         }
       }
 
@@ -291,7 +291,7 @@ function setupMap_zoom() {
     var newScale;
 
     if ( !_isOverZoomLimit(presentScale, isZoomIn) ) {
-      newScale = map.setScale( amount ? presentScale + amount : presentScale + zoomModifier );
+      newScale = map.setZoom( amount ? presentScale + amount : presentScale + zoomModifier );
     }
 
     return newScale;

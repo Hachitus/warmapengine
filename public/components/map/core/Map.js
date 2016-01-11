@@ -635,7 +635,7 @@ export class Map {
     var thisLayersSubcontainers;
 
     primaryLayers.forEach(layer => {
-      thisLayersSubcontainers = layer.getSubcontainersByCoordinates(allCoords.localCoords, { filter: filter });
+      thisLayersSubcontainers = layer.getSubcontainersByCoordinates(allCoords.globalCoords, { filter: filter });
       allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
     });
 

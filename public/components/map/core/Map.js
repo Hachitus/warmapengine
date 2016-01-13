@@ -86,7 +86,7 @@ export class Map {
 
     /* These are the 2 topmost layers on the map:
      * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
-     * objects that do not move with the map.
+     * objects that do not move with the map. StaticLayer has only one child: _movableLayer
      * - movableLayer: Moves the map, when the user commands. Can hold e.g. UI objects that move with the map. Like
      * graphics that show which area or object is currently selected. */
     _staticLayer = new Map_layer({ name:"staticLayer", coord: { x: 0, y: 0 } });
@@ -141,14 +141,6 @@ export class Map {
      * @type {ObjectManager}
      **/
     this.objectManager = new ObjectManager(new PIXI.interaction.InteractionManager(_renderer));
-
-    /**
-     * Is map in move at the moment.
-     *
-     * @private
-     * @type {Boolean}
-     */
-    this._mapInMove = false;
   }
   /**
    * This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since normally the plugins have to be activated before the map is shown.
@@ -230,10 +222,10 @@ export class Map {
     return layer;
   }
   /**
-   * All parameters are passed to ParentLayerConstructor (normally constructor of Map_layer.
+   * All parameters are passed to ParentLayerConstructor (normally constructor of Map_layer).
    *
    * @method addLayer
-   * @see Map_layer
+   * @uses Map_layer
    * @return {Map_layer}          created Map_layer instance
    **/
   addLayer(layerOptions) {
@@ -249,7 +241,7 @@ export class Map {
     return newLayer;
   }
   /**
-   * Just a convenience function (for usability and readability), for solving if the map uses subcontainers
+   * Just a convenience function (for usability and readability), for checking if the map uses subcontainers.
    *
    * @method usesSubContainers
    **/
@@ -257,7 +249,7 @@ export class Map {
     return this.getSubContainerConfigs() ? true : false;
   }
   /**
-   * Returns current subcontainers configurations (like subcontainers size)
+   * Returns current subcontainers configurations (like subcontainers size).
    *
    * @method getSubContainerConfigs
    **/
@@ -265,7 +257,7 @@ export class Map {
     return this.subContainersConfig;
   }
   /**
-   * Get the size of the area that is shown to the player.
+   * Get the size of the area that is shown to the player. More or less the area of the browser window.
    *
    * @method getViewportArea
    * @param  {Boolean} isLocal                                                  Do we want to use Map coordinates or global / canvas coordinates. Default = false
@@ -315,6 +307,7 @@ export class Map {
   /**
    * Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches the ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.
    *
+   * @todo IMPLEMENT
    * @method cacheMap
    * @param {Object}          filters. TO BE IMPLEMENTED. Filter to cache only specific matching layers
    **/
@@ -326,6 +319,7 @@ export class Map {
   /**
    * unCache the map. NOT WORKING ATM. IMPLEMENTED SOON!
    *
+   * @todo IMPLEMENT
    * @method unCacheMap
    * @return {Map}        this map instance
    * */
@@ -335,7 +329,7 @@ export class Map {
     });
   }
   /**
-   * Activate plugins for the map. Plugins need .pluginName property and .init-method. They receive this (Map instance) as parameter.
+   * Activate all plugins for the map. Iterates through the given plugins we wish to activate and does the actual work in activatePlugin-method.
    *
    * @method pluginsArray
    * @param {Object[]} pluginsArray         Array that consists the plugin modules to be activated
@@ -346,7 +340,7 @@ export class Map {
     });
   }
   /**
-   * Activate plugin for the map. Plugins need .pluginName property and .init-method. They receive this (Map instance) as parameter.
+   * Activate plugin for the map. Plugins need .pluginName property and .init-method. Plugins init-method activates the plugins and we call them in Map. Plugins init-metho receivse this (Map instance) as their only parameter.
    *
    * @method activatePlugin
    * @param {Object} plugin        Plugin module
@@ -377,27 +371,26 @@ export class Map {
     thisPrototype[property] = value;
   }
   /**
-   * Resize the canvas to fill the whole browser area. Uses this.eventCBs.fullsize as callback, so when you need to overwrite the eventlistener callback use this.eventCBs
+   * Resize the canvas to fill the whole browser content area.
    *
+   * @todo should return the current status
    * @method toggleFullsize
    **/
   toggleFullsize() {
     /* We set this only once */
-    boundResizer = boundResizer || _resizeCanvas.bind(this);
+    boundResizer = boundResizer || this._resizeCanvas.bind(this);
 
     eventlisteners.toggleFullSizeListener(boundResizer);
     mapEvents.publish("mapResized");
   }
   /**
-   * Toggles fullscreen mode. Uses this.eventCBs.fullscreen as callback, so when you need to overwrite
-   * the eventlistener callback use this.eventCBs
+   * Toggles fullscreen mode.
    *
+   * @todo should return the current status
    * @method toggleFullScreen
    **/
   toggleFullScreen () {
-    var eventListenerCB = setFullScreen.bind(this);
-
-    eventlisteners.toggleFullscreen(eventListenerCB);
+    eventlisteners.toggleFullscreen(this._setFullScreen.bind(this));
     mapEvents.publish("mapFullscreeActivated");
   }
   /**
@@ -501,7 +494,7 @@ export class Map {
     return this.getZoomLayer().getZoom();
   }
   /**
-   * Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative to the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI elements, like effect that happen on certain point on the map.
+   * Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative to the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI elements, like effects that happen on certain point on the map.
    *
    * @method getMovableLayer
    * @return {Map_layer|PIXI.Container|PIXI.ParticleContainer}
@@ -519,60 +512,29 @@ export class Map {
     return _renderer;
   }
   /**
-   * @method getStage
-   */
-  getStage() {
-    return _staticLayer;
-  }
-  /**
    * @method getStaticLayer
    */
   getStaticLayer() {
     return _staticLayer;
   }
-  /*------------------------------------
-   ------- APIS THROUGH PLUGINS --------
-   -----------------------------------*/
+  /*---------------------------------------------
+   ------- ABSTRACT APIS THROUGH PLUGINS --------
+   --------------------------------------------*/
    /**
+    * This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.
+    *
     * @method zoomIn
+    * @abstract
     */
   zoomIn() { return "notImplementedYet. Activate with plugin"; }
    /**
+    * This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.
+    *
     * @method zoomOut
+    * @abstract
     */
   zoomOut() { return "notImplementedYet. Activate with plugin"; }
-  /*
-   * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
-   * Default uses quadtree
-   *
-   * @method addObjectsForSelection
-   * @param  {Object} coord            ViewportArea location and size
-   * @param  {Integer} coord.x         X coordinate
-   * @param  {Integer} coord.y         Y coordinate
-   * @param { String } type type of the objects to search for
-   * @param { String } object The object to add
-   * */
-  addObjectsForSelection() { return "notImplementedYet"; }
-  /*
-   * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
-   * Default uses quadtree
-   *
-   * @method removeObjectsForSelection
-   * @param {{x: Number, y: Number }} coordinates to search from
-   * @param { String } type type of the objects to search for
-   * @param { String } object The object to add
-   * */
-  removeObjectsForSelection() { return "notImplementedYet"; }
-  /*
-   * Selection of objects on the map. For more efficient solution, we implement these APIs thorugh plugin.
-   * Default uses quadtree
-   *
-   * @method getObjectsUnderShape
-   * @param { x: Number, y: Number } coordinates to search from
-   * @param { String } shape The shape to match against
-   * @param { String } type type of the objects to search for
-   * */
-  getObjectsUnderShape() { return "notImplementedYet"; /* Can be implemented if needed. We need more sophisticated quadtree for this */ }
+
   /*-------------------------
   --------- PRIVATE ---------
   -------------------------*/
@@ -641,6 +603,31 @@ export class Map {
 
     return allMatchingSubcontainers;
   }
+  /**
+   * Activate the browsers fullScreen mode and expand the canvas to fullsize
+   *
+   * @private
+   * @method setFullScreen
+   */
+  _setFullScreen() {
+    utils.resize.toggleFullScreen();
+    mapEvents.publish("mapResized");
+    this._resizeCanvas();
+  }
+  /**
+   * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
+   *
+   * @private
+   * @method _resizeCanvas
+   */
+  _resizeCanvas() {
+    let windowSize = utils.resize.getWindowSize();
+
+    _renderer.autoResize = true;
+    _renderer.resize(windowSize.x, windowSize.y);
+    mapEvents.publish("mapResized");
+    this.drawOnNextTick();
+  }
 }
 
 /*---------------------
@@ -687,31 +674,4 @@ function _defaultTick(map, ticker) {
       }
     }
   });
-}
-/**
- * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
- *
- * @private
- * @static
- * @method _resizeCanvas
- */
-function _resizeCanvas() {
-  let windowSize = utils.resize.getWindowSize();
-
-  _renderer.autoResize = true;
-  _renderer.resize(windowSize.x, windowSize.y);
-  mapEvents.publish("mapResized");
-  this.drawOnNextTick();
-}
-/**
- * Activate the browsers fullScreen mode and expand the canvas to fullsize
- *
- * @private
- * @static
- * @method setFullScreen
- */
-function setFullScreen() {
-  utils.resize.toggleFullScreen();
-  mapEvents.publish("mapResized");
-  _resizeCanvas.call(this);
 }

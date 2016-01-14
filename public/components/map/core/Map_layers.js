@@ -188,7 +188,9 @@ export class Map_layer extends PIXI.Container {
     return allObjects;
   }
   /**
-   * @todo TAKE SUBCONTAINERS INTO ACCOUNT!
+   * @todo IMPLEMENT CACHE PROPERLY! TAKE SUBCONTAINERS INTO ACCOUNT!
+   *
+   * Sets layer cache on or off.
    *
    * @method setCache
    * @param {Boolean} status      true = activate cache, false = disable cache
@@ -231,6 +233,7 @@ export class Map_parentLayer extends Map_layer {
     this.subContainerList = [];
   }
   /**
+   * We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and then we call the original (PIXIs) addChild
    * @method addChild
    * @param {PIXI.DisplayObject} displayObject      PIXI.DisplayObject
    */

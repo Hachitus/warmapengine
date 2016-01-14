@@ -3,7 +3,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { eventListeners as eventListenerMod, utils } from '/components/bundles/coreBundle';
+import { eventListeners, utils } from '/components/bundles/coreBundle';
 
 /*---------------------
 --------- API ---------
@@ -25,7 +25,7 @@ function setupMap_drag() {
   /* Function for setting and getting the mouse offset. Private functions declared bottom */
   var offsetCoords = _offsetCoords();
   var mapMoved = false;
-  var eventListenerCB, eventListener;
+  var eventListenerCB;
 
   /*--------------------
   ------- API ----------
@@ -45,11 +45,10 @@ function setupMap_drag() {
    * @param {Map} mapObj        The current instance of Map class
    * */
   function init(map) {
-    eventListener = eventListenerMod();
     eventListenerCB = _startDragListener(map);
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
-    eventListener.toggleDragListener(eventListenerCB);
+    eventListeners.on("drag", eventListenerCB);
   }
 
   /*---------------------
@@ -70,7 +69,7 @@ function setupMap_drag() {
     return function startDrag(e) {
       var coords;
 
-      if (eventListener.getState("zoom")) {
+      if (eventListeners.getActivityState("zoom")) {
         return false;
       }
       coords = utils.mouse.eventData.getHAMMERPointerCoords(e);

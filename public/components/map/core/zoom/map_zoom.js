@@ -3,7 +3,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { eventListeners as eventListenerMod, utils, mapEvents } from '/components/bundles/coreBundle';
+import { eventListeners, utils, mapEvents } from '/components/bundles/coreBundle';
 
 /*---------------------
 --------- API ---------
@@ -28,7 +28,7 @@ function setupMap_zoom() {
   var initialized = false;
   var mobileInitialized = false;
   var difference = {};
-  var map, eventListener;
+  var map;
   /**
    * Maximum and minimum amount, the player can zoom the map
    *
@@ -67,7 +67,6 @@ function setupMap_zoom() {
    * But zoomLimit and modifier need to be setable in creation, init or later with setters
    **/
   function init(thisMap) {
-    eventListener = eventListenerMod();
     map = thisMap;
     map.setPrototype("zoomIn", zoomIn);
     map.setPrototype("zoomOut", zoomOut);
@@ -75,7 +74,7 @@ function setupMap_zoom() {
     map.setPrototype("setZoomModifier", setZoomModifier);
 
     /* Singleton should have been instantiated before, we only retrieve it with 0 params */
-    eventListener.toggleZoomListener(unifiedEventCB);
+    eventListeners.on("zoom", unifiedEventCB);
   }
 
   /*----------------------------------------
@@ -213,7 +212,7 @@ function setupMap_zoom() {
           x: changeX,
           y: changeY
         };
-        eventListener.setState("zoom", true);
+        eventListeners.setActivityState("zoom", true);
         initialized = true;
 
         return;
@@ -222,7 +221,7 @@ function setupMap_zoom() {
          * bad if after zoom there is immediately an unexplainable drag and the map moves a bit
          * */
         window.setTimeout(function () {
-          eventListener.setState("zoom", false);
+          eventListeners.setActivityState("zoom", false);
         }, TIMEOUT_AFTER_ZOOM);
         initialized = false;
       }

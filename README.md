@@ -38,17 +38,13 @@ Clone the repository
 
     git clone [url to this repository]
 
-change to the repository
+Change to the repository
 
     cd [installed repository path]
 
-Install package.json packages
+Install package.json packages and JSPM packages
 
-    npm install
-
-Install jspm packages
-
-    nodejs node_modules/jspm/jspm.js install
+    npm run init
 
 Install bower packages
 

@@ -15,7 +15,3 @@ export * from '/components/map/core/mapEvents';
 export * from '/components/map/core/ObjectManager';
 export * from '/components/map/core/UI';
 export * from '/components/map/core/UI_themeBase';
-
-export * from '/components/map/core/baseEventlisteners/baseEventlisteners';
-export * from '/components/map/core/move/map_drag';
-export * from '/components/map/core/zoom/map_zoom';

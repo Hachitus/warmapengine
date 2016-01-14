@@ -3,7 +3,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { utils, mapEvents, UI, MapDataManipulator, eventListeners as eventListenerMod } from '/components/bundles/coreBundle';
+import { utils, mapEvents, UI, MapDataManipulator, eventListeners } from '/components/bundles/coreBundle';
 
 /*---------------------
 --------- API ---------
@@ -23,17 +23,15 @@ export { _setupHexagonClick as setupHexagonClick };
  * @return {Boolean}      True
  */
 function _setupHexagonClick(map) {
-  var eventlisteners, ui;
+  var ui;
 
   if (!map) {
     throw new Error("eventlisteners initialization require map arguments");
   }
 
-  /* Singleton should have been instantiated before, we only retrieve it with 0 params */
-  eventlisteners = eventListenerMod();
   ui = UI();
 
-  eventlisteners.toggleSelectListener(tapListener);
+  eventListeners.on("select", tapListener);
 
   return true;
 

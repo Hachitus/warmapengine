@@ -3,7 +3,7 @@
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
-import { utils } from '/components/bundles/coreBundle';
+import { utils } from '/components/bundles/strippedCoreBundle';
 
 /*-----------------------
 ---------- API ----------

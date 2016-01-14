@@ -1,6 +1,6 @@
 'use strict';
 
-import { Map_layer, Map_parentLayer } from '/components/bundles/coreBundle';
+import { Map_layer, Map_parentLayer } from '/components/bundles/strippedCoreBundle';
 
 /*---------------------
 --------- API ---------

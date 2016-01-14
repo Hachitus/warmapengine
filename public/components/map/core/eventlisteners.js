@@ -5,197 +5,145 @@
 ------- VARIABLES -------
 -----------------------*/
 var stateOfEvents = {};
-var singletonScope;
+var activeEventListeners = {};
+var detectors = {};
+
+/*-----------------------
+--------- IMPORT --------
+-----------------------*/
+import { mapEvents } from '/components/bundles/strippedCoreBundle';
 
 /*-----------------------
 ---------- API ----------
 -----------------------*/
-export { eventListenerModule as eventListeners };
+export const eventListeners = eventListenersModule();
 
 /*-----------------------
 -------- PUBLIC ---------
 -----------------------*/
 /**
- * Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for the eventlistener management. This way all the eventlisteners are in the same object, conveniently.
- * eventListeners is a singleton that needs to be initialized with an object, that holds all the callbacks used in this class. I.e.
- *  {
- *  select: function() {},
- *   zoom: function() {}
- * }
+ * This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add event listeners with on.
  *
  * @class core.eventListeners
- * @requires Hammer.js (for touch events)
- * @requires Hamster.js (for good cross-browser mousewheel events)
- * @param {HTMLElement} canvasElement           The canvas element we listen events from. Will try to search the first canvas in the DOM, if none is provided
- * @param {Boolean} refresh                     If you want to reset the singleton object, set this to true
  */
-function eventListenerModule(canvasElement = document.getElementsByTagName("canvas")[0], refresh = false) {
-  var CBs = {};
-  var hammer, hamster;
-
-  if (refresh) {
-    singletonScope = undefined;
-  }
-
-  if (singletonScope) {
-    return singletonScope;
-  }
-
-  if (!canvasElement) {
-    throw new Error("eventlisteners initialization require map callbacks and canvas element as arguments");
-  }
-
-  hammer = new Hammer.Manager(canvasElement);
-  hamster = new Hamster(canvasElement);
-
+function eventListenersModule() {
   /*---------------------------
-  ----------- API -------------
+  ------------ API ------------
   ---------------------------*/
-  singletonScope = {
-    states: {},
-    setState,
-    getState,
-    toggleFullSizeListener,
-    toggleFullscreen,
-    toggleZoomListener,
-    toggleDragListener,
-    toggleSelectListener
+  return {
+    on,
+    off,
+    isOn,
+    setActivityState,
+    getActivityState,
+    setDetector,
+    clearDetector
   };
 
+  /*---------------------------
+  ----------- PUBLIC ----------
+  ---------------------------*/
   /**
-   * Sets the state of the event. State is so far very important for fluent dragging and selecting. When we start to drag, we avoid selecting units and vice versa, when we keep an event state tracking through this.
+   * Activates the eventListener.
    *
-   * @method setState
-   * @static
-   * @param {String} type         Event name we are following
-   * @param {Boolean} state       The state we want to set (true or false)
+   * @method on
+   * @event Event that consists of "Map" + the given event type, like such: "MapDrag"
+   * @throws {Error} General error, if detector for this event type has not been set.
+   * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
+   * @param  {Boolean} cb   REQUIRED. Callback to do it's eventlistener magic.
    */
-  function setState(type, state) {
-    stateOfEvents[type] = state;
+  function on(type = "", cb = false) {
+    if (!detectors[type] && !detectors[type].size) {
+      throw new Error("eventlisteners.on needs to have detector set with this event type!")
+    }
+    detectors[type].on(_createWrapper("Map" + type, cb));
+    activeEventListeners[type] = activeEventListeners[type] || new Set();
+    activeEventListeners[type].add(cb);
   }
   /**
-   * Gets the current state of the event
+   * Deactivates the eventListener. Callback is optional. If is not provided will remove all this types eventListeners
    *
-   * @method getState
-   * @static
-   * @param  {String} type         Event name we are following
-   * @return {Boolean}             returns true of false
+   * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
+   * @param  {Boolean} cb   Callback to do it's eventlistener magic.
    */
-  function getState(type) {
+  function off(type = "", cb = false) {
+    detectors[type].off(cb);
+    cb ? activeEventListeners[type].delete(cb) : delete activeEventListeners[type];
+  }
+  /**
+   * Activates the eventListener. Callback is optional. If is not provided will check if the eventlistener type has any listeners active.
+   *
+   * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
+   * @param  {Boolean} cb   Callback to do it's eventlistener magic.
+   */
+  function isOn(type = "", cb = false) {
+    var answer;
+
+    answer = cb ? activeEventListeners[type].has(cb) : !!activeEventListeners[type].size;
+
+    return answer;
+  }
+  /**
+   * Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid selecting units and vice versa, when we keep an event state tracking through this.
+   *
+   * @param {String} type     EventType
+   * @param {[type]} newState [description]
+   */
+  function setActivityState(type = "", newState) {
+    stateOfEvents[type] = newState;
+  }
+  /**
+   * get activity state of the event
+   *
+   * @param  {String} type EventType
+   * @return {Boolean}
+   */
+  function getActivityState(type = "") {
     return stateOfEvents[type];
   }
-
   /**
-   * Sets the canvas to fullsize as in the same size of the window / content area. But not fullscreen
+   * Set event detector. If there is already detector of this type, we overwrite it.
    *
-   * @method toggleFullSizeListener
-   * @static
-   * @param {Function} cb     Callback that fires when this event activates
-   * @return {Boolean}        Return the state of this event
+   * @param {String}   type  Event type
+   * @param {Function} cbOn  Callback which sets activates the detector
+   * @param {Function} cbOff Callback which sets deactivates the detector
    */
-  function toggleFullSizeListener(cb) {
-    if ( !singletonScope.states.fullSize ) {
-      CBs.fullSize = cb;
-      cb();
-      window.addEventListener("resize", CBs.fullSize);
-    } else {
-      window.removeEventListener("resize", CBs.fullSize);
-    }
-
-    singletonScope.states.fullSize = !singletonScope.states.fullSize;
-
-    return singletonScope.states.fullSize;
+  function setDetector(type = "", cbOn = () => {}, cbOff = () => {}) {
+    detectors[type] = {};
+    detectors[type] = {
+      on: cbOn,
+      off: cbOff
+    };
   }
   /**
-   * Sets the canvas to fullsize (as in fullSizeListener) and sets the browser in fullscreen mode
+   * Clear event detector. We also remove all possible eventlisteners set on this event type.
    *
-   * @method toggleFullscreen
-   * @static
-   * @param {Function} cb     Callback that fires when this event activates
-   * @return {Boolean}        Return the state of this event
+   * @param {String}   type  Event type
    */
-  function toggleFullscreen(cb) {
-    singletonScope.states.fullScreen = cb();
+  function clearDetector(type = "") {
+    /* remove all event listeners before we empty the data */
+    activeEventListeners[type].forEach(cb => {
+      detectors[type].cbOff(cb);
+    });
 
-    return cb;
+    /* remove all data / references to event listeners and detector */
+    delete activeEventListeners[type];
+    delete detectors[type];
   }
-  /**
-   * Zoom the map. Mousewheel (desktop) and pinch (mobile)
-   *
-   * @method toggleZoomListener
-   * @static
-   * @param {Function} cb     Callback that fires when this event activates
-   * @return {Boolean}        Return the state of this event
-   */
-  function toggleZoomListener(cb) {
-    CBs.zoom = cb;
-
-    if (singletonScope.states.zoom !== true) {
-      var pinch = new Hammer.Pinch();
-      hammer.add(pinch);
-      hammer.on("pinch", CBs.zoom);
-      /* Hamster handles wheel events really nicely */
-      hamster.wheel(CBs.zoom);
-    } else {
-      hammer.on("pinch", CBs.zoom);
-      hamster.unwheel(CBs.zoom);
-    }
-
-    singletonScope.states.zoom = !singletonScope.states.zoom;
-
-    return singletonScope.states.zoom;
+}
+/*-----------------------------
+----------- PRIVATE -----------
+------------------------------*/
+/**
+ * This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.
+ *
+ * @param  {String}   type Event type
+ * @param  {Function} cb   Event callback
+ */
+function _createWrapper(type, cb) {
+  /* NOTE! There can be more than one arguments in an event. E.g. Hamster.js */
+  return (...args) => {
+    mapEvents.publish(type);
+    cb(...args);
   }
-  /**
-   * DragListener (normally used for moving the map)
-   *
-   * @method toggleDragListener
-   * @static
-   * @param {Function} cb     Callback that fires when this event activates
-   * @return {Boolean}        Return the state of this event
-   */
-  function toggleDragListener(cb) {
-    var pan;
-
-    CBs.drag = cb;
-
-    if (singletonScope.states.drag !== true) {
-      pan = new Hammer.Pan({
-        pointers: 1,
-        threshold: 5,
-        direction:  Hammer.DIRECTION_ALL });
-      hammer.add(pan);
-      hammer.on("pan", CBs.drag);
-    } else {
-      hammer.off("pan", CBs.drag);
-    }
-
-    singletonScope.states.drag = !singletonScope.states.drag;
-
-    return singletonScope.states.drag;
-  }
-  /**
-   * Selecting something from the map
-   *
-   * @method toggleSelectListener
-   * @static
-   * @param {Function} cb     Callback that fires when this event activates
-   * @return {Boolean}        Return the state of this event
-   */
-  function toggleSelectListener(cb) {
-    CBs.select = cb;
-
-    if (singletonScope.states.select !== true) {
-      var tap = new Hammer.Tap();
-      hammer.add(tap);
-      hammer.on("tap", CBs.select);
-    } else {
-      hammer.off("tap", CBs.select);
-    }
-
-    singletonScope.states.select = !singletonScope.states.select;
-
-    return singletonScope.states.select;
-  }
-
-  return singletonScope;
 }

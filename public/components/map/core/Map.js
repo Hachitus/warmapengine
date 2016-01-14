@@ -4,7 +4,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { Map_layer, Map_parentLayer, eventListeners, ObjectManager, mapEvents, utils, MapDataManipulator } from '/components/bundles/coreBundle';
+import { Map_layer, Map_parentLayer, ObjectManager, mapEvents, utils, MapDataManipulator } from '/components/bundles/strippedCoreBundle';
 import * as Q from '/assets/lib/q/q';
 
 /*---------------------
@@ -12,7 +12,7 @@ import * as Q from '/assets/lib/q/q';
 ----------------------*/
 var _drawMapOnNextTick = false;
 var isMapReadyPromises = [];
-var eventlisteners, _staticLayer, _movableLayer, _renderer, boundResizer, ParentLayerConstructor;
+var _staticLayer, _movableLayer, _renderer, ParentLayerConstructor;
 
 /*---------------------
 --------- API ---------
@@ -93,9 +93,6 @@ export class Map {
     _movableLayer = new Map_layer({ name:"movableLayer", coord: { x: 0, y: 0 } });
     _staticLayer.addChild(_movableLayer);
 
-    /* InteractionManager is responsible for finding what objects are under certain coordinates. E.g. when selecting */
-    eventlisteners = eventListeners(this.canvas, true);
-
     /* needed to make the canvas fullsize canvas with PIXI */
     _renderer.view.style.position = "absolute";
     _renderer.view.style.display = "block";
@@ -161,19 +158,8 @@ export class Map {
 
     options.fullsize && this.toggleFullsize();
 
-    /* Iterates over given plugins Array and calls their init-method, depeding if it is String or Object */
-    if (plugins.length && typeof plugins[0] === "object") {
-      this.activatePlugins(plugins);
-    } else if (plugins.length && typeof plugins[0] === "string") {
-      plugins.map(plugin => {
-        let thisPromise;
-
-        thisPromise = System.import(plugin).then( (plugin) => {
-          this.activatePlugin(plugin);
-        });
-
-        allPromises.push(thisPromise);
-      });
+    if (plugins.length) {
+      allPromises = this.activatePlugins(plugins);
     }
 
     /* Sets the correct Map starting coordinates */
@@ -186,7 +172,7 @@ export class Map {
 
     this.drawOnNextTick();
 
-    return allPromises;
+    return allPromises || Promise.resolve();
   }
   /**
    * Returns a promise that resolves after the map is fully initialized
@@ -332,12 +318,28 @@ export class Map {
    * Activate all plugins for the map. Iterates through the given plugins we wish to activate and does the actual work in activatePlugin-method.
    *
    * @method pluginsArray
-   * @param {Object[]} pluginsArray         Array that consists the plugin modules to be activated
+   * @param {Object[]} pluginsArray   Array that consists the plugin modules to be activated
+   * @return {Promise}                Promise. If string are provided resolved those with System.import, otherwise resolves immediately.
    * */
   activatePlugins(pluginsArray = []) {
+    var allPromises = [];
+
+    /* Iterates over given plugins Array and calls their init-method, depeding if it is String or Object */
     pluginsArray.forEach(plugin => {
-      this.activatePlugin(plugin);
+      if (typeof plugin === "object") {
+        this.activatePlugin(plugin);
+      } else if (typeof plugin === "string") {
+        let thisPromise;
+
+        thisPromise = System.import(plugin).then( loadedPlugin => {
+          this.activatePlugin(loadedPlugin);
+        });
+
+        allPromises.push(thisPromise);
+      }
     });
+
+    return allPromises;
   }
   /**
    * Activate plugin for the map. Plugins need .pluginName property and .init-method. Plugins init-method activates the plugins and we call them in Map. Plugins init-metho receivse this (Map instance) as their only parameter.
@@ -369,29 +371,6 @@ export class Map {
     var thisPrototype = Object.getPrototypeOf(this);
 
     thisPrototype[property] = value;
-  }
-  /**
-   * Resize the canvas to fill the whole browser content area.
-   *
-   * @todo should return the current status
-   * @method toggleFullsize
-   **/
-  toggleFullsize() {
-    /* We set this only once */
-    boundResizer = boundResizer || this._resizeCanvas.bind(this);
-
-    eventlisteners.toggleFullSizeListener(boundResizer);
-    mapEvents.publish("mapResized");
-  }
-  /**
-   * Toggles fullscreen mode.
-   *
-   * @todo should return the current status
-   * @method toggleFullScreen
-   **/
-  toggleFullScreen () {
-    eventlisteners.toggleFullscreen(this._setFullScreen.bind(this));
-    mapEvents.publish("mapFullscreeActivated");
   }
   /**
    * Gets object under specific map coordinates. Uses the ObjectManagers retrieve method. Using subcontainers if they exist, other methods if not. If you provide type parameter, the method returns only object types that match it.
@@ -455,15 +434,6 @@ export class Map {
       x: this.getMovableLayer().x,
       y: this.getMovableLayer().y
     };
-  }
-  /**
-   * Get the map canvas Element.
-   *
-   * @method getCanvas
-   * @return {HTMLElement}
-   */
-  getCanvas() {
-    return this.canvas;
   }
   /**
    * This returns the layer that is responsible for map zoom
@@ -534,6 +504,20 @@ export class Map {
     * @abstract
     */
   zoomOut() { return "notImplementedYet. Activate with plugin"; }
+  /**
+   * Resize the canvas to fill the whole browser content area. Defined by the baseEventlisteners core plugin
+   *
+   * @method toggleFullsize
+   * @abstract
+   **/
+  toggleFullsize() { return "notImplementedYet. Activate with plugin"; }
+  /**
+   * Toggles fullscreen mode. Defined by the baseEventlisteners core plugin
+   *
+   * @method toggleFullScreen
+   * @abstract
+   **/
+  toggleFullScreen () { return "notImplementedYet. Activate with plugin"; }
 
   /*-------------------------
   --------- PRIVATE ---------
@@ -606,7 +590,7 @@ export class Map {
   /**
    * Activate the browsers fullScreen mode and expand the canvas to fullsize
    *
-   * @private
+   * @protected
    * @method setFullScreen
    */
   _setFullScreen() {
@@ -617,7 +601,7 @@ export class Map {
   /**
    * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
    *
-   * @private
+   * @protected
    * @method _resizeCanvas
    */
   _resizeCanvas() {

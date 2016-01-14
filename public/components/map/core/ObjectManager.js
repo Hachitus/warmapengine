@@ -3,7 +3,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { Quadtree } from './utils/Quadtree';
+import { utils } from '/components/bundles/strippedCoreBundle';
 import { arrays } from '/components/utilities/general';
 
 /*---------------------
@@ -114,7 +114,7 @@ export class ObjectManager {
    * @param {Object} extra            {objects: Number, levels: Number}. quadtree-settings: maximum objects before we split and maximum levels of nested layers
    */
   addLayer(type, bounds, extra = {}) {
-    this.quadtrees[type] = new Quadtree(bounds, {
+    this.quadtrees[type] = new utils.Quadtree(bounds, {
         objects: extra.objects || 10,
         levels: extra.levels || 5
       });

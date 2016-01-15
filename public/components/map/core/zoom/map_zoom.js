@@ -8,8 +8,9 @@ import { eventListeners, utils, mapEvents } from '/components/bundles/coreBundle
 /*---------------------
 --------- API ---------
 ----------------------*/
-export const pluginName = "map_zoom";
+/** For debugging. This will show up if the plugin fails to load in Map.js */
 export var map_zoom = setupMap_zoom();
+export default map_zoom;
 
 /*---------------------
 -------- PUBLIC -------

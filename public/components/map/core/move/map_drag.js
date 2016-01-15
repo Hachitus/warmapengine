@@ -8,8 +8,9 @@ import { eventListeners, utils } from '/components/bundles/coreBundle';
 /*---------------------
 --------- API ---------
 ----------------------*/
-export const pluginName = "map_drag";
+/** For debugging. This will show up if the plugin fails to load in Map.js */
 export const map_drag = setupMap_drag();
+export default map_drag;
 
 /*---------------------
 -------- PUBLIC -------

@@ -349,15 +349,15 @@ export class Map {
    * */
   activatePlugin(plugin) {
     try {
-      if (!plugin || !plugin.pluginName) {
-        throw new Error("plugin or plugin.pluginName missing");
+      if (!plugin || !plugin.default) {
+        throw new Error("plugin or plugin.default import is missing!");
       }
 
       if (this.plugins.add(plugin[plugin.pluginName])) {
-        plugin[plugin.pluginName].init(this);
+        plugin.default.init(this);
       }
     } catch (e) {
-      console.log("An error initializing plugin " + plugin ? plugin.pluginName : "no plugin name", e);
+      console.log("An error initializing plugin. JSON.stringify: '" + JSON.stringify(plugin) + "' ", e);
     }
   }
   /**

@@ -8,8 +8,9 @@ import { setupHexagonClick } from '/components/map/extensions/hexagons/eventList
 /*-----------------------
 ---------- API ----------
 -----------------------*/
-export const pluginName = "object_select";
+/** For debugging. This will show up if the plugin fails to load in Map.js */
 export const object_select = setupObject_select_hexagon();
+export default object_select;
 
 /*-----------------------
 -------- PUBLIC ---------

@@ -61,7 +61,7 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false,
       transparent: true,
       antialias: false // TEST. Only should work in chrome atm.?
     },
-    subContainers: {
+    subcontainers: {
       width: 500,
       height: 500,
       maxDetectionOffset: 100,

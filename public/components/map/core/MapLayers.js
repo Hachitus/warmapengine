@@ -58,11 +58,11 @@ export class MapLayer extends PIXI.Container {
   /**
    * Does this layer use subcontainers.
    *
-   * @method hasSubContainers
+   * @method hasSubcontainers
    * @return {Boolean} true = uses subcontainers.
    */
-  hasSubContainers() {
-    return this.subContainersConfig ? true : false;
+  hasSubcontainers() {
+    return this.subcontainersConfig ? true : false;
   }
   /**
    * Is this layer cached at the moment or not.
@@ -179,8 +179,8 @@ export class MapLayer extends PIXI.Container {
   getObjects() {
     var allObjects = [];
 
-    if (this.hasSubContainers()) {
-      this.subContainerList.forEach(subcontainer => {
+    if (this.hasSubcontainers()) {
+      this.subcontainerList.forEach(subcontainer => {
         allObjects.concat(subcontainer.children);
       });
     }
@@ -215,22 +215,22 @@ export class MapLayerParent extends MapLayer {
    * @param  {Object} options.coord                  starting coords of layer. Relative to parent map layer.
    * @param  {Integer} options.coord.x               X coordinate
    * @param  {Integer} options.coord.y               Y coordinate
-   * @param  {Object} options.subContainers          Subontainer size. If given activated subcontainers, otherwise not.
-   * @param  {Integer} options.subContainers.width   width (in pixels)
-   * @param  {Integer} options.subContainers.height  height (in pixels)
+   * @param  {Object} options.subcontainers          Subontainer size. If given activated subcontainers, otherwise not.
+   * @param  {Integer} options.subcontainers.width   width (in pixels)
+   * @param  {Integer} options.subcontainers.height  height (in pixels)
    * @param {Boolean} options.specialLayer           Is this special layer or not.
    *
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, subContainers: false, specialLayer: false } ) {
-    var { subContainers } = options;
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, subcontainers: false, specialLayer: false } ) {
+    var { subcontainers } = options;
 
     super(options);
 
     this.oldAddChild = super.addChild.bind(this);
-    this.subContainersConfig = subContainers;
-    this.subContainerList = [];
+    this.subcontainersConfig = subcontainers;
+    this.subcontainerList = [];
   }
   /**
    * We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and then we call the original (PIXIs) addChild
@@ -238,9 +238,9 @@ export class MapLayerParent extends MapLayer {
    * @param {PIXI.DisplayObject} displayObject      PIXI.DisplayObject
    */
   addChild(displayObject) {
-    if (this.hasSubContainers()) {
+    if (this.hasSubcontainers()) {
       let correctContainer;
-      correctContainer = setCorrectSubContainer(displayObject, this);
+      correctContainer = setCorrectSubcontainer(displayObject, this);
       this.oldAddChild(correctContainer);
     } else {
       this.oldAddChild(displayObject);
@@ -252,7 +252,7 @@ export class MapLayerParent extends MapLayer {
    * @method getSubcontainerConfigs 
    */
   getSubcontainerConfigs () {
-    return this.subContainersConfig;
+    return this.subcontainersConfig;
   }
   /**
    * @method getSubcontainersByCoordinates
@@ -263,8 +263,8 @@ export class MapLayerParent extends MapLayer {
    * @param  {MapDataManipulator} options.filter      Filter for selecting only certain subcontainers
    */
   getSubcontainersByCoordinates(coordinates, options = { filter: undefined }) {
-    if (!this.hasSubContainers()) {
-      throw new Error("tried to retrieve subContainers, when they are not present");
+    if (!this.hasSubcontainers()) {
+      throw new Error("tried to retrieve subcontainers, when they are not present");
     }
 
     var foundSubcontainers, tempCoordinates;
@@ -282,18 +282,18 @@ export class MapLayerParent extends MapLayer {
    * @method getSubcontainers
    */
   getSubcontainers() {
-    return this.subContainerList;
+    return this.subcontainerList;
   }
 }
 
-class MapSubContainer extends PIXI.ParticleContainer {
+class MapSubcontainer extends PIXI.ParticleContainer {
   /**
    * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend MapLayers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree.
    *
    * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
    *
    * @private
-   * @class core.MapSubContainer
+   * @class core.MapSubcontainer
    * @constructor
    * @param  {Object} size              Subontainer size. If given activated subcontainers, otherwise not.
    * @param  {Integer} size.width       width (in pixels)
@@ -346,42 +346,42 @@ class MapSubContainer extends PIXI.ParticleContainer {
 ------- PRIVATE -------
 ----------------------*/
 /**
- * [setCorrectSubContainer description]
+ * [setCorrectSubcontainer description]
  *
  * @private
  * @static
- * @method setCorrectSubContainer
+ * @method setCorrectSubcontainer
  * @param {PIXI.DisplayObject} displayObject
  * @param {Object} parentLayer
  */
-function setCorrectSubContainer(displayObject, parentLayer) {
-  var { subContainersConfig, subContainerList } = parentLayer;
-  var xIndex = Math.floor( displayObject.x / subContainersConfig.width );
-  var yIndex = Math.floor( displayObject.y / subContainersConfig.height );
+function setCorrectSubcontainer(displayObject, parentLayer) {
+  var { subcontainersConfig, subcontainerList } = parentLayer;
+  var xIndex = Math.floor( displayObject.x / subcontainersConfig.width );
+  var yIndex = Math.floor( displayObject.y / subcontainersConfig.height );
   var thisSubcontainer;
 
-  subContainerList[xIndex] = subContainerList[xIndex] || [];
-  thisSubcontainer = subContainerList[xIndex][yIndex] = subContainerList[xIndex][yIndex] || [];
+  subcontainerList[xIndex] = subcontainerList[xIndex] || [];
+  thisSubcontainer = subcontainerList[xIndex][yIndex] = subcontainerList[xIndex][yIndex] || [];
 
-  if (subContainerList[xIndex][yIndex].length <= 0) {
-    thisSubcontainer = new MapSubContainer({
-      x: xIndex * subContainersConfig.width,
-      y: yIndex * subContainersConfig.height,
-      width: subContainersConfig.width,
-      height: subContainersConfig.height
+  if (subcontainerList[xIndex][yIndex].length <= 0) {
+    thisSubcontainer = new MapSubcontainer({
+      x: xIndex * subcontainersConfig.width,
+      y: yIndex * subcontainersConfig.height,
+      width: subcontainersConfig.width,
+      height: subcontainersConfig.height
     });
 
-    subContainerList[xIndex][yIndex] = thisSubcontainer;
-    thisSubcontainer.x = xIndex * subContainersConfig.width;
-    thisSubcontainer.y = yIndex * subContainersConfig.height;
-    thisSubcontainer.visible = subContainersConfig.isHiddenByDefault ? false : true;
+    subcontainerList[xIndex][yIndex] = thisSubcontainer;
+    thisSubcontainer.x = xIndex * subcontainersConfig.width;
+    thisSubcontainer.y = yIndex * subcontainersConfig.height;
+    thisSubcontainer.visible = subcontainersConfig.isHiddenByDefault ? false : true;
   }
 
   displayObject.x -= thisSubcontainer.x;
   displayObject.y -= thisSubcontainer.y;
-  subContainerList[xIndex][yIndex].addChild(displayObject);
+  subcontainerList[xIndex][yIndex].addChild(displayObject);
 
-  return subContainerList[xIndex][yIndex];
+  return subcontainerList[xIndex][yIndex];
 }
 /**
  * Get the closest subcontainers of the given area.
@@ -412,16 +412,16 @@ function getClosestSubcontainers(layer, givenCoordinates, options = { filter: un
   var y2 = coordinates.height ? coordinates.y + coordinates.height :  + coordinates.y;
   var widthIndex = Math.floor( x2 / width );
   var heightIndex = Math.floor( y2 / height );
-  var subContainerList = layer.subContainerList;
+  var subcontainerList = layer.subcontainerList;
 
   for (let thisXIndex = xIndex; thisXIndex <= widthIndex; thisXIndex++) {
-    if (thisXIndex >= 0 && subContainerList && subContainerList[thisXIndex]) {
+    if (thisXIndex >= 0 && subcontainerList && subcontainerList[thisXIndex]) {
       for (let thisYIndex = yIndex; thisYIndex <= heightIndex; thisYIndex++) {
-        if (thisYIndex >= 0 && subContainerList[thisXIndex][thisYIndex]) {
-          if (filter && !filter.filterSubcontainers(subContainerList[thisXIndex][thisYIndex])) {
+        if (thisYIndex >= 0 && subcontainerList[thisXIndex][thisYIndex]) {
+          if (filter && !filter.filterSubcontainers(subcontainerList[thisXIndex][thisYIndex])) {
             continue;
           }
-          allFoundSubcontainers.push(subContainerList[thisXIndex][thisYIndex]);
+          allFoundSubcontainers.push(subcontainerList[thisXIndex][thisYIndex]);
         }
       }
     }

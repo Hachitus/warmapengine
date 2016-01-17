@@ -72,6 +72,16 @@ function setupMapMovement () {
         console.log("visible subcontainers: " + visibleContainers.length + ":" +visibleContainers, "\n\ninvisible: " + invisibleContainers.length + ":" + invisibleContainers);
       });
     }
+    window.FlaTWorld_mapMovement_deactivate = function() {
+      map.getPrimaryLayers().forEach( layer => {
+        var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
+        var visibleContainers, invisibleContainers;
+
+        visibleContainers = subcontainers.forEach(subcontainer => {
+          subcontainer.visible = false;
+        });
+      });
+    }
   }
   /**
    * Ínitialize as a plugin

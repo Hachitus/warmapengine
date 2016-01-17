@@ -219,7 +219,7 @@ function setupCreateHighlight(map) {
 
     highlighterObject.alpha = 0.5;
 
-    /* We add the children first to subContainer, since it's much easier to handle the x and y in it, rather than
+    /* We add the children first to subcontainer, since it's much easier to handle the x and y in it, rather than
      * handle graphics x and y */
     container.addChild(highlighterObject);
     container.addChild(object);

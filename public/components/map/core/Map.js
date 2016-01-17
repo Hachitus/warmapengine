@@ -49,9 +49,9 @@ export class Map {
    * @param {Integer} props.bounds.width                  Bound width
    * @param {Integer} props.bounds.height                 Bound height
    * @param {Object} props.rendererOptions                Renderer options passed to PIXI.autoDetectRenderer
-   * @param {Object} props.subContainers                  Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.
-   * @param {Integer} props.subContainers.width           Subcontainer width
-   * @param {Integer} props.subContainers.height          Subcontainer height
+   * @param {Object} props.subcontainers                  Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.
+   * @param {Integer} props.subcontainers.width           Subcontainer width
+   * @param {Integer} props.subcontainers.height          Subcontainer height
    * @param {FPSCallback} trackFPSCB                      Callback function for tracking FPS in renderer. So this is used for debugging and optimizing.
    *
    * @return {Map}                                            new Map instance
@@ -60,9 +60,9 @@ export class Map {
       props = {
         bounds: { width: 0, height: 0 },
         rendererOptions: { refreshEventListeners: true },
-        subContainers: false,
+        subcontainers: false,
         trackFPSCB: false }) {
-    var { bounds, rendererOptions, subContainers, trackFPSCB } = props;
+    var { bounds, rendererOptions, subcontainers, trackFPSCB } = props;
 
     /* Check for the required parameters! */
     if (!canvasContainer) {
@@ -82,7 +82,7 @@ export class Map {
     /* Add the canvas Element PIXI created inside the given canvasContainer */
     canvasContainer.appendChild(_renderer.view, canvasContainer);
     /* This defines which MapLayer class we use to generate layers on the map. Under movableLayer. These are layers like: Units, terrain, fog of war, UIs etc. */
-    ParentLayerConstructor = subContainers ? MapLayerParent : MapLayer;
+    ParentLayerConstructor = subcontainers ? MapLayerParent : MapLayer;
 
     /* These are the 2 topmost layers on the map:
      * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
@@ -120,10 +120,10 @@ export class Map {
     /**
      * Subcontainers size that we want to generate, when layers use subcontainers
      *
-     * @attribute subContainersConfig
+     * @attribute subcontainersConfig
      * @type {{width: Integer, height: Int}}
      **/
-    this.subContainersConfig = subContainers;
+    this.subcontainersConfig = subcontainers;
     /**
      * Callback function that gets the current FPS on the map and shows it in DOM
      *
@@ -217,8 +217,8 @@ export class Map {
   addLayer(layerOptions) {
     var newLayer;
 
-    if (this.getSubcontainerConfigs () && layerOptions.subContainers !== false) {
-      layerOptions.subContainers = this.getSubcontainerConfigs ();
+    if (this.getSubcontainerConfigs () && layerOptions.subcontainers !== false) {
+      layerOptions.subcontainers = this.getSubcontainerConfigs ();
     }
 
     newLayer = new ParentLayerConstructor(layerOptions);
@@ -229,9 +229,9 @@ export class Map {
   /**
    * Just a convenience function (for usability and readability), for checking if the map uses subcontainers.
    *
-   * @method usesSubContainers
+   * @method usesSubcontainers
    **/
-  usesSubContainers() {
+  usesSubcontainers() {
     return this.getSubcontainerConfigs () ? true : false;
   }
   /**
@@ -240,7 +240,7 @@ export class Map {
    * @method getSubcontainerConfigs 
    **/
   getSubcontainerConfigs () {
-    return this.subContainersConfig;
+    return this.subcontainersConfig;
   }
   /**
    * Get the size of the area that is shown to the player. More or less the area of the browser window.
@@ -400,7 +400,7 @@ export class Map {
         value: true
       });
 
-    if (this.usesSubContainers()) {
+    if (this.usesSubcontainers()) {
       let allMatchingSubcontainers = this._getSubcontainersUnderArea(allCoords, { filter } );
 
       if (type) {

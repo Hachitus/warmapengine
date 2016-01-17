@@ -164,7 +164,7 @@ function _get$Element(which) {
  * @static
  * @method _highlightSelectedObject
  * @param  {Object} object
- * @param  {Map_layer} movableLayer
+ * @param  {MapLayer} movableLayer
  * @param  {PIXI.Renderer} renderer
  */
 function _highlightSelectedObject(object, movableLayer, renderer) {

@@ -4,7 +4,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { Map_layer, Map_parentLayer, ObjectManager, mapEvents, utils, MapDataManipulator } from '/components/bundles/strippedCoreBundle';
+import { MapLayer, MapLayerParent, ObjectManager, mapEvents, utils, MapDataManipulator } from '/components/bundles/strippedCoreBundle';
 import * as Q from '/assets/lib/q/q';
 
 /*---------------------
@@ -81,16 +81,16 @@ export class Map {
     canvasContainer.innerHTML = "";
     /* Add the canvas Element PIXI created inside the given canvasContainer */
     canvasContainer.appendChild(_renderer.view, canvasContainer);
-    /* This defines which Map_layer class we use to generate layers on the map. Under movableLayer. These are layers like: Units, terrain, fog of war, UIs etc. */
-    ParentLayerConstructor = subContainers ? Map_parentLayer : Map_layer;
+    /* This defines which MapLayer class we use to generate layers on the map. Under movableLayer. These are layers like: Units, terrain, fog of war, UIs etc. */
+    ParentLayerConstructor = subContainers ? MapLayerParent : MapLayer;
 
     /* These are the 2 topmost layers on the map:
      * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
      * objects that do not move with the map. StaticLayer has only one child: _movableLayer
      * - movableLayer: Moves the map, when the user commands. Can hold e.g. UI objects that move with the map. Like
      * graphics that show which area or object is currently selected. */
-    _staticLayer = new Map_layer({ name:"staticLayer", coord: { x: 0, y: 0 } });
-    _movableLayer = new Map_layer({ name:"movableLayer", coord: { x: 0, y: 0 } });
+    _staticLayer = new MapLayer({ name:"staticLayer", coord: { x: 0, y: 0 } });
+    _movableLayer = new MapLayer({ name:"movableLayer", coord: { x: 0, y: 0 } });
     _staticLayer.addChild(_movableLayer);
 
     /* needed to make the canvas fullsize canvas with PIXI */
@@ -199,26 +199,26 @@ export class Map {
    * @param  {Object} coord         Coordinates of the layer
    * @param  {Integer} coord.x      X coordinate
    * @param  {Integer} coord.y      Y coordinate
-   * @return {Map_layer}            The created UI layer
+   * @return {MapLayer}            The created UI layer
    **/
   createUILayer(name = "default UI layer", coord = { x: 0, y: 0 }) {
-    var layer = new Map_layer(name, coord);
+    var layer = new MapLayer(name, coord);
     layer.specialLayer = true;
 
     return layer;
   }
   /**
-   * All parameters are passed to ParentLayerConstructor (normally constructor of Map_layer).
+   * All parameters are passed to ParentLayerConstructor (normally constructor of MapLayer).
    *
    * @method addLayer
-   * @uses Map_layer
-   * @return {Map_layer}          created Map_layer instance
+   * @uses MapLayer
+   * @return {MapLayer}          created MapLayer instance
    **/
   addLayer(layerOptions) {
     var newLayer;
 
-    if (this.getSubContainerConfigs() && layerOptions.subContainers !== false) {
-      layerOptions.subContainers = this.getSubContainerConfigs();
+    if (this.getSubcontainerConfigs () && layerOptions.subContainers !== false) {
+      layerOptions.subContainers = this.getSubcontainerConfigs ();
     }
 
     newLayer = new ParentLayerConstructor(layerOptions);
@@ -232,14 +232,14 @@ export class Map {
    * @method usesSubContainers
    **/
   usesSubContainers() {
-    return this.getSubContainerConfigs() ? true : false;
+    return this.getSubcontainerConfigs () ? true : false;
   }
   /**
    * Returns current subcontainers configurations (like subcontainers size).
    *
-   * @method getSubContainerConfigs
+   * @method getSubcontainerConfigs 
    **/
-  getSubContainerConfigs() {
+  getSubcontainerConfigs () {
     return this.subContainersConfig;
   }
   /**
@@ -263,7 +263,7 @@ export class Map {
    * Remove a layer from the map
    *
    * @method removeLayer
-   * @param {Map_layer|PIXI.Container|PIXI.ParticleContainer} layer       The layer object to be removed
+   * @param {MapLayer|PIXI.Container|PIXI.ParticleContainer} layer       The layer object to be removed
    **/
   removeLayer(layer) {
     _movableLayer.removeChild(layer);
@@ -424,6 +424,14 @@ export class Map {
     return objects;
   }
   /**
+   * This returns the normal parent layers that we mostly use for manipulation everything. MovableLayer and staticLayer are built-in layers designed to provide the basic functionalities like zooming and moving the map. These layers provide everything that extends the map more.
+   *
+   * @return {Object} Basically anything in the map that is used as a layer (not really counting subcontainers).
+   */
+  getPrimaryLayers () {
+    return this.getMovableLayer().getPrimaryLayers();
+  }
+  /**
    * Get current map coordinates. Basically the same as movable layers position.
    *
    * @method getMapCoordinates
@@ -439,7 +447,7 @@ export class Map {
    * This returns the layer that is responsible for map zoom
    *
    * @method getZoomLayer
-   * @return {Map_layer|PIXI.Container|PIXI.ParticleContainer}
+   * @return {MapLayer|PIXI.Container|PIXI.ParticleContainer}
    */
   getZoomLayer() {
     return this.getStaticLayer();
@@ -458,7 +466,7 @@ export class Map {
    * Get map zoom. 1 = no zoom. <1 zoom out, >1 zoom in.
    *
    * @method getZoom
-   * @return {Map_layer|PIXI.Container|PIXI.ParticleContainer}
+   * @return {MapLayer|PIXI.Container|PIXI.ParticleContainer}
    */
   getZoom() {
     return this.getZoomLayer().getZoom();
@@ -467,7 +475,7 @@ export class Map {
    * Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative to the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI elements, like effects that happen on certain point on the map.
    *
    * @method getMovableLayer
-   * @return {Map_layer|PIXI.Container|PIXI.ParticleContainer}
+   * @return {MapLayer|PIXI.Container|PIXI.ParticleContainer}
    */
   getMovableLayer() {
     return _movableLayer;

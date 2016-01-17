@@ -3,7 +3,7 @@
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
-import { Object_sprite_terrain, Object_sprite_unit } from '/components/bundles/coreBundle';
+import { ObjectSpriteTerrain, ObjectSpriteUnit } from '/components/bundles/coreBundle';
 import { createHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
 import hexagonMath from '/components/map/extensions/hexagons/utils/hexagonMath';
 
@@ -15,11 +15,11 @@ var shape;
 /*-----------------------
 ---------- API ----------
 -----------------------*/
-export class Object_terrain extends Object_sprite_terrain {
+export class ObjectTerrain extends ObjectSpriteTerrain {
   /**
    * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are inherited, depending on the map type. For example you might want to add some click area for these
    *
-   * @class Object_terrains
+   * @class ObjectTerrains
    * @constructor
    * @param  {Object} coords
    * @param  {Integer} coords.x         X coordinate
@@ -37,13 +37,13 @@ export class Object_terrain extends Object_sprite_terrain {
     calculateHexa.call(this, radius);
   }
 }
-Object.assign(Object_terrain.prototype, calculateHexa);
+Object.assign(ObjectTerrain.prototype, calculateHexa);
 
-export class Object_unit extends Object_sprite_unit {
+export class ObjectUnit extends ObjectSpriteUnit {
   /**
    * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
    *
-   * @class Object_unit
+   * @class ObjectUnit
    * @constructor
    * @param {Object} coords            This units coordinates, relative to it's parent container
    * @param {Integer} coords.x         X coordinate

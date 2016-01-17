@@ -8,11 +8,11 @@ var _UIObjects = [];
 /*---------------------
 -------- EXPORT -------
 ---------------------*/
-export class Map_layer extends PIXI.Container {
+export class MapLayer extends PIXI.Container {
   /**
    * Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.
    *
-   * @class core.Map_layer
+   * @class core.MapLayer
    * @constructor
    * @param {Object} options                            optional options
    * @param {String} options.name                       Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too
@@ -204,11 +204,11 @@ export class Map_layer extends PIXI.Container {
   }
 }
 
-export class Map_parentLayer extends Map_layer {
+export class MapLayerParent extends MapLayer {
   /**
    * Layer designed to hold subcontainers. But can handle objects too.
    *
-   * @class core.Map_parentLayer
+   * @class core.MapLayerParent
    * @constructor
    * @param {Object} options
    * @param {String} options.name                    name layer property name, used for identifiying the layer, usefull in debugging, but used also otherwise too
@@ -249,9 +249,9 @@ export class Map_parentLayer extends Map_layer {
     return displayObject;
   }
   /**
-   * @method getSubContainerConfigs
+   * @method getSubcontainerConfigs 
    */
-  getSubContainerConfigs() {
+  getSubcontainerConfigs () {
     return this.subContainersConfig;
   }
   /**
@@ -286,14 +286,14 @@ export class Map_parentLayer extends Map_layer {
   }
 }
 
-class Map_subContainer extends PIXI.ParticleContainer {
+class MapSubContainer extends PIXI.ParticleContainer {
   /**
-   * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend Map_layers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree.
+   * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend MapLayers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree.
    *
    * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
    *
    * @private
-   * @class core.Map_subContainer
+   * @class core.MapSubContainer
    * @constructor
    * @param  {Object} size              Subontainer size. If given activated subcontainers, otherwise not.
    * @param  {Integer} size.width       width (in pixels)
@@ -364,7 +364,7 @@ function setCorrectSubContainer(displayObject, parentLayer) {
   thisSubcontainer = subContainerList[xIndex][yIndex] = subContainerList[xIndex][yIndex] || [];
 
   if (subContainerList[xIndex][yIndex].length <= 0) {
-    thisSubcontainer = new Map_subContainer({
+    thisSubcontainer = new MapSubContainer({
       x: xIndex * subContainersConfig.width,
       y: yIndex * subContainersConfig.height,
       width: subContainersConfig.width,
@@ -404,7 +404,7 @@ function getClosestSubcontainers(layer, givenCoordinates, options = { filter: un
     width: givenCoordinates.width,
     height: givenCoordinates.height
   };
-  var { width, height } = layer.getSubContainerConfigs();
+  var { width, height } = layer.getSubcontainerConfigs ();
   var allFoundSubcontainers = [];
   var xIndex = Math.floor( coordinates.x / width );
   var yIndex = Math.floor( coordinates.y / height );

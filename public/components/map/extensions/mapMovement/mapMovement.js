@@ -51,6 +51,27 @@ function setupMapMovement () {
     addAll(map);
     startEventListeners(map);
     map.drawOnNextTick();
+    /**
+     * For debugging. Shows the amount of currectly active and inactive subcontainers. Console.logs the data. Also extends window object.
+     *
+     * @method window.FlaTWorld_mapMovement_subCheck
+     * @static
+     */
+    window.FlaTWorld_mapMovement_subCheck = function() {
+      map.getPrimaryLayers().forEach( layer => {
+        var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
+        var visibleContainers, invisibleContainers;
+
+        visibleContainers = subcontainers.filter(subcontainer => {
+          return subcontainer.visible;
+        });
+        invisibleContainers = subcontainers.filter(subcontainer => {
+          return !subcontainer.visible;
+        });
+
+        console.log("visible subcontainers: " + visibleContainers.length + ":" +visibleContainers, "\n\ninvisible: " + invisibleContainers.length + ":" + invisibleContainers);
+      });
+    }
   }
   /**
    * Ínitialize as a plugin
@@ -66,7 +87,7 @@ function setupMapMovement () {
     Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
     Object.assign( viewportArea , applyScaleToViewport(viewportArea, map.getZoom()) );
 
-    map.getMovableLayer().getPrimaryLayers().forEach( layer => {
+    map.getPrimaryLayers().forEach( layer => {
       var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
 
       subcontainers.forEach(subcontainer => {
@@ -117,7 +138,7 @@ function setupMapMovement () {
               changedCoordinates.width = 0;
               changedCoordinates.height = 0;
 
-              containersUnderChangedArea = map.getMovableLayer().getPrimaryLayers().map(layer => {
+              containersUnderChangedArea = map.getPrimaryLayers().map(layer => {
                 return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
               });
               containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);

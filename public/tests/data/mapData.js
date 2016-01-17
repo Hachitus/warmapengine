@@ -17,7 +17,7 @@ export let mapData = {
       cache: true
     },
     objectGroups: [{
-      type: "Object_terrain",
+      type: "ObjectTerrain",
       name: "Terrain", // For quadTrees and debugging
       typeImageData: "terrainBase",
       objects: [{
@@ -76,7 +76,7 @@ export let mapData = {
       cache: "false"
     },
     objectGroups: [{
-      type: "Object_unit",
+      type: "ObjectUnit",
       name: "Unit", // I guess only for debugging?
       typeImageData: "unit",
       objects: [{

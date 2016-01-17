@@ -175,7 +175,7 @@ export class Object_sprite extends PIXI.Sprite {
   }
 }
 
-export class Object_sprite_terrain extends Object_sprite {
+export class ObjectSpriteTerrain extends Object_sprite {
   /**
    * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
    * inherited, depending on the map type. For example you might want to add some click area for these
@@ -197,7 +197,7 @@ export class Object_sprite_terrain extends Object_sprite {
   }
 }
 
-export class Object_sprite_unit extends Object_sprite {
+export class ObjectSpriteUnit extends Object_sprite {
   /**
    * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
    *

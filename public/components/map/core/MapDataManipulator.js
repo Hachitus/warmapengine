@@ -1,6 +1,6 @@
 'use strict';
 
-import { Map_layer, Map_parentLayer } from '/components/bundles/strippedCoreBundle';
+import { MapLayer, MapLayerParent } from '/components/bundles/strippedCoreBundle';
 
 /*---------------------
 --------- API ---------
@@ -15,7 +15,7 @@ export class MapDataManipulator {
    **/
   constructor(rules) {
     this.rules = Array.isArray(rules) ?  rules : [rules];
-    this.layerClasses = [Map_layer, Map_parentLayer];
+    this.layerClasses = [MapLayer, MapLayerParent];
   }
   filterSubcontainers(subcontainers) {
     if (!Array.isArray(subcontainers)) {

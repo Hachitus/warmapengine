@@ -23,8 +23,8 @@ const HEXAGON_DISTANCES = {
 };
 var pluginsToActivate = [
   "/components/map/core/baseEventlisteners/baseEventlisteners",
-  "/components/map/core/zoom/map_zoom",
-  "/components/map/core/move/map_drag",
+  "/components/map/core/zoom/mapZoom",
+  "/components/map/core/move/mapDrag",
   "/components/map/extensions/hexagons/object_select_hexagon",
   "/components/map/extensions/mapMovement/mapMovement.js"
 ];
@@ -101,7 +101,15 @@ function initMap(mapData, options) {
   function onComplete() {
     var promises = [];
 
-    map = globalMap.data = createMap(canvasContainer, { game: gameData, map: mapData, type: typeData }, { trackFPSCB: trackFPSCB });
+    map = globalMap.data = createMap(
+      canvasContainer, {
+        game: gameData,
+        map: mapData,
+        type: typeData
+      }, {
+        trackFPSCB: trackFPSCB,
+        isHiddenByDefault: true
+      });
 
     promises = map.init( pluginsToActivate, mapData.startPoint );
 
@@ -126,7 +134,7 @@ function addBase_spriteLayerData(name, group, options = { interactive: true, cac
   var { interactive, cache } = options;
 
   return {
-    type: "Map_parentLayer",
+    type: "MapLayerParent",
     coord: { x: 0, y: 0 },
     name: name,
     group: group, // For quadTrees
@@ -154,7 +162,7 @@ function populateTerrainLayer(size, typeCount, mapsize) {
       let realX = x;
 
       layerData.objectGroups.push({
-        type: "Object_terrain",
+        type: "ObjectTerrain",
         name: "Terrain", // For quadTrees and debugging
         typeImageData: "terrainBase",
         objects: [{
@@ -191,7 +199,7 @@ function populateUnitLayer(size, typeCount, mapsize) {
       let realX = x;
 
       layerData.objectGroups.push({
-        type: "Object_unit",
+        type: "ObjectUnit",
         name: "Unit", // For quadTrees and debugging
         typeImageData: "unit",
         objects: [{

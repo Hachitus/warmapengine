@@ -5,15 +5,15 @@
 ------- IMPORT --------
 ----------------------*/
 import { Map, UI, utils } from "/components/bundles/coreBundle";
-import { Object_terrain, Object_unit } from "/components/map/extensions/hexagons/Objects";
+import { ObjectTerrain, ObjectUnit } from "/components/map/extensions/hexagons/Objects";
 import { UI_default } from "/components/map/UIs/default/default.js";
 
 /*---------------------
 ------ VARIABLES ------
 ----------------------*/
 const functionsInObj = {
-  Object_terrain,
-  Object_unit
+  ObjectTerrain,
+  ObjectUnit
 };
 
 /*---------------------
@@ -37,7 +37,7 @@ export { createMap as createMap };
  * @param {Object} options                      Optional options
  * @param {Function} options.trackFPSCB         Callback to track FPS
  **/
-function createMap(canvasContainerElement, datas, options = { trackFPSCB: false }) {
+function createMap(canvasContainerElement, datas, options = { trackFPSCB: false, isHiddenByDefault: true }) {
   console.log("============== Horizontal hexagonal Map factory started =============");
   const pixelRatio = utils.environmentDetection.getPixelRatio();
   const DATA_MAP = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
@@ -65,7 +65,7 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false 
       width: 500,
       height: 500,
       maxDetectionOffset: 100,
-      isHiddenByDefault: true
+      isHiddenByDefault: options.isHiddenByDefault
     },
     trackFPSCB: options.trackFPSCB
   };

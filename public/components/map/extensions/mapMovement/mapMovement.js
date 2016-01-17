@@ -72,6 +72,12 @@ function setupMapMovement () {
         console.log("visible subcontainers: " + visibleContainers.length + ":" +visibleContainers, "\n\ninvisible: " + invisibleContainers.length + ":" + invisibleContainers);
       });
     }
+    /**
+     * For debugging. Sets all primaryLayers subcontainers on the map as visible = true.
+     *
+     * @method window.FlaTWorld_mapMovement_deactivate
+     * @static
+     */
     window.FlaTWorld_mapMovement_deactivate = function() {
       map.getPrimaryLayers().forEach( layer => {
         var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());

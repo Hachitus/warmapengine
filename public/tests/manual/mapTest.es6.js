@@ -26,7 +26,7 @@ var pluginsToActivate = [
   "/components/map/core/baseEventlisteners/baseEventlisteners",
   "components/map/core/zoom/mapZoom",
   "components/map/core/move/mapDrag",
-  "components/map/extensions/hexagons/object_select_hexagon"
+  "components/map/extensions/hexagons/selectHexagonPlugin"
 ];
 
 window.initMap = function (options) {

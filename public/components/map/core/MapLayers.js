@@ -202,6 +202,24 @@ export class MapLayer extends PIXI.Container {
 
     return toCacheStatus;
   }
+  /**
+   * Create and add special layer, that holds UI effects in it.
+   *
+   * @method createUILayer
+   * @param  {String} name          name of the layer
+   * @param  {Object} coord         Coordinates of the layer
+   * @param  {Integer} coord.x      X coordinate
+   * @param  {Integer} coord.y      Y coordinate
+   * @return {MapLayer}            The created UI layer
+   **/
+  createUILayer(name = "default UI layer", coord = { x: 0, y: 0 }) {
+    var layer = new MapLayer(name, coord);
+
+    layer.specialLayer = true;
+    this.addChild(layer);
+
+    return layer;
+  }
 }
 
 export class MapLayerParent extends MapLayer {
@@ -223,14 +241,16 @@ export class MapLayerParent extends MapLayer {
    * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
    * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
-  constructor(options = { name: "", coord: { x: 0, y: 0 }, subcontainers: false, specialLayer: false } ) {
-    var { subcontainers } = options;
+  constructor(options = { name: "", coord: { x: 0, y: 0 }, subcontainers: false, specialLayer: false, selectable: false } ) {
+    var { subcontainers, selectable, specialLayer } = options;
 
     super(options);
 
     this.oldAddChild = super.addChild.bind(this);
     this.subcontainersConfig = subcontainers;
     this.subcontainerList = [];
+    this.selectable = selectable;
+    this.specialLayer = specialLayer;
   }
   /**
    * We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and then we call the original (PIXIs) addChild
@@ -304,6 +324,7 @@ class MapSubcontainer extends PIXI.ParticleContainer {
 
     this.specialLayer = true;
     this.size = size;
+    this.selectable = false;
   }
   /**
    * Gets this subcontainers coordinates and size

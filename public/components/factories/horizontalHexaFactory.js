@@ -132,7 +132,7 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false,
               typeData: objTypeData,
               activeData: object.data
             };
-            currentFrame = PIXI.utils.TextureCache[objTypeData.image];
+            currentFrame = PIXI.Texture.fromFrame(objTypeData.image);
             objectOptions = {
               currentFrame,
               radius: DATA_GAME.hexagonRadius

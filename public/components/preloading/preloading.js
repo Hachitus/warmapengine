@@ -17,9 +17,10 @@ export class Preload {
    * @constructor
    * @todo should you use PIXI here or just https://github.com/englercj/resource-loader straight?
    */
-  constructor (baseUrl) {
-    this.preloaderClass = new PIXI.loaders.Loader();
-    this.preloaderClass.baseUrl = baseUrl;
+  constructor (baseUrl, options = { concurrency: 15, crossOrigin: false }) {
+    var { concurrency } = options;
+
+    this.preloaderClass = new PIXI.loaders.Loader(baseUrl, concurrency);
   }
   /**
    * @method resolveOnComplete
@@ -30,8 +31,8 @@ export class Preload {
 
     this.preloaderClass.load();
 
-    this.preloaderClass.once('complete', function() {
-      promise.resolve(true);
+    this.preloaderClass.once('complete', function(loader, resources) {
+      promise.resolve(loader, resources);
     });
 
     return promise.promise;

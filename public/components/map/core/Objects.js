@@ -52,13 +52,6 @@ export class Object_sprite extends PIXI.Sprite {
      */
     this.highlightable = true;
     /**
-     * Is the object selectable.
-     *
-     * @attribute
-     * @type {Boolean}
-     */
-    this.selectable = true;
-    /**
      * Objects custom data. Holds unit statistics and most data. Like unit movement speed etc.
      *
      * @attribute
@@ -193,7 +186,6 @@ export class ObjectSpriteTerrain extends Object_sprite {
     this.name = "DefaultTerrainObject";
     this.type = "terrain";
     this.highlightable = false;
-    this.selectable = false;
   }
 }
 

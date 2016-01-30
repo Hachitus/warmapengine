@@ -28,15 +28,7 @@ Clone the repository and change directory
 
 Install package.json packages and JSPM packages. NOTE! Forever is installed as global module!
 
-    npm install
-
-Install bower packages
-
-    nodejs node_modules/bower/lib/bin/bower.js install --allow-root
-
-If you have an issues with forever (type forever on the cmd and see if it gives an error), create symlink:
-
-    ln -s /usr/bin/nodejs /usr/bin/node
+    npm run init
 
 ##Commanding the backend server
 

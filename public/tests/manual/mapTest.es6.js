@@ -62,7 +62,13 @@ window.initMap = function (options) {
   function onComplete() {
     var promises = [];
 
-    map = globalMap.data = createMap(canvasElement, { game: gameData, map: mapData, type: typeData });
+    map = globalMap.data = createMap(canvasElement, {
+        game: gameData,
+        map: mapData,
+        type: typeData
+      }, {
+        isHiddenByDefault: false
+      });
 
     promises = map.init( pluginsToActivate, mapData.startPoint );
 

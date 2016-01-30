@@ -35,6 +35,7 @@ export { createMap as createMap };
  * @param {Object} datas.game                   More general game data (like turn number, map size etc.)
  * @param {Object} datas.type                   Type data such as different unit types and their graphics (tank, soldier etc.)
  * @param {Object} options                      Optional options
+ * @param {Object} options.isHiddenByDefault    When we use mapMovement plugin, it is best to keep all the obejcts hidden at the beginnig.
  * @param {Function} options.trackFPSCB         Callback to track FPS
  **/
 function createMap(canvasContainerElement, datas, options = { trackFPSCB: false, isHiddenByDefault: true }) {

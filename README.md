@@ -16,8 +16,7 @@ If you are interested contact me (http://hyytia.level7.fi/)
 
 #Development data
 ##Requirements
-This is an example install for a fresh debian based virtual server (tested). You may naturally skip any step you wish, if there are alternatives on your server, step you want to perform differently or something you already have on your server.
-
+This is an example install for a fresh Debian 8.0 (Jessie) based virtual server. You may naturally skip any step you wish, if there are alternatives on your server, step you want to perform differently or something you already have on your server. The installation has been tested on upcloud.com servers and works there fine, from start to finish.
 
 Update repositories & install node.js, npm and git
 
@@ -25,7 +24,7 @@ Update repositories & install node.js, npm and git
 
 Clone the repository and change directory
 
-    git clone https://github.com/Hachitus/warmapengine.git && cd FlaTWorld
+    git clone https://github.com/Hachitus/warmapengine.git && cd warmapengine
 
 Install package.json packages and JSPM packages. NOTE! Forever is installed as global module!
 
@@ -33,7 +32,11 @@ Install package.json packages and JSPM packages. NOTE! Forever is installed as g
 
 Install bower packages
 
-    nodejs node_modules/bower/lib/bin/bower.js install
+    nodejs node_modules/bower/lib/bin/bower.js install --allow-root
+
+If you have an issues with forever (type forever on the cmd and see if it gives an error), create symlink:
+
+    ln -s /usr/bin/nodejs /usr/bin/node
 
 ##Commanding the backend server
 

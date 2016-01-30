@@ -46,6 +46,11 @@ function _setupHexagonClick(map) {
    */
   function tapListener(e) {
     var globalCoords = utils.mouse.eventData.getHAMMERPointerCoords(e);
+    var getData = {
+      allData: function (object) {
+        return object.data.typeData;
+      }
+    };
     var objects, filter;
 
     filter = new MapDataManipulator({
@@ -64,6 +69,6 @@ function _setupHexagonClick(map) {
       mapEvents.publish("objectsSelected", objects);
     }
 
-    ui.showSelections(objects);
+    ui.showSelections(objects, getData);
   }
 }

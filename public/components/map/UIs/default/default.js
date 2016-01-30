@@ -5,6 +5,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
+import { UI } from '/components/bundles/strippedCoreBundle';
 import { templates } from '/components/map/UIs/default/layout/templates';
 import { createVisibleHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
 import { UI_templateBase } from '/components/bundles/coreBundle';
@@ -13,10 +14,10 @@ import { UI_templateBase } from '/components/bundles/coreBundle';
 /*---------------------
 ------ VARIABLES ------
 ----------------------*/
+const FADE_ANIMATION = "slow";
 var cssClasses = {
   select: "#dialog_select"
 };
-var fadeAnimation = "slow";
 var $elements = {};
 var createHighlight;
 
@@ -38,7 +39,6 @@ export class UI_default extends UI_templateBase {
    */
   constructor(modal, map, options = { styles: "#F0F0F0" }) {
     super(cssClasses);
-
     // Add a media (and/or media query) here if you'd like!
     // style.setAttribute("media", "screen")
     // style.setAttribute("media", "only screen and (max-width : 1024px)")
@@ -58,19 +58,20 @@ export class UI_default extends UI_templateBase {
    * Required by the map/core/UI.js API
    *
    * @method showSelections
-   * @param  {Object} objects     Objects that have been selected. @todo: Should add object format to this documentation
+   * @param  {Object} objects     Objects that have been selected. See core.UI for more information
+   * @param {Object} getDatas       See explanation in core.UI
+   * @param {Object} options        Extra options
    */
-  showSelections(objects) {
+  showSelections(objects, getDatas, options) {
     createHighlight = setupCreateHighlight(this.map);
-    var hightlightableObjects = _filterObjectsForHighlighting(objects);
     var updateCB = this.map.drawOnNextTick.bind(this.map);
     var UILayer = this.map.getMovableLayer();
     var cb;
 
     /* We add the objects to be highlighted to the correct UI layer */
-    //objectsToUI(UILayer, hightlightableObjects);
+    //objectsToUI(UILayer, objects);
 
-    if (objects && hightlightableObjects.length > 1) {
+    if (objects && objects.length > 1) {
       cb = () => {
         this.modal.innerHTML = templates.multiSelection({
           title: "Objects",
@@ -81,24 +82,13 @@ export class UI_default extends UI_templateBase {
 
         console.log(objects);
 
-        _get$Element("select").fadeIn(fadeAnimation);
+        _get$Element("select").fadeIn(FADE_ANIMATION);
       };
-    } else if (hightlightableObjects.length === 1) {
+    } else if (objects.length === 1) {
       cb = () => {
-        this.modal.innerHTML = templates.singleSelection({
-          title: "Selected",
-          object: {
-            name: hightlightableObjects[0].data.typeData.name
-          }
-        });
+        this.highlightSelectedObject(objects[0]);
 
-        this.showModal(this.modal, cssClasses);
-        this.highlightSelectedObject(hightlightableObjects[0]);
-        updateCB();
-
-        console.log(hightlightableObjects);
-
-        _get$Element("select").fadeIn(fadeAnimation);
+        console.log(objects);
       };
     } else {
       cb = () => {
@@ -108,26 +98,46 @@ export class UI_default extends UI_templateBase {
       };
     }
 
-    _get$Element("select").fadeOut(fadeAnimation, cb);
+    _get$Element("select").fadeOut(FADE_ANIMATION, cb);
   }
   /**
    * Required by the map/core/UI.js API
    *
    * @method highlightSelectedObject
-   * @param  {Object} object       Object that has been selected. @todo: Should add object format to this documentation
+   * @param  {Object} object        Object that has been selected. See core.UI for more information
+   * @param {Object} getDatas       See explanation in core.UI
+   * @param {Object} options        Extra options. Like dropping a shadow etc.
    */
-  highlightSelectedObject(object) {
-    var highlightableObject;
+  highlightSelectedObject(object, getDatas, options = {shadow: { color: "0x0000", distance: 5, alpha: 0.55, angle: 45, blur: 5 }}) {
+    var { shadow } = options;
+    var highlightableObject, objectDatas;
 
     createHighlight = setupCreateHighlight(this.map);
+    objectDatas = getDatas.allData(object);
 
-    if (object.highlightable) {
-      highlightableObject = _highlightSelectedObject(object, this.map.getMovableLayer(), this.map.getRenderer());
+    this.modal.innerHTML = templates.singleSelection({
+      title: "Selected",
+      object: {
+        name: objectDatas.name
+      }
+    });
+    this.showModal(this.modal, cssClasses);
 
-      highlightableObject.dropShadow({ color: "0x0000", distance: 5, alpha: 0.55, angle: 45, blur: 5 });
+    highlightableObject = _highlightSelectedObject(object, this.map.getMovableLayer(), this.map.getRenderer());
 
-      return highlightableObject;
-    }
+    highlightableObject.dropShadow({
+      color: shadow.color,
+      distance: shadow.distance,
+      alpha: shadow.alpha,
+      angle: shadow.angle,
+      blur: shadow.blur
+    });
+
+    this.map.drawOnNextTick();
+
+    _get$Element("select").fadeIn(FADE_ANIMATION);
+
+    return highlightableObject;
   }
   /**
    * @method showUnitMovement
@@ -173,30 +183,16 @@ function _highlightSelectedObject(object, movableLayer, renderer) {
   clonedObject = object.clone(renderer);
   clonedObject.__proto__ = object.__proto__;
 
-  var jee = object.toGlobal(new PIXI.Point(0,0));
-  jee = movableLayer.toLocal(jee);
+  var coord = object.toGlobal(new PIXI.Point(0,0));
+  coord = movableLayer.toLocal(coord);
 
-  jee.x -= object.width * object.anchor.x;
-  jee.y -= object.height * object.anchor.y;
+  coord.x -= object.width * object.anchor.x;
+  coord.y -= object.height * object.anchor.y;
 
-  createHighlight(clonedObject, movableLayer, { coords: jee });
+  createHighlight(clonedObject, movableLayer, { coords: coord });
 
   return clonedObject;
 }
-/**
- * @private
- * @static
- * @method _filterObjectsForHighlighting
- * @param  {Array} objects
- */
-function _filterObjectsForHighlighting(objects) {
-  var newObjects = objects.filter(obj => {
-    return obj.highlightable === true ? true : false;
-  });
-
-  return newObjects;
-}
-
 /**
  * @private
  * @static

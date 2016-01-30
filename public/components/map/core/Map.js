@@ -10,6 +10,8 @@ import * as Q from '/assets/lib/q/q';
 /*---------------------
 ------ VARIABLES ------
 ----------------------*/
+const LAYER_TYPE_STATIC = 0;
+const LAYER_TYPE_MOVABLE = 1;
 var _drawMapOnNextTick = false;
 var isMapReadyPromises = [];
 var _staticLayer, _movableLayer, _renderer, ParentLayerConstructor;
@@ -138,6 +140,23 @@ export class Map {
      * @type {ObjectManager}
      **/
     this.objectManager = new ObjectManager(new PIXI.interaction.InteractionManager(_renderer));
+
+    /**
+     * Layer types. Can be extended, but the already defined types are supposed to be constants and not to be changed.
+     *
+     * @attribute layerTypes
+     * @type {Object}
+     */
+    this.layerTypes = {
+      staticType: {
+        id: LAYER_TYPE_STATIC,
+        layer: _staticLayer
+      },
+      movableType: {
+        id: LAYER_TYPE_MOVABLE,
+        layer: _movableLayer
+      }
+    };
   }
   /**
    * This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since normally the plugins have to be activated before the map is shown.
@@ -190,6 +209,22 @@ export class Map {
    **/
   drawOnNextTick() {
     _drawMapOnNextTick = true;
+  }
+  /**
+   * Add an UI object to the wanted layer.
+   *
+   * @param {Integer} layer   Type of the layer. layerTypes.STATIC of layerTypes.MOVABLE.
+   * @param {Object} object   The object to be attached as UI object.
+   */
+  addUIObject(layerType, object) {
+    switch (layerType) {
+      case LAYER_TYPE_STATIC:
+        this.getStaticLayer().addUIObject();
+        break;
+      case LAYER_TYPE_MOVABLE:
+        this.getMovableLayer().addUIObject();
+        break;
+    }
   }
   /**
    * Create a special layer, that holds UI effects in it.

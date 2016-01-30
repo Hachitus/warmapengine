@@ -162,10 +162,16 @@ function setupMapMovement () {
               containersUnderChangedArea.forEach((thisContainer) => {
                 isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
 
-                thisContainer.visible = isOutside ? false : true;
                 // I do not know is caching between the moves better or not-caching.
-                // thisContainer.setCache(false);
-                // thisContainer.setCache(true);
+                if (isOutside) {
+                  //thisContainer.setCache(false);
+                  thisContainer.visible = false;
+                } else {
+                  //thisContainer.setCache(false);
+                  //thisContainer.setCache(true);
+                  thisContainer.visible = true;
+                }
+
               });
 
               queue.processing = false;

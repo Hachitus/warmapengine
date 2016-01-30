@@ -218,7 +218,33 @@ export class MapLayer extends PIXI.Container {
     layer.specialLayer = true;
     this.addChild(layer);
 
+    this.UILayer = layer;
+
     return layer;
+  }
+  /**
+   * Adds and object to this layers UILayer child.
+   *
+   * @param {Object} object   The UI object to be added under this layer
+   */
+  addUIObject(object) {
+    var UILayer;
+
+    if (!this.getUILayer()) {
+      UILayer = this.createUILayer();
+    } else {
+      UILayer = this.getUILayer;
+    }
+
+    this.UILayer.addChild(object);
+  }
+  /**
+   * Return the UILayer. If no UILayer is yet created, will return undefined
+   *
+   * @return {MapLayer | undefined}
+   */
+  getUILayer() {
+    return this.UILayer;
   }
 }
 
@@ -269,7 +295,7 @@ export class MapLayerParent extends MapLayer {
     return displayObject;
   }
   /**
-   * @method getSubcontainerConfigs 
+   * @method getSubcontainerConfigs
    */
   getSubcontainerConfigs () {
     return this.subcontainersConfig;
@@ -306,11 +332,9 @@ export class MapLayerParent extends MapLayer {
   }
 }
 
-class MapSubcontainer extends PIXI.ParticleContainer {
+class MapSubcontainer extends PIXI.Container {
   /**
-   * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend MapLayers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree.
-   *
-   * NOTICE! PIXI.ParticleContainer is much more strict than normal containers. When you encounter issues with it. Please check the restrictions on ParticleContainer.
+   * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend MapLayers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree. The intention was to use PIXI.ParticleContainer for this, but it seems it doesn't clean up the memory afterwards the same way as normal Container.
    *
    * @private
    * @class core.MapSubcontainer

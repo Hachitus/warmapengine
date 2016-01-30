@@ -47,23 +47,63 @@ function UI (UITheme, givenMap) {
    *
    * @method showSelections
    * @static
+   * @param  {Array} objects     Objects that have been selected.
+   * @param {Object} getDatas       This is an object made of functions, that get wanted data from the object. For example if you have objects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.
+   * @param {Object} getDatas.name  Retrieves object name
+   * @param {Object} options        Extra options
+   * @return {Boolean}
    * */
-  scope.showSelections = UITheme.showSelections.bind(UITheme);
+  scope.showSelections = function (objects, getDatas, options) {
+    objects = filterObjectsForHighlighting(objects);
+
+    if (objects.length === 1) {
+      return UITheme.highlightSelectedObject(objects[0], getDatas);
+    } else if (objects.length > 1) {
+      return UITheme.showSelections(objects, getDatas);
+    }
+
+    return "No objects found";
+  };
   /**
    * Resonsible for hignlighting the selected object. For example the unit that is being commanded. The hightlight
    * can mean e.g. bringing the unit on top on the map and showing selection circle around it.
    *
    * @method highlightSelectedObject
    * @static
+   * @param  {Object} object        Object that has been selected.
+   * @param {Object} getDatas       This is an object made of functions, that get wanted data from the object. For example if you have objects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.
+   * @param {Object} getDatas.name  Retrieves object name
+   * @param {Object} options        Extra options. Like dropping a shadow etc.
    * */
-  scope.highlightSelectedObject = UITheme.highlightSelectedObject.bind(UITheme);
+  scope.highlightSelectedObject = function (object, getDatas, options) {
+    UITheme.highlightSelectedObject(object);
+  }
   /**
    * Shows arrow or movement or what ever to indicate the selected unit is moving to the given location
    *
    * @method showUnitMovement
    * @static
    * */
-  scope.showUnitMovement = UITheme.showUnitMovement.bind(UITheme);
+  scope.showUnitMovement = function (object, from, to, options) {
+    UITheme.showUnitMovement(object, from, to, options);
+  }
 
   return scope;
+}
+/*--------------------------------
+------------ PRIVATE -------------
+--------------------------------*/
+/**
+ * This is a general function which filters only highlightable object for use in UI operations
+ *
+ * @static
+ * @method filterObjectsForHighlighting
+ * @param  {Array} objects
+ */
+function filterObjectsForHighlighting (objects) {
+  var newObjects = objects.filter(obj => {
+    return obj.highlightable === true ? true : false;
+  });
+
+  return newObjects;
 }

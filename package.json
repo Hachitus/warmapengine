@@ -5,14 +5,14 @@
   "private": true,
   "scripts": {
     "start": "echo 'starting instance in http://localhost:9001/' && forever start startEngine.js --uid FlaTWorld",
-    "stop": "node_modules/forever stop startEngine.js FlaTWorld",
+    "stop": "forever stop startEngine.js FlaTWorld",
     "document": "yuidoc -t node_modules/yuidoc-theme-blue",
     "push": "git push && yuidoc -t node_modules/yuidoc-theme-blue",
-    "init": "npm install && node node_modules/jspm/jspm.js install && nodejs node_modules/bower/bower.js install"
+    "init": "npm install && node node_modules/jspm/jspm.js install && nodejs node_modules/bower/bower.js install",
+    "preinstall": "npm i -g forever"
   },
   "dependencies": {
     "express": "^4.12.4",
-    "forever": "^0.15.1",
     "handlebars": "^3.0.3",
     "jsonminify": "^0.1.2",
     "loglevel": "^1.3.1",

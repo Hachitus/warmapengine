@@ -23,28 +23,17 @@ Update repositories & install node.js, npm and git
 
     apt-get update && apt-get install nodejs npm git
 
+Clone the repository and change directory
 
-Install forever globally. If you wish to install it only locally, you are on your own on this.
+    git clone https://github.com/Hachitus/warmapengine.git && cd FlaTWorld
 
-    npm install forever -g
+Install package.json packages and JSPM packages. NOTE! Forever is installed as global module!
 
-Clone the repository
-
-    git clone [url to this repository]
-
-Change to the repository
-
-    cd [installed repository path]
-
-Install package.json packages and JSPM packages
-
-    npm run init
+    npm install
 
 Install bower packages
 
     nodejs node_modules/bower/lib/bin/bower.js install
-    OR as root:
-    nodejs node_modules/bower/lib/bin/bower.js install --allow-root
 
 ##Commanding the backend server
 

@@ -181,7 +181,7 @@ export class UI_default extends UI_templateBase {
   createHighlight(object, options = { coords: new PIXI.Point(0, 0) }) {
     var radius = 47;
     var movableLayer = this.map.getMovableLayer();
-    var container = new this.map.createUILayer("UILayer", { toLayer: movableLayer});
+    var container = new this.map.createSpecialLayer("UILayer", { toLayer: movableLayer});
     var objCoords = {
       x: Number(object.x),
       y: Number(object.y)

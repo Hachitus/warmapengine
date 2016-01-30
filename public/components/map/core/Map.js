@@ -251,9 +251,9 @@ export class Map {
     });
   }
   /**
-   * Create a special layer, that holds UI effects in it.
+   * Create a special layer, that can holds e.g. UI effects in it.
    *
-   * @method createUILayer
+   * @method createSpecialLayer
    * @param {String} name               name of the layer
    * @param {Object} options            Optional options.
    * @param {Object} options.coord      Coordinates of the layer
@@ -262,7 +262,7 @@ export class Map {
    * @param {Object} options.toLayer    To which layer will this layer be added to as UILayer
    * @return {MapLayer}            The created UI layer
    **/
-  createUILayer(name = "default UI layer", options = { coord: { x: 0, y: 0 }, toLayer }) {
+  createSpecialLayer(name = "default special layer", options = { coord: { x: 0, y: 0 }, toLayer }) {
     var {coord, toLayer} = options;
     var layer = new MapLayer(name, coord);
 

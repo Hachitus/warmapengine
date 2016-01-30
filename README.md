@@ -20,7 +20,7 @@ This is an example install for a fresh Debian 8.0 (Jessie) based virtual server.
 
 Update repositories & install node.js, npm and git
 
-    apt-get update && apt-get install nodejs npm git
+    apt-get update && apt-get -y install nodejs npm git
 
 Clone the repository and change directory
 

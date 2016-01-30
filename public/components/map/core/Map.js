@@ -63,8 +63,9 @@ export class Map {
         bounds: { width: 0, height: 0 },
         rendererOptions: { refreshEventListeners: true },
         subcontainers: false,
+        cache: false,
         trackFPSCB: false }) {
-    var { bounds, rendererOptions, subcontainers, trackFPSCB } = props;
+    var { bounds, rendererOptions, subcontainers, trackFPSCB, cache } = props;
 
     /* Check for the required parameters! */
     if (!canvasContainer) {
@@ -140,7 +141,13 @@ export class Map {
      * @type {ObjectManager}
      **/
     this.objectManager = new ObjectManager(new PIXI.interaction.InteractionManager(_renderer));
-
+    /**
+     * Is cache activated for this map at all. This is set for individual layers with a property, but without activating the cache for the whole map, the layers cache property is ignored.
+     *
+     * @attribute objectManager
+     * @type {ObjectManager}
+     **/
+    this.cache = cache;
     /**
      * Layer types. Can be extended, but the already defined types are supposed to be constants and not to be changed.
      *
@@ -301,7 +308,7 @@ export class Map {
   /**
    * Returns current subcontainers configurations (like subcontainers size).
    *
-   * @method getSubcontainerConfigs 
+   * @method getSubcontainerConfigs
    **/
   getSubcontainerConfigs () {
     return this.subcontainersConfig;
@@ -355,16 +362,23 @@ export class Map {
     this.drawOnNextTick();
   }
   /**
+   * Is cache on
+   *
+   * @method isCacheActivated
+   * @return {Boolean}
+   **/
+  isCacheActivated() {
+    return this.cache;
+  }
+  /**
    * Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches the ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.
    *
    * @todo IMPLEMENT
    * @method cacheMap
-   * @param {Object}          filters. TO BE IMPLEMENTED. Filter to cache only specific matching layers
+   * @param {Object} filters          filters from MapDataManipulator.js
    **/
   cacheMap(filters) {
-    _movableLayer.children.forEach(child => {
-      child.setCache(child.isCached());
-    });
+    cacheLayers(true, this.usesSubcontainers());
   }
   /**
    * unCache the map. NOT WORKING ATM. IMPLEMENTED SOON!
@@ -374,9 +388,7 @@ export class Map {
    * @return {Map}        this map instance
    * */
   unCacheMap() {
-    _movableLayer.children.forEach(child => {
-      child.setCache(false);
-    });
+    cacheLayers(false, this.usesSubcontainers());
   }
   /**
    * Activate all plugins for the map. Iterates through the given plugins we wish to activate and does the actual work in activatePlugin-method.
@@ -720,4 +732,35 @@ function _defaultTick(map, ticker) {
       }
     }
   });
+}
+/**
+ * cacheLayers
+ *
+ * @method cacheLayers
+ * @private
+ * @static
+ * @param  {Boolean}  cacheOrNot        Do you want to cache or uncache?
+ * @param  {Boolean} hasSubcontainers   Does the map have subcontainers activated?
+ */
+function cacheLayers(cacheOrNot, hasSubcontainers) {
+  if (hasSubcontainers) {
+    _movableLayer.children.forEach(child => {
+      if (!child.isCached()) {
+        return false;
+      }
+      var subcontainers = child.getSubcontainers();
+
+      subcontainers.forEach(subcontainer => {
+        subcontainer.setCache(cacheOrNot);
+      })
+    });
+  } else {
+    _movableLayer.children.forEach(child => {
+      if (!child.isCached()) {
+        return false;
+      }
+
+      child.setCache(cacheOrNot);
+    });
+  }
 }

@@ -60,7 +60,7 @@ function getMapData(mapsize) {
 }
 
 function initMap(mapData, options) {
-  var { mapsize, canvasContainer, trackFPSCB } = options;
+  var { mapsize, canvasContainer, trackFPSCB, cache } = options;
   var map = {};
   var globalMap = {
     data: {}
@@ -108,16 +108,14 @@ function initMap(mapData, options) {
         type: typeData
       }, {
         trackFPSCB: trackFPSCB,
-        isHiddenByDefault: true
+        isHiddenByDefault: true,
+        cache: options.cache
       });
 
     promises = map.init( pluginsToActivate, mapData.startPoint );
 
     map.whenReady().then( () => {
       document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
-      if (options.cache) {
-        map.cacheMap(true);
-      }
     });
   }
 

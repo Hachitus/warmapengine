@@ -38,7 +38,7 @@ export { createMap as createMap };
  * @param {Object} options.isHiddenByDefault    When we use mapMovement plugin, it is best to keep all the obejcts hidden at the beginnig.
  * @param {Function} options.trackFPSCB         Callback to track FPS
  **/
-function createMap(canvasContainerElement, datas, options = { trackFPSCB: false, isHiddenByDefault: true }) {
+function createMap(canvasContainerElement, datas, options = { trackFPSCB: false, isHiddenByDefault: true, cache: false }) {
   console.log("============== Horizontal hexagonal Map factory started =============");
   const pixelRatio = utils.environmentDetection.getPixelRatio();
   const DATA_MAP = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
@@ -68,7 +68,8 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false,
       maxDetectionOffset: 100,
       isHiddenByDefault: options.isHiddenByDefault
     },
-    trackFPSCB: options.trackFPSCB
+    trackFPSCB: options.trackFPSCB,
+    cache: options.cache
   };
   var map, dialog_selection, defaultUI;
 

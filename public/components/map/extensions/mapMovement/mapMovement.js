@@ -22,7 +22,7 @@ export default mapMovement;
 /*-----------------------
 -------- PUBLIC ---------
 -----------------------*/
-/** This module manages visibility of the objects, based on are they visible to the player (on the canvas / webgl) or outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise.
+/** This module manages visibility of the objects, based on are they visible to the player (on the canvas / webgl) or outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise. Requires subcontainers atm.
  *
  * @class mapMovement
  **/
@@ -143,6 +143,7 @@ function setupMapMovement () {
               const scaledViewport = e.data[0];
               const smallerScaledViewport = e.data[1];
               var containersUnderChangedArea = [];
+              var usesCache = map.isCacheActivated();
               var isOutside, scaledAndChangedViewport;
 
               scaledAndChangedViewport = Object.assign({}, scaledViewport);
@@ -163,13 +164,13 @@ function setupMapMovement () {
                 isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
 
                 // I do not know is caching between the moves better or not-caching.
+                usesCache && thisContainer.setCache(false);
+
                 if (isOutside) {
-                  //thisContainer.setCache(false);
                   thisContainer.visible = false;
                 } else {
-                  //thisContainer.setCache(false);
-                  //thisContainer.setCache(true);
                   thisContainer.visible = true;
+                  usesCache && thisContainer.setCache(true);
                 }
 
               });

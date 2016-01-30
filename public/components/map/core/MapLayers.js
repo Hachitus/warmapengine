@@ -124,38 +124,9 @@ export class MapLayer extends PIXI.Container {
    * */
   emptyUIObjects() {
     _UIObjects.map(obj => {
-      this.removeChild(obj);
+      this.getUILayer().removeChild(obj);
       obj = null;
     });
-
-    return _UIObjects;
-  }
-  /**
-   * Add UIObjects to this layer
-   *
-   * @method addUIObjects
-   * @param {Object|Array} objects           Objects can be an object containing one object to add or an Array of objects to add.
-   * @return {Array}                         All the UIObjects currently on this layer
-   * */
-  addUIObjects(objects) {
-    _UIObjects = _UIObjects || [];
-    if (Array.isArray(objects)) {
-      objects.forEach( (/*thisObj*/) => {
-        /* We want to make a copy of the object, since if add existing child from another container to UI,
-         * it will get removed from the original container and messes up the hierarchy. Probably making a deep copy
-         * directly isn't the best way, but it's the easiest atm. */
-        //let newObj = utils.general.deepCopy(thisObj);
-
-        //this.addChild(newObj);
-      });
-    } else {
-      //let newObj = utils.general.deepCopy(objects);
-      let newObj = objects;
-
-      newObj.specialLayer = true;
-      this.addChild( newObj );
-    }
-    _UIObjects.push( objects );
 
     return _UIObjects;
   }
@@ -226,9 +197,11 @@ export class MapLayer extends PIXI.Container {
    * Adds and object to this layers UILayer child.
    *
    * @param {Object} object   The UI object to be added under this layer
+   * @return {Array}          All the UIObjects currently on this layer
    */
   addUIObject(object) {
     var UILayer;
+    _UIObjects = _UIObjects || [];
 
     if (!this.getUILayer()) {
       UILayer = this.createUILayer();
@@ -237,6 +210,9 @@ export class MapLayer extends PIXI.Container {
     }
 
     this.UILayer.addChild(object);
+    _UIObjects.push( object );
+
+    return _UIObjects;
   }
   /**
    * Return the UILayer. If no UILayer is yet created, will return undefined

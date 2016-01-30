@@ -19,7 +19,6 @@ var cssClasses = {
   select: "#dialog_select"
 };
 var $elements = {};
-var createHighlight;
 
 /*---------------------
 --------- API ---------
@@ -63,7 +62,6 @@ export class UI_default extends UI_templateBase {
    * @param {Object} options        Extra options
    */
   showSelections(objects, getDatas, options) {
-    createHighlight = setupCreateHighlight(this.map);
     var updateCB = this.map.drawOnNextTick.bind(this.map);
     var UILayer = this.map.getMovableLayer();
     var cb;
@@ -112,7 +110,6 @@ export class UI_default extends UI_templateBase {
     var { shadow } = options;
     var highlightableObject, objectDatas;
 
-    createHighlight = setupCreateHighlight(this.map);
     objectDatas = getDatas.allData(object);
 
     this.modal.innerHTML = templates.singleSelection({
@@ -123,7 +120,7 @@ export class UI_default extends UI_templateBase {
     });
     this.showModal(this.modal, cssClasses);
 
-    highlightableObject = _highlightSelectedObject(object, this.map.getMovableLayer(), this.map.getRenderer());
+    highlightableObject = this._highlightSelectedObject(object, this.map.getRenderer());
 
     highlightableObject.dropShadow({
       color: shadow.color,
@@ -148,6 +145,66 @@ export class UI_default extends UI_templateBase {
    */
   init() {}
 
+  /*----------------------
+  ------- PRIVATE --------
+  ----------------------*/
+  /**
+   * @private
+   * @static
+   * @method _highlightSelectedObject
+   * @param  {Object} object
+   * @param  {MapLayer} movableLayer
+   * @param  {PIXI.Renderer} renderer
+   */
+  _highlightSelectedObject(object, renderer) {
+    var movableLayer = this.map.getMovableLayer();
+    var clonedObject;
+
+    clonedObject = object.clone(renderer);
+    clonedObject.__proto__ = object.__proto__;
+
+    var coord = object.toGlobal(new PIXI.Point(0,0));
+    coord = movableLayer.toLocal(coord);
+
+    coord.x -= object.width * object.anchor.x;
+    coord.y -= object.height * object.anchor.y;
+
+    this.createHighlight(clonedObject, { coords: coord });
+
+    return clonedObject;
+  }
+  /**
+   * @private
+   * @static
+   * @method createHighlight
+   */
+  createHighlight(object, options = { coords: new PIXI.Point(0, 0) }) {
+    var radius = 47;
+    var movableLayer = this.map.getMovableLayer();
+    var container = new this.map.createUILayer("UILayer", { toLayer: movableLayer});
+    var objCoords = {
+      x: Number(object.x),
+      y: Number(object.y)
+    };
+    var highlighterObject;
+
+    highlighterObject = createVisibleHexagon(radius, { color: "#F0F0F0" });
+    highlighterObject.x = objCoords.x + 32;
+    highlighterObject.y = objCoords.y + 27;
+
+    highlighterObject.alpha = 0.5;
+
+    /* We add the children first to subcontainer, since it's much easier to handle the x and y in it, rather than
+     * handle graphics x and y */
+    container.addChild(highlighterObject);
+    container.addChild(object);
+
+    container.position = options.coords;
+
+    this.map.removeUIObject(this.map.layerTypes.movableType.id, [container])
+    this.map.addUIObjects(this.map.layerTypes.movableType.id, [container]);
+  }
+
 }
 
 /*----------------------
@@ -168,61 +225,4 @@ function _get$Element(which) {
   }
 
   return $elements[which];
-}
-/**
- * @private
- * @static
- * @method _highlightSelectedObject
- * @param  {Object} object
- * @param  {MapLayer} movableLayer
- * @param  {PIXI.Renderer} renderer
- */
-function _highlightSelectedObject(object, movableLayer, renderer) {
-  var clonedObject;
-
-  clonedObject = object.clone(renderer);
-  clonedObject.__proto__ = object.__proto__;
-
-  var coord = object.toGlobal(new PIXI.Point(0,0));
-  coord = movableLayer.toLocal(coord);
-
-  coord.x -= object.width * object.anchor.x;
-  coord.y -= object.height * object.anchor.y;
-
-  createHighlight(clonedObject, movableLayer, { coords: coord });
-
-  return clonedObject;
-}
-/**
- * @private
- * @static
- * @method setupCreateHighlight
- * @param  {Map} map
- */
-function setupCreateHighlight(map) {
-  return function createHighlight(object, movableLayer, options = { coords: new PIXI.Point(0, 0) }) {
-    var radius = 47;
-    var container = new map.createUILayer("UILayer");
-    var objCoords = {
-      x: Number(object.x),
-      y: Number(object.y)
-    };
-    var highlighterObject;
-
-    highlighterObject = createVisibleHexagon(radius, { color: "#F0F0F0" });
-    highlighterObject.x = objCoords.x + 32;
-    highlighterObject.y = objCoords.y + 27;
-
-    highlighterObject.alpha = 0.5;
-
-    /* We add the children first to subcontainer, since it's much easier to handle the x and y in it, rather than
-     * handle graphics x and y */
-    container.addChild(highlighterObject);
-    container.addChild(object);
-
-    container.position = options.coords;
-
-    movableLayer.emptyUIObjects();
-    movableLayer.addUIObjects(container);
-  };
 }

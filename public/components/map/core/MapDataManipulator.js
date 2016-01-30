@@ -31,17 +31,36 @@ export class MapDataManipulator {
   _runRules(object) {
     var foundObjects;
 
-    this.rules.forEach(rule => {
+    this.rules.forEach((rule) => {
       if (rule.type === "filter") {
         switch (rule.object) {
           case "container":
             foundObjects = this._getContainer(object, rule);
-          break;
+            break;
+          case "object":
+            foundObjects = this._getObject(object, rule);
+            break;
         }
       }
     });
 
     return foundObjects;
+  }
+  /**
+   * This is the actual method that runs through the rules and arranges the data
+   *
+   * @todo Refactor
+   *
+   * @private
+   * @method _getContainer
+   * @return {[type]} [description]
+   **/
+  _getContainer(object, rule) {
+    if (object && ( object.parent instanceof this.layerClasses[0] || object && object.parent instanceof this.layerClasses[1] )) {
+      return object.parent[rule.property] === rule.value;
+    } else if ( object && object.parent && ( object.parent.parent instanceof this.layerClasses[0] || object.parent.parent instanceof this.layerClasses[0] )) {
+      return object.parent.parent[rule.property] === rule.value;
+    }
   }
   /**
    * This is the actual method that runs through the rules and arranges the data

@@ -219,26 +219,55 @@ export class Map {
   addUIObject(layerType, object) {
     switch (layerType) {
       case LAYER_TYPE_STATIC:
-        this.getStaticLayer().addUIObject();
+        this.getStaticLayer().addUIObject(object);
         break;
       case LAYER_TYPE_MOVABLE:
-        this.getMovableLayer().addUIObject();
+        this.getMovableLayer().addUIObject(object);
         break;
     }
+  }
+  /**
+   * Remove an UI object to the wanted layer.
+   *
+   * @param {Integer} layer   Type of the layer. layerTypes.STATIC of layerTypes.MOVABLE.
+   * @param {Object} object   The object to be attached as UI object.
+   */
+  removeUIObject(layerType, object) {
+    switch (layerType) {
+      case LAYER_TYPE_STATIC:
+        this.getStaticLayer().emptyUIObjects();
+        break;
+      case LAYER_TYPE_MOVABLE:
+        this.getMovableLayer().emptyUIObjects();
+        break;
+    }
+  }
+  /**
+   * @todo DOCUMENT
+   */
+  addUIObjects(layerType, objects) {
+    objects.forEach(object => {
+      this.addUIObject(layerType, object);
+    });
   }
   /**
    * Create a special layer, that holds UI effects in it.
    *
    * @method createUILayer
-   * @param  {String} name          name of the layer
-   * @param  {Object} coord         Coordinates of the layer
-   * @param  {Integer} coord.x      X coordinate
-   * @param  {Integer} coord.y      Y coordinate
+   * @param {String} name               name of the layer
+   * @param {Object} options            Optional options.
+   * @param {Object} options.coord      Coordinates of the layer
+   * @param {Integer} options.coord.x   X coordinate
+   * @param {Integer} options.coord.y   Y coordinate
+   * @param {Object} options.toLayer    To which layer will this layer be added to as UILayer
    * @return {MapLayer}            The created UI layer
    **/
-  createUILayer(name = "default UI layer", coord = { x: 0, y: 0 }) {
+  createUILayer(name = "default UI layer", options = { coord: { x: 0, y: 0 }, toLayer }) {
+    var {coord, toLayer} = options;
     var layer = new MapLayer(name, coord);
+
     layer.specialLayer = true;
+    toLayer && toLayer.addChild(layer);
 
     return layer;
   }

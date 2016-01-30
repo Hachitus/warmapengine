@@ -23,17 +23,10 @@ Update repositories & install node.js, npm and git
 
     apt-get update && apt-get install nodejs npm git
 
-Rather install these packages as global
 
-    npm install -g forever
+Install forever globally. If you wish to install it only locally, you are on your own on this.
 
-If you have issues with forever (type forever and enter on the cmd):
-
-    ln -s /usr/bin/nodejs /usr/bin/node
-
-or
-
-    apt-get install nodejs-legacy
+    npm install forever -g
 
 Clone the repository
 
@@ -49,7 +42,9 @@ Install package.json packages and JSPM packages
 
 Install bower packages
 
-    nodejs node_modules/bower/bower.js install
+    nodejs node_modules/bower/lib/bin/bower.js install
+    OR as root:
+    nodejs node_modules/bower/lib/bin/bower.js install --allow-root
 
 ##Commanding the backend server
 

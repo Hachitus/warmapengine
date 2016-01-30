@@ -18,9 +18,10 @@ If you are interested contact me (http://hyytia.level7.fi/)
 ##Requirements
 This is an example install for a fresh debian based virtual server (tested). You may naturally skip any step you wish, if there are alternatives on your server, step you want to perform differently or something you already have on your server.
 
-Install node.js and npm
 
-    apt-get install nodejs npm git
+Update repositories & install node.js, npm and git
+
+    apt-get update && apt-get install nodejs npm git
 
 Rather install these packages as global
 

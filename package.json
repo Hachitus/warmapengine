@@ -8,8 +8,7 @@
     "stop": "forever stop startEngine.js FlaTWorld",
     "document": "yuidoc -t node_modules/yuidoc-theme-blue",
     "push": "git push && yuidoc -t node_modules/yuidoc-theme-blue",
-    "init": "npm install && nodejs node_modules/jspm/jspm.js install && nodejs node_modules/bower/lib/bin/bower.js install --allow-root",
-    "preinstall": "npm i -g forever && ln -s /usr/bin/nodejs /usr/bin/node"
+    "init": "npm i -g forever && ln -s /usr/bin/nodejs /usr/bin/node && npm install && nodejs node_modules/jspm/jspm.js install && nodejs node_modules/bower/lib/bin/bower.js install --allow-root"
   },
   "dependencies": {
     "express": "^4.12.4",

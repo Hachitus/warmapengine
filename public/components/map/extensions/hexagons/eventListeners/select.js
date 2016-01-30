@@ -60,7 +60,7 @@ function _setupHexagonClick(map) {
       value: "unitLayer"
     });
 
-    objects = map.getObjectsUnderArea(globalCoords, filter);
+    objects = map.getObjectsUnderArea(globalCoords, { filter });
     objects = utils.dataManipulation.mapObjectsToArray(objects);
     objects = utils.dataManipulation.flattenArrayBy1Level(objects);
 

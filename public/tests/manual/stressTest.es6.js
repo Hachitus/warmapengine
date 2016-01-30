@@ -129,7 +129,10 @@ function initMap(mapData, options) {
   }
 }
 
-/************ PRIVATE ************/
+/*---------------------
+------- PRIVATE -------
+---------------------*/
+/* THESE GENERATE THE ACTUAL RANDOM MAP DATA */
 function addBase_spriteLayerData(name, group, options = { interactive: true, cache: true }) {
   var { interactive, cache } = options;
 

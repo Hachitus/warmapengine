@@ -22,6 +22,9 @@ export class MapDataManipulator {
       return this._runRules(subcontainers);
     }
   }
+  addRule(rules) {
+    this.rules.concat(rules);
+  }
   /**
    * This is the actual method that runs through the rules and arranges the data
    *

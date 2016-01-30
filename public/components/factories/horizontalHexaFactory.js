@@ -100,15 +100,6 @@ function createMap(canvasContainerElement, datas, options = { trackFPSCB: false,
 
     try {
       thisLayer = map.addLayer(layerOptions);
-      objManager.addLayer(layerGroup, {
-          x: 0,
-          y: 0,
-          width: +MAP_SIZE.x,
-          height: +MAP_SIZE.y
-        }, {
-          objects: 10,
-          levels: 6
-        });
 
       layerData.objectGroups.forEach( objectGroup => {
         let spritesheetType = objectGroup.typeImageData;

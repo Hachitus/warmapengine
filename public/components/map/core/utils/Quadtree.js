@@ -10,6 +10,8 @@ import { Quadtree as QuadMod } from "/assets/lib/quadtree-js/quadtree-js-hitman"
 ----------------------*/
 export class Quadtree {
   /**
+   * NOTE! NOT IN USE AT THE MOMENT. THIS WAS LESS EFFICIENT THAN USING SUBCONTAINERS, SO IT WILL BE USED IN THE FUTURE IF NEEDED.
+   *
    * This class handles the API for quadtree to search for the wanted objects on the certain coordinates. After this
    * the map should do it's own - more precise - hit detections.
    *

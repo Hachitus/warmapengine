@@ -134,7 +134,7 @@ export class Map {
      **/
     this.trackFPSCB = trackFPSCB;
     /**
-     * ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks the map to select some object. Fill this with quadtrees or such or just use subcontainers, in which case the ObjectManager uses them automatically.
+     * ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks the map to select some object. This uses subcontainers when present.
      *
      * @attribute objectManager
      * @type {ObjectManager}
@@ -443,46 +443,36 @@ export class Map {
    * @param  {Object} globalCoords            Event coordinates on the staticLayer / canvas.
    * @param  {Integer} globalCoords.x         X coordinate
    * @param  {Integer} globalCoords.y         Y coordinate
-   * @param  {String} type                    Type of the objects / layer to find.
+   * @param  {Object} options                 Optional options
+   * @param  {Object} options.filter          The filter to apply to subcontainers
    * @return {Array}                          Array of object found on the map.
    */
-  getObjectsUnderArea(globalCoords = { x: 0, y: 0, width: 0, height: 0 }, type = undefined) {
-    var objects = {};
+  getObjectsUnderArea(globalCoords = { x: 0, y: 0, width: 0, height: 0 }, options = { filter }) {
+    var { filter } = options;
     /* We need both coordinates later on and it's logical to do the work here */
     var allCoords = {
       globalCoords: globalCoords,
       localCoords: this.getMovableLayer().toLocal(new PIXI.Point(globalCoords.x, globalCoords.y))
     };
-    var filter;
+    var objects = {};
+    var selectableContainerfilter;
 
     allCoords.localCoords.width = globalCoords.width;
     allCoords.localCoords.height = globalCoords.height;
-    filter = new MapDataManipulator({
+    selectableContainerfilter = new MapDataManipulator({
         type: "filter",
         object: "container",
         property: "selectable",
         value: true
       });
+    filter.addRule(selectableContainerfilter);
 
     if (this.usesSubcontainers()) {
       let allMatchingSubcontainers = this._getSubcontainersUnderArea(allCoords, { filter } );
 
-      if (type) {
-        objects[type] = this._retrieveObjects(allCoords, {
-          type,
-          subcontainers: allMatchingSubcontainers
-        });
-      } else {
-        objects = this._retrieveObjects(allCoords, {
-          subcontainers: allMatchingSubcontainers
-        });
-      }
-    } else {
-      if (type) {
-        objects[type] = this._retrieveObjects(allCoords, { type });
-      } else {
-        objects = this._retrieveObjects(allCoords);
-      }
+      objects = this._retrieveObjects(allCoords, {
+        subcontainers: allMatchingSubcontainers
+      });
     }
 
     return objects;

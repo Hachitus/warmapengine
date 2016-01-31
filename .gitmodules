@@ -1,0 +1,4 @@
+[submodule "warmapengine"]
+	path = warmapengine
+	url = https://github.com/Hachitus/warmapengine.git
+	branch = gh-pages

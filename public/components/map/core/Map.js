@@ -21,9 +21,12 @@ var _staticLayer, _movableLayer, _renderer, ParentLayerConstructor;
 ----------------------*/
 export class Map {
   /**
-   * Main class for the engine, which initializes the whole structure and plugins
+   * #Main class for the engine
+   *
+   * Initializes the whole structure and plugins and is used as primary API for all operations. This class is e.g. passed to every plugin that get initialized with their init-method.
    *
    * You use the class by instantiating it (new) and then finishing initialization with init-method:
+   *
    *     var map = new Map(canvasElement, mapOptions );
    *     promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
    *

@@ -1,21 +1,21 @@
 [![GPLv3 Affero License](http://img.shields.io/badge/license-LGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl.html)
 
 #NOTE, STILL IN DEVELOPMENT!
-This engine is still in development. It is not well tested for other uses than the current tests / example game. When the most critical development phase is over, the API will be more locked now. At this stage the API and structure can still change, so if you use the engine for something serious, please take that into account!
+This engine is still in development. It is not well tested for other uses than the current tests / example game. When the most critical development phase is over, the API will be more locked down. At this stage the API and structure can still change, so if you use the engine for something serious, please take that into account!
 
-Also I am very happy to get feedback on any projects or tests that might be using this engine and very eager to help with getting issues.
+Also I am very happy to get feedback on any projects or tests that might be using this engine and very eager to help with getting issues resolved.
 
 #Introduction
-2D strategy game engine for browsers. Project will move forward at its own phase. Rough estimation for the bare functionality
-of the engine is during 2015.
-Development from that forward will still continue in the form of a 2D strategy game.
+2D strategy game engine for browsers. Project will move forward at its own pace. The very core functionality has been done, that practically manages adding the objects to the map, moving the map around and selecting + highlighting objects on the map. Other functionality outside of that, has not yet been done. But rough roadmap for thise exist.
 
-The development is done in ES6, which should be well enough supported by the time the games made with this framework are done.
+Basically the core functionality will appear mostly in the pace of making a simple example 2D strategy game for the engine. A much later on there will be a full-blown game made based on this, but after the core engine is ready.
+
+The development is done in ES6, which should be well enough supported by the time the games made with this framework are done. I aim to have the supported platforms from IE11+.
 
 If you are interested contact me (http://hyytia.level7.fi/)
 
-#Development data
-##Requirements
+#Developing
+##Installing on fresh server
 This is an example install for a fresh Debian 8.0 (Jessie) based virtual server. You may naturally skip any step you wish, if there are alternatives on your server, step you want to perform differently or something you already have on your server. The installation has been tested on upcloud.com servers and works there fine, from start to finish.
 
 Update repositories & install node.js, npm and git
@@ -41,15 +41,19 @@ stop server
     npm run stop
 
 ##Testing and development
-Tests can be found with index-file in tests/-folder. For example working example should be found in: *http://warmapengine.level7.fi/tests/*
+Tests can be found with index-file in tests/-folder. For example working example should be found in: *http://warmapengine.level7.fi/tests/*, but naturally on your server it is http://server_address/tests/.
 
-But naturally on your server it is http://server_address/tests/
+There are no unit tests at the moment, since I didn't find them worth the time and effort as many things in canvas game can not be unit tested easily, I decided to skip them all together for now.
 
 #How the Map engine works
 ##How to setup simple map
-Unfortunately this instruction is not yet available. As the map is more finished and refactored, you will get the instructions. Now if you have the energy. See through the tests e.g. tests/pixi_manualTest.html or pixi_manualStressTest.html, which have the fully working map prototype.
+The main module for the whole map is core.map, so you should always primarily look through it's API and then dig deeper. The best examples for setting up a map at the moment is still going through the code. Check the test-files: tests/manualTest.html and tests/manualStressTest.html (which is more comprehensive). They have javascript files, which use javascript files to setup the map and use horizontalHexaFactory to go through the map data and setup objects based on that data. You can use horizontalHexaFactory if you want or setup your own factory and own data structure. Factories always have to follow a certain data structure so they might not be something everyone wants or can cope with.
+
+##API documentation
+*http://hachitus.github.io/warmapengine/documentation/*
+
 ##Plugins
-Plugin objects have to have init method, in the format of:
+The map supports adding plugins and even some of the core functionalities have been implemented as plugins. You must comply to just to a couplr rules. Plugins have a lot of freedom to mess around with the map data, this is subject to change if there are issues with this later on. Plugin objects must have init method, in the format of:
 ```javascript
 {
   init: function(map) {

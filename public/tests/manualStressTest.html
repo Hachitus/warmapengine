@@ -71,8 +71,7 @@
 		System.import('/tests/manual/stressTest.es6').then(function() {
 			var mapsizeElement = document.getElementById("hexaTiles");
 			var cacheElement = document.getElementById("cache");
-			var currentMapSize, mapData;
-			var cacheMap = true;
+			var currentMapSize, mapData, cacheMap;
 
 	        document.getElementById("testNotification").textContent = "START THE TESTS BY SELECTING VALUES BELOW AND CLICKING START!";
 	        document.getElementById("changeValues").disabled = false;
@@ -88,11 +87,12 @@
 					cache: cacheMap,
 					canvasContainer: document.getElementById("mapCanvasContainer"),
 					trackFPSCB: function (data) {
-					var totalFPS = data.FPS;
-					var totalTime = data.FPStime;
-					var totalRenderTime = data.renderTime;
-					var drawCount = data.drawCount;
-					window.FPSElement.innerHTML = totalFPS + " - " + Math.round( ( totalRenderTime / totalTime * 100 ) ) + "%" + " : " + drawCount;
+    					var totalFPS = data.FPS;
+    					var totalTime = data.FPStime;
+    					var totalRenderTime = data.renderTime;
+    					var drawCount = data.drawCount;
+
+    					window.FPSElement.innerHTML = totalFPS + " - " + Math.round( ( totalRenderTime / totalTime * 100 ) ) + "%" + " : " + drawCount;
 					}
           		});
         	});

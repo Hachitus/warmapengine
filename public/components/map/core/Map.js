@@ -200,6 +200,10 @@ export class Map {
     tickCB && this.customTickOn(tickCB);
     isMapReadyPromises = allPromises;
 
+    if (this.cache) {
+      this.cacheMap();
+    }
+
     this.drawOnNextTick();
 
     return allPromises || Promise.resolve();
@@ -254,7 +258,11 @@ export class Map {
     }
   }
   /**
-   * @todo DOCUMENT
+   * Adds an UI object to the map. This method adds it to the given layer and removes it with removeUIObject-method.
+   *
+   * @method addUIObjects
+   * @param {Integer} layerType     map.layerTypes holds the constants used in this.
+   * @param {Array} objects         Object that are added as UI objects
    */
   addUIObjects(layerType, objects) {
     objects.forEach(object => {
@@ -335,7 +343,7 @@ export class Map {
     };
   }
   /**
-   * Remove a layer from the map
+   * Remove a primary layer from the map
    *
    * @method removeLayer
    * @param {MapLayer|PIXI.Container|PIXI.ParticleContainer} layer       The layer object to be removed
@@ -377,7 +385,6 @@ export class Map {
   /**
    * Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches the ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.
    *
-   * @todo IMPLEMENT
    * @method cacheMap
    * @param {Object} filters          filters from MapDataManipulator.js
    **/
@@ -387,7 +394,6 @@ export class Map {
   /**
    * unCache the map. NOT WORKING ATM. IMPLEMENTED SOON!
    *
-   * @todo IMPLEMENT
    * @method unCacheMap
    * @return {Map}        this map instance
    * */

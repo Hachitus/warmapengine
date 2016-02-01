@@ -17,6 +17,8 @@ export class UI_templateBase {
   /**
    * The template base class for UI templates
    *
+   * @todo This needs a bit of redesign.
+   *
    * @class core.UI_templateBase
    * @constructor
    * @param  {*} CSSClasses

@@ -196,7 +196,7 @@ export class Map {
     coord && Object.assign(_movableLayer, coord);
 
     /* We activate the default tick for the map, but if custom tick callback has been given, we activate it too */
-    _defaultTick(this, PIXI.ticker.shared);
+    this._defaultTick();
     tickCB && this.customTickOn(tickCB);
     isMapReadyPromises = allPromises;
 
@@ -566,6 +566,8 @@ export class Map {
     return _renderer;
   }
   /**
+   * Return static layer. The static layer is the topmost of all layers. It handles zooming and other non-movable operations.
+   *
    * @method getStaticLayer
    */
   getStaticLayer() {
@@ -674,7 +676,7 @@ export class Map {
   /**
    * Activate the browsers fullScreen mode and expand the canvas to fullsize
    *
-   * @protected
+   * @private
    * @method setFullScreen
    */
   _setFullScreen() {
@@ -685,7 +687,7 @@ export class Map {
   /**
    * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
    *
-   * @protected
+   * @private
    * @method _resizeCanvas
    */
   _resizeCanvas() {
@@ -696,53 +698,55 @@ export class Map {
     mapEvents.publish("mapResized");
     this.drawOnNextTick();
   }
+  /**
+   * This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
+   * callback is always set and should not be removed or overruled
+   *
+   * @private
+   * @method _defaultTick
+   */
+  _defaultTick() {
+    const ONE_SECOND = 1000;
+    var FPSCount = 0;
+    var fpsTimer = new Date().getTime();
+    var renderStart, totalRenderTime;
+
+    PIXI.ticker.shared.add(function () {
+      if (_drawMapOnNextTick === true) {
+        if (this.trackFPSCB) {
+          renderStart = new Date().getTime();
+        }
+
+        _renderer.render(_staticLayer);
+        _drawMapOnNextTick = false;
+
+        if (this.trackFPSCB) {
+          totalRenderTime += Math.round( Math.abs( renderStart - new Date().getTime() ) );
+        }
+      }
+      if (this.trackFPSCB) {
+        FPSCount++;
+
+        if (fpsTimer + ONE_SECOND < new Date().getTime()) {
+          this.trackFPSCB( {
+            FPS: FPSCount,
+            FPStime: fpsTimer,
+            renderTime: totalRenderTime,
+            drawCount: _renderer.drawCount
+          });
+
+          FPSCount = 0;
+          totalRenderTime = 0;
+          fpsTimer = new Date().getTime();
+        }
+      }
+    }.bind(this));
+  }
 }
 
 /*---------------------
 ------- PRIVATE -------
 ----------------------*/
-/**
- * This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick
- * callback is always set and should not be removed or overruled
- *
- * @private
- * @static
- * @method _defaultTick
- */
-function _defaultTick(map, ticker) {
-  const ONE_SECOND = 1000;
-  var FPSCount = 0;
-  var fpsTimer = new Date().getTime();
-  var renderStart, totalRenderTime;
-
-  ticker.add(function () {
-    if (_drawMapOnNextTick === true) {
-      if (map.trackFPSCB) {
-        renderStart = new Date().getTime();
-      }
-      _renderer.render(_staticLayer);
-      _drawMapOnNextTick = false;
-      if (map.trackFPSCB) {
-        totalRenderTime += Math.round( Math.abs( renderStart - new Date().getTime() ) );
-      }
-    }
-    if (map.trackFPSCB) {
-      FPSCount++;
-
-      if (fpsTimer + ONE_SECOND < new Date().getTime()) {
-        map.trackFPSCB( {
-          FPS: FPSCount,
-          FPStime: fpsTimer,
-          renderTime: totalRenderTime,
-          drawCount: _renderer.drawCount
-        });
-        FPSCount = 0;
-        totalRenderTime = 0;
-        fpsTimer = new Date().getTime();
-      }
-    }
-  });
-}
 /**
  * cacheLayers
  *

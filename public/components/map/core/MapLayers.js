@@ -226,7 +226,7 @@ export class MapLayer extends PIXI.Container {
 
 export class MapLayerParent extends MapLayer {
   /**
-   * Layer designed to hold subcontainers. But can handle objects too.
+   * Layer designed to hold subcontainers. But can handle objects too. Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap. Thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    *
    * @class core.MapLayerParent
    * @constructor
@@ -239,9 +239,6 @@ export class MapLayerParent extends MapLayer {
    * @param  {Integer} options.subcontainers.width   width (in pixels)
    * @param  {Integer} options.subcontainers.height  height (in pixels)
    * @param {Boolean} options.specialLayer           Is this special layer or not.
-   *
-   * Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap
-   * thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
    */
   constructor(options = { name: "", coord: { x: 0, y: 0 }, subcontainers: false, specialLayer: false, selectable: false } ) {
     var { subcontainers, selectable, specialLayer } = options;
@@ -256,6 +253,7 @@ export class MapLayerParent extends MapLayer {
   }
   /**
    * We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and then we call the original (PIXIs) addChild
+   *
    * @method addChild
    * @param {PIXI.DisplayObject} displayObject      PIXI.DisplayObject
    */
@@ -271,12 +269,16 @@ export class MapLayerParent extends MapLayer {
     return displayObject;
   }
   /**
+   * Returns the configurations set for subcontainers.
+   *
    * @method getSubcontainerConfigs
    */
   getSubcontainerConfigs () {
     return this.subcontainersConfig;
   }
   /**
+   * Returns subcontainers based on the given coordinates. Can be applied through a MapDataManipulator filter also.
+   *
    * @method getSubcontainersByCoordinates
    * @param  {Object} coordinates
    * @param  {Integer} coordinates.x                  X coordinate
@@ -367,8 +369,9 @@ class MapSubcontainer extends PIXI.Container {
 ------- PRIVATE -------
 ----------------------*/
 /**
- * [setCorrectSubcontainer description]
+ * Helper function for setting subcontainers to parent containers
  *
+ * @method setCorrectSubcontainer
  * @private
  * @static
  * @method setCorrectSubcontainer
@@ -407,6 +410,7 @@ function setCorrectSubcontainer(displayObject, parentLayer) {
 /**
  * Get the closest subcontainers of the given area.
  *
+ * @method setCorrectSubcontainer
  * @private
  * @static
  * @method getClosestSubcontainers

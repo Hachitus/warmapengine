@@ -33,7 +33,6 @@ function setupMap_zoom() {
   /**
    * Maximum and minimum amount, the player can zoom the map
    *
-   * @attribute zoomLimit
    * @type {{ farther: Number, closer: Number }}
    */
   var zoomLimit = {
@@ -43,7 +42,6 @@ function setupMap_zoom() {
   /**
    * How much one step of zooming affects
    *
-   * @attribute zoomModifier
    * @type {Number}
    */
   var zoomModifier = 0.1;

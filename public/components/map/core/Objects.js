@@ -173,9 +173,9 @@ export class ObjectSpriteTerrain extends Object_sprite {
    * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
    * inherited, depending on the map type. For example you might want to add some click area for these
    *
-   * @class
+   * @class core.ObjectSpriteTerrain
    * @constructor
-   * @extends Object_sprite
+   * @extends core.Object_sprite
    * @param {Coordinates} coords        format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
    * @param {object} data               This units custom data
    * @param {object} options            other specific options for constructing this terrain
@@ -193,9 +193,9 @@ export class ObjectSpriteUnit extends Object_sprite {
   /**
    * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
    *
-   * @class
+   * @class core.ObjectSpriteUnit
    * @constructor
-   * @extends Object_sprite
+   * @extends core.Object_sprite
    * @requires core.graphics
    * @param {Object} coords               Coordinates for the object relative to it's parent
    * @param {Integer} coords.x            X coordinate

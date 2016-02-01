@@ -135,66 +135,58 @@ function setupMapMovement () {
     function setupHandleViewportArea(queue, map, changedCoordinates) {
       var viewportArea = map.getViewportArea();
 
-      try {
-        if (window.Worker) {
-          viewportWorker.onmessage = function(e) {
-            try {
-              const scale = map.getZoom();
-              const scaledViewport = e.data[0];
-              const smallerScaledViewport = e.data[1];
-              var containersUnderChangedArea = [];
-              var usesCache = map.isCacheActivated();
-              var isOutside, scaledAndChangedViewport;
+      if (window.Worker) {
+        viewportWorker.onmessage = function(e) {
+            const scale = map.getZoom();
+            const scaledViewport = e.data[0];
+            const smallerScaledViewport = e.data[1];
+            var containersUnderChangedArea = [];
+            var usesCache = map.isCacheActivated();
+            var isOutside, scaledAndChangedViewport;
 
-              scaledAndChangedViewport = Object.assign({}, scaledViewport);
+            scaledAndChangedViewport = Object.assign({}, scaledViewport);
 
-              scaledAndChangedViewport.width += Math.round(Math.abs(changedCoordinates.width));
-              scaledAndChangedViewport.height += Math.round(Math.abs(changedCoordinates.height));
+            scaledAndChangedViewport.width += Math.round(Math.abs(changedCoordinates.width));
+            scaledAndChangedViewport.height += Math.round(Math.abs(changedCoordinates.height));
 
-              /* RESET */
-              changedCoordinates.width = 0;
-              changedCoordinates.height = 0;
+            /* RESET */
+            changedCoordinates.width = 0;
+            changedCoordinates.height = 0;
 
-              containersUnderChangedArea = map.getPrimaryLayers().map(layer => {
-                return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
-              });
-              containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
+            containersUnderChangedArea = map.getPrimaryLayers().map(layer => {
+              return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
+            });
+            containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
 
-              containersUnderChangedArea.forEach((thisContainer) => {
-                isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
+            containersUnderChangedArea.forEach((thisContainer) => {
+              isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
 
-                // I do not know is caching between the moves better or not-caching.
-                usesCache && thisContainer.setCache(false);
+              // I do not know is caching between the moves better or not-caching.
+              usesCache && thisContainer.setCache(false);
 
-                if (isOutside) {
-                  thisContainer.visible = false;
-                } else {
-                  thisContainer.visible = true;
-                  usesCache && thisContainer.setCache(true);
-                }
+              if (isOutside) {
+                thisContainer.visible = false;
+              } else {
+                thisContainer.visible = true;
+                usesCache && thisContainer.setCache(true);
+              }
 
-              });
+            });
 
-              queue.processing = false;
+            queue.processing = false;
 
-              map.drawOnNextTick();
-            } catch (ev) {
-              console.log("ERROR", ev);
-            }
-          };
-          viewportWorker.postMessage([
-            1,
-            viewportArea,
-            map.getZoom(),
-            changedCoordinates
-          ]);
-        } else {
-          queue.processing = false;
-          throw new Error("ERROR WITH WEB WORKER");
-        }
-      } catch (e) {
+            map.drawOnNextTick();
+
+        };
+        viewportWorker.postMessage([
+          1,
+          viewportArea,
+          map.getZoom(),
+          changedCoordinates
+        ]);
+      } else {
         queue.processing = false;
-        console.log(e);
+        throw new Error("ERROR WITH WEB WORKER");
       }
     }
 

@@ -83,18 +83,51 @@
 				cacheMap = cacheElement.checked;
 
 				mapData = window.getMapData(currentMapSize);
-				window.map = window.initMap(mapData, {
+				window.mapReady = window.initMap(mapData, {
 					mapsize: currentMapSize,
 					cache: cacheMap,
 					canvasContainer: document.getElementById("mapCanvasContainer"),
 					trackFPSCB: function (data) {
-					var totalFPS = data.FPS;
-					var totalTime = data.FPStime;
-					var totalRenderTime = data.renderTime;
-					var drawCount = data.drawCount;
-					window.FPSElement.innerHTML = totalFPS + " - " + Math.round( ( totalRenderTime / totalTime * 100 ) ) + "%" + " : " + drawCount;
+  					var totalFPS = data.FPS;
+  					var totalTime = data.FPStime;
+  					var totalRenderTime = data.renderTime;
+  					var drawCount = data.drawCount;
+  					window.FPSElement.innerHTML = totalFPS + " - " + Math.round( ( totalRenderTime / totalTime * 100 ) ) + "%" + " : " + drawCount;
 					}
           		});
+
+                /* These are the actual automatic tests. They move the map to right edge and then back. Repeating it 5 times. Each time calculating the FPS. And you can take profiling during this, to get memory and CPU usages. */
+                window.mapReady.promise.then(function (map) {
+                    map.whenReady().then(() => {
+                        window.setTimeout(perfTestLoop)
+                    }).then(null, (e) => {
+                        console.log(e);
+                    });
+
+                    var perfTestLoop = (function () {
+                        var direction = 1;
+                        var round = 0;
+                        var quantifier = 2;
+
+                        return function() {
+                            map.moveMap({
+                                x: direction === 1 ? -quantifier : quantifier,
+                                y: direction === 1 ? -quantifier : quantifier
+                            });
+
+                            if (map.getMovableLayer().x > 500) {
+                                round ++;
+                                direction = 1;
+                            } else if (map.getMovableLayer().x < - 7000) {
+                                direction = 2;
+                            }
+
+                            if (round < 5) {
+                                window.setTimeout(perfTestLoop);
+                            }
+                        }
+                    })();
+                })
         	});
   		});
     })();

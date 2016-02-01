@@ -92,7 +92,7 @@ function initMap(mapData, options) {
   preload.resolveOnComplete()
     .then(onComplete)
     .then( () => {
-      promise.resolve(true);
+      promise.resolve(map);
     })
     .catch(function (e) {
       console.log("Map stressTest error: ", e);
@@ -119,7 +119,7 @@ function initMap(mapData, options) {
     });
   }
 
-  return globalMap;
+  return { promise: promise.promise, map };
 
   /* ====== private functions, or to be moved elsewhere ====== */
   function preloadErrorHandler(err) {

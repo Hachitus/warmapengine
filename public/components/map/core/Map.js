@@ -25,12 +25,9 @@ export class Map {
    *
    * Initializes the whole structure and plugins and is used as primary API for all operations. This class is e.g. passed to every plugin that get initialized with their init-method.
    *
-   * You use the class by instantiating it (new) and then finishing initialization with init-method:
+   * You use the class by instantiating it (new) and then finishing initialization with init-method. Please see examples below.
    *
-   *     var map = new Map(canvasElement, mapOptions );
-   *     promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
-   *
-   * The biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the tests/data-folder, but that data structure could still change or the way we implement creation of it!
+   * The biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the tests/data-folder, but the factory is responsible for creating the objects, so you can use your own factory implementation. So to understand more, please see e.g. core.horizontalHexaFactory.
    *
    * The map consists of layer on top of each other. The example is best understood when thinking typical war strategy game. The structure is this:
    * 1. StaticLayer: Handles things like scaling / zooming the map
@@ -40,6 +37,10 @@ export class Map {
    * 5. Individual objects, like units, terrains, cities etc...
    *
    * Plugins can be added with activatePlugins-method by sending them to the class. Plugins must always implement init-method, which receives Map instance. Plugins are not yet restricted what they can do and can add functionality without touching map or can modify objects or their prototypes through access to Map instance.
+   *
+   * @example
+   *     var map = new Map(divContainer, mapOptions );
+   *     promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
    *
    * @class core.Map
    * @constructor
@@ -59,7 +60,7 @@ export class Map {
    * @param {Integer} props.subcontainers.height          Subcontainer height
    * @param {FPSCallback} trackFPSCB                      Callback function for tracking FPS in renderer. So this is used for debugging and optimizing.
    *
-   * @return {Map}                                            new Map instance
+   * @return {Object}                                      New Map instance
    */
   constructor(canvasContainer = null,
       props = {

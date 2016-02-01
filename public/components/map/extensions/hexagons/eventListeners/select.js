@@ -70,5 +70,6 @@ function _setupHexagonClick(map) {
     }
 
     ui.showSelections(objects, getData);
+    map.drawOnNextTick();
   }
 }

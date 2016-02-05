@@ -4,9 +4,9 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { Map, UI, utils } from "/components/bundles/coreBundle";
-import { ObjectTerrain, ObjectUnit } from "/components/map/extensions/hexagons/Objects";
-import { UI_default } from "/components/map/UIs/default/default.js";
+import { Map, UI, utils } from '/components/bundles/coreBundle';
+import { ObjectTerrain, ObjectUnit } from '/components/map/extensions/hexagons/Objects';
+import { UI_default } from '/components/map/UIs/default/default.js';
 
 /*---------------------
 ------ VARIABLES ------

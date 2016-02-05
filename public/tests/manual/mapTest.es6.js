@@ -24,9 +24,9 @@ polyfills.arrayFind();
 
 var pluginsToActivate = [
   "/components/map/core/baseEventlisteners/baseEventlisteners",
-  "components/map/core/zoom/mapZoom",
-  "components/map/core/move/mapDrag",
-  "components/map/extensions/hexagons/selectHexagonPlugin"
+  "/components/map/core/zoom/mapZoom",
+  "/components/map/core/move/mapDrag",
+  "/components/map/extensions/hexagons/selectHexagonPlugin"
 ];
 
 window.initMap = function (options) {

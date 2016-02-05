@@ -47,7 +47,53 @@ There are no unit tests at the moment, since I didn't find them worth the time a
 
 #How the Map engine works
 ##How to setup simple map
-The main module for the whole map is core.map, so you should always primarily look through it's API and then dig deeper. The best examples for setting up a map at the moment is still going through the code. Check the test-files: tests/manualTest.html and tests/manualStressTest.html (which is more comprehensive). They have javascript files, which use javascript files to setup the map and use horizontalHexaFactory to go through the map data and setup objects based on that data. You can use horizontalHexaFactory if you want or setup your own factory and own data structure. Factories always have to follow a certain data structure so they might not be something everyone wants or can cope with.
+The main module for the whole map is core.map, so you should always primarily look through it's API and then dig deeper. The best examples for setting up a map at the moment is still going through the code. Check the test-files: tests/manualTest.html and tests/manualStressTest.html (which are more comprehensive). They use horizontalHexaFactory to go through the map data and setup objects based on that data. You can use horizontalHexaFactory if you want or setup your own factory and own data structure. Factories always have to follow a certain data structure so they might not be something everyone wants or can cope with.
+
+Simple example:
+
+	import { Preload } from '/components/preloading/preloading';
+	import { ObjectTerrain, ObjectUnit } from "/components/map/extensions/hexagons/Objects";
+
+	preload = new Preload( "", { crossOrigin: false } );
+	preload.addResource( "terrainBase.json" );
+
+	preload.resolveOnComplete().then(() => {
+		var map, thisLayer, newObject;
+		var layerOptions = {
+	    	name: "terrainLayer",
+	      	drawOutsideViewport: {
+	        	x: 100,
+	        	y: 100
+	      	},
+	      	selectable: layerData.name === "unitLayer" ? true : false
+	    };
+	    var objData = {
+          typeData: "typeData,
+          activeData: "someData"
+        };
+        var currentFrame = 1;
+        var hexagonRadius = 50;
+        var objectOptions = {
+            currentFrame,
+        	radius: hexagonRadius
+        };
+
+		map = new Map(canvasElement, mapOptions );
+		dialog_selection = document.getElementById("selectionDialog");
+	    defaultUI = new UI_default(dialog_selection, map);
+
+	    /* Initialize UI as singleton */
+	    UI(defaultUI, map);
+
+		map.init( pluginsToActivate, startPoint );
+
+		thisLayer = map.addLayer(layerOptions);
+		newObject = new ObjectTerrain({ x: 1, y: 1 }, objData, objectOptions);
+		thisLayer.addChild(newObject);
+	})
+
+Example working in this fiddle
+
 
 ##API documentation
 *http://hachitus.github.io/warmapengine/documentation/*

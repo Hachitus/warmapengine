@@ -49,7 +49,7 @@ There are no unit tests at the moment, since I didn't find them worth the time a
 ##How to setup simple map
 The main module for the whole map is core.map, so you should always primarily look through it's API and then dig deeper. The best examples for setting up a map at the moment is still going through the code. Check the test-files: tests/manualTest.html and tests/manualStressTest.html (which are more comprehensive). They use horizontalHexaFactory to go through the map data and setup objects based on that data. You can use horizontalHexaFactory if you want or setup your own factory and own data structure. Factories always have to follow a certain data structure so they might not be something everyone wants or can cope with.
 
-Simple example:
+Simple unfinished example:
 
 	import { Preload } from '/components/preloading/preloading';
 	import { ObjectTerrain, ObjectUnit } from "/components/map/extensions/hexagons/Objects";
@@ -91,8 +91,6 @@ Simple example:
 		newObject = new ObjectTerrain({ x: 1, y: 1 }, objData, objectOptions);
 		thisLayer.addChild(newObject);
 	})
-
-Example working in this fiddle
 
 
 ##API documentation

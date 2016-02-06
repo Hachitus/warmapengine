@@ -5,7 +5,7 @@
  * some bundler or transpiler, like JSPM to bundle the core functionality to one build-file.
  */
 
-export * from 'strippedCoreBundle';
+export * from '/components/bundles/strippedCoreBundle';
 
 export * from '/components/map/core/baseEventlisteners/baseEventlisteners';
 export * from '/components/map/core/move/mapDrag';

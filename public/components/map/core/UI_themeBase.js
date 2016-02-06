@@ -3,7 +3,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { createCSSRules } from '/components/map/UIs/default/layout/CSSRules';
+import { createCSSRules } from 'components/map/UIs/default/layout/CSSRules';
 
 /*---------------------
 ------ VARIABLES ------

@@ -3,7 +3,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { eventListeners, utils } from '/components/bundles/coreBundle';
+import { eventListeners, utils } from 'components/bundles/coreBundle';
 
 /*---------------------
 --------- API ---------

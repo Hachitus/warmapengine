@@ -4,8 +4,8 @@
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
-import { mapEvents } from '/components/bundles/coreBundle';
-import { arrays } from '/components/utilities/general';
+import { mapEvents } from 'components/bundles/coreBundle';
+import { arrays } from 'components/utilities/general';
 
 /*-----------------------
 ------- VARIABLES -------

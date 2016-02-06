@@ -4,8 +4,8 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { MapLayer, MapLayerParent, ObjectManager, mapEvents, utils, MapDataManipulator } from '/components/bundles/strippedCoreBundle';
-import * as Q from '/assets/lib/q/q';
+import { MapLayer, MapLayerParent, ObjectManager, mapEvents, utils, MapDataManipulator } from 'components/bundles/strippedCoreBundle';
+import * as Q from 'q';
 
 /*---------------------
 ------ VARIABLES ------

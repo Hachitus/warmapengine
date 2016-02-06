@@ -6,14 +6,14 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { createMap } from '/components/factories/horizontalHexaFactory';
-import { polyfills } from '/components/utilities/polyfills';
+import { createMap } from '/factories/horizontalHexaFactory';
+import { polyfills } from 'components/utilities/polyfills';
 import * as Q from '/assets/lib/q/q';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';
 import { typeData } from '/tests/data/typeData';
-import { Preload } from '/components/preloading/preloading';
+import { Preload } from 'components/preloading/preloading';
 
 /** ===== CONFIGS ===== */
 /* Note the y is 3/4 of the actual height */
@@ -22,11 +22,11 @@ const HEXAGON_DISTANCES = {
   y: 94 * 0.75
 };
 var pluginsToActivate = [
-  "/components/map/core/baseEventlisteners/baseEventlisteners",
-  "/components/map/core/zoom/mapZoom",
-  "/components/map/core/move/mapDrag",
-  "/components/map/extensions/hexagons/selectHexagonPlugin",
-  "/components/map/extensions/mapMovement/mapMovement.js"
+  "components/map/core/baseEventlisteners/baseEventlisteners",
+  "components/map/core/zoom/mapZoom",
+  "components/map/core/move/mapDrag",
+  "components/map/extensions/hexagons/selectHexagonPlugin",
+  "components/map/extensions/mapMovement/mapMovement.js"
 ];
 
 /* Do the map: */

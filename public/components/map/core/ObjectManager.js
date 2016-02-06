@@ -3,8 +3,8 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { utils } from '/components/bundles/strippedCoreBundle';
-import { arrays } from '/components/utilities/general';
+import { utils } from 'components/bundles/strippedCoreBundle';
+import { arrays } from 'components/utilities/general';
 
 /*---------------------
 --------- API ---------

@@ -10,23 +10,22 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { createMap } from '/components/factories/horizontalHexaFactory';
-import { polyfills } from '/components/utilities/polyfills';
+import { polyfills, createMap } from '/factories/horizontalHexaFactory';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';
 import { typeData } from '/tests/data/typeData';
 import { mapData } from '/tests/data/mapData';
-import { Preload } from '/components/preloading/preloading';
+import { Preload } from 'components/preloading/preloading';
 
 /* REQUIRED FOR IE11 */
 polyfills.arrayFind();
 
 var pluginsToActivate = [
-  "/components/map/core/baseEventlisteners/baseEventlisteners",
-  "/components/map/core/zoom/mapZoom",
-  "/components/map/core/move/mapDrag",
-  "/components/map/extensions/hexagons/selectHexagonPlugin"
+  "components/map/core/baseEventlisteners/baseEventlisteners",
+  "components/map/core/zoom/mapZoom",
+  "components/map/core/move/mapDrag",
+  "components/map/extensions/hexagons/selectHexagonPlugin"
 ];
 
 window.initMap = function (options) {

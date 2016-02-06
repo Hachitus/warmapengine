@@ -5,11 +5,11 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { UI } from '/components/bundles/strippedCoreBundle';
-import { templates } from '/components/map/UIs/default/layout/templates';
-import { createVisibleHexagon } from '/components/map/extensions/hexagons/utils/createHexagon';
-import { UI_templateBase } from '/components/bundles/coreBundle';
-//import { drawShapes } from '/components/map/UIs/default/utils/arrows';
+import { UI } from 'components/bundles/strippedCoreBundle';
+import { templates } from 'components/map/UIs/default/layout/templates';
+import { createVisibleHexagon } from 'components/map/extensions/hexagons/utils/createHexagon';
+import { UI_templateBase } from 'components/bundles/coreBundle';
+//import { drawShapes } from 'components/map/UIs/default/utils/arrows';
 
 /*---------------------
 ------ VARIABLES ------

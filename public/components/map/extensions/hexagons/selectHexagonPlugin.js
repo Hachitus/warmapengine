@@ -3,7 +3,7 @@
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
-import { setupHexagonClick } from '/components/map/extensions/hexagons/eventListeners/select';
+import { setupHexagonClick } from 'components/map/extensions/hexagons/eventListeners/select';
 
 /*-----------------------
 ---------- API ----------

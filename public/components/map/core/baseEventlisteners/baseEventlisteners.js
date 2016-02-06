@@ -4,7 +4,7 @@
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
-import { eventListeners } from '/components/bundles/coreBundle';
+import { eventListeners } from 'components/bundles/coreBundle';
 
 /*-----------------------
 ---------- API ----------

@@ -10,7 +10,8 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { polyfills, createMap } from '/factories/horizontalHexaFactory';
+import { polyfills } from 'components/bundles/hexagonBundle';
+import { createMap } from '/factories/horizontalHexaFactory';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';

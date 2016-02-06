@@ -40,20 +40,24 @@
 
   <!-- include spec files here... -->
   <script>
-    (function () {
+    (function() {
       /* global System, console */
       'use strict';
 
-  		System.import('/tests/manual/mapTest.es6')
+      System.import('/tests/manual/mapTest.es6')
         .catch(scriptErrors => {
-          scriptErrors.forEach(function(error) {
-            console.error(error);
-          });
+          if (Array.isArray(scriptErrors)) {
+            scriptErrors.forEach(function(error) {
+              console.error(error);
+            });
+          } else {
+            console.error(scriptErrors);
+          }
         }).then(function() {
-    			window.map = window.initMap( {
-            canvasContainer: document.getElementById("mapCanvasContainer")
-          });
-  		});
+        window.map = window.initMap({
+          canvasContainer: document.getElementById("mapCanvasContainer")
+        });
+      });
     })();
 	</script>
 </body>

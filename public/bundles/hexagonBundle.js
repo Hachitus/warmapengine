@@ -4,7 +4,7 @@
  * This should bundle all engines functions
  */
 
-export * from 'components/bundles/coreBundle';
+export * from 'bundles/coreBundle';
 export * from 'components/logger/log';
 export * from 'components/map/extensions/basicActions/basicActions';
 export * from 'components/map/extensions/hexagons/index';

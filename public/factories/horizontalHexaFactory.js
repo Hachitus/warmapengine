@@ -4,7 +4,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { UI_default, ObjectTerrain, ObjectUnit, Map, UI, utils } from 'components/bundles/hexagonBundle';
+import { UI_default, ObjectTerrain, ObjectUnit, Map, UI, utils } from 'bundles/hexagonBundle';
 
 /*---------------------
 ------ VARIABLES ------

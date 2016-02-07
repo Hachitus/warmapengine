@@ -63,6 +63,7 @@ function eventListenersModule() {
   /**
    * Deactivates the eventListener. Callback is optional. If is not provided will remove all this types eventListeners
    *
+   * @method off
    * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
    * @param  {Boolean} cb   Callback to do it's eventlistener magic.
    */
@@ -73,6 +74,7 @@ function eventListenersModule() {
   /**
    * Activates the eventListener. Callback is optional. If is not provided will check if the eventlistener type has any listeners active.
    *
+   * @method isOn
    * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
    * @param  {Boolean} cb   Callback to do it's eventlistener magic.
    */
@@ -86,6 +88,7 @@ function eventListenersModule() {
   /**
    * Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid selecting units and vice versa, when we keep an event state tracking through this.
    *
+   * @method setActivityState
    * @param {String} type     EventType
    * @param {[type]} newState [description]
    */
@@ -95,6 +98,7 @@ function eventListenersModule() {
   /**
    * get activity state of the event
    *
+   * @method getActivityState
    * @param  {String} type EventType
    * @return {Boolean}
    */
@@ -104,6 +108,7 @@ function eventListenersModule() {
   /**
    * Set event detector. If there is already detector of this type, we overwrite it.
    *
+   * @method setDetector
    * @param {String}   type  Event type
    * @param {Function} cbOn  Callback which sets activates the detector
    * @param {Function} cbOff Callback which sets deactivates the detector
@@ -118,6 +123,7 @@ function eventListenersModule() {
   /**
    * Clear event detector. We also remove all possible eventlisteners set on this event type.
    *
+   * @method clearDetector
    * @param {String}   type  Event type
    */
   function clearDetector(type = "") {
@@ -130,20 +136,24 @@ function eventListenersModule() {
     delete activeEventListeners[type];
     delete detectors[type];
   }
-}
-/*-----------------------------
------------ PRIVATE -----------
-------------------------------*/
-/**
- * This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.
- *
- * @param  {String}   type Event type
- * @param  {Function} cb   Event callback
- */
-function _createWrapper(type, cb) {
-  /* NOTE! There can be more than one arguments in an event. E.g. Hamster.js */
-  return (...args) => {
-    mapEvents.publish(type);
-    cb(...args);
+
+  /*-----------------------------
+  ----------- PRIVATE -----------
+  ------------------------------*/
+  /**
+   * This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.
+   *
+   * @method _createWrapper
+   * @private
+   * @static
+   * @param  {String}   type Event type
+   * @param  {Function} cb   Event callback
+   */
+  function _createWrapper(type, cb) {
+    /* NOTE! There can be more than one arguments in an event. E.g. Hamster.js */
+    return (...args) => {
+      mapEvents.publish(type);
+      cb(...args);
+    }
   }
 }

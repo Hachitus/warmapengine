@@ -8,7 +8,7 @@ import { eventListeners, utils, mapEvents } from 'bundles/coreBundle';
 /*---------------------
 --------- API ---------
 ----------------------*/
-/** For debugging. This will show up if the plugin fails to load in Map.js */
+/* For debugging. This will show up if the plugin fails to load in Map.js */
 export var map_zoom = setupMap_zoom();
 export default map_zoom;
 
@@ -33,6 +33,7 @@ function setupMap_zoom() {
   /**
    * Maximum and minimum amount, the player can zoom the map
    *
+   * @attribute zoomLimit
    * @type {{ farther: Number, closer: Number }}
    */
   var zoomLimit = {
@@ -42,6 +43,7 @@ function setupMap_zoom() {
   /**
    * How much one step of zooming affects
    *
+   * @attribute zoomModifier
    * @type {Number}
    */
   var zoomModifier = 0.1;

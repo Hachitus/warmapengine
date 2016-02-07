@@ -10,7 +10,7 @@ import { eventListeners } from 'bundles/coreBundle';
 /*-----------------------
 ---------- API ----------
 -----------------------*/
-/** For debugging. This will show up if the plugin fails to load in Map.js */
+/* For debugging. This will show up if the plugin fails to load in Map.js */
 export const baseEventlisteners = baseEventlistenersModule();
 export default baseEventlisteners;
 

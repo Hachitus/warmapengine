@@ -28,6 +28,7 @@ export class MapDataManipulator {
   /**
    * This is the actual method that runs through the rules and arranges the data
    *
+   * @method _runRules
    * @private
    * @return {[type]} [description]
    **/
@@ -54,8 +55,8 @@ export class MapDataManipulator {
    *
    * @todo Refactor
    *
-   * @private
    * @method _getContainer
+   * @private
    * @return {[type]} [description]
    **/
   _getContainer(object, rule) {
@@ -70,8 +71,8 @@ export class MapDataManipulator {
    *
    * @todo Refactor
    *
-   * @private
    * @method _getContainer
+   * @private
    * @return {[type]} [description]
    **/
   _getContainer(object, rule) {

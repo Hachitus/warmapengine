@@ -196,6 +196,7 @@ export class MapLayer extends PIXI.Container {
   /**
    * Adds and object to this layers UILayer child.
    *
+   * @method addUIObject
    * @param {Object} object   The UI object to be added under this layer
    * @return {Array}          All the UIObjects currently on this layer
    */
@@ -217,6 +218,7 @@ export class MapLayer extends PIXI.Container {
   /**
    * Return the UILayer. If no UILayer is yet created, will return undefined
    *
+   * @method getUILayer
    * @return {MapLayer | undefined}
    */
   getUILayer() {

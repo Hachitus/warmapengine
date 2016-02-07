@@ -15,7 +15,7 @@ var viewportWorker = new Worker("/components/map/extensions/mapMovement/mapMovem
 /*-----------------------
 ---------- API ----------
 -----------------------*/
-/** For debugging. This will show up if the plugin fails to load in Map.js */
+/* For debugging. This will show up if the plugin fails to load in Map.js */
 export const mapMovement = setupMapMovement();
 export default mapMovement;
 

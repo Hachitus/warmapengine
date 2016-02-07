@@ -228,6 +228,7 @@ export class Map {
   /**
    * Add an UI object to the wanted layer.
    *
+   * @method addUIObject
    * @param {Integer} layer   Type of the layer. layerTypes.STATIC of layerTypes.MOVABLE.
    * @param {Object} object   The object to be attached as UI object.
    */
@@ -244,6 +245,7 @@ export class Map {
   /**
    * Remove an UI object to the wanted layer.
    *
+   * @method removeUIObject
    * @param {Integer} layer   Type of the layer. layerTypes.STATIC of layerTypes.MOVABLE.
    * @param {Object} object   The object to be attached as UI object.
    */
@@ -502,6 +504,7 @@ export class Map {
   /**
    * This returns the normal parent layers that we mostly use for manipulation everything. MovableLayer and staticLayer are built-in layers designed to provide the basic functionalities like zooming and moving the map. These layers provide everything that extends the map more.
    *
+   * @method getPrimaryLayers
    * @return {Object} Basically anything in the map that is used as a layer (not really counting subcontainers).
    */
   getPrimaryLayers () {
@@ -580,28 +583,24 @@ export class Map {
     * This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.
     *
     * @method zoomIn
-    * @abstract
     */
   zoomIn() { return "notImplementedYet. Activate with plugin"; }
    /**
     * This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.
     *
     * @method zoomOut
-    * @abstract
     */
   zoomOut() { return "notImplementedYet. Activate with plugin"; }
   /**
    * Resize the canvas to fill the whole browser content area. Defined by the baseEventlisteners core plugin
    *
    * @method toggleFullsize
-   * @abstract
    **/
   toggleFullsize() { return "notImplementedYet. Activate with plugin"; }
   /**
    * Toggles fullscreen mode. Defined by the baseEventlisteners core plugin
    *
    * @method toggleFullScreen
-   * @abstract
    **/
   toggleFullScreen () { return "notImplementedYet. Activate with plugin"; }
 

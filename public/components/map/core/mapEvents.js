@@ -1,11 +1,6 @@
 'use strict';
 
 /*---------------------
-------- IMPORT --------
-----------------------*/
-// import { PubSub } from '/assets/lib/pubsub/pubsub';
-
-/*---------------------
 --------- API ---------
 ----------------------*/
 export const mapEvents = setupMapEvents();
@@ -31,10 +26,12 @@ function setupMapEvents () {
   };
 
   function subscribe(type, cb) {
-    PubSub.subscribe(type, cb);
+    document.addEventListener(type, cb);
   }
   function publish(type, ...data) {
-    console.log("EVENT: " + type);
-    PubSub.publish(type, ...data);
+    var eventToDispatch = new Event(type);
+
+    eventToDispatch.customData = data;
+    document.dispatchEvent(eventToDispatch);
   }
 }

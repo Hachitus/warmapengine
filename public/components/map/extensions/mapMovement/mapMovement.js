@@ -137,41 +137,41 @@ function setupMapMovement () {
 
       if (window.Worker) {
         viewportWorker.onmessage = function(e) {
-            const scale = map.getZoom();
-            const scaledViewport = e.data[0];
-            const smallerScaledViewport = e.data[1];
-            var containersUnderChangedArea = [];
-            var usesCache = map.isCacheActivated();
-            var isOutside, scaledAndChangedViewport;
+          const scale = map.getZoom();
+          const scaledViewport = e.data[0];
+          const smallerScaledViewport = e.data[1];
+          var containersUnderChangedArea = [];
+          var usesCache = map.isCacheActivated();
+          var isOutside, scaledAndChangedViewport;
 
-            scaledAndChangedViewport = Object.assign({}, scaledViewport);
+          scaledAndChangedViewport = Object.assign({}, scaledViewport);
 
-            scaledAndChangedViewport.width += Math.round(Math.abs(changedCoordinates.width));
-            scaledAndChangedViewport.height += Math.round(Math.abs(changedCoordinates.height));
+          scaledAndChangedViewport.width += Math.round(Math.abs(changedCoordinates.width));
+          scaledAndChangedViewport.height += Math.round(Math.abs(changedCoordinates.height));
 
-            /* RESET */
-            changedCoordinates.width = 0;
-            changedCoordinates.height = 0;
+          /* RESET */
+          changedCoordinates.width = 0;
+          changedCoordinates.height = 0;
 
-            containersUnderChangedArea = map.getPrimaryLayers().map(layer => {
-              return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
-            });
-            containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
+          containersUnderChangedArea = map.getPrimaryLayers().map(layer => {
+            return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
+          });
+          containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
 
-            containersUnderChangedArea.forEach((thisContainer) => {
-              isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
+          containersUnderChangedArea.forEach((thisContainer) => {
+            isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
 
-              if (isOutside) {
-                thisContainer.visible = false;
-              } else {
-                thisContainer.visible = true;
-              }
+            if (isOutside) {
+              thisContainer.visible = false;
+            } else {
+              thisContainer.visible = true;
+            }
 
-            });
+          });
 
-            queue.processing = false;
+          queue.processing = false;
 
-            map.drawOnNextTick();
+          map.drawOnNextTick();
 
         };
         viewportWorker.postMessage([
@@ -196,7 +196,9 @@ function setupMapMovement () {
     mapEvents.subscribe("mapMoved", moveCb);
     mapEvents.subscribe("mapResized", resizeCb);
 
-    function moveCb(type, movedCoordinates) {
+    function moveCb(type) {
+      var movedCoordinates = type.customData[0];
+
       changedCoordinates.width += movedCoordinates.x;
       changedCoordinates.height += movedCoordinates.y;
       mapMovement.check(map);

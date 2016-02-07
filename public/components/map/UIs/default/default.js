@@ -5,6 +5,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
+import $ from '/assets/lib/jquery/jquery-css-ajax-effects.min.js';
 import { templates } from 'components/map/UIs/default/layout/templates';
 import { createVisibleHexagon } from 'components/map/extensions/hexagons/utils/createHexagon';
 import { UI_templateBase, UI } from 'bundles/coreBundle';

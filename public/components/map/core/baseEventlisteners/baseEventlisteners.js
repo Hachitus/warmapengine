@@ -4,6 +4,7 @@
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
+import 'hammer';
 import { eventListeners } from 'bundles/coreBundle';
 
 /*-----------------------

@@ -1,7 +1,7 @@
 {
   "name": "flatworld",
   "description": "Game engine for 2D strategy games in browsers",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "main": "src/bundles/fullModuleBundle.js",
   "author": "Janne Hyytiä",
   "license": "AGPL-3.0",

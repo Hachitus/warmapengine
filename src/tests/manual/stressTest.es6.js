@@ -6,7 +6,7 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { polyfills, createHorizontalHexagonMap, Preload } from 'bundles/fullModuleBundle';
+import { polyfills, createHorizontalHexagonMap, Preload, baseEventlisteners, mapZoom, mapDrag, selectHexagonObject, mapMovement } from 'bundles/fullModuleBundle';
 import * as Q from 'q';
 
 /* DATA FILES used for testing */
@@ -20,11 +20,11 @@ const HEXAGON_DISTANCES = {
   y: 94 * 0.75
 };
 var pluginsToActivate = [
-  "components/map/core/baseEventlisteners/baseEventlisteners",
-  "components/map/core/zoom/mapZoom",
-  "components/map/core/move/mapDrag",
-  "components/map/extensions/hexagons/selectHexagonPlugin",
-  "components/map/extensions/mapMovement/mapMovement.js"
+  baseEventlisteners,
+  mapZoom,
+  mapDrag,
+  selectHexagonObject,
+  mapMovement
 ];
 
 /* Do the map: */

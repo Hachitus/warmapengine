@@ -431,8 +431,6 @@ export class Map {
    * */
   activatePlugin(plugin) {
     try {
-      plugin = plugin[plugin.pluginName] || plugin;
-
       if (!plugin || !plugin.pluginName || !plugin.init) {
         throw new Error("plugin, plugin.pluginName or plugin.init import is missing!");
       }

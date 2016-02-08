@@ -9,8 +9,8 @@
         "attributesEmit": "true",
         "selleck": "true",
         "ignorePaths": [ "bundles" ],
-        "paths": "./public/components",
-        "outdir": "./public/documentation",
+        "paths": "./src/components",
+        "outdir": "./src/documentation",
         "markdown": "default"
     }
 }

@@ -1,7 +1,7 @@
 node_modules
 bower_components
 npm-debug.log
-public/assets/img
-public/jspm_packages
+src/assets/img
+src/jspm_packages
 bu
 documentation

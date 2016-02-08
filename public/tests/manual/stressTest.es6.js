@@ -6,7 +6,7 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { createMap } from '/factories/horizontalHexaFactory';
+import { createHorizontalHexagonMap } from '/factories/horizontalHexaFactory';
 import { polyfills } from 'components/utilities/polyfills';
 import * as Q from 'q';
 
@@ -101,7 +101,7 @@ function initMap(mapData, options) {
   function onComplete(loader, resources) {
     var promises = [];
 
-    map = globalMap.data = createMap(
+    map = globalMap.data = createHorizontalHexagonMap(
       canvasContainer, {
         game: gameData,
         map: mapData,

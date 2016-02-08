@@ -11,7 +11,7 @@
 ******** IMPORT ********
 ***********************/
 import { polyfills } from 'components/bundles/hexagonBundle';
-import { createMap } from '/factories/horizontalHexaFactory';
+import { createHorizontalHexagonMap } from '/factories/horizontalHexaFactory';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';
@@ -62,7 +62,7 @@ window.initMap = function (options) {
   function onComplete() {
     var promises = [];
 
-    map = globalMap.data = createMap(canvasElement, {
+    map = globalMap.data = createHorizontalHexagonMap(canvasElement, {
         game: gameData,
         map: mapData,
         type: typeData

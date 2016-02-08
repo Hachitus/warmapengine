@@ -4,7 +4,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { UI_default, ObjectTerrain, ObjectUnit, Map, UI, utils } from 'bundles/hexagonBundle';
+import { UI_default, ObjectTerrain, ObjectUnit, Map, UI, utils } from 'bundles/fullModuleBundle';
 
 /*---------------------
 ------ VARIABLES ------
@@ -17,7 +17,7 @@ const functionsInObj = {
 /*---------------------
 --------- API ---------
 ----------------------*/
-export { createMap as createMap };
+export { createMap as createHorizontalHexagonMap };
 
 /*---------------------
 ------- PUBLIC --------

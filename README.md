@@ -97,18 +97,25 @@ Simple unfinished example:
 *http://hachitus.github.io/warmapengine/documentation/*
 
 ##Plugins
-The map supports adding plugins and even some of the core functionalities have been implemented as plugins. You must comply to just to a couplr rules. Plugins have a lot of freedom to mess around with the map data, this is subject to change if there are issues with this later on. Plugin objects must have init method, in the format of:
+The map supports adding plugins and even some of the core functionalities have been implemented as plugins. You must comply to just to a couplr rules. Plugins have a lot of freedom to mess around with the map data, this is subject to change if there are issues with this later on. Plugin objects must have init method and pluginName variable, in the format of:
 ```javascript
-{
-  init: function(map) {
-    // All the functionality e.g. extend map prototype or activate eventListener etc.
-  }
-}
+
+	export const sameNameThatIsExported = setupModuleFunction();
+
+	{
+	  pluginName: "sameNameThatIsExported"
+	  init: function(map) {
+	    // All the functionality e.g. extend map prototype or activate eventListener etc.
+	  }
+	}
+
 ```
 
-Plugins need to export the class / object that exposes the init-method as default, like so:
+Plugins need to export the class / object that exposes the init-method with the same name as pluginName, like so:
 ```javascript
-export default pluginClass;
+
+	export const sameNameThatIsExported = setupModuleFunction();
+
 ```
 
 Also the map engine uses it's own interface to use the normal map functionalities like moving the map (default dragging

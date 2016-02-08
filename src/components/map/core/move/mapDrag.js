@@ -8,9 +8,7 @@ import { eventListeners, utils } from 'bundles/coreBundle';
 /*---------------------
 --------- API ---------
 ----------------------*/
-/* For debugging. This will show up if the plugin fails to load in Map.js */
-export const map_drag = setupMap_drag();
-export default map_drag;
+export const mapDrag = setupMap_drag();
 
 /*---------------------
 -------- PUBLIC -------
@@ -33,6 +31,7 @@ function setupMap_drag() {
   --------------------*/
   return {
     init,
+    pluginName: "mapDrag",
     _startDragListener /* Function revealed for testing */
   };
 

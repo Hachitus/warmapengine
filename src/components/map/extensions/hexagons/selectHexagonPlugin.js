@@ -9,8 +9,7 @@ import { setupHexagonClick } from 'components/map/extensions/hexagons/eventListe
 ---------- API ----------
 -----------------------*/
 /* For debugging. This will show up if the plugin fails to load in Map.js */
-export const object_select = setupObject_select_hexagon();
-export default object_select;
+export const selectHexagonObject = setupObject_select_hexagon();
 
 /*-----------------------
 -------- PUBLIC ---------
@@ -25,7 +24,8 @@ function setupObject_select_hexagon() {
   var map = {};
 
   return {
-    init
+    init,
+    pluginName: "selectHexagonObject"
   };
 
   /**
@@ -38,9 +38,9 @@ function setupObject_select_hexagon() {
     startClickListener(map);
   }
 
-/*-----------------------
--------- PRIVATE --------
------------------------*/
+  /*-----------------------
+  -------- PRIVATE --------
+  -----------------------*/
   /**
    * @method startClickListener
    * @param {Map} map              Instantiated Map class object

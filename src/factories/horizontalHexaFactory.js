@@ -17,7 +17,7 @@ const functionsInObj = {
 /*---------------------
 --------- API ---------
 ----------------------*/
-export { createMap as createHorizontalHexagonMap };
+export { createHorizontalHexagonMap as createHorizontalHexagonMap };
 
 /*---------------------
 ------- PUBLIC --------
@@ -36,7 +36,7 @@ export { createMap as createHorizontalHexagonMap };
  * @param {Object} options.isHiddenByDefault    When we use mapMovement plugin, it is best to keep all the obejcts hidden at the beginnig.
  * @param {Function} options.trackFPSCB         Callback to track FPS
  **/
-function createMap(canvasContainerElement, datas, options = { trackFPSCB: false, isHiddenByDefault: true, cache: false }) {
+function createHorizontalHexagonMap(canvasContainerElement, datas, options = { trackFPSCB: false, isHiddenByDefault: true, cache: false }) {
   console.log("============== Horizontal hexagonal Map factory started =============");
   const pixelRatio = utils.environmentDetection.getPixelRatio();
   const DATA_MAP = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;

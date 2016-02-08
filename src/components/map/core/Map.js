@@ -416,14 +416,8 @@ export class Map {
     pluginsArray.forEach(plugin => {
       if (typeof plugin === "object") {
         this.activatePlugin(plugin);
-      } else if (typeof plugin === "string") {
-        let thisPromise;
-
-        thisPromise = System.import(plugin).then( loadedPlugin => {
-          this.activatePlugin(loadedPlugin);
-        });
-
-        allPromises.push(thisPromise);
+      } else {
+        throw new Error("problem with initializing a plugin");
       }
     });
 
@@ -437,12 +431,14 @@ export class Map {
    * */
   activatePlugin(plugin) {
     try {
-      if (!plugin || !plugin.default) {
-        throw new Error("plugin or plugin.default import is missing!");
+      plugin = plugin[plugin.pluginName] || plugin;
+
+      if (!plugin || !plugin.pluginName || !plugin.init) {
+        throw new Error("plugin, plugin.pluginName or plugin.init import is missing!");
       }
 
       if (this.plugins.add(plugin[plugin.pluginName])) {
-        plugin.default.init(this);
+        plugin.init(this);
       }
     } catch (e) {
       console.log("An error initializing plugin. JSON.stringify: '" + JSON.stringify(plugin) + "' ", e);

@@ -8,9 +8,7 @@ import { eventListeners, utils, mapEvents } from 'bundles/coreBundle';
 /*---------------------
 --------- API ---------
 ----------------------*/
-/* For debugging. This will show up if the plugin fails to load in Map.js */
-export var map_zoom = setupMap_zoom();
-export default map_zoom;
+export var mapZoom = setupMap_zoom();
 
 /*---------------------
 -------- PUBLIC -------
@@ -52,7 +50,8 @@ function setupMap_zoom() {
   --------- API ---------
   ---------------------*/
   return {
-    init
+    init,
+    pluginName: "mapZoom",
   };
 
   /*---------------------

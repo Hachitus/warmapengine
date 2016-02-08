@@ -6,14 +6,12 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { createHorizontalHexagonMap } from 'flatworld';
-import { polyfills } from 'components/utilities/polyfills';
+import { polyfills, createHorizontalHexagonMap, Preload } from 'bundles/fullModuleBundle';
 import * as Q from 'q';
 
 /* DATA FILES used for testing */
 import { gameData } from '/tests/data/gameData';
 import { typeData } from '/tests/data/typeData';
-import { Preload } from 'components/preloading/preloading';
 
 /** ===== CONFIGS ===== */
 /* Note the y is 3/4 of the actual height */

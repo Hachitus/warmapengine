@@ -10,9 +10,7 @@ import { eventListeners } from 'bundles/coreBundle';
 /*-----------------------
 ---------- API ----------
 -----------------------*/
-/* For debugging. This will show up if the plugin fails to load in Map.js */
 export const baseEventlisteners = baseEventlistenersModule();
-export default baseEventlisteners;
 
 /*-----------------------
 -------- PUBLIC ---------
@@ -33,7 +31,8 @@ function baseEventlistenersModule() {
   ----------- API -------------
   ---------------------------*/
   return {
-    init
+    init,
+    pluginName: "baseEventlisteners"
   };
 
   function init(map) {

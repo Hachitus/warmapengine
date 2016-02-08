@@ -17,7 +17,6 @@ System.config({
   map: {
     "babel": "npm:babel-core@5.8.25",
     "babel-runtime": "npm:babel-runtime@5.8.24",
-    "blueimp-md5": "npm:blueimp-md5@1.1.1",
     "core-js": "npm:core-js@1.1.4",
     "css": "github:systemjs/plugin-css@0.1.17",
     "hammer": "github:hammerjs/hammer.js@2.0.6",

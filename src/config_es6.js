@@ -11,7 +11,6 @@ System.config({
     "npm:*": "jspm_packages/npm/*"
   },
   map: {
-    "blueimp-md5": "npm:blueimp-md5@1.1.1",
     "core-js": "npm:core-js@1.1.4",
     css: "github:systemjs/plugin-css@0.1.17",
     json: "github:systemjs/plugin-json@0.1.0",

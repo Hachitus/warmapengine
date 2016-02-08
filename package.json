@@ -38,7 +38,7 @@
   },
   "jspm": {
     "directories": {
-      "baseURL": "public"
+      "baseURL": "src"
     },
     "dependencies": {
       "css": "github:systemjs/plugin-css@^0.1.17",

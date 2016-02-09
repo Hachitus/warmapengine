@@ -8,7 +8,7 @@ import log from 'loglevel';
 
 log.enableAll();
 /**
- * @class default
+ * @class log
  * @requires loglevel.js for frontend logging, or something similar
  **/
 export default {

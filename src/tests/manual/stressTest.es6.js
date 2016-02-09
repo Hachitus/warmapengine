@@ -6,7 +6,7 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, hexagonPlugin, mapMovement } from 'bundles/fullModuleBundle';
+import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, hexagonPlugin, mapMovement } from '/dist/independentBundle';
 import * as Q from 'q';
 
 /* DATA FILES used for testing */

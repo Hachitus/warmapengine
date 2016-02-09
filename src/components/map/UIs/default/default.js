@@ -54,7 +54,7 @@ export class UI_default extends UI_templateBase {
     return templates;
   }
   /**
-   * Required by the map/core/UI.js API
+   * Required by the map.UI API
    *
    * @method showSelections
    * @param  {Object} objects     Objects that have been selected. See core.UI for more information
@@ -99,7 +99,7 @@ export class UI_default extends UI_templateBase {
     _get$Element("select").fadeOut(FADE_ANIMATION, cb);
   }
   /**
-   * Required by the map/core/UI.js API
+   * Required by the map.UI API
    *
    * @method highlightSelectedObject
    * @param  {Object} object        Object that has been selected. See core.UI for more information

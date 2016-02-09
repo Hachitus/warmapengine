@@ -17,7 +17,7 @@ export { _setupHexagonClick as setupHexagonClick };
  * Handles the eventlistner for selecting objects on the map. THe actual logic for detecting the objects under mouse
  * etc. are in selectHexagonPlugin
  *
- * @class setupHexagonClick
+ * @class hexagonPlugin.setupHexagonClick
  * @requires Hammer.js. Some events are done with Hammer.js, so we need it to handle those events correctly
  * @param  {Map} map      The currently use Map instance
  * @return {Boolean}      True

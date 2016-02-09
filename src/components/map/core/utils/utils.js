@@ -8,7 +8,7 @@ export const resize = setupResizeUtils();
 export const environmentDetection = setupEnvironmentDetection();
 export const general = setupGeneral();
 /**
- * @class core.utils.mouse
+ * @class utils.mouse
  * @return {Object}      isRightClick, eventData.getPointerCoords, eventData.getHAMMERPointerCoords, eventMouseCoords
  */
 function setupMouseUtils() {
@@ -91,7 +91,7 @@ function setupMouseUtils() {
   }
 }
 /**
- * @class core.utils.resize
+ * @class utils.resize
  * @return {Object}      toggleFullScreen, setToFullSize, getWindowSize
  */
 function setupResizeUtils() {
@@ -175,7 +175,7 @@ function setupResizeUtils() {
   }
 }
 /**
- * @class core.utils.environment
+ * @class utils.environment
  * @return {Object}      getPixelRatio
  */
 function setupEnvironmentDetection() {
@@ -202,7 +202,7 @@ function setupEnvironmentDetection() {
   }
 }
 /**
- * @class core.utils.general
+ * @class utils.general
  * @return {Object}      pixelEpsilonEquality
  */
 function setupGeneral() {

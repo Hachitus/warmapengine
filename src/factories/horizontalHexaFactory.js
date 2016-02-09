@@ -4,15 +4,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { UI_default, ObjectTerrain, ObjectUnit, Map, UI, utils } from 'bundles/fullModuleBundle';
-
-/*---------------------
------- VARIABLES ------
-----------------------*/
-const functionsInObj = {
-  ObjectTerrain,
-  ObjectUnit
-};
+import { UI_default, hexagonPlugin, Map, UI, utils } from 'bundles/fullModuleBundle';
 
 /*---------------------
 --------- API ---------
@@ -46,6 +38,13 @@ function createHorizontalHexagonMap(canvasContainerElement, datas, options = { t
   const MAP_SIZE = DATA_GAME.mapSize;
   const mapOptions = {
     refreshEventListeners: true
+  };
+  /*---------------------
+  ------ VARIABLES ------
+  ----------------------*/
+  const functionsInObj = {
+    ObjectTerrain: hexagonPlugin.ObjectHexaTerrain,
+    ObjectUnit: hexagonPlugin.ObjectHexaUnit
   };
   var mapProperties = {
     bounds: {

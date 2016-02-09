@@ -19,7 +19,7 @@ export { UI as UI };
  *
  * @todo Not implemented fully yet and probably need refactoring
  *
- * @class core.UI
+ * @class UI
  * @constructor
  * @param {Object} UITheme        Module that will be used for the UI theme
  * @param {Map} givenMap          Map instance that is used

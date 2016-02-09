@@ -13,7 +13,7 @@ export class ObjectManager {
   /**
    * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or when objects or areas collide with each other.
    *
-   * @class core.ObjectManager
+   * @class ObjectManager
    * @constructor
    * @param {object} hitDetector Object or function that handles hit detection. This can be omitted in many cases
    * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms.

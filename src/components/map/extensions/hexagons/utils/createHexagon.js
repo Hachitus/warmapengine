@@ -8,6 +8,10 @@ import { getHexagonPoints } from './hexagonMath';
 /*-----------------------
 ----------- API ---------
 -----------------------*/
+export default {
+  createHexagon,
+  createVisibleHexagon
+};
 export { createHexagon as createHexagon };
 export { createVisibleHexagon as createVisibleHexagon };
 
@@ -17,7 +21,7 @@ export { createVisibleHexagon as createVisibleHexagon };
 /**
  * This manages some utility functionalities for creating hexagons
  *
- * @class createHexagons
+ * @class hexagonPlugin.utils
  */
 /**
  * Credits belong to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js

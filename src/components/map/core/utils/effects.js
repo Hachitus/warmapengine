@@ -12,7 +12,7 @@ export const effects = setupEffects();
  * This module will hold the most common graphical effects used in the map. It is still very stub as the development
  * hasn't proceeded to this stage yet.
  *
- * @class core.utils.effects
+ * @class utils.effects
  * @return {Object}      init, _startDragListener
  */
 function setupEffects() {

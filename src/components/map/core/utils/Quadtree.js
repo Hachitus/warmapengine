@@ -15,7 +15,7 @@ export class Quadtree {
    * This class handles the API for quadtree to search for the wanted objects on the certain coordinates. After this
    * the map should do it's own - more precise - hit detections.
    *
-   * @class core.utils.Quadtree
+   * @class utils.Quadtree
    * @constructor
    * @requires Quadtree-js. Though this base library can be changed easily
    *

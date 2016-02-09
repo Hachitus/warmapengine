@@ -11,7 +11,7 @@ export const dataManipulation = setupDataManipulation();
 /**
  * These are utils for manipulating the data, that our classes and functions use.
  *
- * @class core.utils.dataManipulation
+ * @class utils.dataManipulation
  * @return {Object}      mapObjectsToArray, flattenArrayBy1Level
  */
 function setupDataManipulation() {

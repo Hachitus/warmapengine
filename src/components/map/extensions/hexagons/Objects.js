@@ -15,11 +15,16 @@ var shape;
 /*-----------------------
 ---------- API ----------
 -----------------------*/
-export class ObjectTerrain extends ObjectSpriteTerrain {
+export default {
+  ObjectHexaTerrain,
+  ObjectHexaUnit
+};
+
+export class ObjectHexaTerrain extends ObjectSpriteTerrain {
   /**
    * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are inherited, depending on the map type. For example you might want to add some click area for these
    *
-   * @class ObjectTerrains
+   * @class hexagonPlugin.ObjectHexaTerrain
    * @constructor
    * @param  {Object} coords
    * @param  {Integer} coords.x         X coordinate
@@ -37,13 +42,12 @@ export class ObjectTerrain extends ObjectSpriteTerrain {
     calculateHexa.call(this, radius);
   }
 }
-Object.assign(ObjectTerrain.prototype, calculateHexa);
 
-export class ObjectUnit extends ObjectSpriteUnit {
+export class ObjectHexaUnit extends ObjectSpriteUnit {
   /**
    * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
    *
-   * @class ObjectUnit
+   * @class hexagonPlugin.ObjectHexaUnit
    * @constructor
    * @param {Object} coords            This units coordinates, relative to it's parent container
    * @param {Integer} coords.x         X coordinate

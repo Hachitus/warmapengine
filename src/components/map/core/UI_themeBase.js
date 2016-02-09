@@ -19,7 +19,7 @@ export class UI_templateBase {
    *
    * @todo This needs a bit of redesign.
    *
-   * @class core.UI_templateBase
+   * @class UI_templateBase
    * @constructor
    * @param  {*} CSSClasses
    */

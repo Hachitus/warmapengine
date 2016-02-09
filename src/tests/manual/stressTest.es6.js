@@ -6,7 +6,7 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { polyfills, createHorizontalHexagonMap, Preload, baseEventlisteners, mapZoom, mapDrag, selectHexagonObject, mapMovement } from 'bundles/fullModuleBundle';
+import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, hexagonPlugin, mapMovement } from 'bundles/fullModuleBundle';
 import * as Q from 'q';
 
 /* DATA FILES used for testing */
@@ -19,13 +19,6 @@ const HEXAGON_DISTANCES = {
   x: 82,
   y: 94 * 0.75
 };
-var pluginsToActivate = [
-  baseEventlisteners,
-  mapZoom,
-  mapDrag,
-  selectHexagonObject,
-  mapMovement
-];
 
 /* Do the map: */
 window.getMapData = getMapData;
@@ -63,6 +56,13 @@ function initMap(mapData, options) {
   var globalMap = {
     data: {}
   };
+  var pluginsToActivate = [
+    baseEventlisteners,
+    mapZoom,
+    mapDrag,
+    hexagonPlugin.selectHexagonObject,
+    mapMovement
+  ];
   var promise = Q.defer();
   var preload;
 
@@ -99,7 +99,7 @@ function initMap(mapData, options) {
   function onComplete(loader, resources) {
     var promises = [];
 
-    map = globalMap.data = createHorizontalHexagonMap(
+    map = globalMap.data = factories.createHorizontalHexagonMap(
       canvasContainer, {
         game: gameData,
         map: mapData,

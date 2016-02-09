@@ -16,7 +16,7 @@ export const mapDrag = setupMap_drag();
 /**
  * Core plugin for the engine. Handles moving the map by dragging the map with mouse or touch event. Core plugins can always be overwrote if needed.
  *
- * @class core.mapDrag
+ * @class mapDrag
  * @requires Hammer.js - Mobile part requires
  * @return {Object}      init, _startDragListener
  */

@@ -9,7 +9,7 @@ export class MapDataManipulator {
   /**
    * Class to get a consistent standard for the engine to be able to filter objects, when retrieving or sorting them.
    *
-   * @class core.MapDataManipulator
+   * @class MapDataManipulator
    * @constructor
    * @param {Array|Object} rules        REQUIRED. The rules that apply for this instance. Multiple rules in Array or one as Object.
    **/

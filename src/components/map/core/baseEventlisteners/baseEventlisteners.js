@@ -18,7 +18,7 @@ export const baseEventlisteners = baseEventlistenersModule();
 /**
  * Core plugin. Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for the eventlistener management.
  *
- * @class core.baseEventlisteners
+ * @class baseEventlisteners
  * @requires Hammer.js (for touch events)
  * @requires Hamster.js (for good cross-browser mousewheel events)
  * @param {HTMLElement} canvasElement   The canvas element we listen events from. Will try to search the first canvas in the DOM, if none is provided

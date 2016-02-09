@@ -12,7 +12,7 @@ export var polyfills = setupPolyfills();
 /**
  * Add polyfills for the map, as necessary. Easy to drop out.
  *
- * @class utilities.polyfills
+ * @class generalUtils.polyfills
  * @return {Object} arrayFind, objectAssign
  */
 function setupPolyfills() {

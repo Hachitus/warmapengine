@@ -4,20 +4,20 @@
 ---------- API ----------
 -----------------------*/
 export default {
-  calcShortDiagonal: calcShortDiagonal,
-  calcLongDiagonal: calcLongDiagonal,
-  getHexagonPoints: getHexagonPoints,
-  hexaHitTest: hexaHitTest
+  calcShortDiagonal,
+  calcLongDiagonal,
+  getHexagonPoints,
+  hexaHitTest
 };
 export { calcShortDiagonal as calcShortDiagonal };
-export { calcLongDiagonal as calcShortDiagonal};
+export { calcLongDiagonal as calcLongDiagonal };
 export { getHexagonPoints as getHexagonPoints };
 export { hexaHitTest as hexaHitTest };
 
 /**
  * Utility module, for making different calculations and tests when hexagon based grid map in use
  *
- * @class hexagonMath
+ * @class hexagonPlugin.utils
  */
 /*-----------------------
 --------- PUBLIC --------

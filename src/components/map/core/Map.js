@@ -27,7 +27,7 @@ export class Map {
    *
    * You use the class by instantiating it (new) and then finishing initialization with init-method. Please see examples below.
    *
-   * The biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the tests/data-folder, but the factory is responsible for creating the objects, so you can use your own factory implementation. So to understand more, please see e.g. core.horizontalHexaFactory.
+   * The biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the tests/data-folder, but the factory is responsible for creating the objects, so you can use your own factory implementation. So to understand more, please see e.g. factories.horizontalHexaFactory.
    *
    * The map consists of layer on top of each other. The example is best understood when thinking typical war strategy game. The structure is this:
    * 1. StaticLayer: Handles things like scaling / zooming the map
@@ -42,7 +42,7 @@ export class Map {
    *     var map = new Map(divContainer, mapOptions );
    *     promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
    *
-   * @class core.Map
+   * @class Map
    * @constructor
    * @requires PIXI.JS framework in global namespace
    * @requires Canvas (webGL support recommended) HTML5-element supported.
@@ -118,7 +118,7 @@ export class Map {
     this.canvas = _renderer.view;
     /**
      * list of plugins that the map uses and are initialized
-     * @see class/core/Map.js~Map.html#instance-method-activatePlugins
+     * @see Map.activatePlugins
      *
      * @attribute plugins
      * @type {Set}
@@ -586,13 +586,13 @@ export class Map {
     */
   zoomOut() { return "notImplementedYet. Activate with plugin"; }
   /**
-   * Resize the canvas to fill the whole browser content area. Defined by the baseEventlisteners core plugin
+   * Resize the canvas to fill the whole browser content area. Defined by the baseEventlisteners-module (core modules plugin)
    *
    * @method toggleFullsize
    **/
   toggleFullsize() { return "notImplementedYet. Activate with plugin"; }
   /**
-   * Toggles fullscreen mode. Defined by the baseEventlisteners core plugin
+   * Toggles fullscreen mode. Defined by the baseEventlisteners-module (core modules plugin)
    *
    * @method toggleFullScreen
    **/

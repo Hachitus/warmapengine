@@ -17,7 +17,7 @@ export const selectHexagonObject = setupObject_select_hexagon();
 /**
  * Handles the selection of hexagons on the map
  *
- * @class object_select
+ * @class hexagonPlugin.setupObject_select_hexagon
  * @return {Object}       Return methods inside object
  */
 function setupObject_select_hexagon() {

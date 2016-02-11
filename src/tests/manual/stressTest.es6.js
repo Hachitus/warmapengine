@@ -6,12 +6,12 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, hexagonPlugin, mapMovement } from '/dist/independentBundle';
+import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, hexagonPlugin, mapMovement } from 'bundles/fullModuleBundle';
 import * as Q from 'q';
 
 /* DATA FILES used for testing */
-import { gameData } from '/tests/data/gameData';
-import { typeData } from '/tests/data/typeData';
+import { gameData } from 'tests/data/gameData';
+import { typeData } from 'tests/data/typeData';
 
 /** ===== CONFIGS ===== */
 /* Note the y is 3/4 of the actual height */

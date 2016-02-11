@@ -10,12 +10,12 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { polyfills, createHorizontalHexagonMap, Preload, baseEventlisteners, mapZoom, mapDrag, selectHexagonObject } from 'bundles/fullModuleBundle';
+import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, selectHexagonObject } from 'bundles/fullModuleBundle';
 
 /* DATA FILES used for testing */
-import { gameData } from '/tests/data/gameData';
-import { typeData } from '/tests/data/typeData';
-import { mapData } from '/tests/data/mapData';
+import { gameData } from 'tests/data/gameData';
+import { typeData } from 'tests/data/typeData';
+import { mapData } from 'tests/data/mapData';
 
 /* REQUIRED FOR IE11 */
 polyfills.arrayFind();
@@ -60,7 +60,7 @@ window.initMap = function (options) {
   function onComplete() {
     var promises = [];
 
-    map = globalMap.data = createHorizontalHexagonMap(canvasElement, {
+    map = globalMap.data = factories.createHorizontalHexagonMap(canvasElement, {
         game: gameData,
         map: mapData,
         type: typeData

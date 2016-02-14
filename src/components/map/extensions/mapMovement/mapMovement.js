@@ -33,6 +33,7 @@ function setupMapMovement () {
     width: 0,
     height: 0
   };
+  var map;
 
   return {
     init,
@@ -47,9 +48,11 @@ function setupMapMovement () {
    * @method init
    * @param  {Map} map     Instance of Map
    */
-  function init(map) {
-    addAll(map);
-    startEventListeners(map);
+  function init(givenMap) {
+    map = givenMap;
+
+    addAll();
+    startEventListeners();
     map.drawOnNextTick();
     /**
      * For debugging. Shows the amount of currectly active and inactive subcontainers. Console.logs the data. Also extends window object.
@@ -95,7 +98,7 @@ function setupMapMovement () {
    * @method addAll
    * @param  {Map} map     Instance of Map
    */
-  function addAll(map) {
+  function addAll() {
     var scale = map.getZoom();
     var viewportArea;
 
@@ -123,57 +126,20 @@ function setupMapMovement () {
    * @param  {Map} map        The current Map instance
    * @return {Boolean}        True
    */
-  function check(map) {
+  function check() {
     if (queue.processing) {
       return false;
     }
     queue.processing = true;
 
-    let viewportFn = setupHandleViewportArea(queue, map, changedCoordinates);
+    let viewportFn = setupHandleViewportArea(queue, changedCoordinates);
     window.setTimeout(viewportFn, CHECK_INTERVAL);
 
-    function setupHandleViewportArea(queue, map, changedCoordinates) {
+    function setupHandleViewportArea(queue, changedCoordinates) {
       var viewportArea = map.getViewportArea();
 
       if (window.Worker) {
-        viewportWorker.onmessage = function(e) {
-          const scale = map.getZoom();
-          const scaledViewport = e.data[0];
-          const smallerScaledViewport = e.data[1];
-          var containersUnderChangedArea = [];
-          var usesCache = map.isCacheActivated();
-          var isOutside, scaledAndChangedViewport;
-
-          scaledAndChangedViewport = Object.assign({}, scaledViewport);
-
-          scaledAndChangedViewport.width += Math.round(Math.abs(changedCoordinates.width));
-          scaledAndChangedViewport.height += Math.round(Math.abs(changedCoordinates.height));
-
-          /* RESET */
-          changedCoordinates.width = 0;
-          changedCoordinates.height = 0;
-
-          containersUnderChangedArea = map.getPrimaryLayers().map(layer => {
-            return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
-          });
-          containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
-
-          containersUnderChangedArea.forEach((thisContainer) => {
-            isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
-
-            if (isOutside) {
-              thisContainer.visible = false;
-            } else {
-              thisContainer.visible = true;
-            }
-
-          });
-
-          queue.processing = false;
-
-          map.drawOnNextTick();
-
-        };
+        viewportWorker.onmessage = viewportWorkerOnMessage;
         viewportWorker.postMessage([
           1,
           viewportArea,
@@ -192,7 +158,7 @@ function setupMapMovement () {
    * @method startEventListeners
    * @param  {Map} map     Instance of Map
    */
-  function startEventListeners(map) {
+  function startEventListeners() {
     mapEvents.subscribe("mapMoved", moveCb);
     mapEvents.subscribe("mapResized", resizeCb);
 
@@ -277,6 +243,50 @@ function setupMapMovement () {
       width: Math.round( viewportArea.width / scale ),
       height: Math.round( viewportArea.height / scale )
     };
+  }
+  /**
+   * The onmessage callback that handles things after we get reply from the worker
+   *
+   * @param  {Object} e   Event object from worker
+   */
+  function viewportWorkerOnMessage(e) {
+    const scaledViewport = e.data[0];
+    const smallerScaledViewport = e.data[1];
+    const thisMap = map; // Just to keep reference closer than top of the scope
+    var containersUnderChangedArea = [];
+    var isOutside, scaledAndChangedViewport, usesCache, scale;
+    scale = thisMap.getZoom();
+    usesCache = thisMap.isCacheActivated();
+
+    scaledAndChangedViewport = Object.assign({}, scaledViewport);
+
+    scaledAndChangedViewport.width += Math.round(Math.abs(changedCoordinates.width));
+    scaledAndChangedViewport.height += Math.round(Math.abs(changedCoordinates.height));
+
+    /* RESET */
+    changedCoordinates.width = 0;
+    changedCoordinates.height = 0;
+
+    containersUnderChangedArea = thisMap.getPrimaryLayers().map(layer => {
+      return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
+    });
+    containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
+
+    containersUnderChangedArea.forEach((thisContainer) => {
+      isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
+
+      if (isOutside) {
+        thisContainer.visible = false;
+      } else {
+        thisContainer.visible = true;
+      }
+
+    });
+
+    queue.processing = false;
+
+    map.drawOnNextTick();
+
   }
 }
 /*-----------------------

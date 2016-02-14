@@ -12,6 +12,7 @@ import * as Q from 'q';
 ----------------------*/
 const LAYER_TYPE_STATIC = 0;
 const LAYER_TYPE_MOVABLE = 1;
+const VERSION = "0.0.1";
 var _drawMapOnNextTick = false;
 var isMapReadyPromises = [];
 var _staticLayer, _movableLayer, _renderer, ParentLayerConstructor;
@@ -170,6 +171,11 @@ export class Map {
         layer: _movableLayer
       }
     };
+    /**
+     * Self explanatory
+     * @type {SEMVER}     http://semver.org/
+     */
+    this.VERSION = VERSION;
   }
   /**
    * This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since normally the plugins have to be activated before the map is shown.

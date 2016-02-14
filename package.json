@@ -50,6 +50,7 @@
       "css": "github:systemjs/plugin-css@^0.1.17",
       "hammer": "github:hammerjs/hammer.js@^2.0.6",
       "handlebars": "github:components/handlebars.js@^4.0.5",
+      "howler": "npm:howler@^1.1.29",
       "json": "github:systemjs/plugin-json@^0.1.0",
       "loglevel": "npm:loglevel@^1.4.0",
       "q": "npm:q@^1.4.1",

@@ -14,6 +14,7 @@ export * from 'components/map/core/mapEvents';
 export * from 'components/map/core/ObjectManager';
 export * from 'components/map/core/UI';
 export * from 'components/map/core/UI_themeBase';
+export * from 'components/map/core/Sound';
 
 /* Adds to global namespace! */
 import * as PIXI from 'assets/lib/pixi/pixi.js';

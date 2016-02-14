@@ -107,6 +107,8 @@ export class Map {
     _renderer.view.style.top = "0px";
     /* stop scrollbars of showing */
     document.getElementsByTagName("body")[0].style.overflow = "hidden";
+    /* For html5 canvas. I guess it doesn't apply for webgl */
+    _renderer.roundPixels = true;
 
     /**
      * canvas element that was generated and is being used by this new generated Map instance.

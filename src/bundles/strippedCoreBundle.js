@@ -15,7 +15,7 @@ export * from 'components/map/core/ObjectManager';
 export * from 'components/map/core/UI';
 export * from 'components/map/core/UI_themeBase';
 
-/* Adds to glocal namespace! */
+/* Adds to global namespace! */
 import * as PIXI from 'assets/lib/pixi/pixi.js';
 import * as hamster from 'assets/lib/hamsterjs/hamster.js';
 // purely for internet explorer. Though I think this issue is only in EI11,not in edge?

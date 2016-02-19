@@ -41,6 +41,7 @@ var viewportArea, scale, methodType, smallerViewportArea;
  * @return {totalViewportArea[]}            Array consists of normal calculated viewport and smaller scaled viewport.
  */
 self.addEventListener("message", function (e) {
+  console.log("handling4-1")
   var scaledViewport, smallerScaledViewportArea;
 
   methodType = e.data[0];

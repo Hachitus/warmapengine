@@ -11,7 +11,6 @@ import { arrays } from 'components/utilities/general';
 ------- VARIABLES -------
 -----------------------*/
 var viewportWorker = new Worker("/components/map/extensions/mapMovement/mapMovementWorker.js");
-
 /*-----------------------
 ---------- API ----------
 -----------------------*/
@@ -136,20 +135,19 @@ function setupMapMovement () {
     window.setTimeout(viewportFn, CHECK_INTERVAL);
 
     function setupHandleViewportArea(queue, changedCoordinates) {
-      var viewportArea = map.getViewportArea();
+      var methodType = 1;
+      var viewportArea, scale;
 
-      if (window.Worker) {
-        viewportWorker.onmessage = viewportWorkerOnMessage;
-        viewportWorker.postMessage([
-          1,
-          viewportArea,
-          map.getZoom(),
-          changedCoordinates
-        ]);
-      } else {
-        queue.processing = false;
-        throw new Error("ERROR WITH WEB WORKER");
-      }
+      viewportArea = map.getViewportArea();
+      scale = map.getZoom();
+
+      smallerViewportArea = Object.assign( {}, getViewportCoordinates(viewportArea, 0.5));
+      Object.assign( viewportArea, getViewportCoordinates(viewportArea));
+
+      scaledViewport = Object.assign({} , applyScaleToViewport(viewportArea, scale) );
+      smallerScaledViewportArea = Object.assign({} , applyScaleToViewport(smallerViewportArea, scale) );
+
+      viewportWorkerOnMessage(scaledViewport, smallerScaledViewportArea);
     }
 
     return;
@@ -249,9 +247,7 @@ function setupMapMovement () {
    *
    * @param  {Object} e   Event object from worker
    */
-  function viewportWorkerOnMessage(e) {
-    const scaledViewport = e.data[0];
-    const smallerScaledViewport = e.data[1];
+  function viewportWorkerOnMessage(scaledViewport, smallerScaledViewport) {
     const thisMap = map; // Just to keep reference closer than top of the scope
     var containersUnderChangedArea = [];
     var isOutside, scaledAndChangedViewport, usesCache, scale;
@@ -287,6 +283,47 @@ function setupMapMovement () {
 
     map.drawOnNextTick();
 
+  }
+  /**
+   * forms the total viewport parameters based on the given ones.
+   *
+   * @private
+   * @static
+   * @method getViewportCoordinates
+   * @param  {AreaSize} viewportArea          Given viewport area
+   * @param  {Number} offsetQuantifier        How big offset we match against
+   * @return {totalViewportArea}              The total viewportArea
+   */
+  function getViewportCoordinates(viewportArea, offsetQuantifier) {
+    var offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET  );
+    offsetQuantifier = offsetQuantifier || 1;
+
+    return {
+      x: Math.round( viewportArea.x - offsetSize * offsetQuantifier ),
+      y: Math.round( viewportArea.y - offsetSize * offsetQuantifier ),
+      x2: Math.round( viewportArea.x + Math.abs( viewportArea.width ) + offsetSize * offsetQuantifier ),
+      y2: Math.round( viewportArea.y + Math.abs( viewportArea.height ) + offsetSize * offsetQuantifier ),
+      width: Math.round( viewportArea.width + offsetSize * 2 * offsetQuantifier ),
+      height: Math.round( viewportArea.height + offsetSize * 2 * offsetQuantifier )
+    };
+  }
+  /**
+   * @private
+   * @static
+   * @method applyScaleToViewport
+   * @param  {AreaSize} viewportArea
+   * @param  {Number} scale             Map scale atm.
+   * @return {totalViewportArea}        The total viewportArea
+   */
+  function applyScaleToViewport(viewportArea, scale) {
+    return {
+      x: Math.round( viewportArea.x / scale ),
+      y: Math.round( viewportArea.y / scale ),
+      x2: Math.round( viewportArea.x2 / scale ),
+      y2: Math.round( viewportArea.y2 / scale ),
+      width: Math.round( viewportArea.width / scale ),
+      height: Math.round( viewportArea.height / scale )
+    };
   }
 }
 /*-----------------------

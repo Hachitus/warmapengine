@@ -14,12 +14,16 @@ export const mapEvents = setupMapEvents();
  * - mapMoved
  * - mapResize
  * - mapFullscreeActivated
+ * - mapZoomed
  *
  * @class mapEvents
  * @return {Object}     subsribe and publish
  * @todo I want the pubsub module to go the ES6 way, not the only global exception!
  */
 function setupMapEvents () {
+  const TIMER_FOR_SAME_TYPE = 50;
+
+  var lastTimePublished = {};
   return {
     subscribe,
     publish
@@ -29,9 +33,20 @@ function setupMapEvents () {
     document.addEventListener(type, cb);
   }
   function publish(type, ...data) {
-    var eventToDispatch = new Event(type);
+    var timestamp;
 
-    eventToDispatch.customData = data;
-    document.dispatchEvent(eventToDispatch);
+    timestamp = new Date().getTime();
+
+    if (!lastTimePublished[type]) {
+      lastTimePublished[type] = timestamp;
+    }
+
+    if ( (lastTimePublished[type] + TIMER_FOR_SAME_TYPE ) < timestamp) {
+      let eventToDispatch = new Event(type);
+
+      eventToDispatch.customData = data;
+      document.dispatchEvent(eventToDispatch);
+      lastTimePublished[type] = timestamp;
+    }
   }
 }

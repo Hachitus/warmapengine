@@ -32,7 +32,7 @@ function setupMapMovement () {
     width: 0,
     height: 0
   };
-  var map;
+  var map, currentScale;
 
   return {
     init,
@@ -49,10 +49,12 @@ function setupMapMovement () {
    */
   function init(givenMap) {
     map = givenMap;
+    currentScale = map.getZoom();
 
     addAll();
     startEventListeners();
     map.drawOnNextTick();
+
     /**
      * For debugging. Shows the amount of currectly active and inactive subcontainers. Console.logs the data. Also extends window object.
      *
@@ -98,18 +100,17 @@ function setupMapMovement () {
    * @param  {Map} map     Instance of Map
    */
   function addAll() {
-    var scale = map.getZoom();
     var viewportArea;
 
     viewportArea = map.getViewportArea();
     Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
-    Object.assign( viewportArea , applyScaleToViewport(viewportArea, map.getZoom()) );
+    Object.assign( viewportArea , applyScaleToViewport(viewportArea, currentScale) );
 
     map.getPrimaryLayers().forEach( layer => {
       var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
 
       subcontainers.forEach(subcontainer => {
-        subcontainer.visible = isObjectOutsideViewport(subcontainer, viewportArea, false, scale) ? false : true;
+        subcontainer.visible = isObjectOutsideViewport(subcontainer, viewportArea, false) ? false : true;
       });
     });
   }
@@ -136,16 +137,15 @@ function setupMapMovement () {
 
     function setupHandleViewportArea(queue, changedCoordinates) {
       var methodType = 1;
-      var viewportArea, scale;
+      var viewportArea;
 
       viewportArea = map.getViewportArea();
-      scale = map.getZoom();
 
       smallerViewportArea = Object.assign( {}, getViewportCoordinates(viewportArea, 0.5));
       Object.assign( viewportArea, getViewportCoordinates(viewportArea));
 
-      scaledViewport = Object.assign({} , applyScaleToViewport(viewportArea, scale) );
-      smallerScaledViewportArea = Object.assign({} , applyScaleToViewport(smallerViewportArea, scale) );
+      scaledViewport = Object.assign({} , applyScaleToViewport(viewportArea) );
+      smallerScaledViewportArea = Object.assign({} , applyScaleToViewport(smallerViewportArea) );
 
       viewportWorkerOnMessage(scaledViewport, smallerScaledViewportArea);
     }
@@ -159,6 +159,8 @@ function setupMapMovement () {
   function startEventListeners() {
     mapEvents.subscribe("mapMoved", moveCb);
     mapEvents.subscribe("mapResized", resizeCb);
+    /* We change the scale factor ONLY if the map is zoomed. We reserve resources */
+    mapEvents.subscribe("mapZoomed", zoomCb);
 
     function moveCb(type) {
       var movedCoordinates = type.customData[0];
@@ -169,6 +171,9 @@ function setupMapMovement () {
     }
     function resizeCb() {
       mapMovement.check(map);
+    }
+    function zoomCb() {
+      currentScale = newScale;
     }
   }
   /*-----------------------
@@ -185,13 +190,12 @@ function setupMapMovement () {
    * @param  {Integer} viewportArea.width     Viewports width (in pixels)
    * @param  {Integer} viewportArea.height    Viewports height (in pixels)
    * @param  {Boolean} hasParent              default = true
-   * @param  {Number}  scale                  default = 1 (equals to no defaul scale / no scale)
    * @return {Boolean}
    */
-  function isObjectOutsideViewport(object, viewportArea, hasParent = true, scale = 1) {
+  function isObjectOutsideViewport(object, viewportArea, hasParent = true) {
     var isIt, globalCoords;
 
-    globalCoords = object.getSubcontainerArea(scale, { toGlobal: hasParent });
+    globalCoords = object.getSubcontainerArea(currentScale, { toGlobal: hasParent });
 
     isIt = !testRectangleIntersect(globalCoords, viewportArea);
 
@@ -230,16 +234,15 @@ function setupMapMovement () {
    * @param  {Integer} viewportArea.y         Y coordinate
    * @param  {Integer} viewportArea.width     Viewports width (in pixels)
    * @param  {Integer} viewportArea.height    Viewports height (in pixels)
-   * @param {Number} scale
    */
-  function applyScaleToViewport(viewportArea, scale) {
+  function applyScaleToViewport(viewportArea) {
     return {
-      x: Math.round( viewportArea.x / scale ),
-      y: Math.round( viewportArea.y / scale ),
-      x2: Math.round( viewportArea.x2 / scale ),
-      y2: Math.round( viewportArea.y2 / scale ),
-      width: Math.round( viewportArea.width / scale ),
-      height: Math.round( viewportArea.height / scale )
+      x: Math.round( viewportArea.x / currentScale ),
+      y: Math.round( viewportArea.y / currentScale ),
+      x2: Math.round( viewportArea.x2 / currentScale ),
+      y2: Math.round( viewportArea.y2 / currentScale ),
+      width: Math.round( viewportArea.width / currentScale ),
+      height: Math.round( viewportArea.height / currentScale )
     };
   }
   /**
@@ -248,11 +251,8 @@ function setupMapMovement () {
    * @param  {Object} e   Event object from worker
    */
   function viewportWorkerOnMessage(scaledViewport, smallerScaledViewport) {
-    const thisMap = map; // Just to keep reference closer than top of the scope
     var containersUnderChangedArea = [];
-    var isOutside, scaledAndChangedViewport, usesCache, scale;
-    scale = thisMap.getZoom();
-    usesCache = thisMap.isCacheActivated();
+    var scaledAndChangedViewport;
 
     scaledAndChangedViewport = Object.assign({}, scaledViewport);
 
@@ -263,15 +263,14 @@ function setupMapMovement () {
     changedCoordinates.width = 0;
     changedCoordinates.height = 0;
 
-    containersUnderChangedArea = thisMap.getPrimaryLayers().map(layer => {
+    containersUnderChangedArea = map.getPrimaryLayers().map(layer => {
       return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
     });
     containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
 
     containersUnderChangedArea.forEach((thisContainer) => {
-      isOutside = isObjectOutsideViewport(thisContainer, smallerScaledViewport, true, scale);
 
-      if (isOutside) {
+      if (isObjectOutsideViewport(thisContainer, smallerScaledViewport, true)) {
         thisContainer.visible = false;
       } else {
         thisContainer.visible = true;
@@ -312,17 +311,16 @@ function setupMapMovement () {
    * @static
    * @method applyScaleToViewport
    * @param  {AreaSize} viewportArea
-   * @param  {Number} scale             Map scale atm.
    * @return {totalViewportArea}        The total viewportArea
    */
-  function applyScaleToViewport(viewportArea, scale) {
+  function applyScaleToViewport(viewportArea) {
     return {
-      x: Math.round( viewportArea.x / scale ),
-      y: Math.round( viewportArea.y / scale ),
-      x2: Math.round( viewportArea.x2 / scale ),
-      y2: Math.round( viewportArea.y2 / scale ),
-      width: Math.round( viewportArea.width / scale ),
-      height: Math.round( viewportArea.height / scale )
+      x: Math.round( viewportArea.x / currentScale ),
+      y: Math.round( viewportArea.y / currentScale ),
+      x2: Math.round( viewportArea.x2 / currentScale ),
+      y2: Math.round( viewportArea.y2 / currentScale ),
+      width: Math.round( viewportArea.width / currentScale ),
+      height: Math.round( viewportArea.height / currentScale )
     };
   }
 }

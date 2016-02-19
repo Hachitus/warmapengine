@@ -541,6 +541,8 @@ export class Map {
    * @return {Number}         The amount of zoom applied
    */
   setZoom(scale) {
+    mapEvents.publish("mapZoomed", scale);
+
     return this.getZoomLayer().setZoom(scale);
   }
   /**

@@ -6,7 +6,7 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, hexagonPlugin, mapMovement } from 'bundles/fullModuleBundle';
+import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, hexagonPlugin, mapMovement, Sound } from 'bundles/fullModuleBundle';
 import * as Q from 'q';
 
 /* DATA FILES used for testing */
@@ -64,6 +64,7 @@ function initMap(mapData, options) {
     mapMovement
   ];
   var promise = Q.defer();
+  var sound = new Sound();
   var preload;
 
   /* Determines how much stuff we show on screen for stress testing */
@@ -79,6 +80,7 @@ function initMap(mapData, options) {
   preload = new Preload( "", { crossOrigin: false } );
   preload.addResource( typeData.graphicData.terrainBase.json );
   preload.addResource( typeData.graphicData.unit.json );
+  //sound.add( "cheer", "/tests/testAssets/sounds/personCheering.mp3" );
 
   preload.setErrorHandler(function(e) {
     console.log("preloader error:", e);
@@ -114,6 +116,10 @@ function initMap(mapData, options) {
 
     map.whenReady().then( () => {
       document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
+      document.getElementById("testFullscreen").addEventListener("click", function () {
+        sound.play("cheer").end
+          .then(() => { alert("done playing")});
+      });
     });
   }
 

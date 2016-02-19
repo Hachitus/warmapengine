@@ -6,7 +6,7 @@
 ------- IMPORT --------
 ----------------------*/
 import * as log from 'components/logger/log';
-import * as Howl from 'howler';
+import Howler from 'howler';
 import * as Q from 'q';
 
 /*---------------------
@@ -14,7 +14,7 @@ import * as Q from 'q';
 ----------------------*/
 export class Sound {
   constructor() {
-    this.allSounds = {};
+    this._allSounds = {};
   }
   /**
    * Add a sound to be used.
@@ -27,24 +27,22 @@ export class Sound {
    * @param {Object} options.volume     The volume of the sound (0 - 1)
    * @return {Object}                   Created instance of sound
    */
-  add(name, url, options = { loop: false, volume: 1, urls: []}) {
+  add(name, url, options = { loop: false, volume: 1 }) {
     const ERROR_STRING = "The sound '" + name + "' was unable to load!";
     var { loop, volume } = options;
 
-    allSounds[name] = {};
-    allSounds[name] = new Howl({
-      urls: [url],
-      loop,
-      volume,
-      onend: () => {
-        allSounds[name].onend();
-      }
+    this._allSounds[name] = {};
+    this._allSounds[name] = new Howler.Howl({
+      urls: [url]/*,
+      autoplay: true,
+      loop: true,
+      volume: 1,
+      onloaderror = (e) => {
+        log.debug(ERROR_STRING);
+      }*/
     });
-    allSounds[name].onloaderror = (e) => {
-      log.debug(ERROR_STRING);
-    }
 
-    return allSounds[name];
+    return this._allSounds[name];
   }
   /**
    * Remove the sound from usage and memory
@@ -53,7 +51,7 @@ export class Sound {
    * @param {String} name     Name / identifier of the sound to be removed
    */
   remove(name) {
-    delete allSounds[name];
+    delete this._allSounds[name];
   }
   /**
    * Start the sounds playback
@@ -63,17 +61,17 @@ export class Sound {
    * @return {Object}           Object that contains promises of the sounds state. end, pause and onload.
    */
   play(name) {
+    debugger;
     var promise = Q.defer();
 
-    allSounds[name].onend = () => {
+    this._allSounds[name]._onend = () => {
       promise.resolve(true);;
     }
-    allSounds[name].play();
+    this._allSounds[name].play();
 
     return {
       end: promise.promise,
-      pause: promise.promise,
-      onload: promise.promise
+      pause: promise.promise
     };
   }
   /**
@@ -83,7 +81,7 @@ export class Sound {
    * @param  {String} name      Name of the sound to stop playing
    */
   stop(name) {
-    allSounds[name].stop();
+    this._allSounds[name].stop();
   }
   /**
    * Fade the sound in or out
@@ -102,7 +100,7 @@ export class Sound {
       promise.resolve(true);
     };
 
-    allSounds[name].fade(from, to, duration, cb);
+    this._allSounds[name].fade(from, to, duration, cb);
 
     return promise.promise;
   }

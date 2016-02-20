@@ -138,7 +138,7 @@ Unless overridden there are 3 map events fired currently (each in different file
 
 # Sponsors
 Thank you to browserstack for providing magnificient testing tools @www.browserstack.com
-![browserstack logo](https://github.com/Hachitus/warmapengine/nonModuleRelated/browserStackLogo.svg)
+![browserstack logo](https://raw.githubusercontent.com/Hachitus/warmapengine/master/nonModuleRelated/browserStackLogo.svg)
 
 # Credit
 Copyright (c) 2016 Janne Hyytiä

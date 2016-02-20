@@ -39,11 +39,11 @@ function baseEventlistenersModule() {
     hammer = new Hammer.Manager(map.canvas);
     hamster = new Hamster(map.canvas);
 
-    eventListeners.setDetector("fullSize", fullSize().on, fullSize().off);
-    eventListeners.setDetector("fullscreen", fullscreen().on, fullscreen().off);
-    eventListeners.setDetector("zoom", zoom().on, zoom().off);
-    eventListeners.setDetector("drag", drag().on, drag().off);
-    eventListeners.setDetector("select", select().on, select().off);
+    eventListeners.setDetector("fullSize", toggleFullSize().on, toggleFullSize().off);
+    eventListeners.setDetector("fullscreen", toggleFullscreen().on, toggleFullscreen().off);
+    eventListeners.setDetector("zoom", toggleZoom().on, toggleZoom().off);
+    eventListeners.setDetector("drag", toggleDrag().on, toggleDrag().off);
+    eventListeners.setDetector("select", toggleSelect().on, toggleSelect().off);
 
     map.setPrototype("setFullsize", () => {
       /* We set this only once */
@@ -59,11 +59,11 @@ function baseEventlistenersModule() {
   /**
    * Sets the canvas to fullsize as in the same size of the window / content area. But not fullscreen. Note that
    *
-   * @method fullSizeListener
+   * @method toggleFullSize
    * @private
    * @static
    */
-  function fullSize() {
+  function toggleFullSize() {
     return {
       on: (cb) => {
         window.addEventListener("resize", cb);
@@ -81,7 +81,7 @@ function baseEventlistenersModule() {
    * @param {Function} cb     Callback that fires when this event activates
    * @return {Boolean}        Return the state of this event
    */
-  function fullscreen() {
+  function toggleFullscreen() {
     return {
       on: (cb) => {
         window.addEventListener("fullscreen", cb);
@@ -99,7 +99,7 @@ function baseEventlistenersModule() {
    * @param {Function} cb     Callback that fires when this event activates
    * @return {Boolean}        Return the state of this event
    */
-  function zoom() {
+  function toggleZoom() {
     return {
       on: (cb) => {
         var pinch = new Hammer.Pinch();
@@ -123,7 +123,7 @@ function baseEventlistenersModule() {
    * @param {Function} cb     Callback that fires when this event activates
    * @return {Boolean}        Return the state of this event
    */
-  function drag() {
+  function toggleDrag() {
     return {
       on: (cb) => {
         var pan = new Hammer.Pan({
@@ -146,7 +146,7 @@ function baseEventlistenersModule() {
    * @param {Function} cb     Callback that fires when this event activates
    * @return {Boolean}        Return the state of this event
    */
-  function select() {
+  function toggleSelect() {
     return {
       on: (cb) => {
         var tap = new Hammer.Tap();

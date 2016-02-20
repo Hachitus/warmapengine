@@ -19,6 +19,7 @@ export { _setupHexagonClick as setupHexagonClick };
  *
  * @class hexagonPlugin.setupHexagonClick
  * @requires Hammer.js. Some events are done with Hammer.js, so we need it to handle those events correctly
+ * @event                 Mapselect and objectsSelected (objectsSelected will have parameter for the objects that were selected)
  * @param  {Map} map      The currently use Map instance
  * @return {Boolean}      True
  */

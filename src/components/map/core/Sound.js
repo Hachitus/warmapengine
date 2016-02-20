@@ -33,13 +33,10 @@ export class Sound {
 
     this._allSounds[name] = {};
     this._allSounds[name] = new Howler.Howl({
-      urls: [url]/*,
-      autoplay: true,
-      loop: true,
-      volume: 1,
-      onloaderror = (e) => {
-        log.debug(ERROR_STRING);
-      }*/
+      urls: [url],
+      autoplay: false,
+      loop: loop,
+      volume: volume
     });
 
     return this._allSounds[name];
@@ -58,21 +55,14 @@ export class Sound {
    *
    * @method play
    * @param  {String} name      Name of the sound to play
-   * @return {Object}           Object that contains promises of the sounds state. end, pause and onload.
    */
   play(name) {
-    debugger;
     var promise = Q.defer();
 
     this._allSounds[name]._onend = () => {
-      promise.resolve(true);;
+      promise.resolve(true);
     }
     this._allSounds[name].play();
-
-    return {
-      end: promise.promise,
-      pause: promise.promise
-    };
   }
   /**
    * stop sound playback

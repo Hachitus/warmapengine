@@ -6,7 +6,7 @@
 /***********************
 ******** IMPORT ********
 ***********************/
-import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, hexagonPlugin, mapMovement, Sound } from 'bundles/fullModuleBundle';
+import { polyfills, factories, Preload, baseEventlisteners, mapZoom, mapDrag, hexagonPlugin, mapMovement, Sound, mapEvents } from 'bundles/fullModuleBundle';
 import * as Q from 'q';
 
 /* DATA FILES used for testing */
@@ -80,7 +80,8 @@ function initMap(mapData, options) {
   preload = new Preload( "", { crossOrigin: false } );
   preload.addResource( typeData.graphicData.terrainBase.json );
   preload.addResource( typeData.graphicData.unit.json );
-  //sound.add( "cheer", "/tests/testAssets/sounds/personCheering.mp3" );
+  loadSounds();
+  mapEvents.subscribe("objectsSelected", unitSelectedSound);
 
   preload.setErrorHandler(function(e) {
     console.log("preloader error:", e);
@@ -116,18 +117,20 @@ function initMap(mapData, options) {
 
     map.whenReady().then( () => {
       document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
-      document.getElementById("testFullscreen").addEventListener("click", function () {
-        sound.play("cheer").end
-          .then(() => { alert("done playing")});
-      });
     });
   }
 
   return { promise: promise.promise, map };
 
-  /* ====== private functions, or to be moved elsewhere ====== */
+  /* ====== private functions ====== */
   function preloadErrorHandler(err) {
     console.log("PRELOADER ERROR", err );
+  }
+  function unitSelectedSound() {
+    sound.play("cheer");
+  }
+  function loadSounds() {
+    sound.add( "cheer", "/tests/testAssets/sounds/personCheering.mp3" );
   }
 }
 

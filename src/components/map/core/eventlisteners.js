@@ -56,7 +56,7 @@ function eventListenersModule() {
     if (!detectors[type] && !detectors[type].size) {
       throw new Error("eventlisteners.on needs to have detector set with this event type!")
     }
-    detectors[type].on(_createWrapper("Map" + type, cb));
+    detectors[type].on(_createEventListenerWrapper("Map" + type, cb));
     activeEventListeners[type] = activeEventListeners[type] || new Set();
     activeEventListeners[type].add(cb);
   }
@@ -143,13 +143,13 @@ function eventListenersModule() {
   /**
    * This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.
    *
-   * @method _createWrapper
+   * @method _createEventListenerWrapper
    * @private
    * @static
    * @param  {String}   type Event type
    * @param  {Function} cb   Event callback
    */
-  function _createWrapper(type, cb) {
+  function _createEventListenerWrapper(type, cb) {
     /* NOTE! There can be more than one arguments in an event. E.g. Hamster.js */
     return (...args) => {
       mapEvents.publish(type);

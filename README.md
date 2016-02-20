@@ -136,5 +136,9 @@ Unless overridden there are 3 map events fired currently (each in different file
 * objectsSelected
 ** Data passed to event: array of objects selected as data
 
+# Sponsors
+Thank you to browserstack for providing magnificient testing tools @www.browserstack.com
+![browserstack logo](https://github.com/Hachitus/warmapengine/nonModuleRelated/browserStackLogo.svg)
+
 # Credit
 Copyright (c) 2016 Janne Hyytiä

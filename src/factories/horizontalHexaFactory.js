@@ -13,14 +13,15 @@
 
   /*---------------------
   --------- API ---------
-  ----------------------*/
+  ---------------------*/
   window.flatworld.factories.hexaFactory = hexaFactory;
 
   /*---------------------
   ------- PUBLIC --------
   ----------------------*/
   /**
-   * This constructs a whole horizontally aligned hexagonal map. Some polyfills are needed and added for IE11 ( http://babeljs.io/docs/usage/polyfill/ ). These are found in utils
+   * This constructs a whole horizontally aligned hexagonal map. Some polyfills are needed and added for IE11 (
+   * http://babeljs.io/docs/usage/polyfill/ ). These are found in utils
    *
    * @class factories.horizontalHexaFactory
    * @requires PIXI in global space
@@ -40,7 +41,6 @@
     const DATA_TYPE = (typeof datas.type === "string") ? JSON.parse(datas.type) : datas.type;
     const DATA_GAME = (typeof datas.game === "string") ? JSON.parse(datas.game) : datas.game;
     const WINDOW_SIZE = utils.resize.getWindowSize();
-    const MAP_SIZE = DATA_GAME.mapSize;
     const mapOptions = {
       refreshEventListeners: true
     };

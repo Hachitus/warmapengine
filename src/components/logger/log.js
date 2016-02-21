@@ -14,6 +14,9 @@
   window.flatworld.log = {
     debug: function(e, errorText) {
       loglevel.debug(errorText, e);
+    },
+    error: function (e, errorText) {
+      loglevel.error(errorText, e);
     }
   };
 })();

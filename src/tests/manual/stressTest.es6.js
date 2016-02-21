@@ -1,4 +1,5 @@
 'use strict';
+
 /* POLYFILL (es6StringPolyfill)  IS NEEDED FOR IE11, maybe Symbol support or something missing:
  * http://babeljs.io/docs/usage/polyfill/
  * */
@@ -17,7 +18,6 @@
   var mapMovement = window.flatworld.extensions.mapMovement;
   var Sound = window.flatworld.Sound;
   var mapEvents = window.flatworld.mapEvents;
-  var Q = window.flatworld.Q;
 
   /* DATA FILES used for testing */
   var gameData = window.gameData;
@@ -144,15 +144,16 @@
 
     preload.resolveOnComplete()
       .then(onComplete)
-      .then(function (map) { return map.whenReady })
-      .then(function () {
+      .then(function (map) {
+        return map.whenReady;
+      }).then(function () {
         document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
 
         var perfTestLoop = setupPerfTestLoop();
 
         if (automatic) {
           map.whenReady().then(function() {
-            window.setTimeout(perfTestLoop)
+            window.setTimeout(perfTestLoop);
           }).then(null, function(e) {
             console.log(e);
           });
@@ -179,7 +180,7 @@
             if (round < 5) {
               window.setTimeout(perfTestLoop);
             }
-          }
+          };
         }
       })
       .catch(function (e) {

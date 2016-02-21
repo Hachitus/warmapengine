@@ -9,7 +9,6 @@
   /*-----------------------
   ---------- API ----------
   -----------------------*/
-  debugger;
   window.flatworld.extensions.hexagons.selectHexagonObject = setupObject_select_hexagon();
 
   /*-----------------------

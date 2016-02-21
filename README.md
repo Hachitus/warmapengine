@@ -5,6 +5,14 @@ This engine is still in development. It is not well tested for other uses than t
 
 Also I am very happy to get feedback on any projects or tests that might be using this engine and very eager to help with getting issues resolved.
 
+Things to do:
+- Make the ES6 bundling work.
+- Refactor / rework UI system. It is not simple enough now and it is too tied to weird test-cases like CSS-classes etc. + take the jquery example away from UI and put something more useful there.
+- Go through the whole API and see what could be simplified and streamlined.
+- Move everything under flatworld repository
+...
+
+
 #Introduction
 2D strategy game engine for browsers. Project will move forward at its own pace. The very core functionality has been done, that practically manages adding the objects to the map, moving the map around and selecting + highlighting objects on the map. Other functionality outside of that, has not yet been done. But rough roadmap for thise exist.
 

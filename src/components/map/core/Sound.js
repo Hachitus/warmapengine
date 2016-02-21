@@ -1,5 +1,4 @@
 (function () {
-  /* global System, Q */
   'use strict';
 
   /*---------------------
@@ -7,7 +6,6 @@
   ----------------------*/
   var Q = window.flatworld_libararies.Q;
   var Howl = window.flatworld_libararies.Howler;
-  var utils = window.flatworld.utils;
   var log = window.flatworld.mapLayers;
 
   /*---------------------
@@ -62,7 +60,7 @@
 
       this._allSounds[name]._onend = () => {
         promise.resolve(true);
-      }
+      };
       this._allSounds[name].play();
     }
     /**

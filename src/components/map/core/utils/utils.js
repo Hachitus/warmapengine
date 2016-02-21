@@ -112,7 +112,6 @@
          (
          document.mozFullScreen || document.webkitIsFullScreen );
 
-      /* jshint expr: true */
       isInFullScreen ? cancelFullScreen( document ) : requestFullScreen( elem );
 
       return false;

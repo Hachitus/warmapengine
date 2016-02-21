@@ -6,11 +6,12 @@
   ----------------------*/
   var Q = window.flatworld_libararies.Q;
   var mapLayers = window.flatworld.mapLayers;
-  var Objects = window.flatworld.Objects;
   var ObjectManager = window.flatworld.ObjectManager;
   var mapEvents = window.flatworld.mapEvents;
   var utils = window.flatworld.utils;
   var MapDataManipulator = window.flatworld.MapDataManipulator;
+  var generalUtils = window.flatworld.generalUtils;
+  var mapLog = window.flatworld.log;
 
   /*---------------------
   ------ VARIABLES ------
@@ -29,20 +30,28 @@
     /**
      * #Main class for the engine
      *
-     * Initializes the whole structure and plugins and is used as primary API for all operations. This class is e.g. passed to every plugin that get initialized with their init-method.
+     * Initializes the whole structure and plugins and is used as primary API for all operations. This class is e.g. passed to every
+     * plugin that get initialized with their init-method.
      *
      * You use the class by instantiating it (new) and then finishing initialization with init-method. Please see examples below.
      *
-     * The biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the tests/data-folder, but the factory is responsible for creating the objects, so you can use your own factory implementation. So to understand more, please see e.g. factories.horizontalHexaFactory.
+     * The biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the
+     * tests/data-folder, but the factory is responsible for creating the objects, so you can use your own factory implementation. So to
+     * understand more, please see e.g. factories.horizontalHexaFactory.
      *
-     * The map consists of layer on top of each other. The example is best understood when thinking typical war strategy game. The structure is this:
+     * The map consists of layer on top of each other. The example is best understood when thinking typical war strategy game. The
+     * structure is this:
      * 1. StaticLayer: Handles things like scaling / zooming the map
-     * 2. MovableLayer: Obviously handles movement of the map. Also is a good place to get map coordinates. Since getting global coordinates won't help you much, half of the time.
+     * 2. MovableLayer: Obviously handles movement of the map. Also is a good place to get map coordinates. Since getting global
+     * coordinates won't help you much, half of the time.
      * 3. Different layers: like units, terrain, fog of war, UIs etc. Can also contains special layers like dynamically changed UIlayers.
-     * 4. possible subcontainers (used for optimized object selection and map movement). Can also contains special layers like dynamically changed UIlayers.
+     * 4. possible subcontainers (used for optimized object selection and map movement). Can also contains special layers like dynamically
+     * changed UIlayers.
      * 5. Individual objects, like units, terrains, cities etc...
      *
-     * Plugins can be added with activatePlugins-method by sending them to the class. Plugins must always implement init-method, which receives Map instance. Plugins are not yet restricted what they can do and can add functionality without touching map or can modify objects or their prototypes through access to Map instance.
+     * Plugins can be added with activatePlugins-method by sending them to the class. Plugins must always implement init-method, which
+     * receives Map instance. Plugins are not yet restricted what they can do and can add functionality without touching map or can modify
+     * objects or their prototypes through access to Map instance.
      *
      * @example
      *     var map = new Map(divContainer, mapOptions );
@@ -62,10 +71,12 @@
      * @param {Integer} props.bounds.width                  Bound width
      * @param {Integer} props.bounds.height                 Bound height
      * @param {Object} props.rendererOptions                Renderer options passed to PIXI.autoDetectRenderer
-     * @param {Object} props.subcontainers                  Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.
+     * @param {Object} props.subcontainers                  Subcontainers size in pixels. If given, will activate subcontainers. If not
+     * given or false, subcontainers are not used.area.
      * @param {Integer} props.subcontainers.width           Subcontainer width
      * @param {Integer} props.subcontainers.height          Subcontainer height
-     * @param {FPSCallback} trackFPSCB                      Callback function for tracking FPS in renderer. So this is used for debugging and optimizing.
+     * @param {FPSCallback} trackFPSCB                      Callback function for tracking FPS in renderer. So this is used for debugging
+     * and optimizing.
      *
      * @return {Object}                                      New Map instance
      */
@@ -95,7 +106,8 @@
       canvasContainer.innerHTML = "";
       /* Add the canvas Element PIXI created inside the given canvasContainer */
       canvasContainer.appendChild(_renderer.view, canvasContainer);
-      /* This defines which MapLayer class we use to generate layers on the map. Under movableLayer. These are layers like: Units, terrain, fog of war, UIs etc. */
+      /* This defines which MapLayer class we use to generate layers on the map. Under movableLayer. These are layers like: Units,
+       * terrain, fog of war, UIs etc. */
       ParentLayerConstructor = subcontainers ? mapLayers.MapLayerParent : mapLayers.MapLayer;
 
       /* These are the 2 topmost layers on the map:
@@ -164,6 +176,20 @@
        **/
       this.cache = cache;
       /**
+       * Set variable showing if the device supports touch or not.
+       *
+       * @attribute isTouch
+       * @type {Boolean}
+       **/
+      this.isSupportedTouch = generalUtils.environmentDetection.isTouchDevice();
+      /**
+       * The object or objects that are currently selected for details and actions / orders. This gets set by other modules, like plugins.
+       *
+       * @attribute currentlySelectedObjects
+       * @type {Array}
+       **/
+      this.currentlySelectedObjects = [];
+      /**
        * Layer types. Can be extended, but the already defined types are supposed to be constants and not to be changed.
        *
        * @attribute layerTypes
@@ -186,7 +212,8 @@
       this.VERSION = VERSION;
     }
     /**
-     * This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since normally the plugins have to be activated before the map is shown.
+     * This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since
+     * normally the plugins have to be activated before the map is shown.
      *
      * @method init
      * @param {String[]|Object[]} plugins                  Plugins to be activated for the map. Normally you should give the plugins here
@@ -194,10 +221,12 @@
      * @param  {Object} coord                     Starting coordinates for the map.
      * @param  {Integer} coord.x                  X coordinate.
      * @param  {Integer} coord.y                  Y coordinate.
-     * @param {Function} tickCB                   callback function for tick. Tick callback is initiated in every frame. So map draws happen during ticks.
+     * @param {Function} tickCB                   callback function for tick. Tick callback is initiated in every frame. So map draws
+     * happen during ticks.
      * @param {Object} options                    Extra options.
      * @param {Boolean} options.fullsize          Do we set fullsize canvas or not at the beginning. Default: true
-     * @return {Array}                            Returns an array of Promises. If this is empty / zero. Then there is nothing to wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
+     * @return {Array}                            Returns an array of Promises. If this is empty / zero. Then there is nothing to wait
+     * for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.
      **/
     init(plugins = [], coord = { x: 0, y: 0 }, tickCB = null, options = { fullsize: true }) {
       var allPromises = [];
@@ -490,7 +519,7 @@
           plugin.init(this);
         }
       } catch (e) {
-        console.log("An error initializing plugin. JSON.stringify: '" + JSON.stringify(plugin) + "' ", e);
+        mapLog.log("An error initializing plugin. JSON.stringify: '" + JSON.stringify(plugin) + "' ", e);
       }
     }
     /**

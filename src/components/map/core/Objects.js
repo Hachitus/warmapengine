@@ -217,10 +217,7 @@
        * @attribute actions
        * @type {Object}
        */
-      this.actions = {
-        move: [],
-        attack: []
-      };
+      this.actions = {};
     }
     /**
      * Execute action on units (move, attack etc.). @todo THIS HAS NOT BEEN IMPLEMENTED YET!
@@ -258,6 +255,13 @@
     dropShadow(...args) {
       return utils.effects.dropShadow(...args);
     }
+    /**
+      * This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you
+      * don't implement your own, I suggest you use it. You can attach any method to object if you wish. Like attack, siege, greet, talk.
+      *
+      * @method move
+      */
+    move() { return "notImplementedYet. Activate with plugin"; }
   }
 
   window.flatworld.objects.ObjectSprite = ObjectSprite;

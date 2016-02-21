@@ -2,6 +2,11 @@
   'use strict';
 
   /*---------------------
+  --------- API ---------
+  ----------------------*/
+  window.flatworld.mapEvents = setupMapEvents();
+
+  /*---------------------
   -------- PUBLIC -------
   ----------------------*/
   /**
@@ -10,7 +15,7 @@
    * - mapfullscreen - NO ARGUMENTS
    * - mapfullSize - NO ARGUMENTS
    * - mapdrag - NO ARGUMENTS
-   * - mapzoomed - event.customData[0].previousScale , .newScale
+   * - mapzoomed - NO ARGUMENTS
    * - Mapselect - NO ARGUMENTS
    * - mapMoved
    * - mapResize
@@ -24,14 +29,17 @@
     const TIMER_FOR_SAME_TYPE = 50;
     var lastTimePublished = {};
 
-    /*---------------------------
-    ------------ API ------------
-    ---------------------------*/
+    /*---------------------
+    --------- API ---------
+    ----------------------*/
     return {
       subscribe,
       publish
     };
 
+    /*---------------------
+    -------- PUBLIC -------
+    ----------------------*/
     function subscribe(type, cb) {
       document.addEventListener(type, cb);
       lastTimePublished[type] = 0;
@@ -51,9 +59,4 @@
       }
     }
   }
-
-  /*---------------------
-  --------- API ---------
-  ----------------------*/
-  window.flatworld.mapEvents = setupMapEvents();
 })();

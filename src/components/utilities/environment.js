@@ -15,7 +15,8 @@
    */
   function setupEnvironmentDetection() {
     return {
-      isMobile
+      isMobile,
+      isTouchDevice
     };
 
     /**
@@ -29,6 +30,19 @@
       var features = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || (navigator.msMaxTouchPoints > 0);
 
       return features && screenSize;
+    }
+  }
+  /**
+   * Detect if device supports touch events
+   *
+   * @method isMobile
+   * @return {Boolean}
+   */
+  function isTouchDevice() {
+    if ("ontouchstart" in document.documentElement) {
+      return true;
+    } else {
+      return false;
     }
   }
 })();

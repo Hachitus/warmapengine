@@ -9,7 +9,6 @@
 	<!-- MOBILE Remove tap highlight on Windows Phone -->
 	<meta name="msapplication-tap-highlight" content="no" />
 
-	
 	<script src="/jspm_packages/system.js"></script>
 	<script src="/config.js"></script>
   <script src="/assets/lib/pace/pace.min.js"></script>
@@ -51,6 +50,8 @@
     (function () {
       /* global System */
       'use strict';
+
+      System.import('/bundles/globalBundle.js');
 
       // align top-left
       window.FPSElement = document.createElement("div");

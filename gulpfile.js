@@ -1,49 +1,69 @@
-/* global require */
-
-process.on('uncaughtException', (err) => {
-    console.log(`Caught exception: ${err}`);
-});
-process.on('unhandledRejection', (reason, p) => {
-    console.log("Unhandled Rejection at: Promise ", p, " reason: ", reason);
-});
-
 var gulp = require('gulp');
-var babel = require('gulp-babel');
-var rename = require('gulp-rename');
-var uglify = require('gulp-uglify');
+var fs = require('fs');
+var browserify = require('browserify');
+var watchify = require('watchify');
+var babelify = require('babelify');
+var rimraf = require('rimraf');
+var source = require('vinyl-source-stream');
+var _ = require('lodash');
+var browserSync = require('browser-sync');
+var reload = browserSync.reload;
 
-// Assets for the project
-var Assets = {
-    dest: './src/dist/',
-    main: 'bundles/fullModuleBundle.js',
-    minified: 'flatworld.es6.min.js',
-    minifiedES5: 'flatworld.min.js',
-    package: './package.json',
-    src: './src/',
+var config = {
+  entryFile: './src/bundles/fullModuleBundle.js',
+  outputDir: './src/dist/',
+  outputFile: 'app.js'
 };
 
-// See the uglify documentation for more details
-var _uglifySettings = {
-    compress: {
-        comparisons: true,
-        conditionals: true,
-        /* jscs: disable */
-        dead_code: true,
-        drop_console: true,
-        /* jscs: enable */
-        unsafe: true,
-        unused: true,
-    },
+// clean the output directory
+gulp.task('clean', function(cb){
+    rimraf(config.outputDir, cb);
+});
+
+var bundler;
+function getBundler() {
+  if (!bundler) {
+    bundler = watchify(browserify(config.entryFile, _.extend({ debug: true, paths: ['./node_modules','./src'], extensions: ['es6', "cjs", "amd", "umd"] }, watchify.args)));
+  }
+  return bundler;
 };
 
-// Run the babel transpiler to convert from ES2015 to ES5, as well as minifying
-gulp.task('es2015to5', function es2015To5Task() {
-    return gulp.src(Assets.src + '/' + Assets.main)
-        .pipe(babel({
-            presets: ['es2015'],
-            plugins: ['transform-es2015-modules-umd'],
-        }))
-        //.pipe(uglify(_uglifySettings))
-        .pipe(rename(Assets.minifiedES5))
-        .pipe(gulp.dest(Assets.dest));
+function bundle() {
+  return getBundler()
+    .transform(babelify)
+    .bundle()
+    .on('error', function(err) { console.log('Error: ' + err.message); })
+    .pipe(source(config.outputFile))
+    .pipe(gulp.dest(config.outputDir))
+    .pipe(reload({ stream: true }));
+}
+
+gulp.task('build-persistent', ['clean'], function() {
+  return bundle();
+});
+
+gulp.task('build', ['build-persistent'], function() {
+  process.exit(0);
+});
+
+gulp.task('watch', ['build-persistent'], function() {
+
+  browserSync({
+    server: {
+      baseDir: './'
+    }
+  });
+
+  getBundler().on('update', function() {
+    gulp.start('build-persistent')
+  });
+});
+
+// WEB SERVER
+gulp.task('serve', function () {
+  browserSync({
+    server: {
+      baseDir: './'
+    }
+  });
 });

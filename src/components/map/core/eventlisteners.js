@@ -11,7 +11,7 @@ var detectors = {};
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
-import { mapEvents } from 'bundles/strippedCoreBundle';
+import { mapEvents } from 'bundles/coreBundle';
 
 /*-----------------------
 ---------- API ----------

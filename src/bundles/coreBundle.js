@@ -17,9 +17,6 @@ export * from 'components/map/core/UI';
 export * from 'components/map/core/UI_themeBase';
 export * from 'components/map/core/Sound';
 
-/* Adds to global namespace! */
-import * as PIXI from 'assets/lib/pixi/pixi.js';
-import * as hamster from 'assets/lib/hamsterjs/hamster.js';
 // purely for internet explorer. Though I think this issue is only in EI11,not in edge?
 import * as es6StringPoly from 'assets/lib/polyfills/es6StringPoly/es6StringPoly.js';
 

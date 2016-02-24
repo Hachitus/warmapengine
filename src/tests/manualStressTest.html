@@ -9,11 +9,10 @@
 	<!-- MOBILE Remove tap highlight on Windows Phone -->
 	<meta name="msapplication-tap-highlight" content="no" />
 
-	
-	<script src="/jspm_packages/system.js"></script>
-	<script src="/config.js"></script>
-  <script src="/assets/lib/pace/pace.min.js"></script>
-  <link rel="stylesheet" href="/assets/lib/pace/css/loadingBar.css">
+	<script src="/src/jspm_packages/system.js"></script>
+	<script src="/src/config.js"></script>
+  <script src="/src/assets/lib/pace/pace.min.js"></script>
+  <link rel="stylesheet" href="/src/assets/lib/pace/css/loadingBar.css">
 </head>
 
 <body>
@@ -52,6 +51,8 @@
       /* global System */
       'use strict';
 
+      System.import('/src/bundles/globalBundle.js');
+
       // align top-left
       window.FPSElement = document.createElement("div");
       window.FPSElement.style.position = 'absolute';
@@ -61,7 +62,7 @@
 
       document.body.appendChild( window.FPSElement );
 
-  		System.import('/tests/manual/stressTest.es6').then(function() {
+  		System.import('/src/tests/manual/stressTest.es6').then(function() {
   			var mapsizeElement = document.getElementById("hexaTiles");
   			var cacheElement = document.getElementById("cache");
   			var currentMapSize, mapData, cacheMap;

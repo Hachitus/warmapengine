@@ -10,9 +10,9 @@ var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 
 var config = {
-  entryFile: './src/bundles/fullModuleBundle.js',
-  outputDir: './src/dist/',
-  outputFile: 'app.js'
+  entryFile: './src/bundles/globalBundle.js',
+  outputDir: './dist/',
+  outputFile: 'flatworld.js'
 };
 
 // clean the output directory

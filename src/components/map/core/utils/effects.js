@@ -1,44 +1,46 @@
-'use strict';
+(function () {
+  'use strict';
 
-/*---------------------
---------- API ---------
-----------------------*/
-export const effects = setupEffects();
-
-/*---------------------
--------- PUBLIC -------
-----------------------*/
-/**
- * This module will hold the most common graphical effects used in the map. It is still very stub as the development
- * hasn't proceeded to this stage yet.
- *
- * @class utils.effects
- * @return {Object}      init, _startDragListener
- */
-function setupEffects() {
   /*---------------------
-  ------- API ----------
-  --------------------*/
-  return {
-    dropShadow
-  };
+  --------- API ---------
+  ----------------------*/
+  window.flatworld.utils.effects = setupEffects();
 
-  /*----------------------
-  ------- PUBLIC ---------
+  /*---------------------
+  -------- PUBLIC -------
   ----------------------*/
   /**
-   * @method dropShadow
-   * @param  {Object} options
+   * This module will hold the most common graphical effects used in the map. It is still very stub as the development
+   * hasn't proceeded to this stage yet.
+   *
+   * @class utils.effects
+   * @return {Object}      init, _startDragListener
    */
-  function dropShadow(options = { color: "#000000", distance: 5, alpha: 0.5, amgöe: 45, blur: 5 } ) {
-      var shadow  = new PIXI.filters.DropShadowFilter();
+  function setupEffects() {
+    /*---------------------
+    ------- API ----------
+    --------------------*/
+    return {
+      dropShadow
+    };
 
-      shadow.color  = options.color;
-      shadow.distance = options.distance;
-      shadow.alpha  = options.alpha;
-      shadow.angle  = options.angle;
-      shadow.blur   = options.blur;
+    /*----------------------
+    ------- PUBLIC ---------
+    ----------------------*/
+    /**
+     * @method dropShadow
+     * @param  {Object} options
+     */
+    function dropShadow(options = { color: "#000000", distance: 5, alpha: 0.5, amgöe: 45, blur: 5 } ) {
+        var shadow  = new PIXI.filters.DropShadowFilter();
 
-      this.filters = [shadow];
-    }
-}
+        shadow.color  = options.color;
+        shadow.distance = options.distance;
+        shadow.alpha  = options.alpha;
+        shadow.angle  = options.angle;
+        shadow.blur   = options.blur;
+
+        this.filters = [shadow];
+      }
+  }
+})();

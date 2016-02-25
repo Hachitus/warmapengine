@@ -143,10 +143,7 @@
 
     preload.resolveOnComplete()
       .then(onComplete)
-      .then((readyMap) => {
-        map = readyMap;
-      })
-      .then(() => {
+      .then((map) => {
         map.whenReady().then(() => {
           document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
         }).then(() => {
@@ -200,6 +197,8 @@
         });
 
       map.init( pluginsToActivate, mapData.startPoint );
+
+      return map;
     }
 
     /* ====== private functions ====== */

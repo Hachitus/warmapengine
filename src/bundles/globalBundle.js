@@ -1,16 +1,16 @@
-import * as core from 'bundles/coreBundle';
-import * as log from 'components/logger/log';
-import * as basicActions from 'components/map/extensions/basicActions/basicActions';
-import * as mapMovement from 'components/map/extensions/mapMovement/mapMovement';
-import * as UIDefaultTemplate from 'components/map/UIs/default/default';
-import * as Preload from 'components/preloading/Preload';
-import * as generalUtils from 'components/utilities/index';
+var core = require('bundles/coreBundle');
+var log = require('components/logger/log');
+var basicActions = require('components/map/extensions/basicActions/basicActions');
+var mapMovement = require('components/map/extensions/mapMovement/mapMovement');
+var UIDefaultTemplate = require('components/map/UIs/default/default');
+var Preload = require('components/preloading/Preload');
+var generalUtils = require('components/utilities/index');
 
 /* Export factories */
-import { factories as factories } from 'factories/index';
+var factories = require('factories/index');
 
 /* Export hexagon plugin */
-import * as hexagonPlugin from 'components/map/extensions/hexagons/index';
+var hexagonPlugin = require('components/map/extensions/hexagons/index');
 
 window.flatworld = core;
 window.flatworld.Q = Q;

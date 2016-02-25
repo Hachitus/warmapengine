@@ -1,0 +1,17 @@
+window.flatworld_libararies = {};
+window.flatworld_libararies.PIXI = window.PIXI;
+window.flatworld_libararies.Q = window.Q;
+window.flatworld_libararies.Hammer = window.Hammer;
+window.flatworld_libararies.hamster = window.hamster;
+window.flatworld_libararies.Handlebars = window.Handlebars;
+window.flatworld_libararies.loglevel = window.log;
+window.flatworld_libararies.Howler = window.Howl;
+window.flatworld = {};
+window.flatworld.generalUtils = {};
+window.flatworld.objects = {};
+window.flatworld.extensions = {};
+window.flatworld.mapLayers = {};
+window.flatworld.utils = {};
+window.flatworld.factories = {};
+window.flatworld.UIs = {};
+window.flatworld.UIs.default = {};

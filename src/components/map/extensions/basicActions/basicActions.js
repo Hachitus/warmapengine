@@ -1,13 +1,15 @@
-'use strict';
+(function () {
+  'use strict';
 
-/*---------------------
-------- IMPORT --------
-----------------------*/
-export {extendUnit as extendUnit};
+  /*---------------------
+  ------- IMPORT --------
+  ----------------------*/
+  exports.flatworld.extensions.basicActions = extendUnit;
 
-/*---------------------
---------- API ---------
-----------------------*/
-function extendUnit (object) {
-  object.prototype.move = function () {};
-}
+  /*---------------------
+  --------- API ---------
+  ----------------------*/
+  function extendUnit (object) {
+    object.prototype.move = function () {};
+  }
+})();

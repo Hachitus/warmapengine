@@ -1,18 +1,19 @@
- 'use strict';
+(function () {
+  'use strict';
 
-/*---------------------
---------- API ---------
-----------------------*/
+  /*---------------------
+  --------- API ---------
+  ----------------------*/
+  var loglevel = window.flatworld_libararies.loglevel;
 
-import log from 'loglevel';
-
-log.enableAll();
-/**
- * @class log
- * @requires loglevel.js for frontend logging, or something similar
- **/
-export default {
-  debug: function(e, errorText) {
-    log.debug(errorText, e);
-  }
-};
+  loglevel.enableAll();
+  /**
+   * @class log
+   * @requires loglevel.js for frontend logging, or something similar
+   **/
+  window.flatworld.log = {
+    debug: function(e, errorText) {
+      loglevel.debug(errorText, e);
+    }
+  };
+})();

@@ -3,16 +3,16 @@
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
-import { utils } from 'bundles/coreBundle';
+import { MapLayer, MapLayerParent, ObjectManager, mapEvents, utils, MapDataManipulator } from 'bundles/coreBundle';
 
 /*-----------------------
 ---------- API ----------
 -----------------------*/
-export class Object_sprite extends PIXI.Sprite {
+export class ObjectSprite extends PIXI.Sprite {
   /**
    * The base class of all sprite objects
    *
-   * @class Object_sprite
+   * @class ObjectSprite
    * @constructor
    * @extends PIXI.Sprite
    * @param {PIXI.Point} coords                         the coordinate where the object is located at, relative to it's parent
@@ -168,14 +168,14 @@ export class Object_sprite extends PIXI.Sprite {
   }
 }
 
-export class ObjectSpriteTerrain extends Object_sprite {
+export class ObjectSpriteTerrain extends ObjectSprite {
   /**
    * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
    * inherited, depending on the map type. For example you might want to add some click area for these
    *
    * @class ObjectSpriteTerrain
    * @constructor
-   * @extends Object_sprite
+   * @extends ObjectSprite
    * @param {Coordinates} coords        format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
    * @param {object} data               This units custom data
    * @param {object} options            other specific options for constructing this terrain
@@ -189,13 +189,13 @@ export class ObjectSpriteTerrain extends Object_sprite {
   }
 }
 
-export class ObjectSpriteUnit extends Object_sprite {
+export class ObjectSpriteUnit extends ObjectSprite {
   /**
    * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
    *
    * @class ObjectSpriteUnit
    * @constructor
-   * @extends Object_sprite
+   * @extends ObjectSprite
    * @requires graphics
    * @param {Object} coords               Coordinates for the object relative to it's parent
    * @param {Integer} coords.x            X coordinate

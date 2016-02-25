@@ -9,12 +9,13 @@
 	<!-- MOBILE Remove tap highlight on Windows Phone -->
 	<meta name="msapplication-tap-highlight" content="no" />
 
-	<script src="/assets/lib/pixi/pixi.js"></script>
-	<!-- purely for internet explorer. Though I think this issue is only in EI11,not in edge? -->
-	<script src="/assets/lib/polyfills/es6StringPoly/es6StringPoly.js"></script>
-	<script src="/assets/lib/hamsterjs/hamster.js"></script>
-	<script src="/jspm_packages/system.js"></script>
-	<script src="/config.js"></script>
+  <script src="/src/assets/lib/pixi/pixi.min.js"></script>
+  <script src="/src/assets/lib/handlebars/handlebars.js"></script>
+  <script src="/src/assets/lib/hammer/hammer.min.js"></script>
+  <script src="/src/assets/lib/hamster/hamster.js"></script>
+  <script src="/src/dist/flatworld.js"></script>
+  <script src="/src/assets/lib/pace/pace.min.js"></script>
+  <link rel="stylesheet" href="/src/assets/lib/pace/css/loadingBar.css">
 </head>
 
 <body>
@@ -62,67 +63,69 @@
 
       document.body.appendChild( window.FPSElement );
 
-		System.import('/tests/manual/stressTest.es6').then(function() {
-			var mapsizeElement = document.getElementById("hexaTiles");
-			var cacheElement = document.getElementById("cache");
-			var currentMapSize, mapData;
-			var cacheMap = true;
+  		System.import('/src/tests/manual/stressTest.es6').then(function() {
+  			var mapsizeElement = document.getElementById("hexaTiles");
+  			var cacheElement = document.getElementById("cache");
+        var cacheMap = true;
+  			var currentMapSize, mapData;
 
-	        document.getElementById("testNotification").textContent = "START THE TESTS BY SELECTING VALUES BELOW AND CLICKING START!";
-	        document.getElementById("changeValues").disabled = false;
+        document.getElementById("testNotification").textContent = "START THE TESTS BY SELECTING VALUES BELOW AND CLICKING START!";
+        document.getElementById("changeValues").disabled = false;
 
-	        document.getElementById("changeValues").addEventListener("click", function() {
-				document.getElementById("testNotification").style.display = "none";
-				currentMapSize = mapsizeElement.value;
-				cacheMap = cacheElement.checked;
+        document.getElementById("changeValues").addEventListener("click", function() {
+  				document.getElementById("testNotification").style.display = "none";
+  				currentMapSize = mapsizeElement.value;
+  				cacheMap = cacheElement.checked;
 
-				mapData = window.getMapData(currentMapSize);
-				window.mapReady = window.initMap(mapData, {
-					mapsize: currentMapSize,
-					cache: cacheMap,
-					canvasContainer: document.getElementById("mapCanvasContainer"),
-					trackFPSCB: function (data) {
-  					var totalFPS = data.FPS;
-  					var totalTime = data.FPStime;
-  					var totalRenderTime = data.renderTime;
-  					var drawCount = data.drawCount;
-  					window.FPSElement.innerHTML = totalFPS + " - " + Math.round( ( totalRenderTime / totalTime * 100 ) ) + "%" + " : " + drawCount;
-					}
-          		});
+  				mapData = window.getMapData(currentMapSize);
+  				window.mapReady = window.initMap(mapData, {
+  					mapsize: currentMapSize,
+  					cache: cacheMap,
+  					canvasContainer: document.getElementById("mapCanvasContainer"),
+            automatic: true,
+  					trackFPSCB: function (data) {
+    					var totalFPS = data.FPS;
+    					var totalTime = data.FPStime;
+    					var totalRenderTime = data.renderTime;
+    					var drawCount = data.drawCount;
 
-                /* These are the actual automatic tests. They move the map to right edge and then back. Repeating it 5 times. Each time calculating the FPS. And you can take profiling during this, to get memory and CPU usages. */
-                window.mapReady.promise.then(function (map) {
-                    map.whenReady().then(() => {
-                        window.setTimeout(perfTestLoop)
-                    }).then(null, (e) => {
-                        console.log(e);
-                    });
+    					window.FPSElement.innerHTML = totalFPS + " - " + Math.round( ( totalRenderTime / totalTime * 100 ) ) + "%" + " : " + drawCount;
+  					}
+      		});
 
-                    var perfTestLoop = (function () {
-                        var direction = 1;
-                        var round = 0;
-                        var quantifier = 2;
+          /* These are the actual automatic tests. They move the map to right edge and then back. Repeating it 5 times. Each time calculating the FPS. And you can take profiling during this, to get memory and CPU usages. */
+          window.mapReady.promise.then(function (map) {
+            map.whenReady().then(() => {
+              window.setTimeout(perfTestLoop)
+            }).then(null, (e) => {
+              console.log(e);
+            });
 
-                        return function() {
-                            map.moveMap({
-                                x: direction === 1 ? -quantifier : quantifier,
-                                y: direction === 1 ? -quantifier : quantifier
-                            });
+            var perfTestLoop = (function () {
+              var direction = 1;
+              var round = 0;
+              var quantifier = 2;
 
-                            if (map.getMovableLayer().x > 500) {
-                                round ++;
-                                direction = 1;
-                            } else if (map.getMovableLayer().x < - 7000) {
-                                direction = 2;
-                            }
+              return function() {
+                map.moveMap({
+                  x: direction === 1 ? -quantifier : quantifier,
+                  y: direction === 1 ? -quantifier : quantifier
+                });
 
-                            if (round < 5) {
-                                window.setTimeout(perfTestLoop);
-                            }
-                        }
-                    })();
-                })
-        	});
+                if (map.getMovableLayer().x > 500) {
+                  round ++;
+                  direction = 1;
+                } else if (map.getMovableLayer().x < - 7000) {
+                  direction = 2;
+                }
+
+                if (round < 5) {
+                  window.setTimeout(perfTestLoop);
+                }
+              }
+            })();
+          })
+      	});
   		});
     })();
 	</script>

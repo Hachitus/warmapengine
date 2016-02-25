@@ -6,9 +6,9 @@
 ------- IMPORT --------
 ----------------------*/
 import $ from 'assets/lib/jquery/jquery-css-ajax-effects.min.js';
-import { templates } from 'components/map/UIs/default/layout/templates';
+import { templates } from './layout/templates';
 import { createVisibleHexagon } from 'components/map/extensions/hexagons/utils/createHexagon';
-import { UI_templateBase, UI } from 'bundles/coreBundle';
+import { UITemplateBase, UI } from 'bundles/coreBundle';
 //import { drawShapes } from 'components/map/UIs/default/utils/arrows';
 
 /*---------------------
@@ -23,13 +23,14 @@ var $elements = {};
 /*---------------------
 --------- API ---------
 ----------------------*/
-export class UI_default extends UI_templateBase {
+export class UIDefault extends UITemplateBase {
   /**
    * The simplest default UI implementation. Implemented UI functionalities for: showSelections, highlightSelectedObject
    *
-   * @class UI_default
+   * @class UIDefault
    * @constructor
    * @requires Handlebars
+   * @requires hexagon extension
    * @requires jQuery
    * @todo  should take jQuery away from this, as soon as we refactor the animations and graphics for selections
    * @param  {HTMLElement} modal

@@ -2,11 +2,6 @@
 "use strict";
 
 /*-----------------------
---------- IMPORT --------
------------------------*/
-import * as Q from 'q';
-
-/*-----------------------
 ---------- API ----------
 -----------------------*/
 export class Preload {
@@ -15,6 +10,7 @@ export class Preload {
    *
    * @class Preload
    * @constructor
+   * @requires Q for promises
    * @todo should you use PIXI here or just https://github.com/englercj/resource-loader straight?
    */
   constructor (baseUrl, options = { concurrency: 15, crossOrigin: false }) {

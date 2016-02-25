@@ -2,7 +2,9 @@
 
 /* Bundle utils in utils-parent and export them */
 import { polyfills } from './polyfills';
+import { environmentDetection } from './environment';
 
-export const generalUtils = {
-	polyfills
+export {
+  polyfills,
+  environmentDetection
 };

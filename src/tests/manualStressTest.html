@@ -9,17 +9,8 @@
 	<!-- MOBILE Remove tap highlight on Windows Phone -->
 	<meta name="msapplication-tap-highlight" content="no" />
 
-<<<<<<< HEAD
-	<script src="/src/jspm_packages/system.js"></script>
-	<script src="/src/config.js"></script>
   <script src="/src/assets/lib/pace/pace.min.js"></script>
   <link rel="stylesheet" href="/src/assets/lib/pace/css/loadingBar.css">
-=======
-	<script src="/jspm_packages/system.js"></script>
-	<script src="/config.js"></script>
-  <script src="/assets/lib/pace/pace.min.js"></script>
-  <link rel="stylesheet" href="/assets/lib/pace/css/loadingBar.css">
->>>>>>> master
 </head>
 
 <body>
@@ -53,52 +44,14 @@
     MODAL WINDOW
   </div>
 
-  <script>
-    (function () {
-      /* global System */
-      'use strict';
-
-      System.import('/src/bundles/globalBundle.js');
-
-      // align top-left
-      window.FPSElement = document.createElement("div");
-      window.FPSElement.style.position = 'absolute';
-      window.FPSElement.style.left = '0px';
-      window.FPSElement.style.top = '0px';
-      window.FPSElement.style.backgroundColor = 'white';
-
-      document.body.appendChild( window.FPSElement );
-
-  		System.import('/src/tests/manual/stressTest.es6').then(function() {
-  			var mapsizeElement = document.getElementById("hexaTiles");
-  			var cacheElement = document.getElementById("cache");
-  			var currentMapSize, mapData, cacheMap;
-
-        document.getElementById("testNotification").textContent = "START THE TESTS BY SELECTING VALUES BELOW AND CLICKING START!";
-        document.getElementById("changeValues").disabled = false;
-
-        document.getElementById("changeValues").addEventListener("click", function() {
-  				document.getElementById("testNotification").style.display = "none";
-  				currentMapSize = mapsizeElement.value;
-  				cacheMap = cacheElement.checked;
-
-  				mapData = window.getMapData(currentMapSize);
-  				window.map = window.initMap(mapData, {
-  					mapsize: currentMapSize,
-  					cache: cacheMap,
-  					canvasContainer: document.getElementById("mapCanvasContainer"),
-  					trackFPSCB: function (data) {
-      					var totalFPS = data.FPS;
-      					var totalTime = data.FPStime;
-      					var totalRenderTime = data.renderTime;
-      					var drawCount = data.drawCount;
-
-      					window.FPSElement.innerHTML = totalFPS + " - " + Math.round( ( totalRenderTime / totalTime * 100 ) ) + "%" + " : " + drawCount;
-  					}
-      		});
-      	});
-  		});
-    })();
-	</script>
+  <script src="/src/assets/lib/q/q.js"></script>
+  <script src="/src/assets/lib/pixi/pixi.min.js"></script>
+  <script src="/src/assets/lib/handlebars/handlebars.js"></script>
+  <script src="/src/assets/lib/hammer/hammer.min.js"></script>
+  <script src="/src/assets/lib/hamster/hamster.js"></script>
+  <script src="/dist/flatworld.js"></script>
+  <script src="/src/tests/data/gameData.js"></script>
+  <script src="/src/tests/data/typeData.js"></script>
+  <script src="/src/tests/manual/stressTest.es6.js"></script>
 </body>
 </html>

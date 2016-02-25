@@ -4,12 +4,12 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { UI_default, hexagonPlugin, Map, UI, utils } from 'bundles/fullModuleBundle';
+import { UIDefault, hexagonPlugin, Flatworld, UI, utils } from 'bundles/fullModuleBundle';
 
 /*---------------------
 --------- API ---------
 ----------------------*/
-export { createHorizontalHexagonMap as createHorizontalHexagonMap };
+export { hexaFactory as hexaFactory };
 
 /*---------------------
 ------- PUBLIC --------
@@ -28,7 +28,7 @@ export { createHorizontalHexagonMap as createHorizontalHexagonMap };
  * @param {Object} options.isHiddenByDefault    When we use mapMovement plugin, it is best to keep all the obejcts hidden at the beginnig.
  * @param {Function} options.trackFPSCB         Callback to track FPS
  **/
-function createHorizontalHexagonMap(canvasContainerElement, datas, options = { trackFPSCB: false, isHiddenByDefault: true, cache: false }) {
+function hexaFactory(canvasContainerElement, datas, options = { trackFPSCB: false, isHiddenByDefault: true, cache: false }) {
   console.log("============== Horizontal hexagonal Map factory started =============");
   const pixelRatio = utils.environmentDetection.getPixelRatio();
   const DATA_MAP = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
@@ -70,9 +70,9 @@ function createHorizontalHexagonMap(canvasContainerElement, datas, options = { t
   };
   var map, dialog_selection, defaultUI;
 
-  map = new Map(canvasContainerElement, mapProperties, mapOptions );
+  map = new Flatworld(canvasContainerElement, mapProperties, mapOptions );
   dialog_selection = document.getElementById("selectionDialog");
-  defaultUI = new UI_default(dialog_selection, map);
+  defaultUI = new UIDefault(dialog_selection, map);
 
   /* Initialize UI as singleton */
   UI(defaultUI, map);

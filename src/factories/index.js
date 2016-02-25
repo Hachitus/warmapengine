@@ -1,8 +1,8 @@
 'use strict';
 
 /* Bundle utils in utils-parent and export them */
-import { createHorizontalHexagonMap } from './horizontalHexaFactory';
+import { hexaFactory } from './horizontalHexaFactory';
 
-export const factories = {
-  createHorizontalHexagonMap
+export var factories = {
+  hexaFactory
 };

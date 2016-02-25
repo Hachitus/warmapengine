@@ -3,7 +3,7 @@
 /*-----------------------
 --------- IMPORT --------
 -----------------------*/
-import { ObjectSpriteTerrain, ObjectSpriteUnit } from 'bundles/coreBundle';
+import { Objects } from 'bundles/coreBundle';
 import { createHexagon } from 'components/map/extensions/hexagons/utils/createHexagon';
 import hexagonMath from 'components/map/extensions/hexagons/utils/hexagonMath';
 
@@ -11,6 +11,7 @@ import hexagonMath from 'components/map/extensions/hexagons/utils/hexagonMath';
 -------- VARIABLES ------
 -----------------------*/
 var shape;
+var { ObjectSpriteTerrain, ObjectSpriteUnit } = Objects;
 
 /*-----------------------
 ---------- API ----------

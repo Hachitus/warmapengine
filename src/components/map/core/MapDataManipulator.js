@@ -1,6 +1,6 @@
 'use strict';
 
-import { MapLayer, MapLayerParent } from 'bundles/coreBundle';
+import { mapLayers } from 'bundles/coreBundle';
 
 /*---------------------
 --------- API ---------
@@ -15,7 +15,7 @@ export class MapDataManipulator {
    **/
   constructor(rules) {
     this.rules = Array.isArray(rules) ?  rules : [rules];
-    this.layerClasses = [MapLayer, MapLayerParent];
+    this.layerClasses = [mapLayers.MapLayer, mapLayers.MapLayerParent];
   }
   filterSubcontainers(subcontainers) {
     if (!Array.isArray(subcontainers)) {

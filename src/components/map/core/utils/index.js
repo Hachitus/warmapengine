@@ -5,7 +5,7 @@ import { dataManipulation } from './dataManipulation';
 import { effects } from './effects';
 import { mouse, resize, environmentDetection, general } from './utils';
 
-export const utils = {
+export {
   dataManipulation,
   effects,
   mouse, resize, environmentDetection, general

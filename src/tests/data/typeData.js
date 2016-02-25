@@ -1,12 +1,12 @@
 'use strict';
 
-export let typeData = {
+window.typeData = {
   graphicData: {
     terrainBase:{
-      json: "/tests/testAssets/images/testHexagons/testHexagonSpritesheet.json"
+      json: "/src/tests/testAssets/images/testHexagons/testHexagonSpritesheet.json"
     },
     unit:{
-      json: "/tests/testAssets/images/units/testHexagonUnits.json"
+      json: "/src/tests/testAssets/images/units/testHexagonUnits.json"
     }
   },
   objectData: {

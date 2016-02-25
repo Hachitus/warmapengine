@@ -26,8 +26,11 @@ export const mapEvents = setupMapEvents();
  */
 function setupMapEvents () {
   const TIMER_FOR_SAME_TYPE = 50;
-
   var lastTimePublished = {};
+
+  /*---------------------------
+  ------------ API ------------
+  ---------------------------*/
   return {
     subscribe,
     publish

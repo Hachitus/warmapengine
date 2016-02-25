@@ -34,7 +34,7 @@
       /* global System, console */
       'use strict';
 
-      System.import('/tests/manual/mapTest.es6')
+      System.import('/tests/manual/flatworldTest.es6')
         .catch(scriptErrors => {
           if (Array.isArray(scriptErrors)) {
             scriptErrors.forEach(function(error) {
@@ -44,7 +44,7 @@
             console.error(scriptErrors);
           }
         }).then(function() {
-        window.map = window.initMap({
+        window.Flatworld = window.initFlatworld({
           canvasContainer: document.getElementById("mapCanvasContainer")
         });
       });

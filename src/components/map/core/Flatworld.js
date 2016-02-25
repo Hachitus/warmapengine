@@ -4,8 +4,7 @@
 /*---------------------
 ------- IMPORT --------
 ----------------------*/
-import { MapLayer, MapLayerParent, ObjectManager, mapEvents, utils, MapDataManipulator } from 'bundles/coreBundle';
-import * as Q from 'q';
+import { mapLayers, Objects, ObjectManager, mapEvents, utils, MapDataManipulator } from 'bundles/coreBundle';
 
 /*---------------------
 ------ VARIABLES ------
@@ -20,7 +19,7 @@ var _staticLayer, _movableLayer, _renderer, ParentLayerConstructor;
 /*---------------------
 --------- API ---------
 ----------------------*/
-export class Map {
+export class Flatworld {
   /**
    * #Main class for the engine
    *
@@ -47,6 +46,7 @@ export class Map {
    * @constructor
    * @requires PIXI.JS framework in global namespace
    * @requires Canvas (webGL support recommended) HTML5-element supported.
+   * @requires Q for promises
    * @requires Hammer for touch events
    * @requires Hamster for mouse scroll events
    *
@@ -90,15 +90,15 @@ export class Map {
     /* Add the canvas Element PIXI created inside the given canvasContainer */
     canvasContainer.appendChild(_renderer.view, canvasContainer);
     /* This defines which MapLayer class we use to generate layers on the map. Under movableLayer. These are layers like: Units, terrain, fog of war, UIs etc. */
-    ParentLayerConstructor = subcontainers ? MapLayerParent : MapLayer;
+    ParentLayerConstructor = subcontainers ? mapLayers.MapLayerParent : mapLayers.MapLayer;
 
     /* These are the 2 topmost layers on the map:
      * - staticLayer: Keeps at the same coordinates always and is responsible for holding map scale value and possible
      * objects that do not move with the map. StaticLayer has only one child: _movableLayer
      * - movableLayer: Moves the map, when the user commands. Can hold e.g. UI objects that move with the map. Like
      * graphics that show which area or object is currently selected. */
-    _staticLayer = new MapLayer({ name:"staticLayer", coord: { x: 0, y: 0 } });
-    _movableLayer = new MapLayer({ name:"movableLayer", coord: { x: 0, y: 0 } });
+    _staticLayer = new mapLayers.MapLayer({ name:"staticLayer", coord: { x: 0, y: 0 } });
+    _movableLayer = new mapLayers.MapLayer({ name:"movableLayer", coord: { x: 0, y: 0 } });
     _staticLayer.addChild(_movableLayer);
 
     /* needed to make the canvas fullsize canvas with PIXI */
@@ -293,7 +293,7 @@ export class Map {
    **/
   createSpecialLayer(name = "default special layer", options = { coord: { x: 0, y: 0 }, toLayer }) {
     var {coord, toLayer} = options;
-    var layer = new MapLayer(name, coord);
+    var layer = new mapLayers.MapLayer(name, coord);
 
     layer.specialLayer = true;
     toLayer && toLayer.addChild(layer);

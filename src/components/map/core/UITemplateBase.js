@@ -13,13 +13,13 @@ var styleSheetElement, allCSSClasses;
 /*---------------------
 --------- API ---------
 ----------------------*/
-export class UI_templateBase {
+export class UITemplateBase {
   /**
    * The template base class for UI templates
    *
    * @todo This needs a bit of redesign.
    *
-   * @class UI_templateBase
+   * @class UITemplateBase
    * @constructor
    * @param  {*} CSSClasses
    */

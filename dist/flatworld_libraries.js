@@ -2566,325 +2566,6 @@ if (typeof define === 'function' && define.amd) {
 }
 
 })(window, document, 'Hammer');
-/*
- * Hamster.js v1.0.5
- * (c) 2013 Monospaced http://monospaced.com
- * License: MIT
- */
-
-(function(window, document){
-'use strict';
-
-/**
- * Hamster
- * use this to create instances
- * @returns {Hamster.Instance}
- * @constructor
- */
-var Hamster = function(element) {
-  return new Hamster.Instance(element);
-};
-
-// default event name
-Hamster.SUPPORT = 'wheel';
-
-// default DOM methods
-Hamster.ADD_EVENT = 'addEventListener';
-Hamster.REMOVE_EVENT = 'removeEventListener';
-Hamster.PREFIX = '';
-
-// until browser inconsistencies have been fixed...
-Hamster.READY = false;
-
-Hamster.Instance = function(element){
-  if (!Hamster.READY) {
-    // fix browser inconsistencies
-    Hamster.normalise.browser();
-
-    // Hamster is ready...!
-    Hamster.READY = true;
-  }
-
-  this.element = element;
-
-  // store attached event handlers
-  this.handlers = [];
-
-  // return instance
-  return this;
-};
-
-/**
- * create new hamster instance
- * all methods should return the instance itself, so it is chainable.
- * @param   {HTMLElement}       element
- * @returns {Hamster.Instance}
- * @constructor
- */
-Hamster.Instance.prototype = {
-  /**
-   * bind events to the instance
-   * @param   {Function}    handler
-   * @param   {Boolean}     useCapture
-   * @returns {Hamster.Instance}
-   */
-  wheel: function onEvent(handler, useCapture){
-    Hamster.event.add(this, Hamster.SUPPORT, handler, useCapture);
-
-    // handle MozMousePixelScroll in older Firefox
-    if (Hamster.SUPPORT === 'DOMMouseScroll') {
-      Hamster.event.add(this, 'MozMousePixelScroll', handler, useCapture);
-    }
-
-    return this;
-  },
-
-  /**
-   * unbind events to the instance
-   * @param   {Function}    handler
-   * @param   {Boolean}     useCapture
-   * @returns {Hamster.Instance}
-   */
-  unwheel: function offEvent(handler, useCapture){
-    // if no handler argument,
-    // unbind the last bound handler (if exists)
-    if (handler === undefined && (handler = this.handlers.slice(-1)[0])) {
-      handler = handler.original;
-    }
-
-    Hamster.event.remove(this, Hamster.SUPPORT, handler, useCapture);
-
-    // handle MozMousePixelScroll in older Firefox
-    if (Hamster.SUPPORT === 'DOMMouseScroll') {
-      Hamster.event.remove(this, 'MozMousePixelScroll', handler, useCapture);
-    }
-
-    return this;
-  }
-};
-
-Hamster.event = {
-  /**
-   * cross-browser 'addWheelListener'
-   * @param   {Instance}    hamster
-   * @param   {String}      eventName
-   * @param   {Function}    handler
-   * @param   {Boolean}     useCapture
-   */
-  add: function add(hamster, eventName, handler, useCapture){
-    // store the original handler
-    var originalHandler = handler;
-
-    // redefine the handler
-    handler = function(originalEvent){
-
-      if (!originalEvent) {
-        originalEvent = window.event;
-      }
-
-      // create a normalised event object,
-      // and normalise "deltas" of the mouse wheel
-      var event = Hamster.normalise.event(originalEvent),
-          delta = Hamster.normalise.delta(originalEvent);
-
-      // fire the original handler with normalised arguments
-      return originalHandler(event, delta[0], delta[1], delta[2]);
-
-    };
-
-    // cross-browser addEventListener
-    hamster.element[Hamster.ADD_EVENT](Hamster.PREFIX + eventName, handler, useCapture || false);
-
-    // store original and normalised handlers on the instance
-    hamster.handlers.push({
-      original: originalHandler,
-      normalised: handler
-    });
-  },
-
-  /**
-   * removeWheelListener
-   * @param   {Instance}    hamster
-   * @param   {String}      eventName
-   * @param   {Function}    handler
-   * @param   {Boolean}     useCapture
-   */
-  remove: function remove(hamster, eventName, handler, useCapture){
-    // find the normalised handler on the instance
-    var originalHandler = handler,
-        lookup = {},
-        handlers;
-    for (var i = 0, len = hamster.handlers.length; i < len; ++i) {
-      lookup[hamster.handlers[i].original] = hamster.handlers[i];
-    }
-    handlers = lookup[originalHandler];
-    handler = handlers.normalised;
-
-    // cross-browser removeEventListener
-    hamster.element[Hamster.REMOVE_EVENT](Hamster.PREFIX + eventName, handler, useCapture || false);
-
-    // remove original and normalised handlers from the instance
-    for (var h in hamster.handlers) {
-      if (hamster.handlers[h] == handlers) {
-        hamster.handlers.splice(h, 1);
-        break;
-      }
-    }
-  }
-};
-
-/**
- * these hold the lowest deltas,
- * used to normalise the delta values
- * @type {Number}
- */
-var lowestDelta,
-    lowestDeltaXY;
-
-Hamster.normalise = {
-  /**
-   * fix browser inconsistencies
-   */
-  browser: function normaliseBrowser(){
-    // detect deprecated wheel events
-    if (!('onwheel' in document || document.documentMode >= 9)) {
-      Hamster.SUPPORT = document.onmousewheel !== undefined ?
-                        'mousewheel' : // webkit and IE < 9 support at least "mousewheel"
-                        'DOMMouseScroll'; // assume remaining browsers are older Firefox
-    }
-
-    // detect deprecated event model
-    if (!window.addEventListener) {
-      // assume IE < 9
-      Hamster.ADD_EVENT = 'attachEvent';
-      Hamster.REMOVE_EVENT = 'detachEvent';
-      Hamster.PREFIX = 'on';
-    }
-
-  },
-
-  /**
-   * create a normalised event object
-   * @param   {Function}    originalEvent
-   * @returns {Object}      event
-   */
-  event: function normaliseEvent(originalEvent){
-    var event = {
-          // keep a reference to the original event object
-          originalEvent: originalEvent,
-          target: originalEvent.target || originalEvent.srcElement,
-          type: 'wheel',
-          deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
-          deltaX: 0,
-          delatZ: 0,
-          preventDefault: function(){
-            if (originalEvent.preventDefault) {
-              originalEvent.preventDefault();
-            } else {
-              originalEvent.returnValue = false;
-            }
-          },
-          stopPropagation: function(){
-            if (originalEvent.stopPropagation) {
-              originalEvent.stopPropagation();
-            } else {
-              originalEvent.cancelBubble = false;
-            }
-          }
-        };
-
-    // calculate deltaY (and deltaX) according to the event
-
-    // 'mousewheel'
-    if (originalEvent.wheelDelta) {
-      event.deltaY = - 1/40 * originalEvent.wheelDelta;
-    }
-    // webkit
-    if (originalEvent.wheelDeltaX) {
-      event.deltaX = - 1/40 * originalEvent.wheelDeltaX;
-    }
-
-    // 'DomMouseScroll'
-    if (originalEvent.detail) {
-      event.deltaY = originalEvent.detail;
-    }
-
-    return event;
-  },
-
-  /**
-   * normalise 'deltas' of the mouse wheel
-   * @param   {Function}    originalEvent
-   * @returns {Array}       deltas
-   */
-  delta: function normaliseDelta(originalEvent){
-    var delta = 0,
-      deltaX = 0,
-      deltaY = 0,
-      absDelta = 0,
-      absDeltaXY = 0,
-      fn;
-
-    // normalise deltas according to the event
-
-    // 'wheel' event
-    if (originalEvent.deltaY) {
-      deltaY = originalEvent.deltaY * -1;
-      delta  = deltaY;
-    }
-    if (originalEvent.deltaX) {
-      deltaX = originalEvent.deltaX;
-      delta  = deltaX * -1;
-    }
-
-    // 'mousewheel' event
-    if (originalEvent.wheelDelta) {
-      delta = originalEvent.wheelDelta;
-    }
-    // webkit
-    if (originalEvent.wheelDeltaY) {
-      deltaY = originalEvent.wheelDeltaY;
-    }
-    if (originalEvent.wheelDeltaX) {
-      deltaX = originalEvent.wheelDeltaX * -1;
-    }
-
-    // 'DomMouseScroll' event
-    if (originalEvent.detail) {
-      delta = originalEvent.detail * -1;
-    }
-
-    // look for lowest delta to normalize the delta values
-    absDelta = Math.abs(delta);
-    if (!lowestDelta || absDelta < lowestDelta) {
-      lowestDelta = absDelta;
-    }
-    absDeltaXY = Math.max(Math.abs(deltaY), Math.abs(deltaX));
-    if (!lowestDeltaXY || absDeltaXY < lowestDeltaXY) {
-      lowestDeltaXY = absDeltaXY;
-    }
-
-    // convert deltas to whole numbers
-    fn = delta > 0 ? 'floor' : 'ceil';
-    delta  = Math[fn](delta / lowestDelta);
-    deltaX = Math[fn](deltaX / lowestDeltaXY);
-    deltaY = Math[fn](deltaY / lowestDeltaXY);
-
-    return [delta, deltaX, deltaY];
-  }
-};
-
-// Expose Hamster to the global object
-window.Hamster = Hamster;
-
-// requireJS module definition
-if (typeof window.define === 'function' && window.define.amd) {
-  window.define('hamster', [], function(){
-    return Hamster;
-  });
-}
-
-})(window, window.document);
 /*!
 
  handlebars v4.0.5
@@ -7493,6 +7174,325 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
+/*
+ * Hamster.js v1.0.5
+ * (c) 2013 Monospaced http://monospaced.com
+ * License: MIT
+ */
+
+(function(window, document){
+'use strict';
+
+/**
+ * Hamster
+ * use this to create instances
+ * @returns {Hamster.Instance}
+ * @constructor
+ */
+var Hamster = function(element) {
+  return new Hamster.Instance(element);
+};
+
+// default event name
+Hamster.SUPPORT = 'wheel';
+
+// default DOM methods
+Hamster.ADD_EVENT = 'addEventListener';
+Hamster.REMOVE_EVENT = 'removeEventListener';
+Hamster.PREFIX = '';
+
+// until browser inconsistencies have been fixed...
+Hamster.READY = false;
+
+Hamster.Instance = function(element){
+  if (!Hamster.READY) {
+    // fix browser inconsistencies
+    Hamster.normalise.browser();
+
+    // Hamster is ready...!
+    Hamster.READY = true;
+  }
+
+  this.element = element;
+
+  // store attached event handlers
+  this.handlers = [];
+
+  // return instance
+  return this;
+};
+
+/**
+ * create new hamster instance
+ * all methods should return the instance itself, so it is chainable.
+ * @param   {HTMLElement}       element
+ * @returns {Hamster.Instance}
+ * @constructor
+ */
+Hamster.Instance.prototype = {
+  /**
+   * bind events to the instance
+   * @param   {Function}    handler
+   * @param   {Boolean}     useCapture
+   * @returns {Hamster.Instance}
+   */
+  wheel: function onEvent(handler, useCapture){
+    Hamster.event.add(this, Hamster.SUPPORT, handler, useCapture);
+
+    // handle MozMousePixelScroll in older Firefox
+    if (Hamster.SUPPORT === 'DOMMouseScroll') {
+      Hamster.event.add(this, 'MozMousePixelScroll', handler, useCapture);
+    }
+
+    return this;
+  },
+
+  /**
+   * unbind events to the instance
+   * @param   {Function}    handler
+   * @param   {Boolean}     useCapture
+   * @returns {Hamster.Instance}
+   */
+  unwheel: function offEvent(handler, useCapture){
+    // if no handler argument,
+    // unbind the last bound handler (if exists)
+    if (handler === undefined && (handler = this.handlers.slice(-1)[0])) {
+      handler = handler.original;
+    }
+
+    Hamster.event.remove(this, Hamster.SUPPORT, handler, useCapture);
+
+    // handle MozMousePixelScroll in older Firefox
+    if (Hamster.SUPPORT === 'DOMMouseScroll') {
+      Hamster.event.remove(this, 'MozMousePixelScroll', handler, useCapture);
+    }
+
+    return this;
+  }
+};
+
+Hamster.event = {
+  /**
+   * cross-browser 'addWheelListener'
+   * @param   {Instance}    hamster
+   * @param   {String}      eventName
+   * @param   {Function}    handler
+   * @param   {Boolean}     useCapture
+   */
+  add: function add(hamster, eventName, handler, useCapture){
+    // store the original handler
+    var originalHandler = handler;
+
+    // redefine the handler
+    handler = function(originalEvent){
+
+      if (!originalEvent) {
+        originalEvent = window.event;
+      }
+
+      // create a normalised event object,
+      // and normalise "deltas" of the mouse wheel
+      var event = Hamster.normalise.event(originalEvent),
+          delta = Hamster.normalise.delta(originalEvent);
+
+      // fire the original handler with normalised arguments
+      return originalHandler(event, delta[0], delta[1], delta[2]);
+
+    };
+
+    // cross-browser addEventListener
+    hamster.element[Hamster.ADD_EVENT](Hamster.PREFIX + eventName, handler, useCapture || false);
+
+    // store original and normalised handlers on the instance
+    hamster.handlers.push({
+      original: originalHandler,
+      normalised: handler
+    });
+  },
+
+  /**
+   * removeWheelListener
+   * @param   {Instance}    hamster
+   * @param   {String}      eventName
+   * @param   {Function}    handler
+   * @param   {Boolean}     useCapture
+   */
+  remove: function remove(hamster, eventName, handler, useCapture){
+    // find the normalised handler on the instance
+    var originalHandler = handler,
+        lookup = {},
+        handlers;
+    for (var i = 0, len = hamster.handlers.length; i < len; ++i) {
+      lookup[hamster.handlers[i].original] = hamster.handlers[i];
+    }
+    handlers = lookup[originalHandler];
+    handler = handlers.normalised;
+
+    // cross-browser removeEventListener
+    hamster.element[Hamster.REMOVE_EVENT](Hamster.PREFIX + eventName, handler, useCapture || false);
+
+    // remove original and normalised handlers from the instance
+    for (var h in hamster.handlers) {
+      if (hamster.handlers[h] == handlers) {
+        hamster.handlers.splice(h, 1);
+        break;
+      }
+    }
+  }
+};
+
+/**
+ * these hold the lowest deltas,
+ * used to normalise the delta values
+ * @type {Number}
+ */
+var lowestDelta,
+    lowestDeltaXY;
+
+Hamster.normalise = {
+  /**
+   * fix browser inconsistencies
+   */
+  browser: function normaliseBrowser(){
+    // detect deprecated wheel events
+    if (!('onwheel' in document || document.documentMode >= 9)) {
+      Hamster.SUPPORT = document.onmousewheel !== undefined ?
+                        'mousewheel' : // webkit and IE < 9 support at least "mousewheel"
+                        'DOMMouseScroll'; // assume remaining browsers are older Firefox
+    }
+
+    // detect deprecated event model
+    if (!window.addEventListener) {
+      // assume IE < 9
+      Hamster.ADD_EVENT = 'attachEvent';
+      Hamster.REMOVE_EVENT = 'detachEvent';
+      Hamster.PREFIX = 'on';
+    }
+
+  },
+
+  /**
+   * create a normalised event object
+   * @param   {Function}    originalEvent
+   * @returns {Object}      event
+   */
+  event: function normaliseEvent(originalEvent){
+    var event = {
+          // keep a reference to the original event object
+          originalEvent: originalEvent,
+          target: originalEvent.target || originalEvent.srcElement,
+          type: 'wheel',
+          deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
+          deltaX: 0,
+          delatZ: 0,
+          preventDefault: function(){
+            if (originalEvent.preventDefault) {
+              originalEvent.preventDefault();
+            } else {
+              originalEvent.returnValue = false;
+            }
+          },
+          stopPropagation: function(){
+            if (originalEvent.stopPropagation) {
+              originalEvent.stopPropagation();
+            } else {
+              originalEvent.cancelBubble = false;
+            }
+          }
+        };
+
+    // calculate deltaY (and deltaX) according to the event
+
+    // 'mousewheel'
+    if (originalEvent.wheelDelta) {
+      event.deltaY = - 1/40 * originalEvent.wheelDelta;
+    }
+    // webkit
+    if (originalEvent.wheelDeltaX) {
+      event.deltaX = - 1/40 * originalEvent.wheelDeltaX;
+    }
+
+    // 'DomMouseScroll'
+    if (originalEvent.detail) {
+      event.deltaY = originalEvent.detail;
+    }
+
+    return event;
+  },
+
+  /**
+   * normalise 'deltas' of the mouse wheel
+   * @param   {Function}    originalEvent
+   * @returns {Array}       deltas
+   */
+  delta: function normaliseDelta(originalEvent){
+    var delta = 0,
+      deltaX = 0,
+      deltaY = 0,
+      absDelta = 0,
+      absDeltaXY = 0,
+      fn;
+
+    // normalise deltas according to the event
+
+    // 'wheel' event
+    if (originalEvent.deltaY) {
+      deltaY = originalEvent.deltaY * -1;
+      delta  = deltaY;
+    }
+    if (originalEvent.deltaX) {
+      deltaX = originalEvent.deltaX;
+      delta  = deltaX * -1;
+    }
+
+    // 'mousewheel' event
+    if (originalEvent.wheelDelta) {
+      delta = originalEvent.wheelDelta;
+    }
+    // webkit
+    if (originalEvent.wheelDeltaY) {
+      deltaY = originalEvent.wheelDeltaY;
+    }
+    if (originalEvent.wheelDeltaX) {
+      deltaX = originalEvent.wheelDeltaX * -1;
+    }
+
+    // 'DomMouseScroll' event
+    if (originalEvent.detail) {
+      delta = originalEvent.detail * -1;
+    }
+
+    // look for lowest delta to normalize the delta values
+    absDelta = Math.abs(delta);
+    if (!lowestDelta || absDelta < lowestDelta) {
+      lowestDelta = absDelta;
+    }
+    absDeltaXY = Math.max(Math.abs(deltaY), Math.abs(deltaX));
+    if (!lowestDeltaXY || absDeltaXY < lowestDeltaXY) {
+      lowestDeltaXY = absDeltaXY;
+    }
+
+    // convert deltas to whole numbers
+    fn = delta > 0 ? 'floor' : 'ceil';
+    delta  = Math[fn](delta / lowestDelta);
+    deltaX = Math[fn](deltaX / lowestDeltaXY);
+    deltaY = Math[fn](deltaY / lowestDeltaXY);
+
+    return [delta, deltaX, deltaY];
+  }
+};
+
+// Expose Hamster to the global object
+window.Hamster = Hamster;
+
+// requireJS module definition
+if (typeof window.define === 'function' && window.define.amd) {
+  window.define('hamster', [], function(){
+    return Hamster;
+  });
+}
+
+})(window, window.document);
 /*!
  *  howler.js v1.1.29
  *  howlerjs.com
@@ -9068,932 +9068,6 @@ if (g)for (i=f[f.length-1].ownerDocument,n.map(f, ob),j=0; g>j; j++)h=f[j],ib.te
 
     return defaultLogger;
 }));
-(function() {
-  var AjaxMonitor, Bar, DocumentMonitor, ElementMonitor, ElementTracker, EventLagMonitor, Evented, Events, NoTargetError, Pace, RequestIntercept, SOURCE_KEYS, Scaler, SocketRequestTracker, XHRRequestTracker, animation, avgAmplitude, bar, cancelAnimation, cancelAnimationFrame, defaultOptions, extend, extendNative, getFromDOM, getIntercept, handlePushState, ignoreStack, init, now, options, requestAnimationFrame, result, runAnimation, scalers, shouldIgnoreURL, shouldTrack, source, sources, uniScaler, _WebSocket, _XDomainRequest, _XMLHttpRequest, _i, _intercept, _len, _pushState, _ref, _ref1, _replaceState,
-    __slice = [].slice,
-    __hasProp = {}.hasOwnProperty,
-    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
-    __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
-
-  defaultOptions = {
-    catchupTime: 100,
-    initialRate: .03,
-    minTime: 250,
-    ghostTime: 100,
-    maxProgressPerFrame: 20,
-    easeFactor: 1.25,
-    startOnPageLoad: true,
-    restartOnPushState: true,
-    restartOnRequestAfter: 500,
-    target: 'body',
-    elements: {
-      checkInterval: 100,
-      selectors: ['body']
-    },
-    eventLag: {
-      minSamples: 10,
-      sampleCount: 3,
-      lagThreshold: 3
-    },
-    ajax: {
-      trackMethods: ['GET'],
-      trackWebSockets: true,
-      ignoreURLs: []
-    }
-  };
-
-  now = function() {
-    var _ref;
-    return (_ref = typeof performance !== "undefined" && performance !== null ? typeof performance.now === "function" ? performance.now() : void 0 : void 0) != null ? _ref : +(new Date);
-  };
-
-  requestAnimationFrame = window.requestAnimationFrame || window.mozRequestAnimationFrame || window.webkitRequestAnimationFrame || window.msRequestAnimationFrame;
-
-  cancelAnimationFrame = window.cancelAnimationFrame || window.mozCancelAnimationFrame;
-
-  if (requestAnimationFrame == null) {
-    requestAnimationFrame = function(fn) {
-      return setTimeout(fn, 50);
-    };
-    cancelAnimationFrame = function(id) {
-      return clearTimeout(id);
-    };
-  }
-
-  runAnimation = function(fn) {
-    var last, tick;
-    last = now();
-    tick = function() {
-      var diff;
-      diff = now() - last;
-      if (diff >= 33) {
-        last = now();
-        return fn(diff, function() {
-          return requestAnimationFrame(tick);
-        });
-      } else {
-        return setTimeout(tick, 33 - diff);
-      }
-    };
-    return tick();
-  };
-
-  result = function() {
-    var args, key, obj;
-    obj = arguments[0], key = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
-    if (typeof obj[key] === 'function') {
-      return obj[key].apply(obj, args);
-    } else {
-      return obj[key];
-    }
-  };
-
-  extend = function() {
-    var key, out, source, sources, val, _i, _len;
-    out = arguments[0], sources = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    for (_i = 0, _len = sources.length; _i < _len; _i++) {
-      source = sources[_i];
-      if (source) {
-        for (key in source) {
-          if (!__hasProp.call(source, key)) continue;
-          val = source[key];
-          if ((out[key] != null) && typeof out[key] === 'object' && (val != null) && typeof val === 'object') {
-            extend(out[key], val);
-          } else {
-            out[key] = val;
-          }
-        }
-      }
-    }
-    return out;
-  };
-
-  avgAmplitude = function(arr) {
-    var count, sum, v, _i, _len;
-    sum = count = 0;
-    for (_i = 0, _len = arr.length; _i < _len; _i++) {
-      v = arr[_i];
-      sum += Math.abs(v);
-      count++;
-    }
-    return sum / count;
-  };
-
-  getFromDOM = function(key, json) {
-    var data, e, el;
-    if (key == null) {
-      key = 'options';
-    }
-    if (json == null) {
-      json = true;
-    }
-    el = document.querySelector("[data-pace-" + key + "]");
-    if (!el) {
-      return;
-    }
-    data = el.getAttribute("data-pace-" + key);
-    if (!json) {
-      return data;
-    }
-    try {
-      return JSON.parse(data);
-    } catch (_error) {
-      e = _error;
-      return typeof console !== "undefined" && console !== null ? console.error("Error parsing inline pace options", e) : void 0;
-    }
-  };
-
-  Evented = (function() {
-    function Evented() {}
-
-    Evented.prototype.on = function(event, handler, ctx, once) {
-      var _base;
-      if (once == null) {
-        once = false;
-      }
-      if (this.bindings == null) {
-        this.bindings = {};
-      }
-      if ((_base = this.bindings)[event] == null) {
-        _base[event] = [];
-      }
-      return this.bindings[event].push({
-        handler: handler,
-        ctx: ctx,
-        once: once
-      });
-    };
-
-    Evented.prototype.once = function(event, handler, ctx) {
-      return this.on(event, handler, ctx, true);
-    };
-
-    Evented.prototype.off = function(event, handler) {
-      var i, _ref, _results;
-      if (((_ref = this.bindings) != null ? _ref[event] : void 0) == null) {
-        return;
-      }
-      if (handler == null) {
-        return delete this.bindings[event];
-      } else {
-        i = 0;
-        _results = [];
-        while (i < this.bindings[event].length) {
-          if (this.bindings[event][i].handler === handler) {
-            _results.push(this.bindings[event].splice(i, 1));
-          } else {
-            _results.push(i++);
-          }
-        }
-        return _results;
-      }
-    };
-
-    Evented.prototype.trigger = function() {
-      var args, ctx, event, handler, i, once, _ref, _ref1, _results;
-      event = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      if ((_ref = this.bindings) != null ? _ref[event] : void 0) {
-        i = 0;
-        _results = [];
-        while (i < this.bindings[event].length) {
-          _ref1 = this.bindings[event][i], handler = _ref1.handler, ctx = _ref1.ctx, once = _ref1.once;
-          handler.apply(ctx != null ? ctx : this, args);
-          if (once) {
-            _results.push(this.bindings[event].splice(i, 1));
-          } else {
-            _results.push(i++);
-          }
-        }
-        return _results;
-      }
-    };
-
-    return Evented;
-
-  })();
-
-  Pace = window.Pace || {};
-
-  window.Pace = Pace;
-
-  extend(Pace, Evented.prototype);
-
-  options = Pace.options = extend({}, defaultOptions, window.paceOptions, getFromDOM());
-
-  _ref = ['ajax', 'document', 'eventLag', 'elements'];
-  for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-    source = _ref[_i];
-    if (options[source] === true) {
-      options[source] = defaultOptions[source];
-    }
-  }
-
-  NoTargetError = (function(_super) {
-    __extends(NoTargetError, _super);
-
-    function NoTargetError() {
-      _ref1 = NoTargetError.__super__.constructor.apply(this, arguments);
-      return _ref1;
-    }
-
-    return NoTargetError;
-
-  })(Error);
-
-  Bar = (function() {
-    function Bar() {
-      this.progress = 0;
-    }
-
-    Bar.prototype.getElement = function() {
-      var targetElement;
-      if (this.el == null) {
-        targetElement = document.querySelector(options.target);
-        if (!targetElement) {
-          throw new NoTargetError;
-        }
-        this.el = document.createElement('div');
-        this.el.className = "pace pace-active";
-        document.body.className = document.body.className.replace(/pace-done/g, '');
-        document.body.className += ' pace-running';
-        this.el.innerHTML = '<div class="pace-progress">\n  <div class="pace-progress-inner"></div>\n</div>\n<div class="pace-activity"></div>';
-        if (targetElement.firstChild != null) {
-          targetElement.insertBefore(this.el, targetElement.firstChild);
-        } else {
-          targetElement.appendChild(this.el);
-        }
-      }
-      return this.el;
-    };
-
-    Bar.prototype.finish = function() {
-      var el;
-      el = this.getElement();
-      el.className = el.className.replace('pace-active', '');
-      el.className += ' pace-inactive';
-      document.body.className = document.body.className.replace('pace-running', '');
-      return document.body.className += ' pace-done';
-    };
-
-    Bar.prototype.update = function(prog) {
-      this.progress = prog;
-      return this.render();
-    };
-
-    Bar.prototype.destroy = function() {
-      try {
-        this.getElement().parentNode.removeChild(this.getElement());
-      } catch (_error) {
-        NoTargetError = _error;
-      }
-      return this.el = void 0;
-    };
-
-    Bar.prototype.render = function() {
-      var el, key, progressStr, transform, _j, _len1, _ref2;
-      if (document.querySelector(options.target) == null) {
-        return false;
-      }
-      el = this.getElement();
-      transform = "translate3d(" + this.progress + "%, 0, 0)";
-      _ref2 = ['webkitTransform', 'msTransform', 'transform'];
-      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-        key = _ref2[_j];
-        el.children[0].style[key] = transform;
-      }
-      if (!this.lastRenderedProgress || this.lastRenderedProgress | 0 !== this.progress | 0) {
-        el.children[0].setAttribute('data-progress-text', "" + (this.progress | 0) + "%");
-        if (this.progress >= 100) {
-          progressStr = '99';
-        } else {
-          progressStr = this.progress < 10 ? "0" : "";
-          progressStr += this.progress | 0;
-        }
-        el.children[0].setAttribute('data-progress', "" + progressStr);
-      }
-      return this.lastRenderedProgress = this.progress;
-    };
-
-    Bar.prototype.done = function() {
-      return this.progress >= 100;
-    };
-
-    return Bar;
-
-  })();
-
-  Events = (function() {
-    function Events() {
-      this.bindings = {};
-    }
-
-    Events.prototype.trigger = function(name, val) {
-      var binding, _j, _len1, _ref2, _results;
-      if (this.bindings[name] != null) {
-        _ref2 = this.bindings[name];
-        _results = [];
-        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-          binding = _ref2[_j];
-          _results.push(binding.call(this, val));
-        }
-        return _results;
-      }
-    };
-
-    Events.prototype.on = function(name, fn) {
-      var _base;
-      if ((_base = this.bindings)[name] == null) {
-        _base[name] = [];
-      }
-      return this.bindings[name].push(fn);
-    };
-
-    return Events;
-
-  })();
-
-  _XMLHttpRequest = window.XMLHttpRequest;
-
-  _XDomainRequest = window.XDomainRequest;
-
-  _WebSocket = window.WebSocket;
-
-  extendNative = function(to, from) {
-    var e, key, val, _results;
-    _results = [];
-    for (key in from.prototype) {
-      try {
-        val = from.prototype[key];
-        if ((to[key] == null) && typeof val !== 'function') {
-          _results.push(to[key] = val);
-        } else {
-          _results.push(void 0);
-        }
-      } catch (_error) {
-        e = _error;
-      }
-    }
-    return _results;
-  };
-
-  ignoreStack = [];
-
-  Pace.ignore = function() {
-    var args, fn, ret;
-    fn = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    ignoreStack.unshift('ignore');
-    ret = fn.apply(null, args);
-    ignoreStack.shift();
-    return ret;
-  };
-
-  Pace.track = function() {
-    var args, fn, ret;
-    fn = arguments[0], args = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    ignoreStack.unshift('track');
-    ret = fn.apply(null, args);
-    ignoreStack.shift();
-    return ret;
-  };
-
-  shouldTrack = function(method) {
-    var _ref2;
-    if (method == null) {
-      method = 'GET';
-    }
-    if (ignoreStack[0] === 'track') {
-      return 'force';
-    }
-    if (!ignoreStack.length && options.ajax) {
-      if (method === 'socket' && options.ajax.trackWebSockets) {
-        return true;
-      } else if (_ref2 = method.toUpperCase(), __indexOf.call(options.ajax.trackMethods, _ref2) >= 0) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  RequestIntercept = (function(_super) {
-    __extends(RequestIntercept, _super);
-
-    function RequestIntercept() {
-      var monitorXHR,
-        _this = this;
-      RequestIntercept.__super__.constructor.apply(this, arguments);
-      monitorXHR = function(req) {
-        var _open;
-        _open = req.open;
-        return req.open = function(type, url, async) {
-          if (shouldTrack(type)) {
-            _this.trigger('request', {
-              type: type,
-              url: url,
-              request: req
-            });
-          }
-          return _open.apply(req, arguments);
-        };
-      };
-      window.XMLHttpRequest = function(flags) {
-        var req;
-        req = new _XMLHttpRequest(flags);
-        monitorXHR(req);
-        return req;
-      };
-      try {
-        extendNative(window.XMLHttpRequest, _XMLHttpRequest);
-      } catch (_error) {}
-      if (_XDomainRequest != null) {
-        window.XDomainRequest = function() {
-          var req;
-          req = new _XDomainRequest;
-          monitorXHR(req);
-          return req;
-        };
-        try {
-          extendNative(window.XDomainRequest, _XDomainRequest);
-        } catch (_error) {}
-      }
-      if ((_WebSocket != null) && options.ajax.trackWebSockets) {
-        window.WebSocket = function(url, protocols) {
-          var req;
-          if (protocols != null) {
-            req = new _WebSocket(url, protocols);
-          } else {
-            req = new _WebSocket(url);
-          }
-          if (shouldTrack('socket')) {
-            _this.trigger('request', {
-              type: 'socket',
-              url: url,
-              protocols: protocols,
-              request: req
-            });
-          }
-          return req;
-        };
-        try {
-          extendNative(window.WebSocket, _WebSocket);
-        } catch (_error) {}
-      }
-    }
-
-    return RequestIntercept;
-
-  })(Events);
-
-  _intercept = null;
-
-  getIntercept = function() {
-    if (_intercept == null) {
-      _intercept = new RequestIntercept;
-    }
-    return _intercept;
-  };
-
-  shouldIgnoreURL = function(url) {
-    var pattern, _j, _len1, _ref2;
-    _ref2 = options.ajax.ignoreURLs;
-    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-      pattern = _ref2[_j];
-      if (typeof pattern === 'string') {
-        if (url.indexOf(pattern) !== -1) {
-          return true;
-        }
-      } else {
-        if (pattern.test(url)) {
-          return true;
-        }
-      }
-    }
-    return false;
-  };
-
-  getIntercept().on('request', function(_arg) {
-    var after, args, request, type, url;
-    type = _arg.type, request = _arg.request, url = _arg.url;
-    if (shouldIgnoreURL(url)) {
-      return;
-    }
-    if (!Pace.running && (options.restartOnRequestAfter !== false || shouldTrack(type) === 'force')) {
-      args = arguments;
-      after = options.restartOnRequestAfter || 0;
-      if (typeof after === 'boolean') {
-        after = 0;
-      }
-      return setTimeout(function() {
-        var stillActive, _j, _len1, _ref2, _ref3, _results;
-        if (type === 'socket') {
-          stillActive = request.readyState < 2;
-        } else {
-          stillActive = (0 < (_ref2 = request.readyState) && _ref2 < 4);
-        }
-        if (stillActive) {
-          Pace.restart();
-          _ref3 = Pace.sources;
-          _results = [];
-          for (_j = 0, _len1 = _ref3.length; _j < _len1; _j++) {
-            source = _ref3[_j];
-            if (source instanceof AjaxMonitor) {
-              source.watch.apply(source, args);
-              break;
-            } else {
-              _results.push(void 0);
-            }
-          }
-          return _results;
-        }
-      }, after);
-    }
-  });
-
-  AjaxMonitor = (function() {
-    function AjaxMonitor() {
-      var _this = this;
-      this.elements = [];
-      getIntercept().on('request', function() {
-        return _this.watch.apply(_this, arguments);
-      });
-    }
-
-    AjaxMonitor.prototype.watch = function(_arg) {
-      var request, tracker, type, url;
-      type = _arg.type, request = _arg.request, url = _arg.url;
-      if (shouldIgnoreURL(url)) {
-        return;
-      }
-      if (type === 'socket') {
-        tracker = new SocketRequestTracker(request);
-      } else {
-        tracker = new XHRRequestTracker(request);
-      }
-      return this.elements.push(tracker);
-    };
-
-    return AjaxMonitor;
-
-  })();
-
-  XHRRequestTracker = (function() {
-    function XHRRequestTracker(request) {
-      var event, size, _j, _len1, _onreadystatechange, _ref2,
-        _this = this;
-      this.progress = 0;
-      if (window.ProgressEvent != null) {
-        size = null;
-        request.addEventListener('progress', function(evt) {
-          if (evt.lengthComputable) {
-            return _this.progress = 100 * evt.loaded / evt.total;
-          } else {
-            return _this.progress = _this.progress + (100 - _this.progress) / 2;
-          }
-        }, false);
-        _ref2 = ['load', 'abort', 'timeout', 'error'];
-        for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-          event = _ref2[_j];
-          request.addEventListener(event, function() {
-            return _this.progress = 100;
-          }, false);
-        }
-      } else {
-        _onreadystatechange = request.onreadystatechange;
-        request.onreadystatechange = function() {
-          var _ref3;
-          if ((_ref3 = request.readyState) === 0 || _ref3 === 4) {
-            _this.progress = 100;
-          } else if (request.readyState === 3) {
-            _this.progress = 50;
-          }
-          return typeof _onreadystatechange === "function" ? _onreadystatechange.apply(null, arguments) : void 0;
-        };
-      }
-    }
-
-    return XHRRequestTracker;
-
-  })();
-
-  SocketRequestTracker = (function() {
-    function SocketRequestTracker(request) {
-      var event, _j, _len1, _ref2,
-        _this = this;
-      this.progress = 0;
-      _ref2 = ['error', 'open'];
-      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-        event = _ref2[_j];
-        request.addEventListener(event, function() {
-          return _this.progress = 100;
-        }, false);
-      }
-    }
-
-    return SocketRequestTracker;
-
-  })();
-
-  ElementMonitor = (function() {
-    function ElementMonitor(options) {
-      var selector, _j, _len1, _ref2;
-      if (options == null) {
-        options = {};
-      }
-      this.elements = [];
-      if (options.selectors == null) {
-        options.selectors = [];
-      }
-      _ref2 = options.selectors;
-      for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-        selector = _ref2[_j];
-        this.elements.push(new ElementTracker(selector));
-      }
-    }
-
-    return ElementMonitor;
-
-  })();
-
-  ElementTracker = (function() {
-    function ElementTracker(selector) {
-      this.selector = selector;
-      this.progress = 0;
-      this.check();
-    }
-
-    ElementTracker.prototype.check = function() {
-      var _this = this;
-      if (document.querySelector(this.selector)) {
-        return this.done();
-      } else {
-        return setTimeout((function() {
-          return _this.check();
-        }), options.elements.checkInterval);
-      }
-    };
-
-    ElementTracker.prototype.done = function() {
-      return this.progress = 100;
-    };
-
-    return ElementTracker;
-
-  })();
-
-  DocumentMonitor = (function() {
-    DocumentMonitor.prototype.states = {
-      loading: 0,
-      interactive: 50,
-      complete: 100
-    };
-
-    function DocumentMonitor() {
-      var _onreadystatechange, _ref2,
-        _this = this;
-      this.progress = (_ref2 = this.states[document.readyState]) != null ? _ref2 : 100;
-      _onreadystatechange = document.onreadystatechange;
-      document.onreadystatechange = function() {
-        if (_this.states[document.readyState] != null) {
-          _this.progress = _this.states[document.readyState];
-        }
-        return typeof _onreadystatechange === "function" ? _onreadystatechange.apply(null, arguments) : void 0;
-      };
-    }
-
-    return DocumentMonitor;
-
-  })();
-
-  EventLagMonitor = (function() {
-    function EventLagMonitor() {
-      var avg, interval, last, points, samples,
-        _this = this;
-      this.progress = 0;
-      avg = 0;
-      samples = [];
-      points = 0;
-      last = now();
-      interval = setInterval(function() {
-        var diff;
-        diff = now() - last - 50;
-        last = now();
-        samples.push(diff);
-        if (samples.length > options.eventLag.sampleCount) {
-          samples.shift();
-        }
-        avg = avgAmplitude(samples);
-        if (++points >= options.eventLag.minSamples && avg < options.eventLag.lagThreshold) {
-          _this.progress = 100;
-          return clearInterval(interval);
-        } else {
-          return _this.progress = 100 * (3 / (avg + 3));
-        }
-      }, 50);
-    }
-
-    return EventLagMonitor;
-
-  })();
-
-  Scaler = (function() {
-    function Scaler(source) {
-      this.source = source;
-      this.last = this.sinceLastUpdate = 0;
-      this.rate = options.initialRate;
-      this.catchup = 0;
-      this.progress = this.lastProgress = 0;
-      if (this.source != null) {
-        this.progress = result(this.source, 'progress');
-      }
-    }
-
-    Scaler.prototype.tick = function(frameTime, val) {
-      var scaling;
-      if (val == null) {
-        val = result(this.source, 'progress');
-      }
-      if (val >= 100) {
-        this.done = true;
-      }
-      if (val === this.last) {
-        this.sinceLastUpdate += frameTime;
-      } else {
-        if (this.sinceLastUpdate) {
-          this.rate = (val - this.last) / this.sinceLastUpdate;
-        }
-        this.catchup = (val - this.progress) / options.catchupTime;
-        this.sinceLastUpdate = 0;
-        this.last = val;
-      }
-      if (val > this.progress) {
-        this.progress += this.catchup * frameTime;
-      }
-      scaling = 1 - Math.pow(this.progress / 100, options.easeFactor);
-      this.progress += scaling * this.rate * frameTime;
-      this.progress = Math.min(this.lastProgress + options.maxProgressPerFrame, this.progress);
-      this.progress = Math.max(0, this.progress);
-      this.progress = Math.min(100, this.progress);
-      this.lastProgress = this.progress;
-      return this.progress;
-    };
-
-    return Scaler;
-
-  })();
-
-  sources = null;
-
-  scalers = null;
-
-  bar = null;
-
-  uniScaler = null;
-
-  animation = null;
-
-  cancelAnimation = null;
-
-  Pace.running = false;
-
-  handlePushState = function() {
-    if (options.restartOnPushState) {
-      return Pace.restart();
-    }
-  };
-
-  if (window.history.pushState != null) {
-    _pushState = window.history.pushState;
-    window.history.pushState = function() {
-      handlePushState();
-      return _pushState.apply(window.history, arguments);
-    };
-  }
-
-  if (window.history.replaceState != null) {
-    _replaceState = window.history.replaceState;
-    window.history.replaceState = function() {
-      handlePushState();
-      return _replaceState.apply(window.history, arguments);
-    };
-  }
-
-  SOURCE_KEYS = {
-    ajax: AjaxMonitor,
-    elements: ElementMonitor,
-    document: DocumentMonitor,
-    eventLag: EventLagMonitor
-  };
-
-  (init = function() {
-    var type, _j, _k, _len1, _len2, _ref2, _ref3, _ref4;
-    Pace.sources = sources = [];
-    _ref2 = ['ajax', 'elements', 'document', 'eventLag'];
-    for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
-      type = _ref2[_j];
-      if (options[type] !== false) {
-        sources.push(new SOURCE_KEYS[type](options[type]));
-      }
-    }
-    _ref4 = (_ref3 = options.extraSources) != null ? _ref3 : [];
-    for (_k = 0, _len2 = _ref4.length; _k < _len2; _k++) {
-      source = _ref4[_k];
-      sources.push(new source(options));
-    }
-    Pace.bar = bar = new Bar;
-    scalers = [];
-    return uniScaler = new Scaler;
-  })();
-
-  Pace.stop = function() {
-    Pace.trigger('stop');
-    Pace.running = false;
-    bar.destroy();
-    cancelAnimation = true;
-    if (animation != null) {
-      if (typeof cancelAnimationFrame === "function") {
-        cancelAnimationFrame(animation);
-      }
-      animation = null;
-    }
-    return init();
-  };
-
-  Pace.restart = function() {
-    Pace.trigger('restart');
-    Pace.stop();
-    return Pace.start();
-  };
-
-  Pace.go = function() {
-    var start;
-    Pace.running = true;
-    bar.render();
-    start = now();
-    cancelAnimation = false;
-    return animation = runAnimation(function(frameTime, enqueueNextFrame) {
-      var avg, count, done, element, elements, i, j, remaining, scaler, scalerList, sum, _j, _k, _len1, _len2, _ref2;
-      remaining = 100 - bar.progress;
-      count = sum = 0;
-      done = true;
-      for (i = _j = 0, _len1 = sources.length; _j < _len1; i = ++_j) {
-        source = sources[i];
-        scalerList = scalers[i] != null ? scalers[i] : scalers[i] = [];
-        elements = (_ref2 = source.elements) != null ? _ref2 : [source];
-        for (j = _k = 0, _len2 = elements.length; _k < _len2; j = ++_k) {
-          element = elements[j];
-          scaler = scalerList[j] != null ? scalerList[j] : scalerList[j] = new Scaler(element);
-          done &= scaler.done;
-          if (scaler.done) {
-            continue;
-          }
-          count++;
-          sum += scaler.tick(frameTime);
-        }
-      }
-      avg = sum / count;
-      bar.update(uniScaler.tick(frameTime, avg));
-      if (bar.done() || done || cancelAnimation) {
-        bar.update(100);
-        Pace.trigger('done');
-        return setTimeout(function() {
-          bar.finish();
-          Pace.running = false;
-          return Pace.trigger('hide');
-        }, Math.max(options.ghostTime, Math.max(options.minTime - (now() - start), 0)));
-      } else {
-        return enqueueNextFrame();
-      }
-    });
-  };
-
-  Pace.start = function(_options) {
-    extend(options, _options);
-    Pace.running = true;
-    try {
-      bar.render();
-    } catch (_error) {
-      NoTargetError = _error;
-    }
-    if (!document.querySelector('.pace')) {
-      return setTimeout(Pace.start, 50);
-    } else {
-      Pace.trigger('start');
-      return Pace.go();
-    }
-  };
-
-  if (typeof define === 'function' && define.amd) {
-    define(function() {
-      return Pace;
-    });
-  } else if (typeof exports === 'object') {
-    module.exports = Pace;
-  } else {
-    if (options.startOnPageLoad) {
-      Pace.start();
-    }
-  }
-
-}).call(this);
 /**
  * @license
  * pixi.js - v3.0.10
@@ -40965,323 +40039,6 @@ var qEndingLine = captureLine();
 return Q;
 
 });
-/*
- * Javascript Quadtree
- * @version 1.2-hitman
- * @author Timo Hausmann
- * https://github.com/timohausmann/quadtree-js/
- */
-
-/*
- Copyright © 2012 Timo Hausmann
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENthis. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-*/
-
-/* MODIFIED THE MODULE TO WORK WITH ES6 EXPORT */
-
- /*
-  * Quadtree Constructor
-  * @param Object bounds			bounds with x, y, width, height
-  * @param Integer max_objects		(optional) max objects a node can hold before splitting into 4 subnodes (default: 10)
-  * @param Integer max_levels		(optional) total max levels inside root Quadtree (default: 4)
-  * @param Integer level			(optional) deepth level, required for subnodes
-  */
-export function Quadtree( bounds, max_objects, max_levels, level ) {
-
-  this.max_objects	= max_objects || 10;
-  this.max_levels		= max_levels || 4;
-
-  this.level 			= level || 0;
-  this.bounds 		= bounds;
-
-  this.objects 		= [];
-  this.object_refs	= [];
-  this.nodes 			= [];
-};
-
-
-/*
- * Split the node into 4 subnodes
- */
-Quadtree.prototype.split = function() {
-
-  var nextLevel	= this.level + 1,
-  subWidth	= Math.round( this.bounds.width / 2 ),
-  subHeight 	= Math.round( this.bounds.height / 2 ),
-  x 			= Math.round( this.bounds.x ),
-  y 			= Math.round( this.bounds.y );
-
-  //top right node
-  this.nodes[0] = new Quadtree({
-    x	: x + subWidth,
-    y	: y,
-    width	: subWidth,
-    height	: subHeight
-  }, this.max_objects, this.max_levels, nextLevel);
-
-  //top left node
-  this.nodes[1] = new Quadtree({
-    x	: x,
-    y	: y,
-    width	: subWidth,
-    height	: subHeight
-  }, this.max_objects, this.max_levels, nextLevel);
-
-  //bottom left node
-  this.nodes[2] = new Quadtree({
-    x	: x,
-    y	: y + subHeight,
-    width	: subWidth,
-    height	: subHeight
-  }, this.max_objects, this.max_levels, nextLevel);
-
-  //bottom right node
-  this.nodes[3] = new Quadtree({
-    x	: x + subWidth,
-    y	: y + subHeight,
-    width	: subWidth,
-    height	: subHeight
-  }, this.max_objects, this.max_levels, nextLevel);
-};
-
-
-/*
- * Determine the quadtrant for an area in this node
- * @param Object pRect		bounds of the area to be checked, with x, y, width, height
- * @return Integer			index of the subnode (0-3), or -1 if pRect cannot completely fit within a subnode and is part of the parent node
- */
-Quadtree.prototype.getIndex = function( pRect ) {
-
-  var index 				= -1,
-  verticalMidpoint 	= this.bounds.x + (this.bounds.width / 2),
-  horizontalMidpoint 	= this.bounds.y + (this.bounds.height / 2),
-
-  //pRect can completely fit within the top quadrants
-  topQuadrant = (pRect.y < horizontalMidpoint && pRect.y + pRect.height < horizontalMidpoint),
-
-  //pRect can completely fit within the bottom quadrants
-  bottomQuadrant = (pRect.y > horizontalMidpoint);
-
-  //pRect can completely fit within the left quadrants
-  if ( pRect.x < verticalMidpoint && pRect.x + pRect.width < verticalMidpoint ) {
-    if ( topQuadrant ) {
-      index = 1;
-    } else if ( bottomQuadrant ) {
-      index = 2;
-    }
-
-    //pRect can completely fit within the right quadrants
-  } else if ( pRect.x > verticalMidpoint ) {
-    if ( topQuadrant ) {
-      index = 0;
-    } else if ( bottomQuadrant ) {
-      index = 3;
-    }
-  }
-
-  return index;
-};
-
-
-/*
- * Insert an object into the node. If the node
- * exceeds the capacity, it will split and add all
- * objects to their corresponding subnodes.
- * @param Object obj		the object to be added, with x, y, width, height
- */
-Quadtree.prototype.insert = function( obj ) {
-
-  var i = 0,
-   index;
-
-  //if we have subnodes ...
-  if ( typeof this.nodes[0] !== 'undefined' ) {
-    index = this.getIndex( obj );
-
-    if ( index !== -1 ) {
-      this.nodes[index].insert( obj );
-      return;
-    }
-  }
-
-  this.objects.push( obj );
-
-  if ( this.objects.length > this.max_objects && this.level < this.max_levels ) {
-
-    //split if we don't already have subnodes
-    if ( typeof this.nodes[0] === 'undefined' ) {
-      this.split();
-    }
-
-    //add all objects to there corresponding subnodes
-    while ( i < this.objects.length ) {
-
-      index = this.getIndex( this.objects[ i ] );
-
-      if ( index !== -1 ) {
-        this.nodes[index].insert( this.objects.splice(i, 1)[0] );
-      } else {
-        i = i + 1;
-      }
-    }
-  }
-};
-
-
-/*
- * Return all objects that could collide with a given area
- * @param Object pRect		bounds of the area to be checked, with x, y, width, height
- * @Return Array			array with all detected objects
- */
-Quadtree.prototype.retrieve = function( pRect ) {
-
-  var index = this.getIndex( pRect ),
-  returnObjects = this.objects;
-
-  //if we have subnodes ...
-  if ( typeof this.nodes[0] !== 'undefined' ) {
-
-    //if pRect fits into a subnode ..
-    if ( index !== -1 ) {
-      returnObjects = returnObjects.concat( this.nodes[index].retrieve( pRect ) );
-
-      //if pRect does not fit into a subnode, check it against all subnodes
-    } else {
-      for ( var i=0; i < this.nodes.length; i=i+1 ) {
-        returnObjects = returnObjects.concat( this.nodes[i].retrieve( pRect ) );
-      }
-    }
-  }
-
-  return returnObjects;
-};
-
-
-/*
- * Get all objects stored in the quadtree
- * @return Array 		all objects in the quadtree
- */
-Quadtree.prototype.getAll = function() {
-
-  var objects = this.objects;
-
-  for ( var i=0; i < this.nodes.length; i=i+1 ) {
-    objects = objects.concat( this.nodes[i].getAll() );
-  }
-
-  return objects;
-};
-
-
-/*
- * Get the node in which a certain object is stored
- * @param Object obj		the object that was added via Quadtree.insert
- * @return Object 			the subnode, or false when not found
- */
-Quadtree.prototype.getObjectNode = function( obj ) {
-
-  var index;
-
-  //if there are no subnodes, object must be here
-  if ( !this.nodes.length ) {
-
-    return this;
-
-  } else {
-
-    index = this.getIndex( obj );
-
-    //if the object does not fit into a subnode, it must be here
-    if ( index === -1 ) {
-
-      return this;
-
-      //if it fits into a subnode, continue deeper search there
-    } else {
-      var node = this.nodes[index].getObjectNode( obj );
-      if ( node ) return node;
-    }
-  }
-
-  return false;
-};
-
-
-/*
- * Removes a specific object from the quadtree
- * Does not delete empty subnodes. See cleanup-function
- * @param Object obj		the object that was added via Quadtree.insert
- * @return Number			false, when the object was not found
- */
-Quadtree.prototype.removeObject = function( obj ) {
-
-  var node = this.getObjectNode( obj ),
-  index = node.objects.indexOf( obj );
-
-  if ( index === -1 ) return false;
-
-  node.objects.splice( index, 1);
-};
-
-
-/*
- * Clear the quadtree and delte all objects
- */
-Quadtree.prototype.clear = function() {
-
-  this.objects = [];
-
-  if ( !this.nodes.length ) return;
-
-  for ( var i=0; i < this.nodes.length; i=i+1 ) {
-
-    this.nodes[i].clear();
-  	}
-
-  	this.nodes = [];
-};
-
-
-/*
- * Clean up the quadtree
- * Like clear, but objects won't be deleted but re-inserted
- */
-Quadtree.prototype.cleanup = function() {
-
-  var objects = this.getAll();
-
-  this.clear();
-
-  for ( var i=0; i < objects.length; i++ ) {
-    this.insert( objects[i] );
-  }
-};
-/*
- * Javascript Quadtree
- * @version 1.1.1
- * @licence MIT
- * @author Timo Hausmann
- * https://github.com/timohausmann/quadtree-js/
- */
-!function(a,b){function c(a,b,c,d){this.max_objects=b||10,this.max_levels=c||4,this.level=d||0,this.bounds=a,this.objects=[],this.nodes=[]}c.prototype.split=function(){var a=this.level+1,d=b.round(this.bounds.width/2),e=b.round(this.bounds.height/2),f=b.round(this.bounds.x),g=b.round(this.bounds.y);this.nodes[0]=new c({x:f+d,y:g,width:d,height:e},this.max_objects,this.max_levels,a),this.nodes[1]=new c({x:f,y:g,width:d,height:e},this.max_objects,this.max_levels,a),this.nodes[2]=new c({x:f,y:g+e,width:d,height:e},this.max_objects,this.max_levels,a),this.nodes[3]=new c({x:f+d,y:g+e,width:d,height:e},this.max_objects,this.max_levels,a)},c.prototype.getIndex=function(a){var b=-1,c=this.bounds.x+this.bounds.width/2,d=this.bounds.y+this.bounds.height/2,e=a.y<d&&a.y+a.height<d,f=a.y>d;return a.x<c&&a.x+a.width<c?e?b=1:f&&(b=2):a.x>c&&(e?b=0:f&&(b=3)),b},c.prototype.insert=function(a){var b,c=0;if ("undefined"!=typeof this.nodes[0]&&(b=this.getIndex(a),-1!==b))return void this.nodes[b].insert(a);if (this.objects.push(a),this.objects.length>this.max_objects&&this.level<this.max_levels)for ("undefined"==typeof this.nodes[0]&&this.split(); c<this.objects.length;)b=this.getIndex(this.objects[c]),-1!==b?this.nodes[b].insert(this.objects.splice(c, 1)[0]):c+=1},c.prototype.retrieve=function(a){var b=this.getIndex(a),c=this.objects;if ("undefined"!=typeof this.nodes[0])if (-1!==b)c=c.concat(this.nodes[b].retrieve(a));else for (var d=0; d<this.nodes.length; d+=1)c=c.concat(this.nodes[d].retrieve(a));return c},c.prototype.clear=function(){this.objects=[];for (var a=0; a<this.nodes.length; a+=1)"undefined"!=typeof this.nodes[a]&&this.nodes[a].clear();this.nodes=[]},a.Quadtree=c}(window, Math);
 /*! https://mths.be/repeat v0.2.0 by @mathias */
 if (!String.prototype.repeat) {
 	(function() {

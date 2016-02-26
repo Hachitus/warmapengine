@@ -62,6 +62,7 @@
         mapsize: currentMapSize,
         cache: cacheMap,
         canvasContainer: document.getElementById("mapCanvasContainer"),
+        automatic: window.automaticTest,
         trackFPSCB: function (data) {
           var totalFPS = data.FPS;
           var totalTime = data.FPStime;
@@ -143,42 +144,43 @@
 
     preload.resolveOnComplete()
       .then(onComplete)
-      .then((map) => {
-        map.whenReady().then(() => {
-          document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
-        }).then(() => {
-          if (automatic) {
-            map.whenReady().then(() => {
-              window.setTimeout(perfTestLoop)
-            }).then(null, (e) => {
-              console.log(e);
+      .then((map) => map.whenReady)
+      .then(() => {
+        document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
+
+        var perfTestLoop = setupPerfTestLoop();
+
+        if (automatic) {
+          map.whenReady().then(() => {
+            window.setTimeout(perfTestLoop)
+          }).then(null, (e) => {
+            console.log(e);
+          });
+        }
+
+        function setupPerfTestLoop () {
+          var direction = 1;
+          var round = 0;
+          var quantifier = 2;
+
+          return function() {
+            map.moveMap({
+              x: direction === 1 ? -quantifier : quantifier,
+              y: direction === 1 ? -quantifier : quantifier
             });
 
-            function perfTestLoop () {
-              var direction = 1;
-              var round = 0;
-              var quantifier = 2;
+            if (map.getMovableLayer().x > 500) {
+              round ++;
+              direction = 1;
+            } else if (map.getMovableLayer().x < - 7000) {
+              direction = 2;
+            }
 
-              return function() {
-                map.moveMap({
-                  x: direction === 1 ? -quantifier : quantifier,
-                  y: direction === 1 ? -quantifier : quantifier
-                });
-
-                if (map.getMovableLayer().x > 500) {
-                  round ++;
-                  direction = 1;
-                } else if (map.getMovableLayer().x < - 7000) {
-                  direction = 2;
-                }
-
-                if (round < 5) {
-                  window.setTimeout(perfTestLoop);
-                }
-              }
+            if (round < 5) {
+              window.setTimeout(perfTestLoop);
             }
           }
-        })
+        }
       })
       .catch(function (e) {
         console.log("Map stressTest error: ", e);

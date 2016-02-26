@@ -26,7 +26,7 @@
    * @class mapMovement
    **/
   function setupMapMovement () {
-    const VIEWPORT_OFFSET = 0.15;
+    const VIEWPORT_OFFSET = 0.8;
     const CHECK_INTERVAL = 20;
     var queue = {};
     var changedCoordinates = {
@@ -173,8 +173,8 @@
       function resizeCb() {
         check(map);
       }
-      function zoomCb(newScale) {
-        currentScale = newScale;
+      function zoomCb(ev) {
+        currentScale = ev.customData[0].newScale;
       }
     }
     /*-----------------------
@@ -270,7 +270,6 @@
       containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
 
       containersUnderChangedArea.forEach((thisContainer) => {
-
         if (isObjectOutsideViewport(thisContainer, smallerScaledViewport, true)) {
           thisContainer.visible = false;
         } else {

@@ -547,10 +547,10 @@
      * @param {Number} scale    The amount of zoom you want to set
      * @return {Number}         The amount of zoom applied
      */
-    setZoom(scale) {
-      mapEvents.publish("mapZoomed", scale);
+    setZoom(newScale) {
+      mapEvents.publish("mapZoomed", { previousScale: this.getZoom(), newScale });
 
-      return this.getZoomLayer().setZoom(scale);
+      return this.getZoomLayer().setZoom(newScale);
     }
     /**
      * Get map zoom. 1 = no zoom. <1 zoom out, >1 zoom in.

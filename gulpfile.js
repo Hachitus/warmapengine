@@ -1,16 +1,12 @@
 var gulp = require('gulp');
-var fs = require('fs');
-var browserify = require('browserify');
-var watchify = require('watchify');
-var babelify = require('babelify');
 var rimraf = require('rimraf');
-var source = require('vinyl-source-stream');
-var _ = require('lodash');
+var watch = require('gulp-watch')
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
 var concat = require("gulp-concat");
 var babel = require("gulp-babel");
 var sourcemaps = require("gulp-sourcemaps");
+var uglify = require('gulp-uglify');
 
 var config = {
   entryFiles: [
@@ -52,65 +48,33 @@ var config = {
   outputFile: 'flatworld.js'
 };
 
-gulp.task('bundle', function() {
+gulp.task('bundle', ['clean'], function() {
   return gulp.src(config.entryFiles)
     .pipe(sourcemaps.init())
     .pipe(babel())
+    .pipe(uglify())
     .pipe(concat('flatworld.js'))
     .pipe(sourcemaps.write("."))
-    .pipe(gulp.dest('./dist/'));
+    .pipe(gulp.dest('./dist/'))
+    .pipe(reload({ stream: true }));
 });
 
+gulp.task('watch', function() {
+  gulp.watch(config.entryFiles, ['bundle']);
+});
 
 // clean the output directory
 gulp.task('clean', function(cb){
     rimraf(config.outputDir, cb);
 });
 
-var bundler;
-function getBundler() {
-  if (!bundler) {
-    bundler = watchify(browserify(config.entryFile, _.extend({ debug: true, paths: ['./node_modules','./src'], extensions: ['es6', "cjs", "amd", "umd"] }, watchify.args)));
-  }
-  return bundler;
-};
-
-function bundle() {
-  return getBundler()
-    .transform(babelify)
-    .bundle()
-    .on('error', function(err) { console.log('Error: ' + err.message); })
-    .pipe(source(config.outputFile))
-    .pipe(gulp.dest(config.outputDir))
-    .pipe(reload({ stream: true }));
-}
-
-gulp.task('build-persistent', ['clean'], function() {
-  return bundle();
-});
-
-gulp.task('build', ['build-persistent'], function() {
-  process.exit(0);
-});
-
-gulp.task('watch', ['build-persistent'], function() {
-
+gulp.task('develope', ['bundle', 'watch'], function() {
   browserSync({
     server: {
       baseDir: './'
-    }
-  });
-
-  getBundler().on('update', function() {
-    gulp.start('build-persistent')
+    },
+    startPath: "src/tests/manualStressTest.html"
   });
 });
 
-// WEB SERVER
-gulp.task('serve', function () {
-  browserSync({
-    server: {
-      baseDir: './'
-    }
-  });
-});
+gulp.task('default', ['bundle', 'watch']);

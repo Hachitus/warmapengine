@@ -10,7 +10,7 @@
    * - mapfullscreen - NO ARGUMENTS
    * - mapfullSize - NO ARGUMENTS
    * - mapdrag - NO ARGUMENTS
-   * - mapzoomed - NO ARGUMENTS
+   * - mapzoomed - event.customData[0].previousScale , .newScale
    * - Mapselect - NO ARGUMENTS
    * - mapMoved
    * - mapResize

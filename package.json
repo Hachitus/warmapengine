@@ -44,6 +44,7 @@
     "browser-sync": "^1.7.1",
     "browserify": "^6.3.3",
     "gulp-concat": "^2.6.0",
+    "gulp-watch": "^4.3.5",
     "ink-docstrap": "^1.1.0",
     "jscs": "^2.3.0",
     "jshint": "^2.8.0",

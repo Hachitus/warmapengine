@@ -120,8 +120,6 @@
       var presentScale = this.getZoom();
       const IS_ZOOM_IN = true;
 
-      mapEvents.publish("mapZoomed", { presentScale: presentScale, amount: amount, isZoomIn: IS_ZOOM_IN } );
-
       return _zoom(this, presentScale, Math.abs(amount) || zoomModifier, IS_ZOOM_IN);
     }
     /**
@@ -135,7 +133,6 @@
       const IS_ZOOM_IN = false;
 
       amount = amount < 0 ? amount : -amount;
-      mapEvents.publish("mapZoomed", { presentScale: presentScale, amount: amount, isZoomIn: IS_ZOOM_IN } );
 
       return _zoom(this, presentScale, amount || -zoomModifier, IS_ZOOM_IN);
     }

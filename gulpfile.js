@@ -1,5 +1,5 @@
 var gulp = require('gulp');
-var rimraf = require('rimraf');
+var rimraf = require('gulp-rimraf');
 var watch = require('gulp-watch')
 var browserSync = require('browser-sync');
 var reload = browserSync.reload;
@@ -7,10 +7,13 @@ var concat = require("gulp-concat");
 var babel = require("gulp-babel");
 var sourcemaps = require("gulp-sourcemaps");
 var uglify = require('gulp-uglify');
+var cssmin = require('gulp-cssmin');
+var debug = require('gulp-debug');
 
 var config = {
   entryFiles: [
     './src/components/map/core/init.js',
+    './src/components/utilities/polyfills.js',
     './src/components/utilities/polyfills.js',
     './src/components/utilities/general.js',
     './src/components/utilities/environment.js',
@@ -44,37 +47,81 @@ var config = {
     './src/components/map/UIs/default/default.js',
     './src/components/map/core/Flatworld.js',
     './src/factories/*.js'],
+  cssFiles: ['./src/assets/lib/pace/css/loadingBar.css'],
   outputDir: './dist/',
+  outputDirDev: './src/dist/',
   outputFile: 'flatworld.js'
 };
 
-gulp.task('bundle', ['clean'], function() {
+gulp.task('deploy', ['clean', 'bundleLib', 'bundleCss', 'bundleProd']);
+
+gulp.task('build', ['cleanDev', 'bundleLibDev', 'bundleCssDev', 'bundleDev']);
+
+gulp.task('bundleProd', function() {
+  return gulp.src(config.entryFiles)
+    .pipe(sourcemaps.init())
+    .pipe(babel())
+    .pipe(uglify())
+    .pipe(concat('flatworld.min.js'))
+    .pipe(sourcemaps.write("."))
+    .pipe(gulp.dest(config.outputDir));
+});
+
+gulp.task('bundleLib', function() {
+  return gulp.src('./src/assets/lib/**/*.js', { base: './src/assets/lib/' })
+    .pipe(concat('flatworld_libraries.js'))
+    .pipe(gulp.dest(config.outputDir));
+});
+
+gulp.task('bundleLibDev', function() {
+  return gulp.src('./src/assets/lib/**/*.js', { base: './src/assets/lib/' })
+    .pipe(concat('flatworld_libraries.js'))
+    .pipe(gulp.dest(config.outputDirDev));
+});
+
+gulp.task('bundleDev', function() {
   return gulp.src(config.entryFiles)
     .pipe(sourcemaps.init())
     .pipe(babel())
     .pipe(uglify())
     .pipe(concat('flatworld.js'))
     .pipe(sourcemaps.write("."))
-    .pipe(gulp.dest('./dist/'))
-    .pipe(reload({ stream: true }));
+    .pipe(gulp.dest(config.outputDirDev));
 });
 
 gulp.task('watch', function() {
-  gulp.watch(config.entryFiles, ['bundle']);
+  return gulp.watch(config.entryFiles, ['bundleDev']);
 });
 
-// clean the output directory
-gulp.task('clean', function(cb){
-    rimraf(config.outputDir, cb);
+gulp.task('cleanDev', function(){
+  return rimraf(config.outputDirDev);
 });
 
-gulp.task('develope', ['bundle', 'watch'], function() {
-  browserSync({
+gulp.task('clean', function(){
+  return rimraf(config.outputDir);
+});
+
+gulp.task('bundleCss', function () {
+  return gulp.src(config.cssFiles)
+    .pipe(cssmin())
+    .pipe(concat('flatworld.css'))
+    .pipe(gulp.dest(config.outputDir + "css/"));
+});
+
+gulp.task('bundleCssDev', function () {
+  return gulp.src(config.cssFiles)
+    .pipe(concat('flatworld.css'))
+    .pipe(gulp.dest(config.outputDirDev + "css/"));
+});
+
+gulp.task('develope', ['build', 'watch'], function() {
+  console.log("HEP")
+  return browserSync({
     server: {
-      baseDir: './'
+      baseDir: './src/'
     },
-    startPath: "src/tests/manualStressTest.html"
+    startPath: "tests/manualStressTest.html"
   });
 });
 
-gulp.task('default', ['bundle', 'watch']);
+gulp.task('default', ['deploy', 'build']);

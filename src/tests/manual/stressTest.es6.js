@@ -25,7 +25,7 @@
 
   /** ===== CONFIGS ===== */
   /* Note the y is 3/4 of the actual height */
-  const HEXAGON_DISTANCES = {
+  var HEXAGON_DISTANCES = {
     x: 82,
     y: 94 * 0.75
   };
@@ -144,16 +144,16 @@
 
     preload.resolveOnComplete()
       .then(onComplete)
-      .then((map) => map.whenReady)
-      .then(() => {
+      .then(function (map) { return map.whenReady })
+      .then(function () {
         document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
 
         var perfTestLoop = setupPerfTestLoop();
 
         if (automatic) {
-          map.whenReady().then(() => {
+          map.whenReady().then(function() {
             window.setTimeout(perfTestLoop)
-          }).then(null, (e) => {
+          }).then(null, function(e) {
             console.log(e);
           });
         }
@@ -240,17 +240,17 @@
   }
 
   function populateTerrainLayer(size, typeCount, mapsize) {
-    let layerData = addBase_spriteLayerData("terrainLayer", "terrain");
+    var layerData = addBase_spriteLayerData("terrainLayer", "terrain");
 
-    for (let y = 0; y < mapsize.y; y += size.y ) {
-      let x = 0;
+    for (var y = 0; y < mapsize.y; y += size.y ) {
+      var x = 0;
 
       if (y / size.y % 2 === 0) {
         x += size.x / 2;
       }
 
       while ( x < mapsize.x ) {
-        let realX = x;
+        var realX = x;
 
         layerData.objectGroups.push({
           type: "ObjectTerrain",
@@ -277,17 +277,17 @@
   }
 
   function populateUnitLayer(size, typeCount, mapsize) {
-    let layerData = addBase_spriteLayerData("unitLayer", "unit");
+    var layerData = addBase_spriteLayerData("unitLayer", "unit");
 
-    for (let y = 0; y < mapsize.y; y += size.y ) {
-      let x = 0;
+    for (var y = 0; y < mapsize.y; y += size.y ) {
+      var x = 0;
 
       if (y / size.y % 2 === 0) {
         x += size.x / 2;
       }
 
       while ( x < mapsize.x ) {
-        let realX = x;
+        var realX = x;
 
         layerData.objectGroups.push({
           type: "ObjectUnit",

@@ -10,7 +10,7 @@
   /*-----------------------
   ------- VARIABLES -------
   -----------------------*/
-  var viewportWorker = new Worker("/components/map/extensions/mapMovement/mapMovementWorker.js");
+  //var viewportWorker = new Worker("/components/map/extensions/mapMovement/mapMovementWorker.js");
 
   /*-----------------------
   ---------- API ----------

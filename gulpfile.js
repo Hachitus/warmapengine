@@ -7,8 +7,8 @@ var concat = require("gulp-concat");
 var babel = require("gulp-babel");
 var sourcemaps = require("gulp-sourcemaps");
 var uglify = require('gulp-uglify');
-var cssmin = require('gulp-cssmin');
-var debug = require('gulp-debug');
+var cssmin = require('gulp-uglify');
+//var debug = require('gulp-debug');
 
 var config = {
   entryFiles: [

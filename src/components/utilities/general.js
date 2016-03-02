@@ -16,7 +16,8 @@
    */
   function setupArrays() {
     return {
-      flatten2Levels
+      flatten2Levels,
+      chunkArray
     };
 
     /**
@@ -28,6 +29,18 @@
      */
     function flatten2Levels(arr) {
       return [].concat.apply([], arr);
+    }
+    /**
+     * from: http://stackoverflow.com/a/34847417/1523545
+     */
+    function chunkArray(array, chunkSize) {
+      var result = [];
+
+      for (var i = 0; i < array.length; i += chunkSize) {
+        result.push(array.slice(i, chunkSize + i));
+      }
+
+      return result;
     }
   }
 })();

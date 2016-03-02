@@ -148,14 +148,16 @@
        **/
       this.trackFPSCB = trackFPSCB;
       /**
-       * ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks the map to select some object. This uses subcontainers when present.
+       * ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks
+       * the map to select some object. This uses subcontainers when present.
        *
        * @attribute objectManager
        * @type {ObjectManager}
        **/
       this.objectManager = new ObjectManager(new PIXI.interaction.InteractionManager(_renderer));
       /**
-       * Is cache activated for this map at all. This is set for individual layers with a property, but without activating the cache for the whole map, the layers cache property is ignored.
+       * Is cache activated for this map at all. This is set for individual layers with a property, but without activating the cache for
+       * the whole map, the layers cache property is ignored.
        *
        * @attribute objectManager
        * @type {ObjectManager}
@@ -345,17 +347,45 @@
      * Get the size of the area that is shown to the player. More or less the area of the browser window.
      *
      * @method getViewportArea
-     * @param  {Boolean} isLocal                                                  Do we want to use Map coordinates or global / canvas coordinates. Default = false
-     * @return {{x: Integer, y: Integer, width: Integer, height: Integer}}        x- and y-coordinates and the width and height of the viewport
+     * @param  {Boolean} isLocal                                                  Do we want to use Map coordinates or global / canvas
+     * coordinates. Default = false
+     * @return {{x: Integer, y: Integer, width: Integer, height: Integer}}        x- and y-coordinates and the width and height of the
+     * viewport
      **/
     getViewportArea(isLocal = false) {
-      var layer = isLocal ? this.getMovableLayer() : this.getStaticLayer();
+      var leftSideCoords = new PIXI.Point(0, 0);
+      var rightSideCoords = new PIXI.Point(window.innerWidth,window.innerHeight);
+      var layer, rightSide, leftSide;
+
+      if (isLocal) {
+        layer = this.getMovableLayer();
+        let rightCoords = layer.toLocal(rightSideCoords);
+        let leftCoords = layer.toLocal(leftSideCoords);
+        leftSide = {
+          x: leftCoords.x,
+          y: leftCoords.y
+        };
+        rightSide = {
+          x2: rightCoords.x,
+          y2: rightCoords.y
+        };
+      } else {
+        layer = this.getStaticLayer();
+        leftSide = {
+          x: leftSideCoords.x,
+          y: leftSideCoords.y
+        };
+        rightSide = {
+          x2: rightSideCoords.x,
+          y2: rightSideCoords.y
+        };
+      }
 
       return {
-        x: layer.x,
-        y: layer.y,
-        width: Math.round(window.innerWidth),
-        height: Math.round(window.innerHeight)
+        x: Math.round(leftSide.x),
+        y: Math.round(leftSide.y),
+        width: Math.round(Math.abs(Math.abs(rightSide.x2) - leftSide.x)),
+        height: Math.round(Math.abs(Math.abs(rightSide.y2) - leftSide.y))
       };
     }
     /**
@@ -370,13 +400,17 @@
       return layer;
     }
     /**
-     * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale). Draws map after movement.
+     * Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that
+     * the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale). Draws map after
+     * movement.
      *
      * @method moveMap
-     * @param {Object} coord                 The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.
+     * @param {Object} coord                 The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we
+     * want the map to move horizontally 5 pixels and vertically stay at the same position.
      * @param {Integer} coord.x              X coordinate
      * @param {Integer} coord.y              Y coordinate
-     * @param {Object} informCoordinates     THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING
+     * @param {Object} informCoordinates     THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN
+     * SCALING
      * @param {Integer} informCoordinates.x  X coordinate
      * @param {Integer} informCoordinates.y  Y coordinate
      **/
@@ -399,7 +433,8 @@
       return this.cache;
     }
     /**
-     * Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches the ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.
+     * Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches
+     * the ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.
      *
      * @method cacheMap
      * @param {Object} filters          filters from MapDataManipulator.js
@@ -417,7 +452,8 @@
       cacheLayers(false, this.usesSubcontainers());
     }
     /**
-     * Activate all plugins for the map. Iterates through the given plugins we wish to activate and does the actual work in activatePlugin-method.
+     * Activate all plugins for the map. Iterates through the given plugins we wish to activate and does the actual work in activatePlugin-
+     * method.
      *
      * @method pluginsArray
      * @param {Object[]} pluginsArray   Array that consists the plugin modules to be activated
@@ -438,7 +474,8 @@
       return allPromises;
     }
     /**
-     * Activate plugin for the map. Plugins need .pluginName property and .init-method. Plugins init-method activates the plugins and we call them in Map. Plugins init-metho receivse this (Map instance) as their only parameter.
+     * Activate plugin for the map. Plugins need .pluginName property and .init-method. Plugins init-method activates the plugins and we
+     * call them in Map. Plugins init-metho receivse this (Map instance) as their only parameter.
      *
      * @method activatePlugin
      * @param {Object} plugin        Plugin module
@@ -469,7 +506,8 @@
       thisPrototype[property] = value;
     }
     /**
-     * Gets object under specific map coordinates. Uses the ObjectManagers retrieve method. Using subcontainers if they exist, other methods if not. If you provide type parameter, the method returns only object types that match it.
+     * Gets object under specific map coordinates. Uses the ObjectManagers retrieve method. Using subcontainers if they exist, other
+     * methods if not. If you provide type parameter, the method returns only object types that match it.
      *
      * @method getObjectsUnderArea
      * @param  {Object} globalCoords            Event coordinates on the staticLayer / canvas.
@@ -511,7 +549,9 @@
       return objects;
     }
     /**
-     * This returns the normal parent layers that we mostly use for manipulation everything. MovableLayer and staticLayer are built-in layers designed to provide the basic functionalities like zooming and moving the map. These layers provide everything that extends the map more.
+     * This returns the normal parent layers that we mostly use for manipulation everything. MovableLayer and staticLayer are built-in
+     * layers designed to provide the basic functionalities like zooming and moving the map. These layers provide everything that extends
+     * the map more.
      *
      * @method getPrimaryLayers
      * @return {Object} Basically anything in the map that is used as a layer (not really counting subcontainers).
@@ -562,7 +602,9 @@
       return this.getZoomLayer().getZoom();
     }
     /**
-     * Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative to the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI elements, like effects that happen on certain point on the map.
+     * Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative
+     * to the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI
+     * elements, like effects that happen on certain point on the map.
      *
      * @method getMovableLayer
      * @return {MapLayer|PIXI.Container|PIXI.ParticleContainer}
@@ -591,13 +633,15 @@
      ------- ABSTRACT APIS THROUGH PLUGINS --------
      --------------------------------------------*/
      /**
-      * This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.
+      * This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't
+      * implement your own, I suggest you use it.
       *
       * @method zoomIn
       */
     zoomIn() { return "notImplementedYet. Activate with plugin"; }
      /**
-      * This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.
+      * This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't
+      * implement your own, I suggest you use it.
       *
       * @method zoomOut
       */
@@ -677,7 +721,7 @@
       var thisLayersSubcontainers;
 
       primaryLayers.forEach(layer => {
-        thisLayersSubcontainers = layer.getSubcontainersByCoordinates(allCoords.globalCoords, { filter: filter });
+        thisLayersSubcontainers = layer.getSubcontainersByCoordinates(allCoords.localCoords, { filter: filter });
         allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
       });
 
@@ -776,7 +820,7 @@
 
         subcontainers.forEach(subcontainer => {
           subcontainer.setCache(cacheOrNot);
-        })
+        });
       });
     } else {
       _movableLayer.children.forEach(child => {

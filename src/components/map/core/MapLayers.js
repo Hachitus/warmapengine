@@ -294,14 +294,10 @@
         throw new Error("tried to retrieve subcontainers, when they are not present");
       }
 
-      var foundSubcontainers, tempCoordinates;
+      var foundSubcontainers;
       var { filter } = options;
 
-      tempCoordinates = this.toLocal(new PIXI.Point(coordinates.x, coordinates.y));
-      tempCoordinates.width = coordinates.width;
-      tempCoordinates.height = coordinates.height;
-
-      foundSubcontainers = getClosestSubcontainers(this, tempCoordinates, { filter });
+      foundSubcontainers = getClosestSubcontainers(this, coordinates, { filter });
 
       return foundSubcontainers;
     }
@@ -337,15 +333,12 @@
      * @method getSubcontainerArea
      * @param {Number} scale                              The size of scale the map currently has
      * @param {Boolean} options.toGlobal                  Do we get the global coordinates or local
+     * @return {Object}                                   x, y, width and height returned inside object.
      */
-    getSubcontainerArea (scale, options = { toGlobal: true } ) {
+    getSubcontainerArea (options = { toGlobal: true } ) {
       var coordinates;
 
       coordinates = options.toGlobal ? this.toGlobal(new PIXI.Point(0, 0)) : this;
-      if (scale) {
-        coordinates.x /= scale;
-        coordinates.y /= scale;
-      }
 
       return {
         x: Math.round( coordinates.x ),

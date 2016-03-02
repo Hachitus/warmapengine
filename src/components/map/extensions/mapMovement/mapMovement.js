@@ -26,7 +26,7 @@
    * @class mapMovement
    **/
   function setupMapMovement () {
-    const VIEWPORT_OFFSET = 0.5;
+    const VIEWPORT_OFFSET = 0.2;
     const CHECK_INTERVAL = 20;
     var queue = {};
     var changedCoordinates = {
@@ -40,7 +40,14 @@
       pluginName: "mapMovement",
       addAll,
       check,
-      startEventListeners
+      startEventListeners,
+      _testObject: {
+        isObjectOutsideViewport,
+        viewportWorkerOnMessage,
+        getViewportCoordinates,
+        testRectangleIntersect,
+        _setMap
+      }
     };
     /**
      * Ínitialize as a plugin
@@ -74,9 +81,12 @@
             return !subcontainer.visible;
           });
 
-          console.log("visible subcontainers: " + visibleContainers.length + ":" +visibleContainers, "\n\ninvisible: " + invisibleContainers.length + ":" + invisibleContainers);
+          window.flatworld.log.debug(
+            "visible subcontainers: " + visibleContainers.length + ":" +visibleContainers +
+            "\n\ninvisible: " + invisibleContainers.length + ":" + invisibleContainers
+          );
         });
-      }
+      };
       /**
        * For debugging. Sets all primaryLayers subcontainers on the map as visible = true.
        *
@@ -86,13 +96,13 @@
       window.FlaTWorld_mapMovement_deactivate = function() {
         map.getPrimaryLayers().forEach( layer => {
           var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
-          var visibleContainers, invisibleContainers;
+          var visibleContainers;
 
           visibleContainers = subcontainers.forEach(subcontainer => {
             subcontainer.visible = false;
           });
         });
-      }
+      };
     }
     /**
      * Ínitialize as a plugin
@@ -103,15 +113,13 @@
     function addAll() {
       var viewportArea;
 
-      viewportArea = map.getViewportArea();
-      Object.assign( viewportArea, getViewportsRightSideCoordinates(viewportArea) );
-      Object.assign( viewportArea , applyScaleToViewport(viewportArea, currentScale) );
+      viewportArea = map.getViewportArea(true);
 
       map.getPrimaryLayers().forEach( layer => {
         var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
 
         subcontainers.forEach(subcontainer => {
-          subcontainer.visible = isObjectOutsideViewport(subcontainer, viewportArea, false) ? false : true;
+          subcontainer.visible = isObjectOutsideViewport(subcontainer, viewportArea) ? false : true;
         });
       });
     }
@@ -133,22 +141,15 @@
       }
       queue.processing = true;
 
-      let viewportFn = setupHandleViewportArea(queue, changedCoordinates);
+      let viewportFn = setupHandleViewportArea();
       window.setTimeout(viewportFn, CHECK_INTERVAL);
 
-      function setupHandleViewportArea(queue, changedCoordinates) {
-        var methodType = 1;
-        var viewportArea, smallerViewportArea, scaledViewport, smallerScaledViewportArea;
+      function setupHandleViewportArea() {
+        var viewportArea;
 
-        viewportArea = map.getViewportArea();
+        viewportArea = map.getViewportArea(true);
 
-        smallerViewportArea = getViewportCoordinates(viewportArea, 0.5);
-        Object.assign( viewportArea, getViewportCoordinates(viewportArea));
-
-        scaledViewport = applyScaleToViewport(viewportArea);
-        smallerScaledViewportArea = applyScaleToViewport(smallerViewportArea);
-
-        viewportWorkerOnMessage(scaledViewport, smallerScaledViewportArea);
+        viewportWorkerOnMessage(viewportArea, map.getPrimaryLayers());
       }
 
       return;
@@ -181,10 +182,12 @@
     -------- PRIVATE --------
     -----------------------*/
     /**
+     * See if the given object or subcontainer is outside the given viewportarea. We check intersecting rectangles
+     *
      * @private
      * @static
      * @method isObjectOutsideViewport
-     * @param  {Object}  object                 Object / layer we are testing
+     * @param  {Object} object                  Object / layer we are testing
      * @param  {Object} viewportArea            ViewportArea location and size
      * @param  {Integer} viewportArea.x         X coordinate
      * @param  {Integer} viewportArea.y         Y coordinate
@@ -193,96 +196,87 @@
      * @param  {Boolean} hasParent              default = true
      * @return {Boolean}
      */
-    function isObjectOutsideViewport(object, viewportArea, hasParent = true) {
-      var isIt, globalCoords;
+    function isObjectOutsideViewport(object, viewportArea) {
+      var isOutside, globalArea;
 
-      globalCoords = object.getSubcontainerArea(currentScale, { toGlobal: hasParent });
+      globalArea = object.getSubcontainerArea({ toGlobal: false });
 
-      isIt = !testRectangleIntersect(globalCoords, viewportArea);
+      isOutside = !testRectangleIntersect(globalArea, viewportArea);
 
-      return isIt;
-    }
-    /**
-     * @private
-     * @static
-     * @method getViewportsRightSideCoordinates
-     * @private
-     * @param  {Object} viewportArea            ViewportArea location and size
-     * @param  {Integer} viewportArea.x         X coordinate
-     * @param  {Integer} viewportArea.y         Y coordinate
-     * @param  {Integer} viewportArea.width     Viewports width (in pixels)
-     * @param  {Integer} viewportArea.height    Viewports height (in pixels)
-     */
-    function getViewportsRightSideCoordinates(viewportArea) {
-      const offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET * 2 );
-
-      return {
-        x2: Math.round( viewportArea.x + Math.abs( viewportArea.width ) + offsetSize ),
-        y2: Math.round( viewportArea.y + Math.abs( viewportArea.height ) + offsetSize ),
-        width: Math.round( viewportArea.width + offsetSize ),
-        height: Math.round( viewportArea.height + offsetSize )
-      };
-    }
-    /**
-     * Calculates and modifies coordinates and size according to current scale / zoom on the map.
-     *
-     * @private
-     * @static
-     * @method applyScaleToViewport
-     * @private
-     * @param  {Object} viewportArea            ViewportArea location and size
-     * @param  {Integer} viewportArea.x         X coordinate
-     * @param  {Integer} viewportArea.y         Y coordinate
-     * @param  {Integer} viewportArea.width     Viewports width (in pixels)
-     * @param  {Integer} viewportArea.height    Viewports height (in pixels)
-     * @return {Object}                         The total viewportArea
-     */
-    function applyScaleToViewport(viewportArea) {
-      return {
-        x: Math.round( viewportArea.x / currentScale ),
-        y: Math.round( viewportArea.y / currentScale ),
-        x2: Math.round( viewportArea.x2 / currentScale ),
-        y2: Math.round( viewportArea.y2 / currentScale ),
-        width: Math.round( viewportArea.width / currentScale ),
-        height: Math.round( viewportArea.height / currentScale )
-      };
+      return isOutside;
     }
     /**
      * The onmessage callback that handles things after we get reply from the worker
      *
      * @param  {Object} e   Event object from worker
      */
-    function viewportWorkerOnMessage(scaledViewport, smallerScaledViewport) {
+    function viewportWorkerOnMessage(scaledViewport, primaryLayers) {
       var containersUnderChangedArea = [];
-      var scaledAndChangedViewport;
-
-      scaledAndChangedViewport = Object.assign({}, scaledViewport);
-
-      scaledAndChangedViewport.width += Math.round(Math.abs(changedCoordinates.width));
-      scaledAndChangedViewport.height += Math.round(Math.abs(changedCoordinates.height));
+      var firstCount = 0;
+      var secondCount = 0;
+      var promises;
 
       /* RESET */
       changedCoordinates.width = 0;
       changedCoordinates.height = 0;
 
-      containersUnderChangedArea = map.getPrimaryLayers().map(layer => {
-        return layer.getSubcontainersByCoordinates(scaledAndChangedViewport);
+      primaryLayers = arrays.chunkArray(primaryLayers, 2);
+      promises = primaryLayers.map((theseLayers) => {
+        var promise = window.Q.defer();
+
+        window.setTimeout(function () {
+          var foundSubcontainers;
+
+          foundSubcontainers = theseLayers.map((layer) => {
+            return layer.getSubcontainersByCoordinates(scaledViewport);
+          });
+          containersUnderChangedArea = containersUnderChangedArea.concat(foundSubcontainers);
+          firstCount++;
+
+          if (firstCount >= primaryLayers.length) {
+            promise.resolve(true);
+          }
+          console.log("ONE");
+        });
+
+        return promise;
       });
-      containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
 
-      containersUnderChangedArea.forEach((thisContainer) => {
-        if (isObjectOutsideViewport(thisContainer, smallerScaledViewport, true)) {
-          thisContainer.visible = false;
-        } else {
-          thisContainer.visible = true;
-        }
+      promises = window.Q.all(promises).then(() => {
+        console.log("TWO");
+        var promise = window.Q.defer();
+        var subcontainers;
 
+        containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
+
+        subcontainers = arrays.chunkArray(containersUnderChangedArea, 40);
+
+        subcontainers.forEach((thesesContainers) => {
+          var promise = window.Q.defer();
+
+          window.setTimeout(function () {
+            thesesContainers.forEach((thisContainer) => {
+              thisContainer.visible = isObjectOutsideViewport(thisContainer, scaledViewport) ? false : true;
+            });
+
+            secondCount++;
+
+            if (secondCount >= subcontainers.length) {
+              promise.resolve(true);
+            }
+          });
+        });
+
+        return promise;
       });
+      window.Q.all(promises).then(() => {
+        console.log("THREE");
+        queue.processing = false;
 
-      queue.processing = false;
-
-      map.drawOnNextTick();
-
+        map.drawOnNextTick();
+      }).then(null, (err) => {
+        window.flatworld.log.debug(err);
+      });
     }
     /**
      * forms the total viewport parameters based on the given ones.
@@ -291,35 +285,44 @@
      * @static
      * @method getViewportCoordinates
      * @param  {AreaSize} viewportArea          Given viewport area
-     * @param  {Number} offsetQuantifier        How big offset we match against
      * @return {totalViewportArea}              The total viewportArea
      */
-    function getViewportCoordinates(viewportArea, offsetQuantifier) {
-      var offsetSize = Math.abs( viewportArea.width * VIEWPORT_OFFSET  );
-      offsetQuantifier = offsetQuantifier || 1;
+    function getViewportCoordinates(viewportArea, options = { scale: 1 }) {
+      var offsetSize = calculateOffset(viewportArea, options);
 
       return {
-        x: Math.round( viewportArea.x - offsetSize * offsetQuantifier ),
-        y: Math.round( viewportArea.y - offsetSize * offsetQuantifier ),
-        x2: Math.round( viewportArea.x + Math.abs( viewportArea.width ) + offsetSize * offsetQuantifier ),
-        y2: Math.round( viewportArea.y + Math.abs( viewportArea.height ) + offsetSize * offsetQuantifier ),
-        width: Math.round( viewportArea.width + offsetSize * 2 * offsetQuantifier ),
-        height: Math.round( viewportArea.height + offsetSize * 2 * offsetQuantifier )
+        x: Math.round( viewportArea.x - offsetSize ),
+        y: Math.round( viewportArea.y - offsetSize ),
+        width: Math.round( viewportArea.width / options.scale + offsetSize * 2 ),
+        height: Math.round( viewportArea.height / options.scale + offsetSize * 2 )
       };
     }
-  }
-  /*-----------------------
-  -------- PRIVATE --------
-  -----------------------*/
-  /**
-   * @private
-   * @static
-   * @method testRectangleIntersect
-   */
-  function testRectangleIntersect(a, b) {
-    return (a.x <= b.x + b.width &&
-            b.x <= a.x + a.width &&
-            a.y <= b.y + b.height &&
-            b.y <= a.y + a.height);
+    /**
+     * @private
+     * @static
+     * @method testRectangleIntersect
+     */
+    function testRectangleIntersect(a, b) {
+      return (a.x <= b.x + b.width &&
+              b.x <= a.x + a.width &&
+              a.y <= b.y + b.height &&
+              b.y <= a.y + a.height);
+    }
+    /**
+     * @private
+     * @static
+     * @method calculateOffset
+     */
+    function calculateOffset(viewportArea, options = { scale: 1 }) {
+      return Math.abs( viewportArea.width / options.scale * VIEWPORT_OFFSET  );
+    }
+    /**
+     * @private
+     * @static
+     * @method _setMap
+     */
+    function _setMap(givenMap) {
+      map = givenMap;
+    }
   }
 })();

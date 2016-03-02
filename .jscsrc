@@ -27,5 +27,6 @@
   "disallowTrailingComma": true,
   "disallowKeywords": [ "with" ],
   "disallowKeywordsOnNewLine": ["else"],
-  "excludeFiles": ["src/jspm_packages/**", "node_modules/**", "webcomponents/**", "src/assets/lib/**", "src/tests/lib/**"]
+  "excludeFiles": ["src/jspm_packages/**", "node_modules/**", "webcomponents/**", "src/assets/lib/**", "src/tests/lib/**"],
+  maximumLineLength: 140
 }

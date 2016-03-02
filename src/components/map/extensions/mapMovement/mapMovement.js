@@ -26,7 +26,7 @@
    * @class mapMovement
    **/
   function setupMapMovement () {
-    const VIEWPORT_OFFSET = 0.8;
+    const VIEWPORT_OFFSET = 0.5;
     const CHECK_INTERVAL = 20;
     var queue = {};
     var changedCoordinates = {
@@ -235,6 +235,7 @@
      * @param  {Integer} viewportArea.y         Y coordinate
      * @param  {Integer} viewportArea.width     Viewports width (in pixels)
      * @param  {Integer} viewportArea.height    Viewports height (in pixels)
+     * @return {Object}                         The total viewportArea
      */
     function applyScaleToViewport(viewportArea) {
       return {
@@ -304,23 +305,6 @@
         y2: Math.round( viewportArea.y + Math.abs( viewportArea.height ) + offsetSize * offsetQuantifier ),
         width: Math.round( viewportArea.width + offsetSize * 2 * offsetQuantifier ),
         height: Math.round( viewportArea.height + offsetSize * 2 * offsetQuantifier )
-      };
-    }
-    /**
-     * @private
-     * @static
-     * @method applyScaleToViewport
-     * @param  {AreaSize} viewportArea
-     * @return {totalViewportArea}        The total viewportArea
-     */
-    function applyScaleToViewport(viewportArea) {
-      return {
-        x: Math.round( viewportArea.x / currentScale ),
-        y: Math.round( viewportArea.y / currentScale ),
-        x2: Math.round( viewportArea.x2 / currentScale ),
-        y2: Math.round( viewportArea.y2 / currentScale ),
-        width: Math.round( viewportArea.width / currentScale ),
-        height: Math.round( viewportArea.height / currentScale )
       };
     }
   }

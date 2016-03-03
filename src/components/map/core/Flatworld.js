@@ -642,7 +642,7 @@
       return _movableLayer;
     }
     /**
-     * Returns the PIXI renderer. Some situations might need this. For more advanced or PIXI specific cases.
+     * Returns the PIXI renderer. Don't use this unless you must. For more advanced or PIXI specific cases.
      *
      * @method getRenderer
      * @return {PIXI.Renderer}
@@ -755,31 +755,6 @@
       });
 
       return allMatchingSubcontainers;
-    }
-    /**
-     * Activate the browsers fullScreen mode and expand the canvas to fullsize
-     *
-     * @private
-     * @method setFullScreen
-     */
-    _setFullScreen() {
-      utils.resize.toggleFullScreen();
-      mapEvents.publish("mapResized");
-      this._resizeCanvas();
-    }
-    /**
-     * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
-     *
-     * @private
-     * @method _resizeCanvas
-     */
-    _resizeCanvas() {
-      let windowSize = utils.resize.getWindowSize();
-
-      _renderer.autoResize = true;
-      _renderer.resize(windowSize.x, windowSize.y);
-      mapEvents.publish("mapResized");
-      this.drawOnNextTick();
     }
     /**
      * This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick

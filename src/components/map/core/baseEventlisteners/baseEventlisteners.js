@@ -7,6 +7,7 @@
   -----------------------*/
   var eventListeners = window.flatworld.eventListeners;
   var mapStates = window.flatworld.mapStates;
+  var mapEvents = window.flatworld.mapEvents;
   var utils = window.flatworld.utils;
 
   /*-----------------------
@@ -19,7 +20,7 @@
   -----------------------*/
   /**
    * Core plugin. Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for the
-   * eventlistener management.
+   * eventlistener management. Creates window.flatworld.setFullScreen function to be used when switching to fullscreen.
    *
    * @class baseEventlisteners
    * @requires Hammer.js (for touch events)
@@ -53,14 +54,10 @@
       eventListeners.setDetector("select", selectToggle.on, selectToggle.off);
       eventListeners.setDetector("order", orderToggle.on, orderToggle.off);
 
-      map.setPrototype("setFullsize", () => {
-        /* We set this only once */
-        boundResizer = boundResizer || map._resizeCanvas.bind(map);
-
-        eventListeners.on("fullSize", boundResizer);
-      });
+      eventListeners.on("fullSize", _resizeCanvas);
       map.setPrototype("setFullScreen", () => {
-        eventListeners.on("fullscreen", map._setFullScreen.bind(map));
+        console.log("HERE")
+        eventListeners.on("fullscreen", _setFullScreen);
       });
     }
 
@@ -226,6 +223,34 @@
 
         activeCB(e);
       }
+    }
+
+    /**
+     * Activate the browsers fullScreen mode and expand the canvas to fullsize
+     *
+     * @private
+     * @method setFullScreen
+     */
+    function _setFullScreen() {
+      utils.resize.toggleFullScreen();
+      mapEvents.publish("mapResized");
+      _resizeCanvas();
+    }
+    /**
+     * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
+     *
+     * @private
+     * @method _resizeCanvas
+     */
+    function _resizeCanvas() {
+      console.log("RESIZING!");
+      var windowSize = utils.resize.getWindowSize();
+      var _renderer = mapInstance.getRenderer();
+
+      _renderer.autoResize = true;
+      _renderer.resize(windowSize.x, windowSize.y);
+      mapEvents.publish("mapResized");
+      mapInstance.drawOnNextTick();
     }
   }
 })();

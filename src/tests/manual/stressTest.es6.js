@@ -58,7 +58,7 @@
       cacheMap = cacheElement.checked;
 
       mapData = getMapData(currentMapSize);
-      window.mapReady = initFlatworld(mapData, {
+      initFlatworld(mapData, {
         mapsize: currentMapSize,
         cache: cacheMap,
         canvasContainer: document.getElementById("mapCanvasContainer"),
@@ -142,7 +142,7 @@
       console.log("progressing" + progress);
     });
 
-    preload.resolveOnComplete()
+    return preload.resolveOnComplete()
       .then(onComplete)
       .then(function (map) {
         return map.whenReady;
@@ -200,6 +200,12 @@
         });
 
       map.init( pluginsToActivate, mapData.startPoint );
+
+      /* Activate the fullscreen button: */
+      document.getElementById("testFullscreen").addEventListener("click", function () {
+        console.log("BOOOO", map, map.setFullScreen)
+        map.setFullScreen();
+      });
 
       return map;
     }

@@ -33,6 +33,7 @@
       width: 0,
       height: 0
     };
+    var debug = false;
     var map, currentScale;
 
     return {
@@ -44,7 +45,7 @@
       _testObject: {
         isObjectOutsideViewport,
         viewportWorkerOnMessage,
-        getViewportCoordinates,
+        getViewportWithOffset,
         testRectangleIntersect,
         _setMap
       }
@@ -63,46 +64,49 @@
       startEventListeners();
       map.drawOnNextTick();
 
-      /**
-       * For debugging. Shows the amount of currectly active and inactive subcontainers. Console.logs the data. Also extends window object.
-       *
-       * @method window.FlaTWorld_mapMovement_subCheck
-       * @static
-       */
-      window.FlaTWorld_mapMovement_subCheck = function() {
-        map.getPrimaryLayers().forEach( layer => {
-          var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
-          var visibleContainers, invisibleContainers;
+      if (debug) {
+        /**
+         * For debugging. Shows the amount of currectly active and inactive subcontainers. Console.logs the data.
+         * Also extends window object.
+         *
+         * @method window.FlaTWorld_mapMovement_subCheck
+         * @static
+         */
+        window.FlaTWorld_mapMovement_subCheck = function() {
+          map.getPrimaryLayers().forEach( layer => {
+            var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
+            var visibleContainers, invisibleContainers;
 
-          visibleContainers = subcontainers.filter(subcontainer => {
-            return subcontainer.visible;
-          });
-          invisibleContainers = subcontainers.filter(subcontainer => {
-            return !subcontainer.visible;
-          });
+            visibleContainers = subcontainers.filter(subcontainer => {
+              return subcontainer.visible;
+            });
+            invisibleContainers = subcontainers.filter(subcontainer => {
+              return !subcontainer.visible;
+            });
 
-          window.flatworld.log.debug(
-            "visible subcontainers: " + visibleContainers.length + ":" +visibleContainers +
-            "\n\ninvisible: " + invisibleContainers.length + ":" + invisibleContainers
-          );
-        });
-      };
-      /**
-       * For debugging. Sets all primaryLayers subcontainers on the map as visible = true.
-       *
-       * @method window.FlaTWorld_mapMovement_deactivate
-       * @static
-       */
-      window.FlaTWorld_mapMovement_deactivate = function() {
-        map.getPrimaryLayers().forEach( layer => {
-          var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
-          var visibleContainers;
-
-          visibleContainers = subcontainers.forEach(subcontainer => {
-            subcontainer.visible = false;
+            let containerCoords = visibleContainers.reduce((all, cont2) => { all + cont2.x + ""; });
+            window.flatworld.log.debug(
+              "visible subcontainers: " + visibleContainers.length + ", " + containerCoords + "\n\ninvisible: " +
+              invisibleContainers.length);
           });
-        });
-      };
+        };
+        /**
+         * For debugging. Sets all primaryLayers subcontainers on the map as visible = true.
+         *
+         * @method window.FlaTWorld_mapMovement_deactivate
+         * @static
+         */
+        window.FlaTWorld_mapMovement_deactivate = function() {
+          map.getPrimaryLayers().forEach( layer => {
+            var subcontainers = arrays.flatten2Levels(layer.getSubcontainers());
+            var visibleContainers;
+
+            visibleContainers = subcontainers.forEach(subcontainer => {
+              subcontainer.visible = false;
+            });
+          });
+        };
+      }
     }
     /**
      * Ínitialize as a plugin
@@ -212,9 +216,9 @@
      */
     function viewportWorkerOnMessage(scaledViewport, primaryLayers) {
       var containersUnderChangedArea = [];
-      var firstCount = 0;
-      var secondCount = 0;
-      var promises;
+      var promises, largerViewportAreaWithOffset;
+
+      largerViewportAreaWithOffset = getViewportWithOffset(scaledViewport);
 
       /* RESET */
       changedCoordinates.width = 0;
@@ -228,30 +232,24 @@
           var foundSubcontainers;
 
           foundSubcontainers = theseLayers.map((layer) => {
-            return layer.getSubcontainersByCoordinates(scaledViewport);
+            return layer.getSubcontainersByCoordinates(largerViewportAreaWithOffset);
           });
           containersUnderChangedArea = containersUnderChangedArea.concat(foundSubcontainers);
-          firstCount++;
 
-          if (firstCount >= primaryLayers.length) {
-            promise.resolve(true);
-          }
-          console.log("ONE");
+          promise.resolve(true);
         });
 
-        return promise;
+        return promise.promise;
       });
 
       promises = window.Q.all(promises).then(() => {
-        console.log("TWO");
-        var promise = window.Q.defer();
-        var subcontainers;
+        var subcontainers, promises;
 
         containersUnderChangedArea = arrays.flatten2Levels(containersUnderChangedArea);
 
         subcontainers = arrays.chunkArray(containersUnderChangedArea, 40);
 
-        subcontainers.forEach((thesesContainers) => {
+        promises = subcontainers.map((thesesContainers) => {
           var promise = window.Q.defer();
 
           window.setTimeout(function () {
@@ -259,18 +257,15 @@
               thisContainer.visible = isObjectOutsideViewport(thisContainer, scaledViewport) ? false : true;
             });
 
-            secondCount++;
-
-            if (secondCount >= subcontainers.length) {
-              promise.resolve(true);
-            }
+            promise.resolve(true);
           });
+
+          return promise.promise;
         });
 
-        return promise;
+        return promises;
       });
       window.Q.all(promises).then(() => {
-        console.log("THREE");
         queue.processing = false;
 
         map.drawOnNextTick();
@@ -283,18 +278,18 @@
      *
      * @private
      * @static
-     * @method getViewportCoordinates
+     * @method getViewportWithOffset
      * @param  {AreaSize} viewportArea          Given viewport area
      * @return {totalViewportArea}              The total viewportArea
      */
-    function getViewportCoordinates(viewportArea, options = { scale: 1 }) {
+    function getViewportWithOffset(viewportArea, options = { scale: 1 }) {
       var offsetSize = calculateOffset(viewportArea, options);
 
       return {
         x: Math.round( viewportArea.x - offsetSize ),
         y: Math.round( viewportArea.y - offsetSize ),
-        width: Math.round( viewportArea.width / options.scale + offsetSize * 2 ),
-        height: Math.round( viewportArea.height / options.scale + offsetSize * 2 )
+        width: Math.round( viewportArea.width + offsetSize * 2 ),
+        height: Math.round( viewportArea.height + offsetSize * 2 )
       };
     }
     /**

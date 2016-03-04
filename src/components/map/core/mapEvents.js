@@ -10,7 +10,9 @@
   -------- PUBLIC -------
   ----------------------*/
   /**
-   * This module handles map events. Like informing map movement, object selection and other changes. Not that ALL the eventlisteners and their callbacks will throw one event! But that event will have no extra parameters, so when you do special things, like selecting objects on the map, you should throw another event when that happens and you can pass on the objects that were selected from the map.
+   * This module handles map events. Like informing map movement, object selection and other changes. Not that ALL the eventlisteners and
+   * their callbacks will throw one event! But that event will have no extra parameters, so when you do special things, like selecting
+   * objects on the map, you should throw another event when that happens and you can pass on the objects that were selected from the map.
    * Events atm:
    * - mapfullscreen - NO ARGUMENTS
    * - mapfullSize - NO ARGUMENTS
@@ -62,7 +64,7 @@
   }
 
   /**
-   * 
+   * Basically custom events polyfill for IE11.
    */
   function createCrossIeEvent(type) {
     var event;

@@ -2,6 +2,11 @@
   'use strict';
 
   /*---------------------
+  ------- IMPORT --------
+  ----------------------*/
+  var PIXI = window.flatworld_libraries.PIXI;
+
+  /*---------------------
   --------- API ---------
   ----------------------*/
   window.flatworld.utils.effects = setupEffects();

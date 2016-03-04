@@ -2,6 +2,11 @@
   'use strict';
 
   /*---------------------
+  ------- IMPORT --------
+  ----------------------*/
+  var PIXI = window.flatworld_libraries.PIXI;
+
+  /*---------------------
   ------ VARIABLES ------
   ---------------------*/
   var _UIObjects = [];
@@ -11,12 +16,15 @@
   ---------------------*/
   class MapLayer extends PIXI.Container {
     /**
-     * Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.
+     * Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can
+     * only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site:
+     * http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.
      *
      * @class MapLayer
      * @constructor
      * @param {Object} options                            optional options
-     * @param {String} options.name                       Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too
+     * @param {String} options.name                       Layers name, used for identifying the layer. Useful in debugging, but can be
+     * used for finding correct layers too
      * @param  {Object} options.coord                   coord starting coords of layer. Relative to parent map layer.
      * @param  {Integer} options.coord.x         X coordinate
      * @param  {Integer} options.coord.y         Y coordinate
@@ -78,7 +86,8 @@
      * Move layer based on given amounts
      *
      * @method move
-     * @param  {Object} coord            The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move the map 5 pixels horizontally and 0 pixels vertically
+     * @param  {Object} coord            The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move
+     * the map 5 pixels horizontally and 0 pixels vertically
      * @param  {Integer} coord.x         X coordinate
      * @param  {Integer} coord.y         Y coordinate
      **/
@@ -229,12 +238,15 @@
 
   class MapLayerParent extends MapLayer {
     /**
-     * Layer designed to hold subcontainers. But can handle objects too. Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap. Thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE
+     * Layer designed to hold subcontainers. But can handle objects too. Different devices graphic cards can only have specific size of
+     * bitmap drawn, and PIXI cache always draws a bitmap. Thus the default is: 4096, based on this site: http://webglstats.com/ and
+     * MAX_TEXTURE_SIZE
      *
      * @class MapLayerParent
      * @constructor
      * @param {Object} options
-     * @param {String} options.name                    name layer property name, used for identifiying the layer, usefull in debugging, but used also otherwise too
+     * @param {String} options.name                    name layer property name, used for identifiying the layer, usefull in debugging,
+     * but used also otherwise too
      * @param  {Object} options.coord                  starting coords of layer. Relative to parent map layer.
      * @param  {Integer} options.coord.x               X coordinate
      * @param  {Integer} options.coord.y               Y coordinate
@@ -255,7 +267,8 @@
       this.specialLayer = specialLayer;
     }
     /**
-     * We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and then we call the original (PIXIs) addChild
+     * We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and
+     * then we call the original (PIXIs) addChild
      *
      * @method addChild
      * @param {PIXI.DisplayObject} displayObject      PIXI.DisplayObject
@@ -311,7 +324,12 @@
 
   class MapSubcontainer extends PIXI.Container {
     /**
-     * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend MapLayers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree. The intention was to use PIXI.ParticleContainer for this, but it seems it doesn't clean up the memory afterwards the same way as normal Container.
+     * Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they
+     * are PIXI.ParticleContainers. But when needed we can extend MapLayers with another class which is subcontainer, but not
+     * ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of
+     * the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use
+     * our inefficient Quadtree. The intention was to use PIXI.ParticleContainer for this, but it seems it doesn't clean up the memory
+     * afterwards the same way as normal Container.
      *
      * @private
      * @class MapSubcontainer

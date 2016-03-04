@@ -5,7 +5,7 @@
   --------- IMPORT --------
   -----------------------*/
   var utils = window.flatworld.utils;
-  var PIXI = window.PIXI;
+  var PIXI = window.flatworld_libraries.PIXI;
 
   /*-----------------------
   ---------- API ----------
@@ -18,8 +18,10 @@
      * @constructor
      * @extends PIXI.Sprite
      * @param {PIXI.Point} coords                         the coordinate where the object is located at, relative to it's parent
-     * @param {Object} data                               objects data, that will be used in the game. It will not actually be mainly used in graphical but rather things  like unit-data and city-data presentations etc.
-     * @param {Object} options.currFrame       currFrame the current frames number. This is basically the initial image, we can change it later for animation or such
+     * @param {Object} data                               objects data, that will be used in the game. It will not actually be mainly used
+     * in graphical but rather things  like unit-data and city-data presentations etc.
+     * @param {Object} options.currFrame       currFrame the current frames number. This is basically the initial image, we can change it
+     * later for animation or such
      */
     constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {} }) {
       var { currentFrame } = options;
@@ -193,7 +195,8 @@
 
   class ObjectSpriteUnit extends ObjectSprite {
     /**
-     * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
+     * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type.
+     * For example you might want to add some click area for these (e.g. hexagon)
      *
      * @class ObjectSpriteUnit
      * @constructor

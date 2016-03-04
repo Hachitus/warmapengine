@@ -4,11 +4,11 @@
   /*---------------------
   ------- IMPORT --------
   ----------------------*/
+  var { PIXI } = window.flatworld_libraries;
   // This is only for testing, so we don't set it here... var $ = require('assets/lib/jquery/jquery-css-ajax-effects.min.js');
   var templates = window.flatworld.UIs.default.templates;
   var createVisibleHexagon = window.flatworld.extensions.hexagons.utils.createVisibleHexagon;
   var UITemplateBase = window.flatworld.UITemplateBase;
-  var UI = window.flatworld.UI;
   //import { drawShapes } from 'components/map/UIs/default/utils/arrows';
 
   /*---------------------

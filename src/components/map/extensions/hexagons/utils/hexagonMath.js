@@ -68,7 +68,8 @@
    * @param  {Object} hitCoords         The coordinates to test against
    * @param  {Integer} hitCoords.x      X coordinate
    * @param  {Integer} hitCoords.y      Y coordinate
-   * @param  {Object} offsetCoords      offsetCoordinates that are added to the hitCoordinates. Separate because these are outside the given array.
+   * @param  {Object} offsetCoords      offsetCoordinates that are added to the hitCoordinates. Separate because these are outside the
+   * given array.
    * @param  {Integer} offsetCoords.x   X coordinate
    * @param  {Integer} offsetCoords.y   Y coordinate
    * @return {Boolean}                  Is the coordinate inside the hexagon or not

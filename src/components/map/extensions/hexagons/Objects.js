@@ -6,6 +6,7 @@
   -----------------------*/
   var { ObjectSpriteTerrain, ObjectSpriteUnit } = window.flatworld.objects;
   var { calcLongDiagonal, calcShortDiagonal, createHexagon } = window.flatworld.extensions.hexagons.utils;
+  var PIXI = window.flatworld_libraries.PIXI;
 
   /*-----------------------
   -------- VARIABLES ------

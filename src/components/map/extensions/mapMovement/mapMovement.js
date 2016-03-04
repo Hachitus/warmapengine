@@ -6,6 +6,7 @@
   -----------------------*/
   var mapEvents = window.flatworld.mapEvents;
   var arrays = window.flatworld.generalUtils.arrays;
+  var Q = window.flatworld_libraries.Q;
 
   /*-----------------------
   ------- VARIABLES -------

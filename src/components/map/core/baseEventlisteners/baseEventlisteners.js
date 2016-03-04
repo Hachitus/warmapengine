@@ -1,5 +1,4 @@
 (function () {
-  /* global Hammer, Hamster */
   'use strict';
 
   /*-----------------------
@@ -9,6 +8,8 @@
   var mapStates = window.flatworld.mapStates;
   var mapEvents = window.flatworld.mapEvents;
   var utils = window.flatworld.utils;
+  var Hammer = window.flatworld_libraries.Hammer;
+  var Hamster = window.flatworld_libraries.Hamster;
 
   /*-----------------------
   ---------- API ----------
@@ -56,7 +57,6 @@
 
       eventListeners.on("fullSize", _resizeCanvas);
       map.setPrototype("setFullScreen", () => {
-        console.log("HERE")
         eventListeners.on("fullscreen", _setFullScreen);
       });
     }

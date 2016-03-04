@@ -4,13 +4,8 @@
   /*---------------------
   ------- IMPORT --------
   ----------------------*/
-  var Q = window.flatworld_libraries.Q;
-  var mapLayers = window.flatworld.mapLayers;
-  var ObjectManager = window.flatworld.ObjectManager;
-  var mapEvents = window.flatworld.mapEvents;
-  var MapDataManipulator = window.flatworld.MapDataManipulator;
-  var generalUtils = window.flatworld.generalUtils;
-  var mapLog = window.flatworld.log;
+  var { Q, PIXI } = window.flatworld_libraries;
+  var { mapLayers, ObjectManager, mapEvents, MapDataManipulator, generalUtils, log }  = window.flatworld;
 
   /*---------------------
   ------ VARIABLES ------
@@ -495,7 +490,7 @@
         if (typeof plugin === "object") {
           this.activatePlugin(plugin);
         } else {
-          mapLog.error("problem with initializing a plugin: " + plugin.name);
+          log.error("problem with initializing a plugin: " + plugin.name);
         }
       });
 
@@ -521,7 +516,7 @@
         }
 
       } catch (e) {
-        mapLog.log("An error initializing plugin. JSON.stringify: '" + JSON.stringify(plugin) + "' ", e);
+        log.log("An error initializing plugin. JSON.stringify: '" + JSON.stringify(plugin) + "' ", e);
       }
     }
     /**

@@ -4,7 +4,7 @@
   /*---------------------
   ------- IMPORT --------
   ----------------------*/
-  var Q = window.flatworld_libararies.Q;
+  var Q = window.flatworld_libraries.Q;
   var mapLayers = window.flatworld.mapLayers;
   var ObjectManager = window.flatworld.ObjectManager;
   var mapEvents = window.flatworld.mapEvents;

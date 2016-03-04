@@ -4,8 +4,8 @@
   /*---------------------
   ------- IMPORT --------
   ----------------------*/
-  var Q = window.flatworld_libararies.Q;
-  var PIXI = window.flatworld_libararies.PIXI;
+  var Q = window.flatworld_libraries.Q;
+  var PIXI = window.flatworld_libraries.PIXI;
 
   /*-----------------------
   ---------- API ----------

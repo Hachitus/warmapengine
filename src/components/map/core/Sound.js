@@ -4,8 +4,8 @@
   /*---------------------
   ------- IMPORT --------
   ----------------------*/
-  var Q = window.flatworld_libararies.Q;
-  var Howl = window.flatworld_libararies.Howler;
+  var Q = window.flatworld_libraries.Q;
+  var Howl = window.flatworld_libraries.Howler;
   var log = window.flatworld.mapLayers;
 
   /*---------------------

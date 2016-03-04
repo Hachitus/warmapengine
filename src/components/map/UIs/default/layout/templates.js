@@ -4,7 +4,7 @@
   /*---------------------
   ------- IMPORT --------
   ----------------------*/
-  var Handlebars = window.flatworld_libararies.Handlebars;
+  var Handlebars = window.flatworld_libraries.Handlebars;
 
   window.flatworld.UIs = window.flatworld.UIs || {};
   window.flatworld.UIs.default = window.flatworld.UIs.default || {};

@@ -4,7 +4,7 @@
   /*---------------------
   ------- IMPORT --------
   ----------------------*/
-  var PIXI = window.flatworld_libararies.PIXI;
+  var PIXI = window.flatworld_libraries.PIXI;
   var UIDefault = window.flatworld.UIs.default.init;
   var hexagonPlugin = window.flatworld.extensions.hexagons;
   var Flatworld = window.flatworld.Flatworld;

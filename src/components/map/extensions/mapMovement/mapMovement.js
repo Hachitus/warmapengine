@@ -174,13 +174,14 @@
 
         changedCoordinates.width += movedCoordinates.x;
         changedCoordinates.height += movedCoordinates.y;
-        check(map);
+        check();
       }
       function resizeCb() {
-        check(map);
+        check();
       }
       function zoomCb(ev) {
         currentScale = ev.customData[0].newScale;
+        check();
       }
     }
     /*-----------------------

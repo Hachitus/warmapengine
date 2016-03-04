@@ -6,7 +6,6 @@
   ----------------------*/
   var eventListeners = window.flatworld.eventListeners;
   var utils = window.flatworld.utils;
-  var mapEvents = window.flatworld.mapEvents;
 
   /*---------------------
   --------- API ---------
@@ -17,7 +16,8 @@
   -------- PUBLIC -------
   ----------------------*/
   /**
-   * Core plugin for the engine. Handles zooming for the map. Core plugins can always be overwrote if needed. Zooming happens when the user scrolls the mousewheel or in mobile, pinches the screen.
+   * Core plugin for the engine. Handles zooming for the map. Core plugins can always be overwrote if needed. Zooming happens when the
+   * user scrolls the mousewheel or in mobile, pinches the screen.
    *
    * @class mapZoom
    * @return {Object}      init
@@ -54,7 +54,7 @@
     ---------------------*/
     return {
       init,
-      pluginName: "mapZoom",
+      pluginName: "mapZoom"
     };
 
     /*---------------------

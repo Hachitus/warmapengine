@@ -14,7 +14,8 @@
 
   class ObjectHexaTerrain extends ObjectSpriteTerrain {
     /**
-     * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are inherited, depending on the map type. For example you might want to add some click area for these
+     * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are inherited, depending on
+     * the map type. For example you might want to add some click area for these
      *
      * @class hexagonPlugin.ObjectHexaTerrain
      * @constructor
@@ -37,7 +38,8 @@
 
   class ObjectHexaUnit extends ObjectSpriteUnit {
     /**
-     * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)
+     * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type.
+     * For example you might want to add some click area for these (e.g. hexagon)
      *
      * @class hexagonPlugin.ObjectHexaUnit
      * @constructor
@@ -84,20 +86,12 @@
 
     /* Draw hexagon to test the hits with hitArea */
     this.hitArea = setAndGetShape(radius);
-    this.hitTest = function (coords, options) {
-      this.updateTransform();
-      //map.getMovableLayer().updateTransform();
-      //coords = map.getMovableLayer().toLocal(coords);
-      var isHit = options.hitDetector.processInteractive(
-        new PIXI.Point(coords.x, coords.y),
-        this,
-        function (/*parent, hits*/) {
-          console.log("Shouldn't get here, the object should be non-interactive");
-        },
-        true,
-        true);
+    this.hitTest = function (coords) {
+      var localCoords;
 
-      return isHit;
+      localCoords = this.toLocal(new PIXI.Point(coords.x, coords.y));
+
+      return this.hitArea.contains(localCoords.x, localCoords.y);
     };
   }
   /**

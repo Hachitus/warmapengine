@@ -29,7 +29,7 @@
    * if none is provided
    */
   function baseEventlistenersModule() {
-    var hammer, hamster, boundResizer, mapInstance;
+    var hammer, hamster, mapInstance;
 
     /*---------------------------
     ----------- API -------------
@@ -243,7 +243,6 @@
      * @method _resizeCanvas
      */
     function _resizeCanvas() {
-      console.log("RESIZING!");
       var windowSize = utils.resize.getWindowSize();
       var _renderer = mapInstance.getRenderer();
 

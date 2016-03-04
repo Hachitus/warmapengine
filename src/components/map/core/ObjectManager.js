@@ -2,25 +2,19 @@
   'use strict';
 
   /*---------------------
-  ------- IMPORT --------
-  ----------------------*/
-  var utils = window.flatworld.utils;
-  var arrays = window.flatworld.generalUtils.arrays;
-
-  /*---------------------
   --------- API ---------
   ----------------------*/
   class ObjectManager {
     /**
-     * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or when objects or areas collide with each other.
+     * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or when objects or areas
+     * collide with each other.
      *
      * @class ObjectManager
      * @constructor
-     * @param {object} hitDetector Object or function that handles hit detection. This can be omitted in many cases
-     * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms.
+     * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits.
+     * It could use sprites or forms.
      */
-    constructor(hitDetector) {
-      this.hitDetector = hitDetector || {};
+    constructor() {
     }
     /**
      * Retrieve objects under certain coordinates or area, if size is given. Uses subcontainers when used, no other options yet.
@@ -36,14 +30,15 @@
      * @param {string} type                                     type of the object / layer that we want to retrieve
      * @param {Object} options                                  optional options
      * @param {Array} options.subcontainers                     The subcontainers we match against
-     * @param {Object} options.size                             Size of the rectangle area to match against, if we want to match rectangle instead of one point
+     * @param {Object} options.size                             Size of the rectangle area to match against, if we want to match rectangle
+     * instead of one point
      * @param {Integer} options.size.width
      * @param {Integer} options.size.height
      * @return {Array}                                          matched objects
      */
     retrieve(allCoords, options = { type: false, subcontainers: [], size: { width: 0, height: 0 } }) {
       var { subcontainers, size, type } = options;
-      var { globalCoords, localCoords } = allCoords;
+      var { globalCoords } = allCoords;
       var foundObjs = [];
 
       if (subcontainers.length > 0) {
@@ -57,7 +52,7 @@
               return false;
             }
 
-            let isHit = obj.hitTest ? obj.hitTest(globalCoords, { hitDetector: this.hitDetector }) : true;
+            let isHit = obj.hitTest ? obj.hitTest(globalCoords) : true;
 
             return isHit;
           });

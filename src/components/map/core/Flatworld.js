@@ -8,7 +8,6 @@
   var mapLayers = window.flatworld.mapLayers;
   var ObjectManager = window.flatworld.ObjectManager;
   var mapEvents = window.flatworld.mapEvents;
-  var utils = window.flatworld.utils;
   var MapDataManipulator = window.flatworld.MapDataManipulator;
   var generalUtils = window.flatworld.generalUtils;
   var mapLog = window.flatworld.log;
@@ -166,7 +165,7 @@
        * @attribute objectManager
        * @type {ObjectManager}
        **/
-      this.objectManager = new ObjectManager(new PIXI.interaction.InteractionManager(_renderer));
+      this.objectManager = new ObjectManager();
       /**
        * Is cache activated for this map at all. This is set for individual layers with a property, but without activating the cache for
        * the whole map, the layers cache property is ignored.
@@ -325,10 +324,10 @@
      * @param {Object} options.coord      Coordinates of the layer
      * @param {Integer} options.coord.x   X coordinate
      * @param {Integer} options.coord.y   Y coordinate
-     * @param {Object} options.toLayer    To which layer will this layer be added to as UILayer
+     * @param {Object} options.toLayer    To which layer will this layer be added to as UILayer. Default false
      * @return {MapLayer}            The created UI layer
      **/
-    createSpecialLayer(name = "default special layer", options = { coord: { x: 0, y: 0 }, toLayer }) {
+    createSpecialLayer(name = "default special layer", options = { coord: { x: 0, y: 0 }, toLayer: false }) {
       var coord = options.coord || { x: 0, y: 0 };
       var layer = new mapLayers.MapLayer(name, coord);
 

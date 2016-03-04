@@ -50,13 +50,30 @@
       timestamp = new Date().getTime();
 
       if ( (lastTimePublished[type] + TIMER_FOR_SAME_TYPE ) < timestamp) {
-        let eventToDispatch = new Event(type);
+        let eventToDispatch;
 
+        eventToDispatch = createCrossIeEvent(type);
         eventToDispatch.customData = data;
 
         document.dispatchEvent(eventToDispatch);
         lastTimePublished[type] = timestamp;
       }
     }
+  }
+
+  /**
+   * 
+   */
+  function createCrossIeEvent(type) {
+    var event;
+
+    try {
+      event = new Event(type);
+    } catch (e) {
+      event = document.createEvent('Event');
+      event.initEvent(type, true, true);
+    }
+
+    return event;
   }
 })();

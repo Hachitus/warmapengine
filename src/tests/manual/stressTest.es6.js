@@ -188,7 +188,7 @@
       });
 
     function onComplete(loader, resources) {
-      map = globalMap.data = factories.hexaFactory(
+      window.worldMap = map = globalMap.data = factories.hexaFactory(
         canvasContainer, {
           game: gameData,
           map: mapData,

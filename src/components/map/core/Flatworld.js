@@ -495,7 +495,7 @@
         if (typeof plugin === "object") {
           this.activatePlugin(plugin);
         } else {
-          throw new Error("problem with initializing a plugin");
+          mapLog.error("problem with initializing a plugin: " + plugin.name);
         }
       });
 
@@ -506,6 +506,7 @@
      * call them in Map. Plugins init-metho receivse this (Map instance) as their only parameter.
      *
      * @method activatePlugin
+     * @throws {Error} Throws a general error if there is an issue activating the plugin
      * @param {Object} plugin        Plugin module
      * */
     activatePlugin(plugin) {
@@ -514,9 +515,11 @@
           throw new Error("plugin, plugin.pluginName or plugin.init import is missing!");
         }
 
-        if (this.plugins.add(plugin[plugin.pluginName])) {
+        this.plugins.add(plugin[plugin.pluginName]);
+        if (this.plugins.has(plugin[plugin.pluginName])) {
           plugin.init(this);
         }
+
       } catch (e) {
         mapLog.log("An error initializing plugin. JSON.stringify: '" + JSON.stringify(plugin) + "' ", e);
       }

@@ -516,7 +516,7 @@
         }
 
       } catch (e) {
-        log.log("An error initializing plugin. JSON.stringify: '" + JSON.stringify(plugin) + "' ", e);
+        log.error("An error initializing plugin. JSON.stringify: '" + JSON.stringify(plugin) + "' ", e);
       }
     }
     /**

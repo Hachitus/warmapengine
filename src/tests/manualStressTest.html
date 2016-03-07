@@ -6,16 +6,24 @@
 
 	<!-- MOBILE prevent zooming with mobile native gestures and use our own -->
 	<meta name="viewport" content="user-scalable=no, width=device-width, initial-scale=1, maximum-scale=1, maximum-scale=1">
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
 	<!-- MOBILE Remove tap highlight on Windows Phone -->
 	<meta name="msapplication-tap-highlight" content="no" />
-
+  <style>
+  @media screen {
+    html, body {
+       height: 100vh;
+    }
+  }
+  </style>
   <!--<script src="/tests/testAssets/lib/pace/pace.js"></script>
   <link rel="stylesheet" href="/tests/testAssets/lib/pace/css/loadingBar.css">-->
 </head>
 
 <body>
-  <div id="mapCanvasContainer" height="600" width="1200">
-    <canvas id="mapCanvas" height="600" width="1200">
+  <div id="mapCanvasContainer">
+    <canvas id="mapCanvas">
       Canvas not supported!
     </canvas>
   </div>

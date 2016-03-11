@@ -29,25 +29,25 @@
          *
          * @method objectSelect
          */
-        { name: "objectSelect", from: [ "statusQuo", "objectSelect"], to: "objectSelect" },
+        { name: "objectSelect", from: [ "statusQuo", "objectSelected"], to: "objectSelected" },
         /**
          * When object is issued a move order
          *
          * @method objectMove
          */
-        { name: "objectOrder", from: "objectSelect", to: "animatingObject" },
+        { name: "objectOrder", from: "objectSelected", to: "animatingObject" },
         /**
          * When object ends it's movement animation
          *
          * @method objectMoveEnd
          */
-        { name: "objectOrderEnd", from: "animatingObject", to: "statusQuo" },
+        { name: "objectOrderEnd", from: "animatingObject", to: "objectSelected" },
         /**
          * The games main UI is opened and the map stays at the background, normally non-responsive
          *
          * @method UIOpen
          */
-        { name: "UIOpen", from: ["statusQuo", "unitSelected"], to: "mainUIOpened" },
+        { name: "UIOpen", from: ["statusQuo", "objectSelected"], to: "mainUIOpened" },
         /**
          * Games main UI is closed and map is activated again
          *
@@ -59,7 +59,7 @@
          *
          * @method mapMove
          */
-        { name: "mapMove", from: ["statusQuo", "unitSelected"], to: "mapMoving" },
+        { name: "mapMove", from: ["statusQuo", "objectSelected"], to: "mapMoving" },
         /**
          * Map is being moved / dragged
          *

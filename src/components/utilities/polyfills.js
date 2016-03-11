@@ -93,8 +93,8 @@
             // IE 8 only supports `Object.defineProperty` on DOM elements
             try {
               var object = {};
-              var $defineProperty = Object.defineProperty;
-              var result = $defineProperty(object, object, object) && $defineProperty;
+              var defineProperty = Object.defineProperty;
+              var result = defineProperty(object, object, object) && defineProperty;
             } catch (error) {}
             return result;
           }());

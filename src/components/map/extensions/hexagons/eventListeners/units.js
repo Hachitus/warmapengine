@@ -128,10 +128,7 @@
       selectedObject.move(globalCoords);
       mapEvents.publish("objectMoves", selectedObject);
 
-      ui.moveObject(selectedObject, {
-        from: 0,
-        to: 0
-      });
+      ui.showUnitMovement(selectedObject, globalCoords);
 
       mapStates.objectOrderEnd();
       mapInstance.drawOnNextTick();

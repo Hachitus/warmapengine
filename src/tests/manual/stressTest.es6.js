@@ -26,8 +26,8 @@
   /** ===== CONFIGS ===== */
   /* Note the y is 3/4 of the actual height */
   var HEXAGON_DISTANCES = {
-    x: 81,
-    y: 92 * 0.75
+    x: 82,
+    y: 94 * 0.75
   };
 
   /* REQUIRED FOR IE11 */

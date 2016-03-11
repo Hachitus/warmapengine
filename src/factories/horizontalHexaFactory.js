@@ -5,7 +5,7 @@
   ------- IMPORT --------
   ----------------------*/
   var PIXI = window.flatworld_libraries.PIXI;
-  var { Flatworld, UI, utils }  = window.flatworld;
+  var { Flatworld, UI, utils, log }  = window.flatworld;
   var UIDefault = window.flatworld.UIs.default.init;
   var hexagonPlugin = window.flatworld.extensions.hexagons;
 
@@ -82,12 +82,10 @@
 
     DATA_MAP.layers.forEach( layerData => {
       if (typeof layerData !== "object") {
-        console.log("Problem in horizontalHexaFactory, with layerData:", layerData);
+        log.error("Problem in horizontalHexaFactory, with layerData:" + JSON.stringify(layerData));
         throw new Error("Problem in horizontalHexaFactory, with layerData:", layerData);
       }
 
-      var layerGroup = layerData.group;
-      var objManager = map.objectManager;
       var renderer = map.getRenderer();
       var layerOptions = {
         name: layerData.name,
@@ -107,7 +105,7 @@
           let spritesheetType = objectGroup.typeImageData;
 
           if (!spritesheetType) {
-            console.log("Error with spritesheetType-data");
+            log.error("Error with spritesheetType-data");
             return;
           }
 
@@ -117,7 +115,7 @@
             try {
               objTypeData = DATA_TYPE.objectData[spritesheetType][object.objType];
               if (!objTypeData) {
-                console.debug("Bad mapData for type:", spritesheetType, object.objType, object.name);
+                log.error("Bad mapData for type:", spritesheetType, object.objType, object.name);
                 throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
               }
 
@@ -135,12 +133,12 @@
 
               thisLayer.addChild(newObject);
             } catch (e) {
-              console.log(e);
+              log.error(e);
             }
           });
         });
       } catch (e) {
-        console.log("Problem:", layerData.type, e.stack);
+        log.error("Problem:" + JSON.stringify(layerData.type) + " ---- " + JSON.stringify(e.stack));
       }
     });
 

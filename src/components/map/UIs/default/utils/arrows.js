@@ -5,7 +5,8 @@
   window.flatworld.UIs.default.utils.drawShapes = (function() {
     return {
       normal: drawArrow,
-      arced: drawArcedArrow
+      arced: drawArcedArrow,
+      line
     };
 
     /* =============== Functions for drawing arrows ================ */
@@ -241,5 +242,16 @@
       }
     }
     /* =============================== */
+
+    function line(graphics, from, to, options = { color: 0xf3a33f, style: 5 }) {
+      var { color, style } = options;
+
+      graphics.lineStyle(style, color);
+      graphics.moveTo(from.x, from.y);
+      graphics.lineTo(to.x, to.y);
+      graphics.endFill();
+
+      return graphics;
+    }
   })();
 })();

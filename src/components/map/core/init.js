@@ -11,6 +11,7 @@
   window.flatworld_libraries.Howler = window.Howl;
   window.flatworld = {};
   window.flatworld.generalUtils = {};
+  window.flatworld.log = {};
   window.flatworld.objects = {};
   window.flatworld.extensions = {};
   window.flatworld.mapLayers = {};

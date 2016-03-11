@@ -5,20 +5,18 @@
   ------- IMPORT --------
   ----------------------*/
   var { PIXI } = window.flatworld_libraries;
-  // This is only for testing, so we don't set it here... var $ = require('assets/lib/jquery/jquery-css-ajax-effects.min.js');
   var templates = window.flatworld.UIs.default.templates;
   var createVisibleHexagon = window.flatworld.extensions.hexagons.utils.createVisibleHexagon;
   var UITemplateBase = window.flatworld.UITemplateBase;
-  //import { drawShapes } from 'components/map/UIs/default/utils/arrows';
+  var drawShapes = window.flatworld.UIs.default.utils.drawShapes;
 
   /*---------------------
   ------ VARIABLES ------
   ----------------------*/
-  const FADE_ANIMATION = "slow";
   var cssClasses = {
     select: "#dialog_select"
   };
-  var $elements = {};
+  var elements = {};
 
   /*---------------------
   --------- API ---------
@@ -31,8 +29,6 @@
      * @constructor
      * @requires Handlebars
      * @requires hexagon extension
-     * @requires jQuery
-     * @todo  should take jQuery away from this, as soon as we refactor the animations and graphics for selections
      * @param  {HTMLElement} modal
      * @param  {Map} map
      * @param  {Object} options
@@ -81,7 +77,7 @@
 
           console.log(objects);
 
-          _get$Element("select").fadeIn(FADE_ANIMATION);
+          _getElement("select").style.display = 'block';
         };
       } else if (objects.length === 1) {
         cb = () => {
@@ -97,7 +93,8 @@
         };
       }
 
-      _get$Element("select").fadeOut(FADE_ANIMATION, cb);
+      _getElement("select").style.display = 'none';
+      cb();
     }
     /**
      * Required by the map.UI API
@@ -133,14 +130,21 @@
 
       this.map.drawOnNextTick();
 
-      _get$Element("select").fadeIn(FADE_ANIMATION);
+      _getElement("select").style.display = 'block';
 
       return highlightableObject;
     }
     /**
      * @method showUnitMovement
      */
-    showUnitMovement() {}
+    showUnitMovement(object, to) {
+      var arrow;
+
+      arrow = drawShapes.line(new PIXI.Graphics(), object, to );
+      console.log("arrow", this.map.getMovableLayer());
+      this.map.addUIObject(arrow);
+      this.map.drawOnNextTick();
+    }
     /**
      * @method init
      */
@@ -214,18 +218,17 @@
   /**
    * @private
    * @static
-   * @method _get$Element
+   * @method _getElement
    * @param  {[type]} which [description]
    * @return {[type]}       [description]
    */
-  function _get$Element(which) {
-    /* Set the jQuery element to collection only once */
-    if (!$elements[which]) {
-      let $element = $(cssClasses[which]);
-      $elements[which] = $element;
+  function _getElement(which) {
+    if (!elements[which]) {
+      let element = document.querySelector(cssClasses[which]);
+      elements[which] = element;
     }
 
-    return $elements[which];
+    return elements[which];
   }
 
   window.flatworld.UIs.default.init = UIDefault;

@@ -554,6 +554,7 @@
 
       allCoords.localCoords.width = globalCoords.width;
       allCoords.localCoords.height = globalCoords.height;
+
       if (filter) {
         let selectableContainerfilter = new MapDataManipulator({
             type: "filter",

@@ -11,7 +11,8 @@
   ----------------------*/
   /**
    * Main class for showing UI on the map. Like unit selections and such. Has nothing to do with showing off-map data.
-   * Good examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit) and bringing the unit on top in the map. UI themes must implement this core UI module
+   * Good examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit) and bringing the
+   * unit on top in the map. UI themes must implement this core UI module
    *
    * @todo Not implemented fully yet and probably need refactoring
    *
@@ -44,7 +45,8 @@
      * @method showSelections
      * @static
      * @param  {Array} objects     Objects that have been selected.
-     * @param {Object} getDatas       This is an object made of functions, that get wanted data from the object. For example if you have objects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.
+     * @param {Object} getDatas       This is an object made of functions, that get wanted data from the object. For example if you have
+     * objects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.
      * @param {Object} getDatas.name  Retrieves object name
      * @param {Object} options        Extra options
      * @return {Boolean}
@@ -67,13 +69,14 @@
      * @method highlightSelectedObject
      * @static
      * @param  {Object} object        Object that has been selected.
-     * @param {Object} getDatas       This is an object made of functions, that get wanted data from the object. For example if you have objects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.
+     * @param {Object} getDatas       This is an object made of functions, that get wanted data from the object. For example if you have
+     * objects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.
      * @param {Object} getDatas.name  Retrieves object name
      * @param {Object} options        Extra options. Like dropping a shadow etc.
      * */
     scope.highlightSelectedObject = function (object, getDatas, options) {
       UITheme.highlightSelectedObject(object);
-    }
+    };
     /**
      * Shows arrow or movement or what ever to indicate the selected unit is moving to the given location
      *
@@ -82,7 +85,7 @@
      * */
     scope.showUnitMovement = function (object, from, to, options) {
       UITheme.showUnitMovement(object, from, to, options);
-    }
+    };
 
     return scope;
   }

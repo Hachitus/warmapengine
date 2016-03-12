@@ -5,7 +5,6 @@
   --------- IMPORT --------
   -----------------------*/
   var setupHexagonClick = window.flatworld.extensions.hexagons.setupHexagonClick;
-  var utils = window.flatworld.extensions.hexagons.utils;
 
   /*-----------------------
   ---------- API ----------

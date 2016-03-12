@@ -122,9 +122,6 @@
         globalCoords = utils.mouse.eventData.getPointerCoords(e);
       }
 
-      /* Align the coordinates with hexagon grid */
-      globalCoords = hexagonUtils.getClosestHexagonCenter(map.getMovableLayer().toLocal(globalCoords));
-
       selectedObject.move(globalCoords);
       mapEvents.publish("objectMoves", selectedObject);
 

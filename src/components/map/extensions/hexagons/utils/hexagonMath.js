@@ -7,6 +7,13 @@
   window.flatworld.extensions.hexagons.utils.calcShortDiagonal = calcShortDiagonal;
   window.flatworld.extensions.hexagons.utils.calcLongDiagonal = calcLongDiagonal;
   window.flatworld.extensions.hexagons.utils.hexaHitTest = hexaHitTest;
+  window.flatworld.extensions.hexagons.utils.getClosestHexagonCenter = getClosestHexagonCenter;
+  window.flatworld.extensions.hexagons.utils.init = init;
+
+  /*-----------------------
+  ------- VARIABLES -------
+  -----------------------*/
+  var point, radius;
 
   /**
    * Utility module, for making different calculations and tests when hexagon based grid map in use
@@ -46,9 +53,9 @@
    *
    * @method calcLongDiagonal
    * @static
-   * @param {float} value					Usually the radius of the hexagon
-   * @param {string} type					If you provide something else than radius, where the calculation is based from
-   * @param {integer} precision 	How many decimals to round
+   * @param {float} value         Usually the radius of the hexagon
+   * @param {string} type         If you provide something else than radius, where the calculation is based from
+   * @param {integer} precision   How many decimals to round
    */
   function calcLongDiagonal(value, type = "radius", precision = 3) {
     var answer;
@@ -87,7 +94,26 @@
 
     return pointInPolygon(hitCoords, realPolygonPoints);
   }
-
+  /**
+   * Set hexagon radius
+   *
+   * @static
+   * @method setRadius
+   * @param {Number} givenRadius    The radius of the hexagon
+   */
+  function init(givenRadius, givenPoint) {
+    radius = givenRadius;
+    point = givenPoint;
+  }
+  /**
+   * Calculates the closest hexagon center coordinates, for the given coordinates. So aligning the given coordinates to proper hexagon
+   * coordinates
+   *
+   * @static
+   * @method getClosestHexagonCenter
+   * @requires setRadius has to be set
+   */
+  function getClosestHexagonCenter(coordinates) {}
   /*-----------------------
   --------- PRIVATE -------
   -----------------------*/

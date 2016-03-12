@@ -120,6 +120,8 @@
     var sound = new Sound();
     var preload;
 
+    /* This NEEDS to be set for the hexagon plugin to work correctly */
+    hexagons.utils.init(gameData.hexagonRadius);
     activateAPIs();
 
     /* Determines how much stuff we show on screen for stress testing */

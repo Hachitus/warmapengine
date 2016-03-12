@@ -10,8 +10,8 @@
   var MapDataManipulator = window.flatworld.MapDataManipulator;
   var eventListeners = window.flatworld.eventListeners;
   var mapStates = window.flatworld.mapStates;
-  var Objects = window.flatworld.objects;
   var mapLog = window.flatworld.log;
+  var hexagonUtils = window.flatworld.extensions.hexagons.utils;
 
   /*---------------------
   --------- API ---------
@@ -121,6 +121,9 @@
       } else {
         globalCoords = utils.mouse.eventData.getPointerCoords(e);
       }
+
+      /* Align the coordinates with hexagon grid */
+      globalCoords = hexagonUtils.getClosestHexagonCenter(map.getMovableLayer().toLocal(globalCoords));
 
       selectedObject.move(globalCoords);
       mapEvents.publish("objectMoves", selectedObject);

@@ -18,7 +18,7 @@
   var mapMovement = window.flatworld.extensions.mapMovement;
   var Sound = window.flatworld.Sound;
   var mapEvents = window.flatworld.mapEvents;
-
+  var mapAPI = window.flatworld.mapAPI;
   /* DATA FILES used for testing */
   var gameData = window.gameData;
   var typeData = window.typeData;
@@ -29,6 +29,7 @@
     x: 82,
     y: 94 * 0.75
   };
+  const BASE_URL = "/requests/";
 
   /* REQUIRED FOR IE11 */
   polyfills.arrayFind();
@@ -118,6 +119,8 @@
     ];
     var sound = new Sound();
     var preload;
+
+    activateAPIs();
 
     /* Determines how much stuff we show on screen for stress testing */
     // If either is even 1 pixel bigger than this, gets all black
@@ -327,5 +330,27 @@
     }
 
     return layerData;
+  }
+
+  function activateAPIs() {
+    mapAPI.add(
+      "objectMove",
+      function (type, data, params) {
+        var object = params[0];
+        var movementData = params[0];
+
+        if (type === "get") {
+          return {
+            url: data.baseUrl + object.name
+          };
+        } else {
+          return {
+            url: data.baseUrl + params.name,
+            body: JSON.stringify(movementData)
+          };
+        }
+      },
+      BASE_URL
+    );
   }
 })();

@@ -6,7 +6,6 @@
 
 export * from 'bundles/coreBundle';
 export * from 'components/logger/log';
-export * from 'components/map/extensions/basicActions/basicActions';
 export * from 'components/map/extensions/mapMovement/mapMovement';
 export * from 'components/map/UIs/default/default';
 export * from 'components/map/UIs/default/layout/index';

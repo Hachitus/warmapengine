@@ -1,6 +1,5 @@
 var core = require('bundles/coreBundle');
 var log = require('components/logger/log');
-var basicActions = require('components/map/extensions/basicActions/basicActions');
 var mapMovement = require('components/map/extensions/mapMovement/mapMovement');
 var UIDefaultTemplate = require('components/map/UIs/default/default');
 var Preload = require('components/preloading/Preload');
@@ -22,5 +21,4 @@ window.flatworld.UITemplates = window.flatworld.UITemplates || {};
 window.flatworld.UITemplates.default = UIDefaultTemplate;
 window.flatworld.extensions = window.flatworld.extensions || {};
 window.flatworld.extensions.hexagons = hexagonPlugin;
-window.flatworld.extensions.basicActions = basicActions;
 window.flatworld.extensions.mapMovement = mapMovement;

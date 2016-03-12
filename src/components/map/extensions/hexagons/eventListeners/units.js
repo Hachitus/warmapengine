@@ -11,7 +11,6 @@
   var eventListeners = window.flatworld.eventListeners;
   var mapStates = window.flatworld.mapStates;
   var Objects = window.flatworld.objects;
-  var basicActions = window.flatworld.extensions.basicActions;
   var mapLog = window.flatworld.log;
 
   /*---------------------
@@ -41,8 +40,6 @@
 
     mapInstance = map;
     ui = UI();
-
-    basicActions.extendBasicActions.extendMove(Objects.ObjectSpriteUnit);
 
     eventListeners.on("select", tapListener);
     eventListeners.on("order", orderListener);

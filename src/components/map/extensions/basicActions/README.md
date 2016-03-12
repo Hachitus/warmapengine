@@ -1,1 +1,0 @@
-Yet unfinished extension, that should hold the basic actions in normal wargame, like move, attack, siege etc.

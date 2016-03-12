@@ -6,6 +6,8 @@
   -----------------------*/
   var utils = window.flatworld.utils;
   var PIXI = window.flatworld_libraries.PIXI;
+  var mapAPI = window.flatworld.mapAPI;
+  var mapEvents = window.flatworld.mapEvents;
 
   /*-----------------------
   ---------- API ----------
@@ -263,8 +265,19 @@
       * don't implement your own, I suggest you use it. You can attach any method to object if you wish. Like attack, siege, greet, talk.
       *
       * @method move
+      * @requires  mapAPIa..("objectMove") to be declared
       */
-    move() { return "notImplementedYet. Activate with plugin"; }
+    move(to) {
+      mapEvents.publish("objectMove", this);
+      mapAPI.post("objectMove", {
+        id: this.id,
+        from: {
+          x: this.x,
+          y: this.y
+        },
+        to
+      });
+    }
   }
 
   window.flatworld.objects.ObjectSprite = ObjectSprite;

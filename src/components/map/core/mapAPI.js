@@ -76,6 +76,7 @@
     function post(type, params) {
       if (!APIs[type]) {
         mapLog.error("API endpoint for fetch not found: " + type + ", " + ( params ? params[0] : "no params"));
+        return;
       }
 
       let completeData = APIs[type];

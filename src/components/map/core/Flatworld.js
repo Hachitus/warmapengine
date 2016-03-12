@@ -290,10 +290,10 @@
     removeUIObject(layerType, UIName) {
       switch (layerType) {
         case LAYER_TYPE_STATIC:
-          this.getStaticLayer().emptyUIObjects(UIName);
+          this.getStaticLayer().deleteUIObjects(UIName);
           break;
         case LAYER_TYPE_MOVABLE:
-          this.getMovableLayer().emptyUIObjects(UIName);
+          this.getMovableLayer().deleteUIObjects(UIName);
           break;
       }
     }

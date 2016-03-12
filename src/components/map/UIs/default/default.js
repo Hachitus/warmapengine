@@ -83,7 +83,7 @@
         };
       } else {
         cb = () => {
-          UILayer.emptyUIObjects();
+          UILayer.deleteUIObjects();
           updateCB();
           console.log("Error occured selecting the objects on this coordinates! Nothing found");
         };

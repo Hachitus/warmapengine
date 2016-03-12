@@ -208,15 +208,22 @@
       return this.UILayer;
     }
     /**
-     * Adds and object to this layers UILayer child.
+     * Adds and object to this layers UILayer child. If an object with the same name already exists, we remove it automatically and replace
+     * it with the new object given as parameter.
      *
      * @method addUIObject
      * @param {Object} object   The UI object to be added under this layer
+     * @param {Object} UIName   Name of the UI object. This is important as you can use it to remove the UI object later or replace it.
      * @return {Array}          All the UIObjects currently on this layer
      */
     addUIObject(object, UIName) {
       var UILayer;
       _UIObjects = _UIObjects || [];
+
+      /* We remove the old UIObject with the same name, if it exists. */
+      if (UIName && this.UIObjectList[UIName]) {
+        this.deleteUIObjects(UIName);
+      }
 
       this.UIObjectList[UIName] = object;
 
@@ -234,11 +241,11 @@
     /**
      * If object is given, removes that object, otherwiseRemove all the UIObjects from this layer
      *
-     * @method emptyUIObjects
+     * @method deleteUIObjects
      * @param {Object} object   If you wish to delete particular object
      * @return {Array} empty    UIObjects array
      * */
-    emptyUIObjects(UIName) {
+    deleteUIObjects(UIName) {
       var UILayer = this.getUILayer();
 
       if (UIName) {

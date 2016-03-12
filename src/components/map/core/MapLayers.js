@@ -63,6 +63,14 @@
        * @type {Boolean}
        */
       this.selectable = selectable;
+      /**
+       * Every added UIObject will be listed here for removal and updating. The indexes in the list provide the easy option to remove only
+       * certain object from the UIObjects.
+       *
+       * @attribute UIObjectList
+       * @type {Array}
+       */
+      this.UIObjectList = {};
     }
     /**
      * Does this layer use subcontainers.
@@ -127,20 +135,6 @@
       return _UIObjects;
     }
     /**
-     * Remove all the UIObjects from this layer
-     *
-     * @method emptyUIObjects
-     * @return {Array} empty UIObjects array
-     * */
-    emptyUIObjects() {
-      _UIObjects.map(obj => {
-        this.getUILayer().removeChild(obj);
-        obj = null;
-      });
-
-      return _UIObjects;
-    }
-    /**
      * Get primary layers, that this layer holds as children. So basically all children that are not special layers (such as UI layers etc.)
      *
      * @method getPrimaryLayers
@@ -184,7 +178,8 @@
       return toCacheStatus;
     }
     /**
-     * Create and add special layer, that holds UI effects in it.
+     * Create and add special layer, that holds UI effects in it. UILayer is normally positioned as movableLayers 3rd child. And the
+     * actual UI stuff is added there.
      *
      * @method createUILayer
      * @param  {String} name          name of the layer
@@ -204,15 +199,26 @@
       return layer;
     }
     /**
+     * Return the UILayer. If no UILayer is yet created, will return undefined
+     *
+     * @method getUILayer
+     * @return {MapLayer | undefined}
+     */
+    getUILayer() {
+      return this.UILayer;
+    }
+    /**
      * Adds and object to this layers UILayer child.
      *
      * @method addUIObject
      * @param {Object} object   The UI object to be added under this layer
      * @return {Array}          All the UIObjects currently on this layer
      */
-    addUIObject(object) {
+    addUIObject(object, UIName) {
       var UILayer;
       _UIObjects = _UIObjects || [];
+
+      this.UIObjectList[UIName] = object;
 
       if (!this.getUILayer()) {
         UILayer = this.createUILayer();
@@ -226,13 +232,31 @@
       return _UIObjects;
     }
     /**
-     * Return the UILayer. If no UILayer is yet created, will return undefined
+     * If object is given, removes that object, otherwiseRemove all the UIObjects from this layer
      *
-     * @method getUILayer
-     * @return {MapLayer | undefined}
-     */
-    getUILayer() {
-      return this.UILayer;
+     * @method emptyUIObjects
+     * @param {Object} object   If you wish to delete particular object
+     * @return {Array} empty    UIObjects array
+     * */
+    emptyUIObjects(UIName) {
+      var UILayer = this.getUILayer();
+
+      if (UIName) {
+        let object = this.UIObjectList[UIName];
+
+        UILayer.removeChild(object);
+        object = null;
+        return;
+      }
+
+      Object.keys(this.UIObjectList).map((index) => {
+        let object = this.UIObjectList[index];
+
+        UILayer.removeChild(object);
+        object = null;
+      });
+
+      return _UIObjects;
     }
   }
 

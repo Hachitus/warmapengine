@@ -266,6 +266,7 @@
       *
       * @method move
       * @requires  mapAPIa..("objectMove") to be declared
+      * @attribute [name]
       */
     move(to) {
       mapEvents.publish("objectMove", this);

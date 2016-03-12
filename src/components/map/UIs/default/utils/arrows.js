@@ -243,7 +243,7 @@
     }
     /* =============================== */
 
-    function line(graphics, from, to, options = { color: 0xf3a33f, style: 5 }) {
+    function line(graphics, from, to, options = { color: "#000000", style: 5 }) {
       var { color, style } = options;
 
       graphics.lineStyle(style, color);

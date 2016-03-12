@@ -268,47 +268,34 @@
      * Add an UI object to the wanted layer.
      *
      * @method addUIObject
-     * @param {Integer} layer   Type of the layer. layerTypes.STATIC of layerTypes.MOVABLE.
-     * @param {Object} object   The object to be attached as UI object.
+     * @param {Integer} layer           Type of the layer. this.layerTypes.STATIC.id or layerTypes.MOVABLE.id.
+     * @param {Object | Array} object   The object to be attached as UI object.
      */
-    addUIObject(layerType, object) {
-      switch (layerType) {
-        case LAYER_TYPE_STATIC:
-          this.getStaticLayer().addUIObject(object);
-          break;
-        case LAYER_TYPE_MOVABLE:
-          this.getMovableLayer().addUIObject(object);
-          break;
+    addUIObject(layerType, objects, UIName) {
+      if (Array.isArray(objects)) {
+        objects.forEach(object => {
+          this._addObjectToUIlayer(layerType, object);
+        });
+      } else {
+        this._addObjectToUIlayer(layerType, objects, UIName);
       }
     }
     /**
      * Remove an UI object to the wanted layer.
      *
      * @method removeUIObject
-     * @param {Integer} layer   Type of the layer. layerTypes.STATIC of layerTypes.MOVABLE.
-     * @param {Object} object   The object to be attached as UI object.
+     * @param {Integer} layer       Type of the layer. layerTypes.STATIC of layerTypes.MOVABLE.
+     * @param {String} objectName   The object to be attached as UI object.
      */
-    removeUIObject(layerType, object) {
+    removeUIObject(layerType, UIName) {
       switch (layerType) {
         case LAYER_TYPE_STATIC:
-          this.getStaticLayer().emptyUIObjects();
+          this.getStaticLayer().emptyUIObjects(UIName);
           break;
         case LAYER_TYPE_MOVABLE:
-          this.getMovableLayer().emptyUIObjects();
+          this.getMovableLayer().emptyUIObjects(UIName);
           break;
       }
-    }
-    /**
-     * Adds an UI object to the map. This method adds it to the given layer and removes it with removeUIObject-method.
-     *
-     * @method addUIObjects
-     * @param {Integer} layerType     map.layerTypes holds the constants used in this.
-     * @param {Array} objects         Object that are added as UI objects
-     */
-    addUIObjects(layerType, objects) {
-      objects.forEach(object => {
-        this.addUIObject(layerType, object);
-      });
     }
     /**
      * Create a special layer, that can holds e.g. UI effects in it.
@@ -798,6 +785,16 @@
           }
         }
       }.bind(this));
+    }
+    _addObjectToUIlayer(layerType, object, name) {
+      switch (layerType) {
+        case LAYER_TYPE_STATIC:
+          this.getStaticLayer().addUIObject(object, name);
+          break;
+        case LAYER_TYPE_MOVABLE:
+          this.getMovableLayer().addUIObject(object, name);
+          break;
+      }
     }
   }
 

@@ -75,15 +75,11 @@
 
           this.showModal(this.modal, cssClasses);
 
-          console.log(objects);
-
           _getElement("select").style.display = 'block';
         };
       } else if (objects.length === 1) {
         cb = () => {
           this.highlightSelectedObject(objects[0]);
-
-          console.log(objects);
         };
       } else {
         cb = () => {
@@ -136,13 +132,20 @@
     }
     /**
      * @method showUnitMovement
+     * @param {PIXI.Point} to       Global coordinates that were clicked
      */
     showUnitMovement(object, to) {
-      var arrow;
+      const UINAME = "movementArrow";
+      var localTo, localFrom, currentArrow;
 
-      arrow = drawShapes.line(new PIXI.Graphics(), object, to );
-      console.log("arrow", this.map.getMovableLayer());
-      this.map.addUIObject(arrow);
+      localTo = this.map.getMovableLayer().toLocal(to);
+      localFrom = this.map.getMovableLayer().toLocal(object.toGlobal(new PIXI.Point(0,0)));
+
+      currentArrow = drawShapes.line(new PIXI.Graphics(), localFrom, localTo );
+
+      this.map.removeUIObject(this.map.layerTypes.movableType.id, UINAME);
+
+      this.map.addUIObject(this.map.layerTypes.movableType.id, currentArrow, UINAME);
       this.map.drawOnNextTick();
     }
     /**
@@ -184,16 +187,17 @@
      * @method createHighlight
      */
     createHighlight(object, options = { coords: new PIXI.Point(0, 0) }) {
-      var radius = 47;
-      var movableLayer = this.map.getMovableLayer();
-      var container = new this.map.createSpecialLayer("UILayer", { toLayer: movableLayer});
-      var objCoords = {
+      const RADIUS = 47;
+      const UI_CONTAINER_NAME = "unit highlight";
+      const movableLayer = this.map.getMovableLayer();
+      const container = new this.map.createSpecialLayer("UILayer", { toLayer: movableLayer});
+      const objCoords = {
         x: Number(object.x),
         y: Number(object.y)
       };
       var highlighterObject;
 
-      highlighterObject = createVisibleHexagon(radius, { color: "#F0F0F0" });
+      highlighterObject = createVisibleHexagon(RADIUS, { color: "#F0F0F0" });
       highlighterObject.x = objCoords.x + 32;
       highlighterObject.y = objCoords.y + 27;
 
@@ -206,8 +210,8 @@
 
       container.position = options.coords;
 
-      this.map.removeUIObject(this.map.layerTypes.movableType.id, [container])
-      this.map.addUIObjects(this.map.layerTypes.movableType.id, [container]);
+      this.map.removeUIObject(this.map.layerTypes.movableType.id);
+      this.map.addUIObject(this.map.layerTypes.movableType.id, container, UI_CONTAINER_NAME);
     }
 
   }

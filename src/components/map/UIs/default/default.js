@@ -25,7 +25,7 @@
     /**
      * The simplest default UI implementation. Implemented UI functionalities for: showSelections, highlightSelectedObject
      *
-     * @class UIDefault
+     * @class UIs.default
      * @constructor
      * @requires Handlebars
      * @requires hexagon extension

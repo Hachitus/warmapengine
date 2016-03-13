@@ -18,7 +18,7 @@
   /**
    * This manages some utility functionalities for creating hexagons
    *
-   * @class hexagonPlugin.utils
+   * @class extensions.hexagons.utils.getHexagonPoints.utils
    */
   /**
    * Credits belong to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js
@@ -41,6 +41,7 @@
   /**
    * @private
    * @static
+   * @method createVisibleHexagon
    * @method createVisibleHexagon
    * @param {Number} radius       Radius of the hexagon
    * @param {Object} options      Options, such as:
@@ -65,9 +66,9 @@
   /**
    * Converts Array of x- and y-coordinates to new PIXI.Point coordinates
    *
-   * @method coordsToPixiPoints
    * @private
    * @static
+   * @method coordsToPixiPoints
    * @method coordsToPixiPoints
    * @param  {Number} radius        Hexagons radius
    * @return {Array}                Array of PIXI.Point coordinates
@@ -78,9 +79,9 @@
     });
   }
   /**
-   * @method getHexagonPoints
    * @private
    * @static
+   * @method getHexagonPoints
    * @param {Float} radius      radius of the hexagon
    * @param {object} options    extra options, like generating horizontal hexagon points and
    * how many decimals to round

@@ -20,7 +20,7 @@
      * only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site:
      * http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.
      *
-     * @class MapLayer
+     * @class maplayers.MapLayer
      * @constructor
      * @param {Object} options                            optional options
      * @param {String} options.name                       Layers name, used for identifying the layer. Useful in debugging, but can be
@@ -273,7 +273,7 @@
      * bitmap drawn, and PIXI cache always draws a bitmap. Thus the default is: 4096, based on this site: http://webglstats.com/ and
      * MAX_TEXTURE_SIZE
      *
-     * @class MapLayerParent
+     * @class maplayers.MapLayerParent
      * @constructor
      * @param {Object} options
      * @param {String} options.name                    name layer property name, used for identifiying the layer, usefull in debugging,
@@ -363,7 +363,7 @@
      * afterwards the same way as normal Container.
      *
      * @private
-     * @class MapSubcontainer
+     * @class maplayers.MapSubcontainer
      * @constructor
      * @param  {Object} size              Subontainer size. If given activated subcontainers, otherwise not.
      * @param  {Integer} size.width       width (in pixels)

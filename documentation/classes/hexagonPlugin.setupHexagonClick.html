@@ -48,22 +48,24 @@
                                 <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
                                 <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
                                 <li><a href="../classes/MapLayer.html">MapLayer</a></li>
                                 <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
                                 <li><a href="../classes/mapMovement.html">mapMovement</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
                                 <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
+                                <li><a href="../classes/ObjectSprite.html">ObjectSprite</a></li>
                                 <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
                                 <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIDefault.html">UIDefault</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -115,7 +117,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_components_map_extensions_hexagons_eventListeners_select.js.html#l16"><code>src\components\map\extensions\hexagons\eventListeners\select.js:16</code></a>
+            Defined in: <a href="../files/src_components_map_extensions_hexagons_eventListeners_units.js.html#l24"><code>src\components\map\extensions\hexagons\eventListeners\units.js:24</code></a>
         </div>
 
 
@@ -145,6 +147,10 @@ etc. are in selectHexagonPlugin</p>
 
                     <ul class="index-list methods">
                             <li class="index-item method">
+                                <a href="#method_orderListener">orderListener</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_tapListener">tapListener</a>
 
                             </li>
@@ -158,6 +164,61 @@ etc. are in selectHexagonPlugin</p>
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
+<div id="method_orderListener" class="method item">
+    <h3 class="name"><code>orderListener</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>e</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_components_map_extensions_hexagons_eventListeners_units.js.html#l89"><code>src\components\map\extensions\hexagons\eventListeners\units.js:89</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>This listener is for the situation, where we have an object and we issue an order / action to
+that unit. For example to move from one hexagon to another.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">e</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" class="crosslink external" target="_blank">Event</a></span>
+
+
+                    <div class="param-description">
+                        <p>Event object</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
 <div id="method_tapListener" class="method item">
     <h3 class="name"><code>tapListener</code></h3>
 
@@ -179,7 +240,7 @@ etc. are in selectHexagonPlugin</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_hexagons_eventListeners_select.js.html#l41"><code>src\components\map\extensions\hexagons\eventListeners\select.js:41</code></a>
+        <a href="../files/src_components_map_extensions_hexagons_eventListeners_units.js.html#l52"><code>src\components\map\extensions\hexagons\eventListeners\units.js:52</code></a>
         </p>
 
 

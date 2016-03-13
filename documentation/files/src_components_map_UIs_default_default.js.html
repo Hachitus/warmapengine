@@ -48,22 +48,24 @@
                                 <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
                                 <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
                                 <li><a href="../classes/MapLayer.html">MapLayer</a></li>
                                 <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
                                 <li><a href="../classes/mapMovement.html">mapMovement</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
                                 <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
+                                <li><a href="../classes/ObjectSprite.html">ObjectSprite</a></li>
                                 <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
                                 <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIDefault.html">UIDefault</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -114,152 +116,223 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-/* global $ */
+(function () {
+  &#x27;use strict&#x27;;
 
-&#x27;use strict&#x27;;
+  /*---------------------
+  ------- IMPORT --------
+  ----------------------*/
+  var { PIXI } = window.flatworld_libraries;
+  var templates = window.flatworld.UIs.default.templates;
+  var createVisibleHexagon = window.flatworld.extensions.hexagons.utils.createVisibleHexagon;
+  var UITemplateBase = window.flatworld.UITemplateBase;
+  var drawShapes = window.flatworld.UIs.default.utils.drawShapes;
 
-/*---------------------
-------- IMPORT --------
-----------------------*/
-import $ from &#x27;assets/lib/jquery/jquery-css-ajax-effects.min.js&#x27;;
-import { templates } from &#x27;components/map/UIs/default/layout/templates&#x27;;
-import { createVisibleHexagon } from &#x27;components/map/extensions/hexagons/utils/createHexagon&#x27;;
-import { UI_templateBase, UI } from &#x27;bundles/coreBundle&#x27;;
-//import { drawShapes } from &#x27;components/map/UIs/default/utils/arrows&#x27;;
+  /*---------------------
+  ------ VARIABLES ------
+  ----------------------*/
+  var cssClasses = {
+    select: &quot;#dialog_select&quot;
+  };
+  var elements = {};
 
-/*---------------------
------- VARIABLES ------
-----------------------*/
-const FADE_ANIMATION = &quot;slow&quot;;
-var cssClasses = {
-  select: &quot;#dialog_select&quot;
-};
-var $elements = {};
+  /*---------------------
+  --------- API ---------
+  ----------------------*/
+  class UIDefault extends UITemplateBase {
+    /**
+     * The simplest default UI implementation. Implemented UI functionalities for: showSelections, highlightSelectedObject
+     *
+     * @class UIDefault
+     * @constructor
+     * @requires Handlebars
+     * @requires hexagon extension
+     * @param  {HTMLElement} modal
+     * @param  {Map} map
+     * @param  {Object} options
+     */
+    constructor(modal, map, options = { styles: &quot;#F0F0F0&quot; }) {
+      super(cssClasses);
+      // Add a media (and/or media query) here if you&#x27;d like!
+      // style.setAttribute(&quot;media&quot;, &quot;screen&quot;)
+      // style.setAttribute(&quot;media&quot;, &quot;only screen and (max-width : 1024px)&quot;)
 
-/*---------------------
---------- API ---------
-----------------------*/
-export class UI_default extends UI_templateBase {
-  /**
-   * The simplest default UI implementation. Implemented UI functionalities for: showSelections, highlightSelectedObject
-   *
-   * @class UI_default
-   * @constructor
-   * @requires Handlebars
-   * @requires jQuery
-   * @todo  should take jQuery away from this, as soon as we refactor the animations and graphics for selections
-   * @param  {HTMLElement} modal
-   * @param  {Map} map
-   * @param  {Object} options
-   */
-  constructor(modal, map, options = { styles: &quot;#F0F0F0&quot; }) {
-    super(cssClasses);
-    // Add a media (and/or media query) here if you&#x27;d like!
-    // style.setAttribute(&quot;media&quot;, &quot;screen&quot;)
-    // style.setAttribute(&quot;media&quot;, &quot;only screen and (max-width : 1024px)&quot;)
+      this.map = map;
+      this.modal = modal || document.getElementById(&quot;dialog_select&quot;);
+      this.styles = options.styles;
+    }
+    /**
+     * @method getTemplates
+     * Required by the map/core/UI.js API
+     */
+    getTemplates() {
+      return templates;
+    }
+    /**
+     * Required by the map.UI API
+     *
+     * @method showSelections
+     * @param  {Object} objects     Objects that have been selected. See core.UI for more information
+     * @param {Object} getDatas       See explanation in core.UI
+     * @param {Object} options        Extra options
+     */
+    showSelections(objects, getDatas, options) {
+      var updateCB = this.map.drawOnNextTick.bind(this.map);
+      var UILayer = this.map.getMovableLayer();
+      var cb;
 
-    this.map = map;
-    this.modal = modal || document.getElementById(&quot;dialog_select&quot;);
-    this.styles = options.styles;
-  }
-  /**
-   * @method getTemplates
-   * Required by the map/core/UI.js API
-   */
-  getTemplates() {
-    return templates;
-  }
-  /**
-   * Required by the map.UI API
-   *
-   * @method showSelections
-   * @param  {Object} objects     Objects that have been selected. See core.UI for more information
-   * @param {Object} getDatas       See explanation in core.UI
-   * @param {Object} options        Extra options
-   */
-  showSelections(objects, getDatas, options) {
-    var updateCB = this.map.drawOnNextTick.bind(this.map);
-    var UILayer = this.map.getMovableLayer();
-    var cb;
+      /* We add the objects to be highlighted to the correct UI layer */
+      //objectsToUI(UILayer, objects);
 
-    /* We add the objects to be highlighted to the correct UI layer */
-    //objectsToUI(UILayer, objects);
+      if (objects &amp;&amp; objects.length &gt; 1) {
+        cb = () =&gt; {
+          this.modal.innerHTML = templates.multiSelection({
+            title: &quot;Objects&quot;,
+            objects
+          });
 
-    if (objects &amp;&amp; objects.length &gt; 1) {
-      cb = () =&gt; {
-        this.modal.innerHTML = templates.multiSelection({
-          title: &quot;Objects&quot;,
-          objects
-        });
+          this.showModal(this.modal, cssClasses);
 
-        this.showModal(this.modal, cssClasses);
+          _getElement(&quot;select&quot;).style.display = &#x27;block&#x27;;
+        };
+      } else if (objects.length === 1) {
+        cb = () =&gt; {
+          this.highlightSelectedObject(objects[0]);
+        };
+      } else {
+        cb = () =&gt; {
+          UILayer.deleteUIObjects();
+          updateCB();
+          console.log(&quot;Error occured selecting the objects on this coordinates! Nothing found&quot;);
+        };
+      }
 
-        console.log(objects);
+      _getElement(&quot;select&quot;).style.display = &#x27;none&#x27;;
+      cb();
+    }
+    /**
+     * Required by the map.UI API
+     *
+     * @method highlightSelectedObject
+     * @param  {Object} object        Object that has been selected. See core.UI for more information
+     * @param {Object} getDatas       See explanation in core.UI
+     * @param {Object} options        Extra options. Like dropping a shadow etc.
+     */
+    highlightSelectedObject(object, getDatas, options = {shadow: { color: &quot;0x0000&quot;, distance: 5, alpha: 0.55, angle: 45, blur: 5 }}) {
+      var { shadow } = options;
+      var highlightableObject, objectDatas;
 
-        _get$Element(&quot;select&quot;).fadeIn(FADE_ANIMATION);
+      objectDatas = getDatas.allData(object);
+
+      this.modal.innerHTML = templates.singleSelection({
+        title: &quot;Selected&quot;,
+        object: {
+          name: objectDatas.name
+        }
+      });
+      this.showModal(this.modal, cssClasses);
+
+      highlightableObject = this._highlightSelectedObject(object, this.map.getRenderer());
+
+      highlightableObject.dropShadow({
+        color: shadow.color,
+        distance: shadow.distance,
+        alpha: shadow.alpha,
+        angle: shadow.angle,
+        blur: shadow.blur
+      });
+
+      this.map.drawOnNextTick();
+
+      _getElement(&quot;select&quot;).style.display = &#x27;block&#x27;;
+
+      return highlightableObject;
+    }
+    /**
+     * @method showUnitMovement
+     * @param {PIXI.Point} to       Global coordinates that were clicked
+     */
+    showUnitMovement(object, to) {
+      const UINAME = &quot;movementArrow&quot;;
+      var localTo, localFrom, currentArrow;
+
+      localTo = this.map.getMovableLayer().toLocal(to);
+      localFrom = this.map.getMovableLayer().toLocal(object.toGlobal(new PIXI.Point(0,0)));
+
+      currentArrow = drawShapes.line(new PIXI.Graphics(), localFrom, localTo );
+
+      this.map.removeUIObject(this.map.layerTypes.movableType.id, UINAME);
+
+      this.map.addUIObject(this.map.layerTypes.movableType.id, currentArrow, UINAME);
+      this.map.drawOnNextTick();
+    }
+    /**
+     * @method init
+     */
+    init() {}
+
+    /*----------------------
+    ------- PRIVATE --------
+    ----------------------*/
+    /**
+     * @private
+     * @static
+     * @method _highlightSelectedObject
+     * @param  {Object} object
+     * @param  {MapLayer} movableLayer
+     * @param  {PIXI.Renderer} renderer
+     */
+    _highlightSelectedObject(object, renderer) {
+      var movableLayer = this.map.getMovableLayer();
+      var clonedObject;
+
+      clonedObject = object.clone(renderer);
+      clonedObject.__proto__ = object.__proto__;
+
+      var coord = object.toGlobal(new PIXI.Point(0,0));
+      coord = movableLayer.toLocal(coord);
+
+      coord.x -= object.width * object.anchor.x;
+      coord.y -= object.height * object.anchor.y;
+
+      this.createHighlight(clonedObject, { coords: coord });
+
+      return clonedObject;
+    }
+    /**
+     * @private
+     * @static
+     * @method createHighlight
+     */
+    createHighlight(object, options = { coords: new PIXI.Point(0, 0) }) {
+      const RADIUS = 47;
+      const UI_CONTAINER_NAME = &quot;unit highlight&quot;;
+      const movableLayer = this.map.getMovableLayer();
+      const container = new this.map.createSpecialLayer(&quot;UILayer&quot;, { toLayer: movableLayer});
+      const objCoords = {
+        x: Number(object.x),
+        y: Number(object.y)
       };
-    } else if (objects.length === 1) {
-      cb = () =&gt; {
-        this.highlightSelectedObject(objects[0]);
+      var highlighterObject;
 
-        console.log(objects);
-      };
-    } else {
-      cb = () =&gt; {
-        UILayer.emptyUIObjects();
-        updateCB();
-        console.log(&quot;Error occured selecting the objects on this coordinates! Nothing found&quot;);
-      };
+      highlighterObject = createVisibleHexagon(RADIUS, { color: &quot;#F0F0F0&quot; });
+      highlighterObject.x = objCoords.x + 32;
+      highlighterObject.y = objCoords.y + 27;
+
+      highlighterObject.alpha = 0.5;
+
+      /* We add the children first to subcontainer, since it&#x27;s much easier to handle the x and y in it, rather than
+       * handle graphics x and y */
+      container.addChild(highlighterObject);
+      container.addChild(object);
+
+      container.position = options.coords;
+
+      this.map.removeUIObject(this.map.layerTypes.movableType.id);
+      this.map.addUIObject(this.map.layerTypes.movableType.id, container, UI_CONTAINER_NAME);
     }
 
-    _get$Element(&quot;select&quot;).fadeOut(FADE_ANIMATION, cb);
   }
-  /**
-   * Required by the map.UI API
-   *
-   * @method highlightSelectedObject
-   * @param  {Object} object        Object that has been selected. See core.UI for more information
-   * @param {Object} getDatas       See explanation in core.UI
-   * @param {Object} options        Extra options. Like dropping a shadow etc.
-   */
-  highlightSelectedObject(object, getDatas, options = {shadow: { color: &quot;0x0000&quot;, distance: 5, alpha: 0.55, angle: 45, blur: 5 }}) {
-    var { shadow } = options;
-    var highlightableObject, objectDatas;
-
-    objectDatas = getDatas.allData(object);
-
-    this.modal.innerHTML = templates.singleSelection({
-      title: &quot;Selected&quot;,
-      object: {
-        name: objectDatas.name
-      }
-    });
-    this.showModal(this.modal, cssClasses);
-
-    highlightableObject = this._highlightSelectedObject(object, this.map.getRenderer());
-
-    highlightableObject.dropShadow({
-      color: shadow.color,
-      distance: shadow.distance,
-      alpha: shadow.alpha,
-      angle: shadow.angle,
-      blur: shadow.blur
-    });
-
-    this.map.drawOnNextTick();
-
-    _get$Element(&quot;select&quot;).fadeIn(FADE_ANIMATION);
-
-    return highlightableObject;
-  }
-  /**
-   * @method showUnitMovement
-   */
-  showUnitMovement() {}
-  /**
-   * @method init
-   */
-  init() {}
 
   /*----------------------
   ------- PRIVATE --------
@@ -267,81 +340,21 @@ export class UI_default extends UI_templateBase {
   /**
    * @private
    * @static
-   * @method _highlightSelectedObject
-   * @param  {Object} object
-   * @param  {MapLayer} movableLayer
-   * @param  {PIXI.Renderer} renderer
+   * @method _getElement
+   * @param  {[type]} which [description]
+   * @return {[type]}       [description]
    */
-  _highlightSelectedObject(object, renderer) {
-    var movableLayer = this.map.getMovableLayer();
-    var clonedObject;
+  function _getElement(which) {
+    if (!elements[which]) {
+      let element = document.querySelector(cssClasses[which]);
+      elements[which] = element;
+    }
 
-    clonedObject = object.clone(renderer);
-    clonedObject.__proto__ = object.__proto__;
-
-    var coord = object.toGlobal(new PIXI.Point(0,0));
-    coord = movableLayer.toLocal(coord);
-
-    coord.x -= object.width * object.anchor.x;
-    coord.y -= object.height * object.anchor.y;
-
-    this.createHighlight(clonedObject, { coords: coord });
-
-    return clonedObject;
-  }
-  /**
-   * @private
-   * @static
-   * @method createHighlight
-   */
-  createHighlight(object, options = { coords: new PIXI.Point(0, 0) }) {
-    var radius = 47;
-    var movableLayer = this.map.getMovableLayer();
-    var container = new this.map.createSpecialLayer(&quot;UILayer&quot;, { toLayer: movableLayer});
-    var objCoords = {
-      x: Number(object.x),
-      y: Number(object.y)
-    };
-    var highlighterObject;
-
-    highlighterObject = createVisibleHexagon(radius, { color: &quot;#F0F0F0&quot; });
-    highlighterObject.x = objCoords.x + 32;
-    highlighterObject.y = objCoords.y + 27;
-
-    highlighterObject.alpha = 0.5;
-
-    /* We add the children first to subcontainer, since it&#x27;s much easier to handle the x and y in it, rather than
-     * handle graphics x and y */
-    container.addChild(highlighterObject);
-    container.addChild(object);
-
-    container.position = options.coords;
-
-    this.map.removeUIObject(this.map.layerTypes.movableType.id, [container])
-    this.map.addUIObjects(this.map.layerTypes.movableType.id, [container]);
+    return elements[which];
   }
 
-}
-
-/*----------------------
-------- PRIVATE --------
-----------------------*/
-/**
- * @private
- * @static
- * @method _get$Element
- * @param  {[type]} which [description]
- * @return {[type]}       [description]
- */
-function _get$Element(which) {
-  /* Set the jQuery element to collection only once */
-  if (!$elements[which]) {
-    let $element = $(cssClasses[which]);
-    $elements[which] = $element;
-  }
-
-  return $elements[which];
-}
+  window.flatworld.UIs.default.init = UIDefault;
+})();
     </pre>
 </div>
                     </div>

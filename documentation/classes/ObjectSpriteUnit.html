@@ -48,22 +48,24 @@
                                 <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
                                 <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
                                 <li><a href="../classes/MapLayer.html">MapLayer</a></li>
                                 <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
                                 <li><a href="../classes/mapMovement.html">mapMovement</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
                                 <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
+                                <li><a href="../classes/ObjectSprite.html">ObjectSprite</a></li>
                                 <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
                                 <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIDefault.html">UIDefault</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -114,11 +116,11 @@
 <div class="box meta">
 
         <div class="extends">
-            Extends <a href="../classes/Object_sprite.html" class="crosslink">Object_sprite</a>
+            Extends <a href="../classes/ObjectSprite.html" class="crosslink">ObjectSprite</a>
         </div>
 
         <div class="foundat">
-            Defined in: <a href="../files/src_components_map_core_Objects.js.html#l193"><code>src\components\map\core\Objects.js:193</code></a>
+            Defined in: <a href="../files/src_components_map_core_Objects.js.html#l199"><code>src\components\map\core\Objects.js:199</code></a>
         </div>
 
 
@@ -126,7 +128,8 @@
 
 
 <div class="box intro">
-    <p>Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)</p>
+    <p>Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type.
+For example you might want to add some click area for these (e.g. hexagon)</p>
 
 </div>
 
@@ -159,7 +162,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Objects.js.html#l193"><code>src\components\map\core\Objects.js:193</code></a>
+        <a href="../files/src_components_map_core_Objects.js.html#l199"><code>src\components\map\core\Objects.js:199</code></a>
         </p>
 
 
@@ -310,6 +313,9 @@
 
                     <ul class="index-list attrs extends">
                             <li class="index-item attr">
+                                <a href="#attr_[name]">[name]</a>
+                            </li>
+                            <li class="index-item attr">
                                 <a href="#attr_actions">actions</a>
                             </li>
                             <li class="index-item attr inherited inherited">
@@ -344,7 +350,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Objects.js.html#l234"><code>src\components\map\core\Objects.js:234</code></a>
+        <a href="../files/src_components_map_core_Objects.js.html#l238"><code>src\components\map\core\Objects.js:238</code></a>
         </p>
 
 
@@ -400,7 +406,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Objects.js.html#l243"><code>src\components\map\core\Objects.js:243</code></a>
+        <a href="../files/src_components_map_core_Objects.js.html#l247"><code>src\components\map\core\Objects.js:247</code></a>
         </p>
 
 
@@ -468,8 +474,8 @@
 
     <div class="meta">
                 <p>Inherited from
-                <a href="../classes/Object_sprite.html#method_clone">Object_sprite</a>:
-        <a href="../files/src_components_map_core_Objects.js.html#l147"><code>src\components\map\core\Objects.js:147</code></a>
+                <a href="../classes/ObjectSprite.html#method_clone">ObjectSprite</a>:
+        <a href="../files/src_components_map_core_Objects.js.html#l153"><code>src\components\map\core\Objects.js:153</code></a>
         </p>
 
 
@@ -543,7 +549,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Objects.js.html#l223"><code>src\components\map\core\Objects.js:223</code></a>
+        <a href="../files/src_components_map_core_Objects.js.html#l227"><code>src\components\map\core\Objects.js:227</code></a>
         </p>
 
 
@@ -604,8 +610,8 @@
 
     <div class="meta">
                 <p>Inherited from
-                <a href="../classes/Object_sprite.html#method_drawNewFrame">Object_sprite</a>:
-        <a href="../files/src_components_map_core_Objects.js.html#l98"><code>src\components\map\core\Objects.js:98</code></a>
+                <a href="../classes/ObjectSprite.html#method_drawNewFrame">ObjectSprite</a>:
+        <a href="../files/src_components_map_core_Objects.js.html#l104"><code>src\components\map\core\Objects.js:104</code></a>
         </p>
 
 
@@ -683,7 +689,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Objects.js.html#l253"><code>src\components\map\core\Objects.js:253</code></a>
+        <a href="../files/src_components_map_core_Objects.js.html#l257"><code>src\components\map\core\Objects.js:257</code></a>
         </p>
 
 
@@ -721,8 +727,8 @@
 
     <div class="meta">
                 <p>Inherited from
-                <a href="../classes/Object_sprite.html#method_getGraphicalArea">Object_sprite</a>:
-        <a href="../files/src_components_map_core_Objects.js.html#l112"><code>src\components\map\core\Objects.js:112</code></a>
+                <a href="../classes/ObjectSprite.html#method_getGraphicalArea">ObjectSprite</a>:
+        <a href="../files/src_components_map_core_Objects.js.html#l118"><code>src\components\map\core\Objects.js:118</code></a>
         </p>
 
 
@@ -790,8 +796,8 @@
 
     <div class="meta">
                 <p>Inherited from
-                <a href="../classes/Object_sprite.html#method_innerDraw">Object_sprite</a>:
-        <a href="../files/src_components_map_core_Objects.js.html#l83"><code>src\components\map\core\Objects.js:83</code></a>
+                <a href="../classes/ObjectSprite.html#method_innerDraw">ObjectSprite</a>:
+        <a href="../files/src_components_map_core_Objects.js.html#l89"><code>src\components\map\core\Objects.js:89</code></a>
         </p>
 
 
@@ -872,8 +878,8 @@
 
     <div class="meta">
                 <p>Inherited from
-                <a href="../classes/Object_sprite.html#method_localToLocal">Object_sprite</a>:
-        <a href="../files/src_components_map_core_Objects.js.html#l131"><code>src\components\map\core\Objects.js:131</code></a>
+                <a href="../classes/ObjectSprite.html#method_localToLocal">ObjectSprite</a>:
+        <a href="../files/src_components_map_core_Objects.js.html#l137"><code>src\components\map\core\Objects.js:137</code></a>
         </p>
 
 
@@ -941,6 +947,86 @@
             <div id="attrs" class="api-class-tabpanel">
                 <h2 class="off-left">Attributes</h2>
 
+                    <div id="attr_[name]" class="attr item">
+                        <a name="config_[name]"></a> 
+                        <h3 class="name"><code>[name]</code></h3>
+                        <span class="type"></span>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_components_map_core_Objects.js.html#l263"><code>src\components\map\core\Objects.js:263</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you
+                    don't implement your own, I suggest you use it. You can attach any method to object if you wish. Like attack, siege, greet, talk.</p>
+                    
+                        </div>
+                    
+                    
+                            <div class="emits box">
+                                <h4>Fires event <code>[name]Change</code></h4>
+                    
+                                <p>
+                                Fires when the value for the configuration attribute <code>[name]</code> is
+                                changed. You can listen for the event using the <code>on</code> method if you
+                                wish to be notified before the attribute's value has changed, or
+                                using the <code>after</code> method if you wish to be notified after the
+                                attribute's value has changed.
+                                </p>
+                    
+                                <div class="params">
+                                    <h4>Parameters:</h4>
+                    
+                                    <ul class="params-list">
+                                        <li class="param">
+                                            <code class="param-name">e</code>
+                                            <span class="type">EventFacade</span>
+                    
+                                            <div class="param-description">
+                                                An Event Facade object with the following
+                                                attribute-specific properties added:
+                                            </div>
+                    
+                                            <ul class="params-list">
+                                                <li class="param">
+                                                    <code class="param-name">prevVal</code>
+                                                    <span class="type">Any</span>
+                                                    <div class="param-description">The value of the attribute, prior to it being set.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">newVal</code>
+                                                    <span class="type">Any</span>
+                                                    <div class="param-description">The value the attribute is to be set to.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">attrName</code>
+                                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                                                    <div class="param-description">The name of the attribute being set.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">subAttrName</code>
+                                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                                                    <div class="param-description">If setting a property within the attribute's value, the name of the sub-attribute property being set.</div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                    
+                    </div>
                     <div id="attr_actions" class="attr item">
                         <a name="config_actions"></a> 
                         <h3 class="name"><code>actions</code></h3>
@@ -956,7 +1042,7 @@
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_components_map_core_Objects.js.html#l212"><code>src\components\map\core\Objects.js:212</code></a>
+                            <a href="../files/src_components_map_core_Objects.js.html#l219"><code>src\components\map\core\Objects.js:219</code></a>
                             </p>
                     
                     
@@ -1034,11 +1120,11 @@
                     
                         <div class="meta">
                                 <p>Inherited from
-                                <a href="../classes/Object_sprite.html#attr_">
-                                    Object_sprite
+                                <a href="../classes/ObjectSprite.html#attr_">
+                                    ObjectSprite
                                 </a>
                                 but overwritten in
-                            <a href="../files/src_components_map_core_Objects.js.html#l33"><code>src\components\map\core\Objects.js:33</code></a>
+                            <a href="../files/src_components_map_core_Objects.js.html#l39"><code>src\components\map\core\Objects.js:39</code></a>
                             </p>
                     
                     

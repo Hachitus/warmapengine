@@ -48,22 +48,24 @@
                                 <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
                                 <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
                                 <li><a href="../classes/MapLayer.html">MapLayer</a></li>
                                 <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
                                 <li><a href="../classes/mapMovement.html">mapMovement</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
                                 <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
+                                <li><a href="../classes/ObjectSprite.html">ObjectSprite</a></li>
                                 <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
                                 <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIDefault.html">UIDefault</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -115,7 +117,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_components_map_core_MapLayers.js.html#l230"><code>src\components\map\core\MapLayers.js:230</code></a>
+            Defined in: <a href="../files/src_components_map_core_MapLayers.js.html#l271"><code>src\components\map\core\MapLayers.js:271</code></a>
         </div>
 
 
@@ -123,7 +125,9 @@
 
 
 <div class="box intro">
-    <p>Layer designed to hold subcontainers. But can handle objects too. Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap. Thus the default is: 4096, based on this site: <a href="http://webglstats.com/">http://webglstats.com/</a> and MAX_TEXTURE_SIZE</p>
+    <p>Layer designed to hold subcontainers. But can handle objects too. Different devices graphic cards can only have specific size of
+bitmap drawn, and PIXI cache always draws a bitmap. Thus the default is: 4096, based on this site: <a href="http://webglstats.com/">http://webglstats.com/</a> and
+MAX_TEXTURE_SIZE</p>
 
 </div>
 
@@ -150,7 +154,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_MapLayers.js.html#l230"><code>src\components\map\core\MapLayers.js:230</code></a>
+        <a href="../files/src_components_map_core_MapLayers.js.html#l271"><code>src\components\map\core\MapLayers.js:271</code></a>
         </p>
 
 
@@ -180,7 +184,8 @@
                                     <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
 
                                 <div class="param-description">
-                                    <p>name layer property name, used for identifiying the layer, usefull in debugging, but used also otherwise too</p>
+                                    <p>name layer property name, used for identifiying the layer, usefull in debugging,
+but used also otherwise too</p>
 
                                 </div>
 
@@ -323,7 +328,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_MapLayers.js.html#l256"><code>src\components\map\core\MapLayers.js:256</code></a>
+        <a href="../files/src_components_map_core_MapLayers.js.html#l300"><code>src\components\map\core\MapLayers.js:300</code></a>
         </p>
 
 
@@ -331,7 +336,8 @@
     </div>
 
     <div class="description">
-        <p>We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and then we call the original (PIXIs) addChild</p>
+        <p>We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and
+then we call the original (PIXIs) addChild</p>
 
     </div>
 
@@ -371,7 +377,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_MapLayers.js.html#l273"><code>src\components\map\core\MapLayers.js:273</code></a>
+        <a href="../files/src_components_map_core_MapLayers.js.html#l318"><code>src\components\map\core\MapLayers.js:318</code></a>
         </p>
 
 
@@ -402,7 +408,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_MapLayers.js.html#l307"><code>src\components\map\core\MapLayers.js:307</code></a>
+        <a href="../files/src_components_map_core_MapLayers.js.html#l348"><code>src\components\map\core\MapLayers.js:348</code></a>
         </p>
 
 
@@ -441,7 +447,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_MapLayers.js.html#l281"><code>src\components\map\core\MapLayers.js:281</code></a>
+        <a href="../files/src_components_map_core_MapLayers.js.html#l326"><code>src\components\map\core\MapLayers.js:326</code></a>
         </p>
 
 

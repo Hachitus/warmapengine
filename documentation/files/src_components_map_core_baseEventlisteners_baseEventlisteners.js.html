@@ -48,22 +48,24 @@
                                 <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
                                 <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
                                 <li><a href="../classes/MapLayer.html">MapLayer</a></li>
                                 <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
                                 <li><a href="../classes/mapMovement.html">mapMovement</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
                                 <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
+                                <li><a href="../classes/ObjectSprite.html">ObjectSprite</a></li>
                                 <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
                                 <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIDefault.html">UIDefault</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -114,167 +116,261 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-/* global Hammer, Hamster */
-&#x27;use strict&#x27;;
+(function () {
+  &#x27;use strict&#x27;;
 
-/*-----------------------
---------- IMPORT --------
------------------------*/
-import &#x27;hammer&#x27;;
-import { eventListeners } from &#x27;bundles/coreBundle&#x27;;
+  /*-----------------------
+  --------- IMPORT --------
+  -----------------------*/
+  var eventListeners = window.flatworld.eventListeners;
+  var mapStates = window.flatworld.mapStates;
+  var mapEvents = window.flatworld.mapEvents;
+  var utils = window.flatworld.utils;
+  var Hammer = window.flatworld_libraries.Hammer;
+  var Hamster = window.flatworld_libraries.Hamster;
 
-/*-----------------------
----------- API ----------
------------------------*/
-export const baseEventlisteners = baseEventlistenersModule();
+  /*-----------------------
+  ---------- API ----------
+  -----------------------*/
+  window.flatworld.extensions.baseEventlisteners = baseEventlistenersModule();
 
-/*-----------------------
--------- PUBLIC ---------
------------------------*/
-/**
- * Core plugin. Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for the eventlistener management.
- *
- * @class baseEventlisteners
- * @requires Hammer.js (for touch events)
- * @requires Hamster.js (for good cross-browser mousewheel events)
- * @param {HTMLElement} canvasElement   The canvas element we listen events from. Will try to search the first canvas in the DOM, if none is provided
- */
-function baseEventlistenersModule() {
-  var CBs = {};
-  var hammer, hamster, fullSize, fullscreen, zoom, drag, select, boundResizer;
-
-  /*---------------------------
-  ----------- API -------------
-  ---------------------------*/
-  return {
-    init,
-    pluginName: &quot;baseEventlisteners&quot;
-  };
-
-  function init(map) {
-    hammer = new Hammer.Manager(map.canvas);
-    hamster = new Hamster(map.canvas);
-
-    eventListeners.setDetector(&quot;fullSize&quot;, fullSize().on, fullSize().off);
-    eventListeners.setDetector(&quot;fullscreen&quot;, fullscreen().on, fullscreen().off);
-    eventListeners.setDetector(&quot;zoom&quot;, zoom().on, zoom().off);
-    eventListeners.setDetector(&quot;drag&quot;, drag().on, drag().off);
-    eventListeners.setDetector(&quot;select&quot;, select().on, select().off);
-
-    map.setPrototype(&quot;setFullsize&quot;, () =&gt; {
-      /* We set this only once */
-      boundResizer = boundResizer || map._resizeCanvas.bind(map);
-
-      eventListeners.on(&quot;fullSize&quot;, boundResizer);
-    })
-    map.setPrototype(&quot;setFullScreen&quot;, () =&gt; {
-      eventListeners.on(&quot;fullscreen&quot;, map._setFullScreen.bind(map));
-    })
-  }
-
+  /*-----------------------
+  -------- PUBLIC ---------
+  -----------------------*/
   /**
-   * Sets the canvas to fullsize as in the same size of the window / content area. But not fullscreen. Note that
+   * Core plugin. Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for the
+   * eventlistener management. Creates window.flatworld.setFullScreen function to be used when switching to fullscreen.
    *
-   * @method fullSizeListener
-   * @private
-   * @static
+   * @class baseEventlisteners
+   * @requires Hammer.js (for touch events)
+   * @requires Hamster.js (for good cross-browser mousewheel events)
+   * @param {HTMLElement} canvasElement   The canvas element we listen events from. Will try to search the first canvas in the DOM,
+   * if none is provided
    */
-  function fullSize() {
-    return {
-      on: (cb) =&gt; {
-        window.addEventListener(&quot;resize&quot;, cb);
-      },
-      off: (cb) =&gt; {
-        window.removeEventListener(&quot;resize&quot;, cb);
-      }
-    }
-  }
-  /**
-   * Sets the browser in fullscreen mode.
-   *
-   * @method toggleFullscreen
-   * @static
-   * @param {Function} cb     Callback that fires when this event activates
-   * @return {Boolean}        Return the state of this event
-   */
-  function fullscreen() {
-    return {
-      on: (cb) =&gt; {
-        window.addEventListener(&quot;fullscreen&quot;, cb);
-      },
-      off: (cb) =&gt; {
-        window.removeEventListener(&quot;fullscreen&quot;, cb);
-      }
-    }
-  };
-  /**
-   * Zoom the map. Mousewheel (desktop) and pinch (mobile)
-   *
-   * @method toggleZoomListener
-   * @static
-   * @param {Function} cb     Callback that fires when this event activates
-   * @return {Boolean}        Return the state of this event
-   */
-  function zoom() {
-    return {
-      on: (cb) =&gt; {
-        var pinch = new Hammer.Pinch();
+  function baseEventlistenersModule() {
+    var hammer, hamster, mapInstance;
 
-        hammer.add(pinch);
-        hammer.on(&quot;pinch&quot;, cb);
-        /* Hamster handles wheel events really nicely */
-        hamster.wheel(cb);
-      },
-      off: (cb) =&gt; {
-        hammer.on(&quot;pinch&quot;, cb);
-        hamster.unwheel(cb);
-      }
-    }
-  };
-  /**
-   * DragListener (normally used for moving the map)
-   *
-   * @method toggleDragListener
-   * @static
-   * @param {Function} cb     Callback that fires when this event activates
-   * @return {Boolean}        Return the state of this event
-   */
-  function drag() {
+    /*---------------------------
+    ----------- API -------------
+    ---------------------------*/
     return {
-      on: (cb) =&gt; {
-        var pan = new Hammer.Pan({
-          pointers: 1,
-          threshold: 5,
-          direction:  Hammer.DIRECTION_ALL });
-        hammer.add(pan);
-        hammer.on(&quot;pan&quot;, cb);
-      },
-      off: (cb) =&gt; {
-        hammer.off(&quot;pan&quot;, cb);
-      }
-    }
-  };
-  /**
-   * Selecting something from the map
-   *
-   * @method toggleSelectListener
-   * @static
-   * @param {Function} cb     Callback that fires when this event activates
-   * @return {Boolean}        Return the state of this event
-   */
-  function select() {
-    return {
-      on: (cb) =&gt; {
-        var tap = new Hammer.Tap();
-        hammer.add(tap);
-        hammer.on(&quot;tap&quot;, cb);
-      },
-      off: (cb) =&gt; {
-        hammer.off(&quot;tap&quot;, cb);
-      }
+      init,
+      pluginName: &quot;baseEventlisteners&quot;
     };
+
+    function init(map) {
+      const orderToggle = toggleOrder();
+      const selectToggle = toggleSelect();
+
+      mapInstance = map;
+      hammer = new Hammer.Manager(map.canvas);
+      hamster = new Hamster(map.canvas);
+
+      eventListeners.setDetector(&quot;fullSize&quot;, toggleFullSize().on, toggleFullSize().off);
+      eventListeners.setDetector(&quot;fullscreen&quot;, toggleFullscreen().on, toggleFullscreen().off);
+      eventListeners.setDetector(&quot;zoom&quot;, toggleZoom().on, toggleZoom().off);
+      eventListeners.setDetector(&quot;drag&quot;, toggleDrag().on, toggleDrag().off);
+      eventListeners.setDetector(&quot;select&quot;, selectToggle.on, selectToggle.off);
+      eventListeners.setDetector(&quot;order&quot;, orderToggle.on, orderToggle.off);
+
+      eventListeners.on(&quot;fullSize&quot;, _resizeCanvas);
+      map.setPrototype(&quot;setFullScreen&quot;, () =&gt; {
+        eventListeners.on(&quot;fullscreen&quot;, _setFullScreen);
+      });
+    }
+
+    /**
+     * Sets the canvas to fullsize as in the same size of the window / content area. But not fullscreen. Note that
+     *
+     * @method toggleFullSize
+     * @private
+     * @static
+     */
+    function toggleFullSize() {
+      var activeCB;
+
+      return {
+        on: (cb) =&gt; {
+          activeCB = cb;
+
+          window.addEventListener(&quot;resize&quot;, activeCB);
+        },
+        off: () =&gt; {
+          window.removeEventListener(&quot;resize&quot;, activeCB);
+        }
+      };
+    }
+    /**
+     * Sets the browser in fullscreen mode.
+     *
+     * @method toggleFullscreen
+     * @static
+     * @param {Function} cb     Callback that fires when this event activates
+     * @return {Boolean}        Return the state of this event
+     */
+    function toggleFullscreen() {
+      var activeCB;
+
+      return {
+        on: (cb) =&gt; {
+          activeCB = cb;
+
+          window.addEventListener(&quot;fullscreen&quot;, activeCB);
+        },
+        off: () =&gt; {
+          window.removeEventListener(&quot;fullscreen&quot;, activeCB);
+        }
+      };
+    }
+    /**
+     * Zoom the map. Mousewheel (desktop) and pinch (mobile)
+     *
+     * @method toggleZoomListener
+     * @static
+     * @param {Function} cb     Callback that fires when this event activates
+     * @return {Boolean}        Return the state of this event
+     */
+    function toggleZoom() {
+      var activeCB;
+
+      return {
+        on: (cb) =&gt; {
+          var pinch = new Hammer.Pinch();
+          activeCB = cb;
+
+          hammer.add(pinch);
+          hammer.on(&quot;pinch&quot;, activeCB);
+          /* Hamster handles wheel events really nicely */
+          hamster.wheel(activeCB);
+        },
+        off: () =&gt; {
+          hammer.on(&quot;pinch&quot;, activeCB);
+          hamster.unwheel(activeCB);
+        }
+      };
+    }
+    /**
+     * DragListener (normally used for moving the map)
+     *
+     * @method toggleDragListener
+     * @static
+     * @param {Function} cb     Callback that fires when this event activates
+     * @return {Boolean}        Return the state of this event
+     */
+    function toggleDrag() {
+      var activeCB;
+
+      return {
+        on: (cb) =&gt; {
+          var pan = new Hammer.Pan({
+            pointers: 1,
+            threshold: 5,
+            direction:  Hammer.DIRECTION_ALL });
+          activeCB = cb;
+
+          hammer.add(pan);
+          hammer.on(&quot;pan&quot;, activeCB);
+        },
+        off: () =&gt; {
+          hammer.off(&quot;pan&quot;, activeCB);
+        }
+      };
+    }
+    /**
+     * Selecting something from the map
+     *
+     * @method toggleSelectListener
+     * @static
+     * @param {Function} cb     Callback that fires when this event activates
+     * @return {Boolean}        Return the state of this event
+     */
+    function toggleSelect() {
+      var activeCB;
+
+      return {
+        on: (cb) =&gt; {
+          var tap = new Hammer.Tap();
+          activeCB = cb;
+
+          hammer.add(tap);
+          hammer.on(&quot;tap&quot;, activeCB);
+        },
+        off: () =&gt; {
+          hammer.off(&quot;tap&quot;, activeCB);
+        }
+      };
+    }
+    /**
+     * Selecting something from the map
+     *
+     * @method toggleSelectListener
+     * @static
+     * @param {Function} cb     Callback that fires when this event activates
+     * @return {Boolean}        Return the state of this event
+     */
+    function toggleOrder() {
+      var activeCB;
+
+      return {
+        on: (cb) =&gt; {
+          activeCB = cb;
+
+          if (mapInstance.isSupportedTouch) {
+            var tap = new Hammer.Tap();
+
+            hammer.add(tap);
+            hammer.on(&quot;tap&quot;, clickListener);
+          } else {
+            mapInstance.canvas.addEventListener(&quot;contextmenu&quot;, clickListener, true);
+          }
+        },
+        off: () =&gt; {
+          hammer.off(&quot;tap&quot;, clickListener);
+          mapInstance.canvas.removeEventListener(&quot;contextmenu&quot;, clickListener, true);
+        }
+      };
+
+      function clickListener(e) {
+        /* Prevent right clicks default menu */
+        e.preventDefault();
+
+        /* Check that finite state is correct and that if desktop, the user clicked right button */
+        if (! mapStates.can(&quot;objectOrder&quot;) &amp;&amp; ( mapInstance.isSupportedTouch || utils.mouse.isRightClick(e))) {
+          return false;
+        }
+
+        activeCB(e);
+      }
+    }
+
+    /**
+     * Activate the browsers fullScreen mode and expand the canvas to fullsize
+     *
+     * @private
+     * @method setFullScreen
+     */
+    function _setFullScreen() {
+      utils.resize.toggleFullScreen();
+      mapEvents.publish(&quot;mapResized&quot;);
+      _resizeCanvas();
+    }
+    /**
+     * Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.
+     *
+     * @private
+     * @method _resizeCanvas
+     */
+    function _resizeCanvas() {
+      var windowSize = utils.resize.getWindowSize();
+      var _renderer = mapInstance.getRenderer();
+
+      _renderer.autoResize = true;
+      _renderer.resize(windowSize.x, windowSize.y);
+      mapEvents.publish(&quot;mapResized&quot;);
+      mapInstance.drawOnNextTick();
+    }
   }
-}
+})();
     </pre>
 </div>
                     </div>

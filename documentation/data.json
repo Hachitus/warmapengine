@@ -6,20 +6,11 @@
         "url": "https://github.com/Hachitus/FlaTWorld"
     },
     "files": {
-        "src\\components\\logger\\log.js": {
-            "name": "src\\components\\logger\\log.js",
-            "modules": {},
-            "classes": {
-                "log": 1
-            },
-            "fors": {},
-            "namespaces": {}
-        },
         "src\\components\\map\\UIs\\default\\default.js": {
             "name": "src\\components\\map\\UIs\\default\\default.js",
             "modules": {},
             "classes": {
-                "UI_default": 1
+                "UIDefault": 1
             },
             "fors": {},
             "namespaces": {}
@@ -90,8 +81,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "src\\components\\map\\core\\Map.js": {
-            "name": "src\\components\\map\\core\\Map.js",
+        "src\\components\\map\\core\\Flatworld.js": {
+            "name": "src\\components\\map\\core\\Flatworld.js",
             "modules": {},
             "classes": {
                 "Map": 1
@@ -132,10 +123,17 @@
             "name": "src\\components\\map\\core\\Objects.js",
             "modules": {},
             "classes": {
-                "Object_sprite": 1,
+                "ObjectSprite": 1,
                 "ObjectSpriteTerrain": 1,
                 "ObjectSpriteUnit": 1
             },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\components\\map\\core\\Sound.js": {
+            "name": "src\\components\\map\\core\\Sound.js",
+            "modules": {},
+            "classes": {},
             "fors": {},
             "namespaces": {}
         },
@@ -148,11 +146,11 @@
             "fors": {},
             "namespaces": {}
         },
-        "src\\components\\map\\core\\UI_themeBase.js": {
-            "name": "src\\components\\map\\core\\UI_themeBase.js",
+        "src\\components\\map\\core\\UITemplateBase.js": {
+            "name": "src\\components\\map\\core\\UITemplateBase.js",
             "modules": {},
             "classes": {
-                "UI_templateBase": 1
+                "UITemplateBase": 1
             },
             "fors": {},
             "namespaces": {}
@@ -166,6 +164,24 @@
             "fors": {},
             "namespaces": {}
         },
+        "src\\components\\map\\core\\log.js": {
+            "name": "src\\components\\map\\core\\log.js",
+            "modules": {},
+            "classes": {
+                "log": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\components\\map\\core\\mapAPI.js": {
+            "name": "src\\components\\map\\core\\mapAPI.js",
+            "modules": {},
+            "classes": {
+                "mapApi": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
         "src\\components\\map\\core\\mapEvents.js": {
             "name": "src\\components\\map\\core\\mapEvents.js",
             "modules": {},
@@ -175,8 +191,17 @@
             "fors": {},
             "namespaces": {}
         },
-        "src\\components\\map\\extensions\\hexagons\\eventListeners\\select.js": {
-            "name": "src\\components\\map\\extensions\\hexagons\\eventListeners\\select.js",
+        "src\\components\\map\\core\\mapStates.js": {
+            "name": "src\\components\\map\\core\\mapStates.js",
+            "modules": {},
+            "classes": {
+                "mapStates": 1
+            },
+            "fors": {},
+            "namespaces": {}
+        },
+        "src\\components\\map\\extensions\\hexagons\\eventListeners\\units.js": {
+            "name": "src\\components\\map\\extensions\\hexagons\\eventListeners\\units.js",
             "modules": {},
             "classes": {
                 "hexagonPlugin.setupHexagonClick": 1
@@ -235,8 +260,8 @@
             "fors": {},
             "namespaces": {}
         },
-        "src\\components\\preloading\\preloading.js": {
-            "name": "src\\components\\preloading\\preloading.js",
+        "src\\components\\preloading\\Preload.js": {
+            "name": "src\\components\\preloading\\Preload.js",
             "modules": {},
             "classes": {
                 "Preload": 1
@@ -274,40 +299,21 @@
     },
     "modules": {},
     "classes": {
-        "log": {
-            "name": "log",
-            "shortname": "log",
-            "classitems": [],
-            "plugins": [],
-            "extensions": [],
-            "plugin_for": [],
-            "extension_for": [],
-            "file": "src\\components\\logger\\log.js",
-            "line": 10,
-            "requires": [
-                "loglevel.js for frontend logging",
-                "or something similar"
-            ]
-        },
-        "UI_default": {
-            "name": "UI_default",
-            "shortname": "UI_default",
+        "UIDefault": {
+            "name": "UIDefault",
+            "shortname": "UIDefault",
             "classitems": [],
             "plugins": [],
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\UIs\\default\\default.js",
-            "line": 27,
+            "line": 25,
             "description": "The simplest default UI implementation. Implemented UI functionalities for: showSelections, highlightSelectedObject",
             "is_constructor": 1,
             "requires": [
                 "Handlebars",
-                "jQuery"
-            ],
-            "todo": [
-                "should take jQuery away from this",
-                "as soon as we refactor the animations and graphics for selections"
+                "hexagon extension"
             ],
             "params": [
                 {
@@ -336,8 +342,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
-            "line": 18,
-            "description": "Core plugin. Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for the eventlistener management.",
+            "line": 22,
+            "description": "Core plugin. Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for the\neventlistener management. Creates window.flatworld.setFullScreen function to be used when switching to fullscreen.",
             "requires": [
                 "Hammer.js (for touch events)",
                 "Hamster.js (for good cross-browser mousewheel events)"
@@ -345,7 +351,7 @@
             "params": [
                 {
                     "name": "canvasElement",
-                    "description": "The canvas element we listen events from. Will try to search the first canvas in the DOM, if none is provided",
+                    "description": "The canvas element we listen events from. Will try to search the first canvas in the DOM,\nif none is provided",
                     "type": "HTMLElement"
                 }
             ]
@@ -359,7 +365,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
-            "line": 16,
+            "line": 18,
             "description": "Core plugin for the engine. Handles moving the map by dragging the map with mouse or touch event. Core plugins can always be overwrote if needed.",
             "requires": [
                 "Hammer.js - Mobile part requires"
@@ -378,7 +384,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\utils\\Quadtree.js",
-            "line": 12,
+            "line": 13,
             "description": "NOTE! NOT IN USE AT THE MOMENT. THIS WAS LESS EFFICIENT THAN USING SUBCONTAINERS, SO IT WILL BE USED IN THE FUTURE IF NEEDED.\n\nThis class handles the API for quadtree to search for the wanted objects on the certain coordinates. After this\nthe map should do it's own - more precise - hit detections.",
             "is_constructor": 1,
             "requires": [
@@ -409,7 +415,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\utils\\dataManipulation.js",
-            "line": 11,
+            "line": 12,
             "description": "These are utils for manipulating the data, that our classes and functions use.",
             "return": {
                 "description": "mapObjectsToArray, flattenArrayBy1Level",
@@ -425,7 +431,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\utils\\effects.js",
-            "line": 11,
+            "line": 17,
             "description": "This module will hold the most common graphical effects used in the map. It is still very stub as the development\nhasn't proceeded to this stage yet.",
             "return": {
                 "description": "init, _startDragListener",
@@ -441,7 +447,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 10,
+            "line": 12,
             "return": {
                 "description": "isRightClick, eventData.getPointerCoords, eventData.getHAMMERPointerCoords, eventMouseCoords",
                 "type": "Object"
@@ -456,7 +462,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 93,
+            "line": 95,
             "return": {
                 "description": "toggleFullScreen, setToFullSize, getWindowSize",
                 "type": "Object"
@@ -471,7 +477,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 177,
+            "line": 178,
             "return": {
                 "description": "getPixelRatio",
                 "type": "Object"
@@ -486,7 +492,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 204,
+            "line": 205,
             "return": {
                 "description": "pixelEpsilonEquality",
                 "type": "Object"
@@ -501,8 +507,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
-            "line": 16,
-            "description": "Core plugin for the engine. Handles zooming for the map. Core plugins can always be overwrote if needed. Zooming happens when the user scrolls the mousewheel or in mobile, pinches the screen.",
+            "line": 18,
+            "description": "Core plugin for the engine. Handles zooming for the map. Core plugins can always be overwrote if needed. Zooming happens when the\nuser scrolls the mousewheel or in mobile, pinches the screen.",
             "return": {
                 "description": "init",
                 "type": "Object"
@@ -516,9 +522,9 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 23,
-            "description": "#Main class for the engine\n\nInitializes the whole structure and plugins and is used as primary API for all operations. This class is e.g. passed to every plugin that get initialized with their init-method.\n\nYou use the class by instantiating it (new) and then finishing initialization with init-method. Please see examples below.\n\nThe biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the tests/data-folder, but the factory is responsible for creating the objects, so you can use your own factory implementation. So to understand more, please see e.g. factories.horizontalHexaFactory.\n\nThe map consists of layer on top of each other. The example is best understood when thinking typical war strategy game. The structure is this:\n1. StaticLayer: Handles things like scaling / zooming the map\n2. MovableLayer: Obviously handles movement of the map. Also is a good place to get map coordinates. Since getting global coordinates won't help you much, half of the time.\n3. Different layers: like units, terrain, fog of war, UIs etc. Can also contains special layers like dynamically changed UIlayers.\n4. possible subcontainers (used for optimized object selection and map movement). Can also contains special layers like dynamically changed UIlayers.\n5. Individual objects, like units, terrains, cities etc...\n\nPlugins can be added with activatePlugins-method by sending them to the class. Plugins must always implement init-method, which receives Map instance. Plugins are not yet restricted what they can do and can add functionality without touching map or can modify objects or their prototypes through access to Map instance.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 24,
+            "description": "#Main class for the engine\n\nInitializes the whole structure and plugins and is used as primary API for all operations. This class is e.g. passed to every\nplugin that get initialized with their init-method.\n\nYou use the class by instantiating it (new) and then finishing initialization with init-method. Please see examples below.\n\nThe biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the\ntests/data-folder, but the factory is responsible for creating the objects, so you can use your own factory implementation. So to\nunderstand more, please see e.g. factories.horizontalHexaFactory.\n\nThe map consists of layer on top of each other. The example is best understood when thinking typical war strategy game. The\nstructure is this:\n1. StaticLayer: Handles things like scaling / zooming the map\n2. MovableLayer: Obviously handles movement of the map. Also is a good place to get map coordinates. Since getting global\ncoordinates won't help you much, half of the time.\n3. Different layers: like units, terrain, fog of war, UIs etc. Can also contains special layers like dynamically changed UIlayers.\n4. possible subcontainers (used for optimized object selection and map movement). Can also contains special layers like dynamically\nchanged UIlayers.\n5. Individual objects, like units, terrains, cities etc...\n\nPlugins can be added with activatePlugins-method by sending them to the class. Plugins must always implement init-method, which\nreceives Map instance. Plugins are not yet restricted what they can do and can add functionality without touching map or can modify\nobjects or their prototypes through access to Map instance.",
             "example": [
                 "\n    var map = new Map(divContainer, mapOptions );\n    promises = map.init( gameData.pluginsToActivate, mapData.startPoint );"
             ],
@@ -526,6 +532,7 @@
             "requires": [
                 "PIXI.JS framework in global namespace",
                 "Canvas (webGL support recommended) HTML5-element supported.",
+                "Q for promises",
                 "Hammer for touch events",
                 "Hamster for mouse scroll events"
             ],
@@ -564,7 +571,7 @@
                         },
                         {
                             "name": "subcontainers",
-                            "description": "Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.",
+                            "description": "Subcontainers size in pixels. If given, will activate subcontainers. If not\ngiven or false, subcontainers are not used.area.",
                             "type": "Object",
                             "props": [
                                 {
@@ -583,7 +590,7 @@
                 },
                 {
                     "name": "trackFPSCB",
-                    "description": "Callback function for tracking FPS in renderer. So this is used for debugging and optimizing.",
+                    "description": "Callback function for tracking FPS in renderer. So this is used for debugging\nand optimizing.",
                     "type": "FPSCallback"
                 }
             ],
@@ -601,7 +608,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\MapDataManipulator.js",
-            "line": 9,
+            "line": 10,
             "description": "Class to get a consistent standard for the engine to be able to filter objects, when retrieving or sorting them.",
             "is_constructor": 1,
             "params": [
@@ -621,8 +628,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 12,
-            "description": "Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.",
+            "line": 18,
+            "description": "Creates a basic layer for the Map. This type of layer can not hold subcontainers. Note that different devices and graphic cards can\nonly have specific size of bitmap drawn, and PIXI cache always draws a bitmap thus the default is: 4096, based on this site:\nhttp://webglstats.com/ and MAX_TEXTURE_SIZE. This is important also when caching.",
             "is_constructor": 1,
             "params": [
                 {
@@ -632,7 +639,7 @@
                     "props": [
                         {
                             "name": "name",
-                            "description": "Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too",
+                            "description": "Layers name, used for identifying the layer. Useful in debugging, but can be\nused for finding correct layers too",
                             "type": "String"
                         },
                         {
@@ -682,8 +689,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 230,
-            "description": "Layer designed to hold subcontainers. But can handle objects too. Different devices graphic cards can only have specific size of bitmap drawn, and PIXI cache always draws a bitmap. Thus the default is: 4096, based on this site: http://webglstats.com/ and MAX_TEXTURE_SIZE",
+            "line": 271,
+            "description": "Layer designed to hold subcontainers. But can handle objects too. Different devices graphic cards can only have specific size of\nbitmap drawn, and PIXI cache always draws a bitmap. Thus the default is: 4096, based on this site: http://webglstats.com/ and\nMAX_TEXTURE_SIZE",
             "is_constructor": 1,
             "params": [
                 {
@@ -693,7 +700,7 @@
                     "props": [
                         {
                             "name": "name",
-                            "description": "name layer property name, used for identifiying the layer, usefull in debugging, but used also otherwise too",
+                            "description": "name layer property name, used for identifiying the layer, usefull in debugging,\nbut used also otherwise too",
                             "type": "String"
                         },
                         {
@@ -748,8 +755,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 316,
-            "description": "Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they are PIXI.ParticleContainers. But when needed we can extend MapLayers with another class which is subcontainer, but not ParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of the map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use our inefficient Quadtree. The intention was to use PIXI.ParticleContainer for this, but it seems it doesn't clean up the memory afterwards the same way as normal Container.",
+            "line": 357,
+            "description": "Subcontainers are containers that hold objects like units and terrain etc. under them. They have some restrictions atm. since they\nare PIXI.ParticleContainers. But when needed we can extend MapLayers with another class which is subcontainer, but not\nParticleContainer at the present there is no need, so we won't extend yet. Subcontainers help the layers to make better movement of\nthe map, by making subcontainers visible or invisible and even helping with selecting objects on the map. Thus we don't need to use\nour inefficient Quadtree. The intention was to use PIXI.ParticleContainer for this, but it seems it doesn't clean up the memory\nafterwards the same way as normal Container.",
             "access": "private",
             "tagname": "",
             "is_constructor": 1,
@@ -782,30 +789,23 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\ObjectManager.js",
-            "line": 13,
-            "description": "this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or when objects or areas collide with each other.",
+            "line": 8,
+            "description": "this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or when objects or areas\ncollide with each other.",
             "is_constructor": 1,
-            "params": [
-                {
-                    "name": "hitDetector",
-                    "description": "Object or function that handles hit detection. This can be omitted in many cases",
-                    "type": "Object"
-                }
-            ],
             "todo": [
-                "It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits. It could use sprites or forms."
+                "It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits.\nIt could use sprites or forms."
             ]
         },
-        "Object_sprite": {
-            "name": "Object_sprite",
-            "shortname": "Object_sprite",
+        "ObjectSprite": {
+            "name": "ObjectSprite",
+            "shortname": "ObjectSprite",
             "classitems": [],
             "plugins": [],
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 12,
+            "line": 16,
             "description": "The base class of all sprite objects",
             "is_constructor": 1,
             "extends": "PIXI.Sprite",
@@ -817,12 +817,12 @@
                 },
                 {
                     "name": "data",
-                    "description": "objects data, that will be used in the game. It will not actually be mainly used in graphical but rather things  like unit-data and city-data presentations etc.",
+                    "description": "objects data, that will be used in the game. It will not actually be mainly used\nin graphical but rather things  like unit-data and city-data presentations etc.",
                     "type": "Object"
                 },
                 {
                     "name": "options.currFrame",
-                    "description": "currFrame the current frames number. This is basically the initial image, we can change it later for animation or such",
+                    "description": "currFrame the current frames number. This is basically the initial image, we can change it\nlater for animation or such",
                     "type": "Object"
                 }
             ]
@@ -836,10 +836,10 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 172,
+            "line": 178,
             "description": "Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are\ninherited, depending on the map type. For example you might want to add some click area for these",
             "is_constructor": 1,
-            "extends": "Object_sprite",
+            "extends": "ObjectSprite",
             "params": [
                 {
                     "name": "coords",
@@ -867,10 +867,10 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 193,
-            "description": "Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)",
+            "line": 199,
+            "description": "Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type.\nFor example you might want to add some click area for these (e.g. hexagon)",
             "is_constructor": 1,
-            "extends": "Object_sprite",
+            "extends": "ObjectSprite",
             "requires": [
                 "graphics"
             ],
@@ -920,8 +920,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\UI.js",
-            "line": 16,
-            "description": "Main class for showing UI on the map. Like unit selections and such. Has nothing to do with showing off-map data.\nGood examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit) and bringing the unit on top in the map. UI themes must implement this core UI module",
+            "line": 12,
+            "description": "Main class for showing UI on the map. Like unit selections and such. Has nothing to do with showing off-map data.\nGood examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit) and bringing the\nunit on top in the map. UI themes must implement this core UI module",
             "todo": [
                 "Not implemented fully yet and probably need refactoring"
             ],
@@ -943,16 +943,16 @@
                 "type": "Object"
             }
         },
-        "UI_templateBase": {
-            "name": "UI_templateBase",
-            "shortname": "UI_templateBase",
+        "UITemplateBase": {
+            "name": "UITemplateBase",
+            "shortname": "UITemplateBase",
             "classitems": [],
             "plugins": [],
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "src\\components\\map\\core\\UI_themeBase.js",
-            "line": 17,
+            "file": "src\\components\\map\\core\\UITemplateBase.js",
+            "line": 12,
             "description": "The template base class for UI templates",
             "todo": [
                 "This needs a bit of redesign."
@@ -975,8 +975,35 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 24,
+            "line": 25,
             "description": "This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add event listeners with on."
+        },
+        "log": {
+            "name": "log",
+            "shortname": "log",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\components\\map\\core\\log.js",
+            "line": 10,
+            "requires": [
+                "loglevel.js for frontend logging",
+                "or something similar"
+            ]
+        },
+        "mapApi": {
+            "name": "mapApi",
+            "shortname": "mapApi",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\components\\map\\core\\mapAPI.js",
+            "line": 17,
+            "description": "Uses JSON only data flow"
         },
         "mapEvents": {
             "name": "mapEvents",
@@ -987,8 +1014,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\mapEvents.js",
-            "line": 11,
-            "description": "This module handles map events. Like informing map movement, object selection and other changes.\nEvents atm:\n- mapMoved\n- mapResize\n- mapFullscreeActivated",
+            "line": 12,
+            "description": "This module handles map events. Like informing map movement, object selection and other changes. Not that ALL the eventlisteners and\ntheir callbacks will throw one event! But that event will have no extra parameters, so when you do special things, like selecting\nobjects on the map, you should throw another event when that happens and you can pass on the objects that were selected from the map.\nEvents atm:\n- mapfullscreen - NO ARGUMENTS\n- mapfullSize - NO ARGUMENTS\n- mapdrag - NO ARGUMENTS\n- mapzoomed - NO ARGUMENTS\n- Mapselect - NO ARGUMENTS\n- mapMoved\n- mapResize\n- mapFullscreeActivated",
             "return": {
                 "description": "subsribe and publish",
                 "type": "Object"
@@ -996,6 +1023,21 @@
             "todo": [
                 "I want the pubsub module to go the ES6 way",
                 "not the only global exception!"
+            ]
+        },
+        "mapStates": {
+            "name": "mapStates",
+            "shortname": "mapStates",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\components\\map\\core\\mapStates.js",
+            "line": 17,
+            "description": "Finite state machine for the map. Uses this library and pretty much it's API https://github.com/jakesgordon/javascript-state-machine.",
+            "requires": [
+                "state-machine library"
             ]
         },
         "hexagonPlugin.setupHexagonClick": {
@@ -1006,13 +1048,14 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "src\\components\\map\\extensions\\hexagons\\eventListeners\\select.js",
-            "line": 16,
+            "file": "src\\components\\map\\extensions\\hexagons\\eventListeners\\units.js",
+            "line": 24,
             "description": "Handles the eventlistner for selecting objects on the map. THe actual logic for detecting the objects under mouse\netc. are in selectHexagonPlugin",
             "requires": [
                 "Hammer.js. Some events are done with Hammer.js",
                 "so we need it to handle those events correctly"
             ],
+            "itemtype": "event",
             "params": [
                 {
                     "name": "map",
@@ -1034,7 +1077,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
-            "line": 17,
+            "line": 18,
             "description": "Utility module, for making different calculations and tests when hexagon based grid map in use"
         },
         "hexagonPlugin.ObjectHexaTerrain": {
@@ -1046,8 +1089,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\extensions\\hexagons\\Objects.js",
-            "line": 24,
-            "description": "Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are inherited, depending on the map type. For example you might want to add some click area for these",
+            "line": 17,
+            "description": "Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are inherited, depending on\nthe map type. For example you might want to add some click area for these",
             "is_constructor": 1,
             "params": [
                 {
@@ -1095,8 +1138,8 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\extensions\\hexagons\\Objects.js",
-            "line": 47,
-            "description": "Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type. For example you might want to add some click area for these (e.g. hexagon)",
+            "line": 41,
+            "description": "Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type.\nFor example you might want to add some click area for these (e.g. hexagon)",
             "is_constructor": 1,
             "params": [
                 {
@@ -1160,7 +1203,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 24
+            "line": 25
         },
         "Preload": {
             "name": "Preload",
@@ -1170,10 +1213,13 @@
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
-            "file": "src\\components\\preloading\\preloading.js",
+            "file": "src\\components\\preloading\\Preload.js",
             "line": 13,
             "description": "Preloads assets before initializing map.",
             "is_constructor": 1,
+            "requires": [
+                "Q for promises"
+            ],
             "todo": [
                 "should you use PIXI here or just https://github.com/englercj/resource-loader straight?"
             ]
@@ -1187,7 +1233,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\utilities\\environment.js",
-            "line": 11,
+            "line": 12,
             "return": {
                 "description": "Holds methods in this class",
                 "type": "Object"
@@ -1202,7 +1248,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\utilities\\general.js",
-            "line": 11,
+            "line": 12,
             "description": "Array manipulation"
         },
         "generalUtils.polyfills": {
@@ -1214,7 +1260,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\utilities\\polyfills.js",
-            "line": 12,
+            "line": 13,
             "description": "Add polyfills for the map, as necessary. Easy to drop out.",
             "return": {
                 "description": "arrayFind, objectAssign",
@@ -1226,14 +1272,14 @@
     "classitems": [
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
-            "line": 49,
+            "line": 46,
             "itemtype": "method",
             "name": "getTemplates\nRequired by the map/core/UI.js API",
-            "class": "UI_default"
+            "class": "UIDefault"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
-            "line": 56,
+            "line": 53,
             "description": "Required by the map.UI API",
             "itemtype": "method",
             "name": "showSelections",
@@ -1254,11 +1300,11 @@
                     "type": "Object"
                 }
             ],
-            "class": "UI_default"
+            "class": "UIDefault"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
-            "line": 101,
+            "line": 95,
             "description": "Required by the map.UI API",
             "itemtype": "method",
             "name": "highlightSelectedObject",
@@ -1279,25 +1325,32 @@
                     "type": "Object"
                 }
             ],
-            "class": "UI_default"
+            "class": "UIDefault"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
-            "line": 139,
+            "line": 133,
             "itemtype": "method",
             "name": "showUnitMovement",
-            "class": "UI_default"
-        },
-        {
-            "file": "src\\components\\map\\UIs\\default\\default.js",
-            "line": 143,
-            "itemtype": "method",
-            "name": "init",
-            "class": "UI_default"
+            "params": [
+                {
+                    "name": "to",
+                    "description": "Global coordinates that were clicked",
+                    "type": "PIXI.Point"
+                }
+            ],
+            "class": "UIDefault"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
             "line": 151,
+            "itemtype": "method",
+            "name": "init",
+            "class": "UIDefault"
+        },
+        {
+            "file": "src\\components\\map\\UIs\\default\\default.js",
+            "line": 159,
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -1320,26 +1373,26 @@
                     "type": "PIXI.Renderer"
                 }
             ],
-            "class": "UI_default"
+            "class": "UIDefault"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
-            "line": 176,
+            "line": 184,
             "access": "private",
             "tagname": "",
             "static": 1,
             "itemtype": "method",
             "name": "createHighlight",
-            "class": "UI_default"
+            "class": "UIDefault"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
-            "line": 213,
+            "line": 222,
             "access": "private",
             "tagname": "",
             "static": 1,
             "itemtype": "method",
-            "name": "_get$Element",
+            "name": "_getElement",
             "params": [
                 {
                     "name": "which",
@@ -1351,14 +1404,14 @@
                 "description": "[description]",
                 "type": "[type]"
             },
-            "class": "UI_default"
+            "class": "UIDefault"
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
-            "line": 59,
+            "line": 64,
             "description": "Sets the canvas to fullsize as in the same size of the window / content area. But not fullscreen. Note that",
             "itemtype": "method",
-            "name": "fullSizeListener",
+            "name": "toggleFullSize",
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -1366,7 +1419,7 @@
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
-            "line": 76,
+            "line": 85,
             "description": "Sets the browser in fullscreen mode.",
             "itemtype": "method",
             "name": "toggleFullscreen",
@@ -1386,7 +1439,7 @@
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
-            "line": 94,
+            "line": 107,
             "description": "Zoom the map. Mousewheel (desktop) and pinch (mobile)",
             "itemtype": "method",
             "name": "toggleZoomListener",
@@ -1406,7 +1459,7 @@
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
-            "line": 118,
+            "line": 134,
             "description": "DragListener (normally used for moving the map)",
             "itemtype": "method",
             "name": "toggleDragListener",
@@ -1426,7 +1479,7 @@
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
-            "line": 141,
+            "line": 161,
             "description": "Selecting something from the map",
             "itemtype": "method",
             "name": "toggleSelectListener",
@@ -1445,8 +1498,48 @@
             "class": "baseEventlisteners"
         },
         {
+            "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
+            "line": 185,
+            "description": "Selecting something from the map",
+            "itemtype": "method",
+            "name": "toggleSelectListener",
+            "static": 1,
+            "params": [
+                {
+                    "name": "cb",
+                    "description": "Callback that fires when this event activates",
+                    "type": "Function"
+                }
+            ],
+            "return": {
+                "description": "Return the state of this event",
+                "type": "Boolean"
+            },
+            "class": "baseEventlisteners"
+        },
+        {
+            "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
+            "line": 228,
+            "description": "Activate the browsers fullScreen mode and expand the canvas to fullsize",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "setFullScreen",
+            "class": "baseEventlisteners"
+        },
+        {
+            "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
+            "line": 239,
+            "description": "Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "_resizeCanvas",
+            "class": "baseEventlisteners"
+        },
+        {
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
-            "line": 41,
+            "line": 43,
             "description": "Required init functions for the plugin",
             "itemtype": "method",
             "name": "init",
@@ -1461,7 +1554,7 @@
         },
         {
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
-            "line": 57,
+            "line": 59,
             "description": "Mobile version. Starts the functionality, uses Hammer.js heavily for doing the drag. More simple and better than\ndesktop version, since we don't need to calculate the drag with several event listener, one is enough with Hammer",
             "access": "private",
             "tagname": "",
@@ -1479,7 +1572,7 @@
         },
         {
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
-            "line": 99,
+            "line": 101,
             "description": "This handles offset Changes and setting data has map been moved based on it. Also\nsets basic settings like preventDefault etc.",
             "access": "private",
             "tagname": "",
@@ -1507,7 +1600,7 @@
         },
         {
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
-            "line": 132,
+            "line": 134,
             "description": "Function for setting and getting the mouse offset.\nOffset is the distance from the left upper coordinates (global 0, 0 coordinates) on the canvas, to the current /\nlast known mouse coordinates",
             "access": "private",
             "tagname": "",
@@ -1518,7 +1611,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\Quadtree.js",
-            "line": 31,
+            "line": 32,
             "description": "Add an object to the quadtree.",
             "itemtype": "method",
             "name": "add",
@@ -1570,7 +1663,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\Quadtree.js",
-            "line": 49,
+            "line": 50,
             "description": "Remove an object from the quadtree.",
             "itemtype": "method",
             "name": "remove",
@@ -1627,7 +1720,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\Quadtree.js",
-            "line": 70,
+            "line": 71,
             "itemtype": "method",
             "name": "retrieve",
             "params": [
@@ -1670,7 +1763,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\Quadtree.js",
-            "line": 94,
+            "line": 95,
             "description": "Move an object on the quadtree",
             "itemtype": "method",
             "name": "move",
@@ -1728,7 +1821,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\Quadtree.js",
-            "line": 124,
+            "line": 125,
             "description": "refresh the whole quadtree setting. Can spend some resources.",
             "itemtype": "method",
             "name": "refreshAll",
@@ -1736,7 +1829,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\Quadtree.js",
-            "line": 132,
+            "line": 133,
             "description": "Find an object by hitDetection from the quadtree setting.",
             "itemtype": "method",
             "name": "findObject",
@@ -1789,7 +1882,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\Quadtree.js",
-            "line": 157,
+            "line": 158,
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -1844,7 +1937,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\dataManipulation.js",
-            "line": 29,
+            "line": 30,
             "description": "Changes the data from e.g. getting objects from the map based on coordinate. The data is like this normally:\n{\n  units: [{\n    {... the objects datas ...}\n  }]\n}\nWe change it to this:\n[\n  [{\n    {... the objects datas ...}\n  }]\n]",
             "itemtype": "method",
             "name": "mapObjectsToArray",
@@ -1863,7 +1956,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\dataManipulation.js",
-            "line": 52,
+            "line": 53,
             "itemtype": "method",
             "name": "flattenArrayBy1Level",
             "params": [
@@ -1877,7 +1970,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\effects.js",
-            "line": 29,
+            "line": 35,
             "itemtype": "method",
             "name": "dropShadow",
             "params": [
@@ -1891,7 +1984,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 24,
+            "line": 26,
             "description": "Detects if the mouse click has been the right mouse button",
             "itemtype": "method",
             "name": "isRightClick",
@@ -1906,7 +1999,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 48,
+            "line": 50,
             "itemtype": "method",
             "name": "getPointerCoords",
             "params": [
@@ -1924,7 +2017,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 59,
+            "line": 61,
             "itemtype": "method",
             "name": "getHAMMERPointerCoords",
             "params": [
@@ -1942,7 +2035,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 67,
+            "line": 69,
             "itemtype": "method",
             "name": "eventMouseCoords",
             "params": [
@@ -1960,14 +2053,14 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 104,
+            "line": 106,
             "itemtype": "method",
             "name": "toggleFullScreen",
             "class": "utils.resize"
         },
         {
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 150,
+            "line": 151,
             "description": "Sets canvas size to maximum width and height on the browser, not using fullscreen",
             "itemtype": "method",
             "name": "setToFullSize",
@@ -1982,7 +2075,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 164,
+            "line": 165,
             "description": "Get browser windows size",
             "itemtype": "method",
             "name": "getWindowSize",
@@ -1997,7 +2090,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 188,
+            "line": 189,
             "itemtype": "method",
             "name": "getPixelRatio",
             "requires": [
@@ -2018,7 +2111,7 @@
         },
         {
             "file": "src\\components\\map\\core\\utils\\utils.js",
-            "line": 215,
+            "line": 216,
             "itemtype": "method",
             "name": "epsilonEquality",
             "params": [
@@ -2037,7 +2130,7 @@
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
-            "line": 31,
+            "line": 34,
             "description": "Maximum and minimum amount, the player can zoom the map",
             "itemtype": "attribute",
             "name": "zoomLimit",
@@ -2046,7 +2139,7 @@
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
-            "line": 41,
+            "line": 44,
             "description": "How much one step of zooming affects",
             "itemtype": "attribute",
             "name": "zoomModifier",
@@ -2055,7 +2148,7 @@
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
-            "line": 60,
+            "line": 63,
             "description": "Required init functions for the plugin",
             "itemtype": "method",
             "name": "init",
@@ -2074,7 +2167,7 @@
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
-            "line": 83,
+            "line": 86,
             "description": "How much one mouse wheel step zooms",
             "itemtype": "method",
             "name": "setZoomModifier",
@@ -2089,7 +2182,7 @@
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
-            "line": 97,
+            "line": 100,
             "description": "How much can be zoomed in maximum and minimum",
             "itemtype": "method",
             "name": "setZoomLimits",
@@ -2109,7 +2202,7 @@
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
-            "line": 110,
+            "line": 113,
             "description": "Zoom in to the map",
             "itemtype": "method",
             "name": "zoomIn",
@@ -2124,7 +2217,7 @@
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
-            "line": 124,
+            "line": 125,
             "description": "Zoom out of the map",
             "itemtype": "method",
             "name": "zoomOut",
@@ -2229,8 +2322,8 @@
             "class": "mapZoom"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 111,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 126,
             "description": "canvas element that was generated and is being used by this new generated Map instance.",
             "itemtype": "attribute",
             "name": "canvas",
@@ -2239,8 +2332,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 119,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 134,
             "description": "list of plugins that the map uses and are initialized",
             "see": [
                 "Map.activatePlugins"
@@ -2251,8 +2344,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 127,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 142,
             "description": "Subcontainers size that we want to generate, when layers use subcontainers",
             "itemtype": "attribute",
             "name": "subcontainersConfig",
@@ -2260,8 +2353,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 134,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 149,
             "description": "Callback function that gets the current FPS on the map and shows it in DOM",
             "itemtype": "attribute",
             "name": "trackFPSCB",
@@ -2269,26 +2362,44 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 141,
-            "description": "ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks the map to select some object. This uses subcontainers when present.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 156,
+            "description": "ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks\nthe map to select some object. This uses subcontainers when present.",
             "itemtype": "attribute",
             "name": "objectManager",
             "type": "{ObjectManager}",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 148,
-            "description": "Is cache activated for this map at all. This is set for individual layers with a property, but without activating the cache for the whole map, the layers cache property is ignored.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 164,
+            "description": "Is cache activated for this map at all. This is set for individual layers with a property, but without activating the cache for\nthe whole map, the layers cache property is ignored.",
             "itemtype": "attribute",
             "name": "objectManager",
             "type": "{ObjectManager}",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 155,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 172,
+            "description": "Set variable showing if the device supports touch or not.",
+            "itemtype": "attribute",
+            "name": "isTouch",
+            "type": "{Boolean}",
+            "class": "Map"
+        },
+        {
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 179,
+            "description": "The object or objects that are currently selected for details and actions / orders. This gets set by other modules, like plugins.",
+            "itemtype": "attribute",
+            "name": "currentlySelectedObjects",
+            "type": "{Array}",
+            "class": "Map"
+        },
+        {
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 186,
             "description": "Layer types. Can be extended, but the already defined types are supposed to be constants and not to be changed.",
             "itemtype": "attribute",
             "name": "layerTypes",
@@ -2296,9 +2407,18 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 172,
-            "description": "This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since normally the plugins have to be activated before the map is shown.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 202,
+            "description": "Self explanatory",
+            "itemtype": "attribute",
+            "name": "VERSION",
+            "type": "{SEMVER}       http://semver.org/",
+            "class": "Map"
+        },
+        {
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 210,
+            "description": "This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since\nnormally the plugins have to be activated before the map is shown.",
             "itemtype": "method",
             "name": "init",
             "params": [
@@ -2326,7 +2446,7 @@
                 },
                 {
                     "name": "tickCB",
-                    "description": "callback function for tick. Tick callback is initiated in every frame. So map draws happen during ticks.",
+                    "description": "callback function for tick. Tick callback is initiated in every frame. So map draws\nhappen during ticks.",
                     "type": "Function"
                 },
                 {
@@ -2343,14 +2463,14 @@
                 }
             ],
             "return": {
-                "description": "Returns an array of Promises. If this is empty / zero. Then there is nothing to wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.",
+                "description": "Returns an array of Promises. If this is empty / zero. Then there is nothing to wait\nfor, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.",
                 "type": "Array"
             },
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 211,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 252,
             "description": "Returns a promise that resolves after the map is fully initialized",
             "itemtype": "method",
             "name": "whenReady",
@@ -2361,36 +2481,36 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 220,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 261,
             "description": "The correct way to update / redraw the map. Check happens at every tick and thus in every frame.",
             "itemtype": "method",
             "name": "drawOnNextTick",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 228,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 269,
             "description": "Add an UI object to the wanted layer.",
             "itemtype": "method",
             "name": "addUIObject",
             "params": [
                 {
                     "name": "layer",
-                    "description": "Type of the layer. layerTypes.STATIC of layerTypes.MOVABLE.",
+                    "description": "Type of the layer. this.layerTypes.STATIC.id or layerTypes.MOVABLE.id.",
                     "type": "Integer"
                 },
                 {
                     "name": "object",
                     "description": "The object to be attached as UI object.",
-                    "type": "Object"
+                    "type": "Object | Array"
                 }
             ],
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 245,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 285,
             "description": "Remove an UI object to the wanted layer.",
             "itemtype": "method",
             "name": "removeUIObject",
@@ -2401,36 +2521,16 @@
                     "type": "Integer"
                 },
                 {
-                    "name": "object",
+                    "name": "objectName",
                     "description": "The object to be attached as UI object.",
-                    "type": "Object"
+                    "type": "String"
                 }
             ],
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 262,
-            "description": "Adds an UI object to the map. This method adds it to the given layer and removes it with removeUIObject-method.",
-            "itemtype": "method",
-            "name": "addUIObjects",
-            "params": [
-                {
-                    "name": "layerType",
-                    "description": "map.layerTypes holds the constants used in this.",
-                    "type": "Integer"
-                },
-                {
-                    "name": "objects",
-                    "description": "Object that are added as UI objects",
-                    "type": "Array"
-                }
-            ],
-            "class": "Map"
-        },
-        {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 274,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 302,
             "description": "Create a special layer, that can holds e.g. UI effects in it.",
             "itemtype": "method",
             "name": "createSpecialLayer",
@@ -2464,7 +2564,7 @@
                         },
                         {
                             "name": "toLayer",
-                            "description": "To which layer will this layer be added to as UILayer",
+                            "description": "To which layer will this layer be added to as UILayer. Default false",
                             "type": "Object"
                         }
                     ]
@@ -2477,8 +2577,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 295,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 323,
             "description": "All parameters are passed to ParentLayerConstructor (normally constructor of MapLayer).",
             "itemtype": "method",
             "name": "addLayer",
@@ -2492,43 +2592,43 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 314,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 342,
             "description": "Just a convenience function (for usability and readability), for checking if the map uses subcontainers.",
             "itemtype": "method",
             "name": "usesSubcontainers",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 322,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 350,
             "description": "Returns current subcontainers configurations (like subcontainers size).",
             "itemtype": "method",
             "name": "getSubcontainerConfigs",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 330,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 358,
             "description": "Get the size of the area that is shown to the player. More or less the area of the browser window.",
             "itemtype": "method",
             "name": "getViewportArea",
             "params": [
                 {
                     "name": "isLocal",
-                    "description": "Do we want to use Map coordinates or global / canvas coordinates. Default = false",
+                    "description": "Do we want to use Map coordinates or global / canvas\ncoordinates. Default = false",
                     "type": "Boolean"
                 }
             ],
             "return": {
-                "description": "}        x- and y-coordinates and the width and height of the viewport",
+                "description": "}        x- and y-coordinates and the width and height of the\nviewport",
                 "type": "X: Integer, y: Integer, width: Integer, height: Integer"
             },
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 347,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 403,
             "description": "Remove a primary layer from the map",
             "itemtype": "method",
             "name": "removeLayer",
@@ -2542,15 +2642,15 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 358,
-            "description": "Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale). Draws map after movement.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 414,
+            "description": "Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that\nthe map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale). Draws map after\nmovement.",
             "itemtype": "method",
             "name": "moveMap",
             "params": [
                 {
                     "name": "coord",
-                    "description": "The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.",
+                    "description": "The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we\nwant the map to move horizontally 5 pixels and vertically stay at the same position.",
                     "type": "Object",
                     "props": [
                         {
@@ -2567,7 +2667,7 @@
                 },
                 {
                     "name": "informCoordinates",
-                    "description": "THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING",
+                    "description": "THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN\nSCALING",
                     "type": "Object",
                     "props": [
                         {
@@ -2586,8 +2686,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 378,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 438,
             "description": "Is cache on",
             "itemtype": "method",
             "name": "isCacheActivated",
@@ -2598,9 +2698,9 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 387,
-            "description": "Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches the ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 447,
+            "description": "Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches\nthe ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.",
             "itemtype": "method",
             "name": "cacheMap",
             "params": [
@@ -2613,8 +2713,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 396,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 457,
             "description": "unCache the map. NOT WORKING ATM. IMPLEMENTED SOON!",
             "itemtype": "method",
             "name": "unCacheMap",
@@ -2625,9 +2725,9 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 405,
-            "description": "Activate all plugins for the map. Iterates through the given plugins we wish to activate and does the actual work in activatePlugin-method.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 466,
+            "description": "Activate all plugins for the map. Iterates through the given plugins we wish to activate and does the actual work in activatePlugin-\nmethod.",
             "itemtype": "method",
             "name": "pluginsArray",
             "params": [
@@ -2644,11 +2744,15 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 426,
-            "description": "Activate plugin for the map. Plugins need .pluginName property and .init-method. Plugins init-method activates the plugins and we call them in Map. Plugins init-metho receivse this (Map instance) as their only parameter.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 488,
+            "description": "Activate plugin for the map. Plugins need .pluginName property and .init-method. Plugins init-method activates the plugins and we\ncall them in Map. Plugins init-metho receivse this (Map instance) as their only parameter.",
             "itemtype": "method",
             "name": "activatePlugin",
+            "throws": {
+                "description": "Throws a general error if there is an issue activating the plugin",
+                "type": "Error"
+            },
             "params": [
                 {
                     "name": "plugin",
@@ -2659,8 +2763,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 445,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 511,
             "description": "Setting new prototype methods for the Map instance",
             "itemtype": "method",
             "name": "setPrototype",
@@ -2679,9 +2783,9 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 457,
-            "description": "Gets object under specific map coordinates. Uses the ObjectManagers retrieve method. Using subcontainers if they exist, other methods if not. If you provide type parameter, the method returns only object types that match it.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 523,
+            "description": "Gets object under specific map coordinates. Uses the ObjectManagers retrieve method. Using subcontainers if they exist, other\nmethods if not. If you provide type parameter, the method returns only object types that match it.",
             "itemtype": "method",
             "name": "getObjectsUnderArea",
             "params": [
@@ -2722,9 +2826,9 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 498,
-            "description": "This returns the normal parent layers that we mostly use for manipulation everything. MovableLayer and staticLayer are built-in layers designed to provide the basic functionalities like zooming and moving the map. These layers provide everything that extends the map more.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 567,
+            "description": "This returns the normal parent layers that we mostly use for manipulation everything. MovableLayer and staticLayer are built-in\nlayers designed to provide the basic functionalities like zooming and moving the map. These layers provide everything that extends\nthe map more.",
             "itemtype": "method",
             "name": "getPrimaryLayers",
             "return": {
@@ -2734,8 +2838,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 507,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 578,
             "description": "Get current map coordinates. Basically the same as movable layers position.",
             "itemtype": "method",
             "name": "getMapCoordinates",
@@ -2746,8 +2850,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 519,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 590,
             "description": "This returns the layer that is responsible for map zoom",
             "itemtype": "method",
             "name": "getZoomLayer",
@@ -2758,8 +2862,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 528,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 599,
             "description": "Set map zoom. 1 = no zoom. <1 zoom out, >1 zoom in.",
             "itemtype": "method",
             "name": "setZoom",
@@ -2777,8 +2881,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 538,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 612,
             "description": "Get map zoom. 1 = no zoom. <1 zoom out, >1 zoom in.",
             "itemtype": "method",
             "name": "getZoom",
@@ -2789,9 +2893,9 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 547,
-            "description": "Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative to the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI elements, like effects that happen on certain point on the map.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 621,
+            "description": "Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative\nto the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI\nelements, like effects that happen on certain point on the map.",
             "itemtype": "method",
             "name": "getMovableLayer",
             "return": {
@@ -2801,9 +2905,9 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 556,
-            "description": "Returns the PIXI renderer. Some situations might need this. For more advanced or PIXI specific cases.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 632,
+            "description": "Returns the PIXI renderer. Don't use this unless you must. For more advanced or PIXI specific cases.",
             "itemtype": "method",
             "name": "getRenderer",
             "return": {
@@ -2813,48 +2917,48 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 565,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 641,
             "description": "Return static layer. The static layer is the topmost of all layers. It handles zooming and other non-movable operations.",
             "itemtype": "method",
             "name": "getStaticLayer",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 576,
-            "description": "This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 652,
+            "description": "This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't\nimplement your own, I suggest you use it.",
             "itemtype": "method",
             "name": "zoomIn",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 582,
-            "description": "This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.",
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 659,
+            "description": "This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't\nimplement your own, I suggest you use it.",
             "itemtype": "method",
             "name": "zoomOut",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 588,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 666,
             "description": "Resize the canvas to fill the whole browser content area. Defined by the baseEventlisteners-module (core modules plugin)",
             "itemtype": "method",
             "name": "toggleFullsize",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 594,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 672,
             "description": "Toggles fullscreen mode. Defined by the baseEventlisteners-module (core modules plugin)",
             "itemtype": "method",
             "name": "toggleFullScreen",
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 604,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 682,
             "description": "Retrieves the objects from ObjectManager, with the given parameters. Mostly helper functionality for getObjectsUnderArea",
             "access": "private",
             "tagname": "",
@@ -2937,8 +3041,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 633,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 711,
             "description": "This returns layers by filtering them based on certain attribute. Can be used with more higher order filtering",
             "access": "private",
             "tagname": "",
@@ -2962,8 +3066,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 647,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 725,
             "description": "Get subcontainers under certain point or rectangle",
             "access": "private",
             "tagname": "",
@@ -2988,28 +3092,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 669,
-            "description": "Activate the browsers fullScreen mode and expand the canvas to fullsize",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "method",
-            "name": "setFullScreen",
-            "class": "Map"
-        },
-        {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 680,
-            "description": "Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.",
-            "access": "private",
-            "tagname": "",
-            "itemtype": "method",
-            "name": "_resizeCanvas",
-            "class": "Map"
-        },
-        {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 694,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 747,
             "description": "This handles the default drawing of the map, so that map always updates when drawOnNextTick === true. This tick\ncallback is always set and should not be removed or overruled",
             "access": "private",
             "tagname": "",
@@ -3018,8 +3102,8 @@
             "class": "Map"
         },
         {
-            "file": "src\\components\\map\\core\\Map.js",
-            "line": 743,
+            "file": "src\\components\\map\\core\\Flatworld.js",
+            "line": 806,
             "description": "cacheLayers",
             "itemtype": "method",
             "name": "cacheLayers",
@@ -3042,7 +3126,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapDataManipulator.js",
-            "line": 28,
+            "line": 29,
             "description": "This is the actual method that runs through the rules and arranges the data",
             "itemtype": "method",
             "name": "_runRules",
@@ -3056,7 +3140,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapDataManipulator.js",
-            "line": 53,
+            "line": 54,
             "description": "This is the actual method that runs through the rules and arranges the data",
             "todo": [
                 "Refactor"
@@ -3073,7 +3157,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapDataManipulator.js",
-            "line": 69,
+            "line": 70,
             "description": "This is the actual method that runs through the rules and arranges the data",
             "todo": [
                 "Refactor"
@@ -3090,7 +3174,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 36,
+            "line": 45,
             "description": "Layers name, used for identifying the layer. Useful in debugging, but can be used for finding correct layers too",
             "itemtype": "attribute",
             "name": "name",
@@ -3099,7 +3183,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 43,
+            "line": 52,
             "description": "Is this layer special (e.g. UILayer not included in normal operations)",
             "itemtype": "attribute",
             "name": "specialLayer",
@@ -3108,7 +3192,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 50,
+            "line": 59,
             "description": "Can you select objects from this layer. For example with Map.getObjectsUnderArea",
             "itemtype": "attribute",
             "name": "selectable",
@@ -3117,7 +3201,16 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 58,
+            "line": 66,
+            "description": "Every added UIObject will be listed here for removal and updating. The indexes in the list provide the easy option to remove only\ncertain object from the UIObjects.",
+            "itemtype": "attribute",
+            "name": "UIObjectList",
+            "type": "{Array}",
+            "class": "MapLayer"
+        },
+        {
+            "file": "src\\components\\map\\core\\MapLayers.js",
+            "line": 75,
             "description": "Does this layer use subcontainers.",
             "itemtype": "method",
             "name": "hasSubcontainers",
@@ -3129,7 +3222,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 67,
+            "line": 84,
             "description": "Is this layer cached at the moment or not.",
             "itemtype": "method",
             "name": "isCached",
@@ -3141,14 +3234,14 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 76,
+            "line": 93,
             "description": "Move layer based on given amounts",
             "itemtype": "method",
             "name": "move",
             "params": [
                 {
                     "name": "coord",
-                    "description": "The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move the map 5 pixels horizontally and 0 pixels vertically",
+                    "description": "The amount of x and y coordinates we want the layer to move. I.e. { x: 5, y: 0 }. This would move\nthe map 5 pixels horizontally and 0 pixels vertically",
                     "type": "Object",
                     "props": [
                         {
@@ -3168,7 +3261,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 89,
+            "line": 107,
             "description": "set layer zoom",
             "itemtype": "method",
             "name": "setZoom",
@@ -3187,7 +3280,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 101,
+            "line": 119,
             "description": "get layer zoom",
             "itemtype": "method",
             "name": "getZoom",
@@ -3199,7 +3292,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 110,
+            "line": 128,
             "description": "get UIObjects on this layer, if there are any, or defaulty empty array if no UIObjects are active",
             "itemtype": "method",
             "name": "getUIObjects",
@@ -3211,19 +3304,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 119,
-            "description": "Remove all the UIObjects from this layer",
-            "itemtype": "method",
-            "name": "emptyUIObjects",
-            "return": {
-                "description": "empty UIObjects array",
-                "type": "Array"
-            },
-            "class": "MapLayer"
-        },
-        {
-            "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 133,
+            "line": 137,
             "description": "Get primary layers, that this layer holds as children. So basically all children that are not special layers (such as UI layers etc.)",
             "itemtype": "method",
             "name": "getPrimaryLayers",
@@ -3235,7 +3316,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 144,
+            "line": 148,
             "description": "Get all objects that are this layers children or subcontainers children. Does not return layers, but the objects.",
             "itemtype": "method",
             "name": "getObjects",
@@ -3247,7 +3328,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 161,
+            "line": 165,
             "todo": [
                 "IMPLEMENT CACHE PROPERLY! TAKE SUBCONTAINERS INTO ACCOUNT!\n\nSets layer cache on or off."
             ],
@@ -3264,8 +3345,8 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 176,
-            "description": "Create and add special layer, that holds UI effects in it.",
+            "line": 180,
+            "description": "Create and add special layer, that holds UI effects in it. UILayer is normally positioned as movableLayers 3rd child. And the\nactual UI stuff is added there.",
             "itemtype": "method",
             "name": "createUILayer",
             "params": [
@@ -3300,26 +3381,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 196,
-            "description": "Adds and object to this layers UILayer child.",
-            "itemtype": "method",
-            "name": "addUIObject",
-            "params": [
-                {
-                    "name": "object",
-                    "description": "The UI object to be added under this layer",
-                    "type": "Object"
-                }
-            ],
-            "return": {
-                "description": "All the UIObjects currently on this layer",
-                "type": "Array"
-            },
-            "class": "MapLayer"
-        },
-        {
-            "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 218,
+            "line": 201,
             "description": "Return the UILayer. If no UILayer is yet created, will return undefined",
             "itemtype": "method",
             "name": "getUILayer",
@@ -3331,8 +3393,51 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 256,
-            "description": "We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and then we call the original (PIXIs) addChild",
+            "line": 210,
+            "description": "Adds and object to this layers UILayer child. If an object with the same name already exists, we remove it automatically and replace\nit with the new object given as parameter.",
+            "itemtype": "method",
+            "name": "addUIObject",
+            "params": [
+                {
+                    "name": "object",
+                    "description": "The UI object to be added under this layer",
+                    "type": "Object"
+                },
+                {
+                    "name": "UIName",
+                    "description": "Name of the UI object. This is important as you can use it to remove the UI object later or replace it.",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "All the UIObjects currently on this layer",
+                "type": "Array"
+            },
+            "class": "MapLayer"
+        },
+        {
+            "file": "src\\components\\map\\core\\MapLayers.js",
+            "line": 241,
+            "description": "If object is given, removes that object, otherwiseRemove all the UIObjects from this layer",
+            "itemtype": "method",
+            "name": "deleteUIObjects",
+            "params": [
+                {
+                    "name": "object",
+                    "description": "If you wish to delete particular object",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "empty    UIObjects array",
+                "type": "Array"
+            },
+            "class": "MapLayer"
+        },
+        {
+            "file": "src\\components\\map\\core\\MapLayers.js",
+            "line": 300,
+            "description": "We override the PIXIs own addchild functionality. Since we need to support subcontainers in addChild. We check subcontainers and\nthen we call the original (PIXIs) addChild",
             "itemtype": "method",
             "name": "addChild",
             "params": [
@@ -3346,7 +3451,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 273,
+            "line": 318,
             "description": "Returns the configurations set for subcontainers.",
             "itemtype": "method",
             "name": "getSubcontainerConfigs",
@@ -3354,7 +3459,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 281,
+            "line": 326,
             "description": "Returns subcontainers based on the given coordinates. Can be applied through a MapDataManipulator filter also.",
             "itemtype": "method",
             "name": "getSubcontainersByCoordinates",
@@ -3393,14 +3498,14 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 307,
+            "line": 348,
             "itemtype": "method",
             "name": "getSubcontainers",
             "class": "MapLayerParent"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 333,
+            "line": 379,
             "description": "Gets this subcontainers coordinates and size",
             "itemtype": "method",
             "name": "getSubcontainerArea",
@@ -3416,11 +3521,15 @@
                     "type": "Boolean"
                 }
             ],
+            "return": {
+                "description": "x, y, width and height returned inside object.",
+                "type": "Object"
+            },
             "class": "MapSubcontainer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 356,
+            "line": 399,
             "description": "Set cache on or off for this layer",
             "itemtype": "method",
             "name": "setCache",
@@ -3435,7 +3544,7 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 373,
+            "line": 416,
             "description": "Helper function for setting subcontainers to parent containers",
             "itemtype": "method",
             "name": "setCorrectSubcontainer",
@@ -3458,10 +3567,10 @@
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
-            "line": 412,
+            "line": 455,
             "description": "Get the closest subcontainers of the given area.",
             "itemtype": "method",
-            "name": "getClosestSubcontainers",
+            "name": "_getClosestSubcontainers",
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -3472,14 +3581,31 @@
                     "type": "Object"
                 },
                 {
-                    "name": "xIndex",
-                    "description": "x / horizontal index.",
-                    "type": "Number"
-                },
-                {
-                    "name": "yIndex",
-                    "description": "y / vertical index.",
-                    "type": "Number"
+                    "name": "givenCoordinates",
+                    "description": "Coordinates or rectangle",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "x",
+                            "description": "x coordinate",
+                            "type": "Integer"
+                        },
+                        {
+                            "name": "y",
+                            "description": "y coordinate",
+                            "type": "Integer"
+                        },
+                        {
+                            "name": "width",
+                            "description": "width of the rectangle",
+                            "type": "Integer"
+                        },
+                        {
+                            "name": "height",
+                            "description": "height of the rectangle",
+                            "type": "Integer"
+                        }
+                    ]
                 },
                 {
                     "name": "options",
@@ -3502,7 +3628,7 @@
         },
         {
             "file": "src\\components\\map\\core\\ObjectManager.js",
-            "line": 24,
+            "line": 19,
             "description": "Retrieve objects under certain coordinates or area, if size is given. Uses subcontainers when used, no other options yet.",
             "itemtype": "method",
             "name": "retrieve",
@@ -3565,7 +3691,7 @@
                         },
                         {
                             "name": "size",
-                            "description": "Size of the rectangle area to match against, if we want to match rectangle instead of one point",
+                            "description": "Size of the rectangle area to match against, if we want to match rectangle\ninstead of one point",
                             "type": "Object",
                             "props": [
                                 {
@@ -3591,70 +3717,70 @@
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 33,
+            "line": 39,
             "description": "Name of the object. Used mostly for debugging",
             "itemtype": "attribute",
             "name": "",
             "type": "{String}",
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 40,
+            "line": 46,
             "description": "Type of the object. Can be used for filtering, ordering or finding correct objects.",
             "itemtype": "attribute",
             "name": "",
             "type": "{String}",
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 47,
+            "line": 53,
             "description": "Is the object highligtable.",
             "itemtype": "attribute",
             "name": "",
             "type": "{Boolean}",
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 54,
+            "line": 60,
             "description": "Objects custom data. Holds unit statistics and most data. Like unit movement speed etc.",
             "itemtype": "attribute",
             "name": "",
             "type": "{Object}",
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 61,
+            "line": 67,
             "description": "Current frame (from spritesheet) we are showing.",
             "itemtype": "attribute",
             "name": "",
             "type": "{Number}",
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 68,
+            "line": 74,
             "description": "Object area width in pixels.",
             "itemtype": "attribute",
             "name": "",
             "type": "{Number}",
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 75,
+            "line": 81,
             "description": "Object area height in pixels.",
             "itemtype": "attribute",
             "name": "",
             "type": "{Number}",
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 83,
+            "line": 89,
             "description": "Drawing the object",
             "itemtype": "method",
             "name": "innerDraw",
@@ -3673,11 +3799,11 @@
             "return": {
                 "description": "this object instance"
             },
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 98,
+            "line": 104,
             "description": "Draws new frame to animate or such",
             "itemtype": "method",
             "name": "drawNewFrame",
@@ -3701,11 +3827,11 @@
             "return": {
                 "description": "this object instance"
             },
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 112,
+            "line": 118,
             "description": "Get the area that is reserved for the graphical presenation of this object as a rectangle.",
             "itemtype": "method",
             "name": "getGraphicalArea",
@@ -3720,11 +3846,11 @@
                 "description": "{ x: Number, y: Number, width: Number, height: Number}",
                 "type": "AreaSize"
             },
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 131,
+            "line": 137,
             "description": "Coordinate conversion: localToLocal",
             "itemtype": "method",
             "name": "localToLocal",
@@ -3749,11 +3875,11 @@
                 "description": "",
                 "type": "Coordinates"
             },
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 147,
+            "line": 153,
             "description": "Clone object",
             "itemtype": "method",
             "name": "clone",
@@ -3773,11 +3899,11 @@
                 "description": "cloned object",
                 "type": "Object"
             },
-            "class": "Object_sprite"
+            "class": "ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 212,
+            "line": 219,
             "description": "actions bound to this object. @todo THIS HAS NOT BEEN IMPLEMENTED YET!",
             "itemtype": "attribute",
             "name": "actions",
@@ -3786,7 +3912,7 @@
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 223,
+            "line": 227,
             "description": "Execute action on units (move, attack etc.). @todo THIS HAS NOT BEEN IMPLEMENTED YET!",
             "itemtype": "method",
             "name": "doAction",
@@ -3801,7 +3927,7 @@
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 234,
+            "line": 238,
             "description": "Add certain action type. @todo THIS HAS NOT BEEN IMPLEMENTED YET!",
             "itemtype": "method",
             "name": "addActionType",
@@ -3816,7 +3942,7 @@
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 243,
+            "line": 247,
             "description": "Attach callback for the certain action type. @todo THIS HAS NOT BEEN IMPLEMENTED YET!",
             "itemtype": "method",
             "name": "addCallbackToAction",
@@ -3836,14 +3962,145 @@
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
-            "line": 253,
+            "line": 257,
             "itemtype": "method",
             "name": "dropShadow",
             "class": "ObjectSpriteUnit"
         },
         {
-            "file": "src\\components\\map\\core\\UI.js",
+            "file": "src\\components\\map\\core\\Objects.js",
+            "line": 263,
+            "description": "This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you\ndon't implement your own, I suggest you use it. You can attach any method to object if you wish. Like attack, siege, greet, talk.",
+            "itemtype": "attribute",
+            "name": "[name]",
+            "requires": [
+                "mapAPIa..(\"objectMove\") to be declared"
+            ],
+            "class": "ObjectSpriteUnit"
+        },
+        {
+            "file": "src\\components\\map\\core\\Sound.js",
+            "line": 18,
+            "description": "Add a sound to be used.",
+            "itemtype": "method",
+            "name": "add",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name / identifier",
+                    "type": "String"
+                },
+                {
+                    "name": "urls",
+                    "description": "An array of urls or one url",
+                    "type": "String"
+                },
+                {
+                    "name": "options",
+                    "description": "*OPTIONAL*",
+                    "type": "Object",
+                    "props": [
+                        {
+                            "name": "loop",
+                            "description": "Wether the sound will be looped or not",
+                            "type": "Booleam"
+                        },
+                        {
+                            "name": "volume",
+                            "description": "The volume of the sound (0 - 1)",
+                            "type": "Object"
+                        }
+                    ]
+                }
+            ],
+            "return": {
+                "description": "Created instance of sound",
+                "type": "Object"
+            },
+            "class": "UI"
+        },
+        {
+            "file": "src\\components\\map\\core\\Sound.js",
             "line": 43,
+            "description": "Remove the sound from usage and memory",
+            "itemtype": "method",
+            "name": "remove",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name / identifier of the sound to be removed",
+                    "type": "String"
+                }
+            ],
+            "class": "UI"
+        },
+        {
+            "file": "src\\components\\map\\core\\Sound.js",
+            "line": 52,
+            "description": "Start the sounds playback",
+            "itemtype": "method",
+            "name": "play",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name of the sound to play",
+                    "type": "String"
+                }
+            ],
+            "class": "UI"
+        },
+        {
+            "file": "src\\components\\map\\core\\Sound.js",
+            "line": 66,
+            "description": "stop sound playback",
+            "itemtype": "method",
+            "name": "stop",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name of the sound to stop playing",
+                    "type": "String"
+                }
+            ],
+            "class": "UI"
+        },
+        {
+            "file": "src\\components\\map\\core\\Sound.js",
+            "line": 75,
+            "description": "Fade the sound in or out",
+            "itemtype": "method",
+            "name": "fade",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "Name / identifier of the sound",
+                    "type": "String"
+                },
+                {
+                    "name": "from",
+                    "description": "Volume to fade from",
+                    "type": "Object"
+                },
+                {
+                    "name": "to",
+                    "description": "Volume to fade to",
+                    "type": "Object"
+                },
+                {
+                    "name": "duration",
+                    "description": "Time in milliseconds to fade",
+                    "type": "Object"
+                }
+            ],
+            "return": {
+                "description": "Promise that resolves after fade is complete",
+                "type": "Promise"
+            },
+            "class": "UI"
+        },
+        {
+            "file": "src\\components\\map\\core\\UI.js",
+            "line": 40,
             "description": "Responsible for showing selection element, where the player select the wanted object out of array of objects.\nFor example if there are several objects in one tile on the map and the player needs to be able to select one\nspecific unit on the stack. This is always defined in the UI theme-module",
             "itemtype": "method",
             "name": "showSelections",
@@ -3856,7 +4113,7 @@
                 },
                 {
                     "name": "getDatas",
-                    "description": "This is an object made of functions, that get wanted data from the object. For example if you have objects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.",
+                    "description": "This is an object made of functions, that get wanted data from the object. For example if you have\nobjects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.",
                     "type": "Object",
                     "props": [
                         {
@@ -3880,7 +4137,7 @@
         },
         {
             "file": "src\\components\\map\\core\\UI.js",
-            "line": 67,
+            "line": 65,
             "description": "Resonsible for hignlighting the selected object. For example the unit that is being commanded. The hightlight\ncan mean e.g. bringing the unit on top on the map and showing selection circle around it.",
             "itemtype": "method",
             "name": "highlightSelectedObject",
@@ -3893,7 +4150,7 @@
                 },
                 {
                     "name": "getDatas",
-                    "description": "This is an object made of functions, that get wanted data from the object. For example if you have objects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.",
+                    "description": "This is an object made of functions, that get wanted data from the object. For example if you have\nobjects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.",
                     "type": "Object",
                     "props": [
                         {
@@ -3913,7 +4170,7 @@
         },
         {
             "file": "src\\components\\map\\core\\UI.js",
-            "line": 81,
+            "line": 80,
             "description": "Shows arrow or movement or what ever to indicate the selected unit is moving to the given location",
             "itemtype": "method",
             "name": "showUnitMovement",
@@ -3922,7 +4179,7 @@
         },
         {
             "file": "src\\components\\map\\core\\UI.js",
-            "line": 96,
+            "line": 95,
             "description": "This is a general function which filters only highlightable object for use in UI operations",
             "static": 1,
             "itemtype": "method",
@@ -3937,8 +4194,8 @@
             "class": "UI"
         },
         {
-            "file": "src\\components\\map\\core\\UI_themeBase.js",
-            "line": 32,
+            "file": "src\\components\\map\\core\\UITemplateBase.js",
+            "line": 40,
             "description": "Get the stylesheet element. Where are the defined CSS is",
             "itemtype": "method",
             "name": "getStyleSheetElement",
@@ -3946,18 +4203,18 @@
                 "description": "",
                 "type": "HTMLElement"
             },
-            "class": "UI_templateBase"
+            "class": "UITemplateBase"
         },
         {
-            "file": "src\\components\\map\\core\\UI_themeBase.js",
-            "line": 41,
+            "file": "src\\components\\map\\core\\UITemplateBase.js",
+            "line": 49,
             "itemtype": "method",
             "name": "getCSSClasses",
-            "class": "UI_templateBase"
+            "class": "UITemplateBase"
         },
         {
-            "file": "src\\components\\map\\core\\UI_themeBase.js",
-            "line": 47,
+            "file": "src\\components\\map\\core\\UITemplateBase.js",
+            "line": 55,
             "itemtype": "method",
             "name": "addCSSRulesToScriptTag",
             "params": [
@@ -3972,18 +4229,18 @@
                     "type": "Object"
                 }
             ],
-            "class": "UI_templateBase"
+            "class": "UITemplateBase"
         },
         {
-            "file": "src\\components\\map\\core\\UI_themeBase.js",
-            "line": 56,
+            "file": "src\\components\\map\\core\\UITemplateBase.js",
+            "line": 64,
             "itemtype": "method",
             "name": "addStyleElement",
-            "class": "UI_templateBase"
+            "class": "UITemplateBase"
         },
         {
-            "file": "src\\components\\map\\core\\UI_themeBase.js",
-            "line": 67,
+            "file": "src\\components\\map\\core\\UITemplateBase.js",
+            "line": 75,
             "itemtype": "method",
             "name": "showModal",
             "params": [
@@ -4002,11 +4259,11 @@
                 "make sure / check",
                 "that modalElem.classList.add gets added only once"
             ],
-            "class": "UI_templateBase"
+            "class": "UITemplateBase"
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 46,
+            "line": 47,
             "description": "Activates the eventListener.",
             "itemtype": "event",
             "name": "Event that consists of \"Map\" + the given event type, like such: \"MapDrag\"",
@@ -4030,7 +4287,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 63,
+            "line": 64,
             "description": "Deactivates the eventListener. Callback is optional. If is not provided will remove all this types eventListeners",
             "itemtype": "method",
             "name": "off",
@@ -4050,7 +4307,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 74,
+            "line": 75,
             "description": "Activates the eventListener. Callback is optional. If is not provided will check if the eventlistener type has any listeners active.",
             "itemtype": "method",
             "name": "isOn",
@@ -4070,7 +4327,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 88,
+            "line": 89,
             "description": "Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid selecting units and vice versa, when we keep an event state tracking through this.",
             "itemtype": "method",
             "name": "setActivityState",
@@ -4090,7 +4347,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 98,
+            "line": 99,
             "description": "get activity state of the event",
             "itemtype": "method",
             "name": "getActivityState",
@@ -4109,7 +4366,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 108,
+            "line": 109,
             "description": "Set event detector. If there is already detector of this type, we overwrite it.",
             "itemtype": "method",
             "name": "setDetector",
@@ -4134,7 +4391,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 123,
+            "line": 124,
             "description": "Clear event detector. We also remove all possible eventlisteners set on this event type.",
             "itemtype": "method",
             "name": "clearDetector",
@@ -4149,10 +4406,10 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 143,
+            "line": 144,
             "description": "This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.",
             "itemtype": "method",
-            "name": "_createWrapper",
+            "name": "_createEventListenerWrapper",
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -4171,8 +4428,133 @@
             "class": "eventListeners"
         },
         {
-            "file": "src\\components\\map\\extensions\\hexagons\\eventListeners\\select.js",
-            "line": 41,
+            "file": "src\\components\\map\\core\\mapAPI.js",
+            "line": 39,
+            "description": "Get data from server",
+            "itemtype": "method",
+            "name": "get",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "The indentifier for this API call / endpoint",
+                    "type": "String"
+                },
+                {
+                    "name": "params",
+                    "description": "Params that are sent to the callbacks that have been attached to handle this API data",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "ES6 native Promise as the API advances",
+                "type": "Promise"
+            },
+            "class": "mapApi"
+        },
+        {
+            "file": "src\\components\\map\\core\\mapAPI.js",
+            "line": 67,
+            "description": "Send data to server",
+            "itemtype": "method",
+            "name": "post",
+            "params": [
+                {
+                    "name": "name",
+                    "description": "The indentifier for this API call / endpoint",
+                    "type": "String"
+                },
+                {
+                    "name": "params",
+                    "description": "Params that are sent to the callbacks that have been attached to handle this API data. E.g. at least the\nPOST data that will be sent to server needs to be set in the callback to the object.body property.",
+                    "type": "Array"
+                }
+            ],
+            "return": {
+                "description": "ES6 native Promise as the API advances",
+                "type": "Promise"
+            },
+            "class": "mapApi"
+        },
+        {
+            "file": "src\\components\\map\\core\\mapEvents.js",
+            "line": 69,
+            "description": "Basically custom events polyfill for IE11.",
+            "access": "private",
+            "tagname": "",
+            "itemtype": "method",
+            "name": "createCrossIeEvent",
+            "params": [
+                {
+                    "name": "type",
+                    "description": "",
+                    "type": "String"
+                }
+            ],
+            "return": {
+                "description": "Created event object",
+                "type": "Event"
+            },
+            "class": "mapEvents"
+        },
+        {
+            "file": "src\\components\\map\\core\\mapStates.js",
+            "line": 27,
+            "description": "When the object is selected",
+            "itemtype": "method",
+            "name": "objectSelect",
+            "class": "mapStates"
+        },
+        {
+            "file": "src\\components\\map\\core\\mapStates.js",
+            "line": 33,
+            "description": "When object is issued a move order",
+            "itemtype": "method",
+            "name": "objectMove",
+            "class": "mapStates"
+        },
+        {
+            "file": "src\\components\\map\\core\\mapStates.js",
+            "line": 39,
+            "description": "When object ends it's movement animation",
+            "itemtype": "method",
+            "name": "objectMoveEnd",
+            "class": "mapStates"
+        },
+        {
+            "file": "src\\components\\map\\core\\mapStates.js",
+            "line": 45,
+            "description": "The games main UI is opened and the map stays at the background, normally non-responsive",
+            "itemtype": "method",
+            "name": "UIOpen",
+            "class": "mapStates"
+        },
+        {
+            "file": "src\\components\\map\\core\\mapStates.js",
+            "line": 51,
+            "description": "Games main UI is closed and map is activated again",
+            "itemtype": "method",
+            "name": "UIClose",
+            "class": "mapStates"
+        },
+        {
+            "file": "src\\components\\map\\core\\mapStates.js",
+            "line": 57,
+            "description": "Map is being moved / dragged",
+            "itemtype": "method",
+            "name": "mapMove",
+            "class": "mapStates"
+        },
+        {
+            "file": "src\\components\\map\\core\\mapStates.js",
+            "line": 63,
+            "description": "Map is being moved / dragged",
+            "itemtype": "method",
+            "name": "mapMove",
+            "class": "mapStates"
+        },
+        {
+            "file": "src\\components\\map\\extensions\\hexagons\\eventListeners\\units.js",
+            "line": 52,
             "description": "the listener that received the event object",
             "itemtype": "method",
             "name": "tapListener",
@@ -4186,8 +4568,23 @@
             "class": "hexagonPlugin.setupHexagonClick"
         },
         {
+            "file": "src\\components\\map\\extensions\\hexagons\\eventListeners\\units.js",
+            "line": 89,
+            "description": "This listener is for the situation, where we have an object and we issue an order / action to\nthat unit. For example to move from one hexagon to another.",
+            "itemtype": "method",
+            "name": "orderListener",
+            "params": [
+                {
+                    "name": "e",
+                    "description": "Event object",
+                    "type": "Event"
+                }
+            ],
+            "class": "hexagonPlugin.setupHexagonClick"
+        },
+        {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
-            "line": 26,
+            "line": 23,
             "description": "Credits belong to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js\nCreates a hex shaped polygon that is used for the hex's hit area.",
             "access": "private",
             "tagname": "",
@@ -4214,7 +4611,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
-            "line": 44,
+            "line": 41,
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -4240,13 +4637,13 @@
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
-            "line": 68,
+            "line": 65,
             "description": "Converts Array of x- and y-coordinates to new PIXI.Point coordinates",
+            "itemtype": "method",
+            "name": "coordsToPixiPoints",
             "access": "private",
             "tagname": "",
             "static": 1,
-            "itemtype": "method",
-            "name": "coordsToPixiPoints",
             "params": [
                 {
                     "name": "radius",
@@ -4261,8 +4658,30 @@
             "class": "hexagonPlugin.utils"
         },
         {
+            "file": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
+            "line": 80,
+            "itemtype": "method",
+            "name": "getHexagonPoints",
+            "access": "private",
+            "tagname": "",
+            "static": 1,
+            "params": [
+                {
+                    "name": "radius",
+                    "description": "radius of the hexagon",
+                    "type": "Float"
+                },
+                {
+                    "name": "options",
+                    "description": "extra options, like generating horizontal hexagon points and\nhow many decimals to round",
+                    "type": "Object"
+                }
+            ],
+            "class": "hexagonPlugin.utils"
+        },
+        {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
-            "line": 25,
+            "line": 26,
             "description": "Calculates the hexagons:\ninnerDiameter\n- Vertical / Flat hexagons height\n- Horizontal / pointy hexagons width",
             "itemtype": "method",
             "name": "calcLongDiagonal",
@@ -4288,7 +4707,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
-            "line": 48,
+            "line": 49,
             "description": "outerDiameter\n- Vertical / Flat hexagons width\n- Horizontal / pointy hexagons height",
             "itemtype": "method",
             "name": "calcLongDiagonal",
@@ -4314,27 +4733,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
-            "line": 68,
-            "itemtype": "method",
-            "name": "getHexagonPoints",
-            "static": 1,
-            "params": [
-                {
-                    "name": "radius",
-                    "description": "radius of the hexagon",
-                    "type": "Float"
-                },
-                {
-                    "name": "options",
-                    "description": "extra options, like generating horizontal hexagon points and\nhow many decimals to round",
-                    "type": "Object"
-                }
-            ],
-            "class": "hexagonPlugin.utils"
-        },
-        {
-            "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
-            "line": 98,
+            "line": 69,
             "description": "Test do the given coordinates hit the hexagon, given by the points container / array",
             "static": 1,
             "itemtype": "method",
@@ -4364,7 +4763,7 @@
                 },
                 {
                     "name": "offsetCoords",
-                    "description": "offsetCoordinates that are added to the hitCoordinates. Separate because these are outside the given array.",
+                    "description": "offsetCoordinates that are added to the hitCoordinates. Separate because these are outside the\ngiven array.",
                     "type": "Object",
                     "props": [
                         {
@@ -4388,7 +4787,35 @@
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
-            "line": 129,
+            "line": 97,
+            "description": "Set hexagon radius",
+            "static": 1,
+            "itemtype": "method",
+            "name": "setRadius",
+            "params": [
+                {
+                    "name": "givenRadius",
+                    "description": "The radius of the hexagon",
+                    "type": "Number"
+                }
+            ],
+            "class": "hexagonPlugin.utils"
+        },
+        {
+            "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
+            "line": 108,
+            "description": "Calculates the closest hexagon center coordinates, for the given coordinates. So aligning the given coordinates to proper hexagon\ncoordinates",
+            "static": 1,
+            "itemtype": "method",
+            "name": "getClosestHexagonCenter",
+            "requires": [
+                "setRadius has to be set"
+            ],
+            "class": "hexagonPlugin.utils"
+        },
+        {
+            "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
+            "line": 120,
             "description": "credits to: https://github.com/substack/point-in-polygon\nTests whether the given point / coordinate is inside the given points. Assuming the points form a polygon",
             "static": 1,
             "access": "private",
@@ -4425,7 +4852,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\Objects.js",
-            "line": 72,
+            "line": 67,
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -4442,7 +4869,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\Objects.js",
-            "line": 111,
+            "line": 98,
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -4487,7 +4914,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 44,
+            "line": 54,
             "description": "Ínitialize as a plugin",
             "itemtype": "method",
             "name": "init",
@@ -4502,8 +4929,8 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 54,
-            "description": "For debugging. Shows the amount of currectly active and inactive subcontainers. Console.logs the data. Also extends window object.",
+            "line": 69,
+            "description": "For debugging. Shows the amount of currectly active and inactive subcontainers. Console.logs the data.\nAlso extends window object.",
             "itemtype": "method",
             "name": "window.FlaTWorld_mapMovement_subCheck",
             "static": 1,
@@ -4511,7 +4938,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 75,
+            "line": 94,
             "description": "For debugging. Sets all primaryLayers subcontainers on the map as visible = true.",
             "itemtype": "method",
             "name": "window.FlaTWorld_mapMovement_deactivate",
@@ -4520,7 +4947,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 92,
+            "line": 112,
             "description": "Ínitialize as a plugin",
             "itemtype": "method",
             "name": "addAll",
@@ -4535,7 +4962,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 114,
+            "line": 131,
             "description": "This one checks the that the objects that should currently be visible in the viewport area are visible and outside\nof the viewport objects are set .visible = false. This affect performance a lot. Basically when the map moves, we\nset a check in the future based on the given intervalCheck milliseconds. And immediately after it we check if there\nis another map movement. If there is we set another timeout. This works better with timeouts.\n\nThis uses webWorkers. They seemed to speed up the check, when timing with performance.now.",
             "itemtype": "method",
             "name": "check",
@@ -4554,7 +4981,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 191,
+            "line": 162,
             "itemtype": "method",
             "name": "startEventListeners",
             "params": [
@@ -4568,7 +4995,8 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 213,
+            "line": 190,
+            "description": "See if the given object or subcontainer is outside the given viewportarea. We check intersecting rectangles",
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -4611,11 +5039,6 @@
                     "name": "hasParent",
                     "description": "default = true",
                     "type": "Boolean"
-                },
-                {
-                    "name": "scale",
-                    "description": "default = 1 (equals to no defaul scale / no scale)",
-                    "type": "Number"
                 }
             ],
             "return": {
@@ -4626,91 +5049,52 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 236,
-            "access": "private",
-            "tagname": "",
-            "static": 1,
-            "itemtype": "method",
-            "name": "getViewportsRightSideCoordinates",
-            "params": [
-                {
-                    "name": "viewportArea",
-                    "description": "ViewportArea location and size",
-                    "type": "Object",
-                    "props": [
-                        {
-                            "name": "x",
-                            "description": "X coordinate",
-                            "type": "Integer"
-                        },
-                        {
-                            "name": "y",
-                            "description": "Y coordinate",
-                            "type": "Integer"
-                        },
-                        {
-                            "name": "width",
-                            "description": "Viewports width (in pixels)",
-                            "type": "Integer"
-                        },
-                        {
-                            "name": "height",
-                            "description": "Viewports height (in pixels)",
-                            "type": "Integer"
-                        }
-                    ]
-                }
+            "line": 214,
+            "description": "Originally webworker onmessage function, but webworker got refactored away.",
+            "todo": [
+                "rename and generally refactor"
             ],
-            "class": "mapMovement"
-        },
-        {
-            "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 257,
-            "description": "Calculates and modifies coordinates and size according to current scale / zoom on the map.",
-            "access": "private",
-            "tagname": "",
-            "static": 1,
             "itemtype": "method",
-            "name": "applyScaleToViewport",
+            "name": "viewportWorkerOnMessage",
             "params": [
                 {
-                    "name": "viewportArea",
-                    "description": "ViewportArea location and size",
-                    "type": "Object",
-                    "props": [
-                        {
-                            "name": "x",
-                            "description": "X coordinate",
-                            "type": "Integer"
-                        },
-                        {
-                            "name": "y",
-                            "description": "Y coordinate",
-                            "type": "Integer"
-                        },
-                        {
-                            "name": "width",
-                            "description": "Viewports width (in pixels)",
-                            "type": "Integer"
-                        },
-                        {
-                            "name": "height",
-                            "description": "Viewports height (in pixels)",
-                            "type": "Integer"
-                        }
-                    ]
+                    "name": "scaledViewport",
+                    "description": "Viewportarea that has been scaled.",
+                    "type": "Object"
                 },
                 {
-                    "name": "scale",
-                    "description": "",
-                    "type": "Number"
+                    "name": "primaryLayers",
+                    "description": "The primarylayers that we handle",
+                    "type": "Array"
                 }
             ],
             "class": "mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
-            "line": 285,
+            "line": 281,
+            "description": "forms the total viewport parameters based on the given ones.",
+            "access": "private",
+            "tagname": "",
+            "static": 1,
+            "itemtype": "method",
+            "name": "getViewportWithOffset",
+            "params": [
+                {
+                    "name": "viewportArea",
+                    "description": "Given viewport area",
+                    "type": "AreaSize"
+                }
+            ],
+            "return": {
+                "description": "The total viewportArea",
+                "type": "TotalViewportArea"
+            },
+            "class": "mapMovement"
+        },
+        {
+            "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
+            "line": 300,
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -4719,8 +5103,28 @@
             "class": "mapMovement"
         },
         {
+            "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
+            "line": 311,
+            "access": "private",
+            "tagname": "",
+            "static": 1,
+            "itemtype": "method",
+            "name": "calculateOffset",
+            "class": "mapMovement"
+        },
+        {
+            "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
+            "line": 319,
+            "access": "private",
+            "tagname": "",
+            "static": 1,
+            "itemtype": "method",
+            "name": "_setMap",
+            "class": "mapMovement"
+        },
+        {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovementWorker.js",
-            "line": 65,
+            "line": 66,
             "description": "forms the total viewport parameters based on the given ones.",
             "access": "private",
             "tagname": "",
@@ -4747,7 +5151,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovementWorker.js",
-            "line": 88,
+            "line": 89,
             "access": "private",
             "tagname": "",
             "static": 1,
@@ -4772,8 +5176,8 @@
             "class": "Preload"
         },
         {
-            "file": "src\\components\\preloading\\preloading.js",
-            "line": 25,
+            "file": "src\\components\\preloading\\Preload.js",
+            "line": 26,
             "itemtype": "method",
             "name": "resolveOnComplete",
             "return": {
@@ -4783,39 +5187,39 @@
             "class": "Preload"
         },
         {
-            "file": "src\\components\\preloading\\preloading.js",
-            "line": 40,
+            "file": "src\\components\\preloading\\Preload.js",
+            "line": 41,
             "itemtype": "method",
             "name": "addResource",
             "class": "Preload"
         },
         {
-            "file": "src\\components\\preloading\\preloading.js",
-            "line": 46,
+            "file": "src\\components\\preloading\\Preload.js",
+            "line": 47,
             "description": "Preload assets",
             "itemtype": "method",
             "name": "loadManifest",
             "class": "Preload"
         },
         {
-            "file": "src\\components\\preloading\\preloading.js",
-            "line": 54,
+            "file": "src\\components\\preloading\\Preload.js",
+            "line": 55,
             "description": "Error handler if something goes wrong when preloading",
             "itemtype": "method",
             "name": "setErrorHandler",
             "class": "Preload"
         },
         {
-            "file": "src\\components\\preloading\\preloading.js",
-            "line": 64,
+            "file": "src\\components\\preloading\\Preload.js",
+            "line": 65,
             "description": "Progress handler for loading. You should look easeljs docs for more information",
             "itemtype": "method",
             "name": "setProgressHandler",
             "class": "Preload"
         },
         {
-            "file": "src\\components\\preloading\\preloading.js",
-            "line": 74,
+            "file": "src\\components\\preloading\\Preload.js",
+            "line": 75,
             "description": "Activate sound preloading also",
             "itemtype": "method",
             "name": "activateSound",
@@ -4823,7 +5227,7 @@
         },
         {
             "file": "src\\components\\utilities\\environment.js",
-            "line": 20,
+            "line": 22,
             "description": "Detect mobile environment",
             "itemtype": "method",
             "name": "isMobile",
@@ -4834,8 +5238,20 @@
             "class": "utilities.environmentDetections"
         },
         {
+            "file": "src\\components\\utilities\\environment.js",
+            "line": 35,
+            "description": "Detect if device supports touch events",
+            "itemtype": "method",
+            "name": "isMobile",
+            "return": {
+                "description": "",
+                "type": "Boolean"
+            },
+            "class": "utilities.environmentDetections"
+        },
+        {
             "file": "src\\components\\utilities\\general.js",
-            "line": 21,
+            "line": 23,
             "description": "Flattern 2 levels deep, 2-dimensional arrays. Credits: http://stackoverflow.com/a/15030117/1523545",
             "itemtype": "method",
             "name": "flatten2Levels",
@@ -4853,8 +5269,28 @@
             "class": "utilities.arrays"
         },
         {
+            "file": "src\\components\\utilities\\general.js",
+            "line": 33,
+            "description": "This function takes an array and slices it to proper chunks.",
+            "itemtype": "method",
+            "name": "chunkArray",
+            "params": [
+                {
+                    "name": "array",
+                    "description": "The array to be chunked",
+                    "type": "Array"
+                },
+                {
+                    "name": "chunksize",
+                    "description": "size of the chunks\nfrom: http://stackoverflow.com/a/34847417/1523545",
+                    "type": "Integer"
+                }
+            ],
+            "class": "utilities.arrays"
+        },
+        {
             "file": "src\\components\\utilities\\polyfills.js",
-            "line": 24,
+            "line": 26,
             "static": 1,
             "itemtype": "method",
             "name": "arrayFind",
@@ -4862,7 +5298,7 @@
         },
         {
             "file": "src\\components\\utilities\\polyfills.js",
-            "line": 53,
+            "line": 55,
             "description": "Object.assign IE11 polyfill. Credits to Mozillas folk:\nhttps://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/assign",
             "itemtype": "method",
             "name": "objectAssign",

@@ -48,22 +48,24 @@
                                 <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
                                 <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
                                 <li><a href="../classes/MapLayer.html">MapLayer</a></li>
                                 <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
                                 <li><a href="../classes/mapMovement.html">mapMovement</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
                                 <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
+                                <li><a href="../classes/ObjectSprite.html">ObjectSprite</a></li>
                                 <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
                                 <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIDefault.html">UIDefault</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -115,7 +117,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_components_map_core_UI.js.html#l16"><code>src\components\map\core\UI.js:16</code></a>
+            Defined in: <a href="../files/src_components_map_core_UI.js.html#l12"><code>src\components\map\core\UI.js:12</code></a>
         </div>
 
 
@@ -124,7 +126,8 @@
 
 <div class="box intro">
     <p>Main class for showing UI on the map. Like unit selections and such. Has nothing to do with showing off-map data.
-Good examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit) and bringing the unit on top in the map. UI themes must implement this core UI module</p>
+Good examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit) and bringing the
+unit on top in the map. UI themes must implement this core UI module</p>
 
 </div>
 
@@ -157,7 +160,7 @@ Good examples for what this shows are: selected units-list, selection highlight 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_UI.js.html#l16"><code>src\components\map\core\UI.js:16</code></a>
+        <a href="../files/src_components_map_core_UI.js.html#l12"><code>src\components\map\core\UI.js:12</code></a>
         </p>
 
 
@@ -227,6 +230,14 @@ Good examples for what this shows are: selected units-list, selection highlight 
 
                     <ul class="index-list methods">
                             <li class="index-item method">
+                                <a href="#method_add">add</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_fade">fade</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_filterObjectsForHighlighting">filterObjectsForHighlighting</a>
 
                                     <span class="flag static">static</span>
@@ -235,6 +246,14 @@ Good examples for what this shows are: selected units-list, selection highlight 
                                 <a href="#method_highlightSelectedObject">highlightSelectedObject</a>
 
                                     <span class="flag static">static</span>
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_play">play</a>
+
+                            </li>
+                            <li class="index-item method">
+                                <a href="#method_remove">remove</a>
+
                             </li>
                             <li class="index-item method">
                                 <a href="#method_showSelections">showSelections</a>
@@ -246,6 +265,10 @@ Good examples for what this shows are: selected units-list, selection highlight 
 
                                     <span class="flag static">static</span>
                             </li>
+                            <li class="index-item method">
+                                <a href="#method_stop">stop</a>
+
+                            </li>
                     </ul>
                 </div>
 
@@ -256,6 +279,230 @@ Good examples for what this shows are: selected units-list, selection highlight 
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
+<div id="method_add" class="method item">
+    <h3 class="name"><code>add</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>name</code>
+                </li>
+                <li class="arg">
+                        <code>urls</code>
+                </li>
+                <li class="arg">
+                        <code>options</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_components_map_core_Sound.js.html#l18"><code>src\components\map\core\Sound.js:18</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Add a sound to be used.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">name</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>Name / identifier</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">urls</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>An array of urls or one url</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">options</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+                    <div class="param-description">
+                        <p><em>OPTIONAL</em></p>
+
+                    </div>
+
+                        <ul class="params-list">
+                            <li class="param">
+                                    <code class="param-name">loop</code>
+                                    <span class="type">Booleam</span>
+
+                                <div class="param-description">
+                                    <p>Wether the sound will be looped or not</p>
+
+                                </div>
+
+                            </li>
+                            <li class="param">
+                                    <code class="param-name">volume</code>
+                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+                                <div class="param-description">
+                                    <p>The volume of the sound (0 - 1)</p>
+
+                                </div>
+
+                            </li>
+                        </ul>
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>:
+                    <p>Created instance of sound</p>
+
+            </div>
+        </div>
+
+
+</div>
+<div id="method_fade" class="method item">
+    <h3 class="name"><code>fade</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>name</code>
+                </li>
+                <li class="arg">
+                        <code>from</code>
+                </li>
+                <li class="arg">
+                        <code>to</code>
+                </li>
+                <li class="arg">
+                        <code>duration</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>
+        </span>
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_components_map_core_Sound.js.html#l75"><code>src\components\map\core\Sound.js:75</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Fade the sound in or out</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">name</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>Name / identifier of the sound</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">from</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+                    <div class="param-description">
+                        <p>Volume to fade from</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">to</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+                    <div class="param-description">
+                        <p>Volume to fade to</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">duration</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+                    <div class="param-description">
+                        <p>Time in milliseconds to fade</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Promise" class="crosslink external" target="_blank">Promise</a></span>:
+                    <p>Promise that resolves after fade is complete</p>
+
+            </div>
+        </div>
+
+
+</div>
 <div id="method_filterObjectsForHighlighting" class="method item">
     <h3 class="name"><code>filterObjectsForHighlighting</code></h3>
 
@@ -278,7 +525,7 @@ Good examples for what this shows are: selected units-list, selection highlight 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_UI.js.html#l96"><code>src\components\map\core\UI.js:96</code></a>
+        <a href="../files/src_components_map_core_UI.js.html#l95"><code>src\components\map\core\UI.js:95</code></a>
         </p>
 
 
@@ -338,7 +585,7 @@ Good examples for what this shows are: selected units-list, selection highlight 
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_UI.js.html#l67"><code>src\components\map\core\UI.js:67</code></a>
+        <a href="../files/src_components_map_core_UI.js.html#l65"><code>src\components\map\core\UI.js:65</code></a>
         </p>
 
 
@@ -372,7 +619,8 @@ can mean e.g. bringing the unit on top on the map and showing selection circle a
 
 
                     <div class="param-description">
-                        <p>This is an object made of functions, that get wanted data from the object. For example if you have objects name in <a href="http://object.data.specialData.name">object.data.specialData.name</a>, then you have an object <a href="http://getDatas.name">getDatas.name</a>(), which retrieves this.</p>
+                        <p>This is an object made of functions, that get wanted data from the object. For example if you have
+objects name in <a href="http://object.data.specialData.name">object.data.specialData.name</a>, then you have an object <a href="http://getDatas.name">getDatas.name</a>(), which retrieves this.</p>
 
                     </div>
 
@@ -396,6 +644,114 @@ can mean e.g. bringing the unit on top on the map and showing selection circle a
 
                     <div class="param-description">
                         <p>Extra options. Like dropping a shadow etc.</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_play" class="method item">
+    <h3 class="name"><code>play</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>name</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_components_map_core_Sound.js.html#l52"><code>src\components\map\core\Sound.js:52</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Start the sounds playback</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">name</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>Name of the sound to play</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+
+
+</div>
+<div id="method_remove" class="method item">
+    <h3 class="name"><code>remove</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>name</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_components_map_core_Sound.js.html#l43"><code>src\components\map\core\Sound.js:43</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Remove the sound from usage and memory</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">name</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>Name / identifier of the sound to be removed</p>
 
                     </div>
 
@@ -437,7 +793,7 @@ can mean e.g. bringing the unit on top on the map and showing selection circle a
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_UI.js.html#l43"><code>src\components\map\core\UI.js:43</code></a>
+        <a href="../files/src_components_map_core_UI.js.html#l40"><code>src\components\map\core\UI.js:40</code></a>
         </p>
 
 
@@ -472,7 +828,8 @@ specific unit on the stack. This is always defined in the UI theme-module</p>
 
 
                     <div class="param-description">
-                        <p>This is an object made of functions, that get wanted data from the object. For example if you have objects name in <a href="http://object.data.specialData.name">object.data.specialData.name</a>, then you have an object <a href="http://getDatas.name">getDatas.name</a>(), which retrieves this.</p>
+                        <p>This is an object made of functions, that get wanted data from the object. For example if you have
+objects name in <a href="http://object.data.specialData.name">object.data.specialData.name</a>, then you have an object <a href="http://getDatas.name">getDatas.name</a>(), which retrieves this.</p>
 
                     </div>
 
@@ -529,7 +886,7 @@ specific unit on the stack. This is always defined in the UI theme-module</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_UI.js.html#l81"><code>src\components\map\core\UI.js:81</code></a>
+        <a href="../files/src_components_map_core_UI.js.html#l80"><code>src\components\map\core\UI.js:80</code></a>
         </p>
 
 
@@ -541,6 +898,60 @@ specific unit on the stack. This is always defined in the UI theme-module</p>
 
     </div>
 
+
+
+
+</div>
+<div id="method_stop" class="method item">
+    <h3 class="name"><code>stop</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>name</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_components_map_core_Sound.js.html#l66"><code>src\components\map\core\Sound.js:66</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>stop sound playback</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">name</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                        <p>Name of the sound to stop playing</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
 
 
 

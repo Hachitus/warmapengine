@@ -48,22 +48,24 @@
                                 <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
                                 <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
                                 <li><a href="../classes/MapLayer.html">MapLayer</a></li>
                                 <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
                                 <li><a href="../classes/mapMovement.html">mapMovement</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
                                 <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
+                                <li><a href="../classes/ObjectSprite.html">ObjectSprite</a></li>
                                 <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
                                 <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIDefault.html">UIDefault</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -114,165 +116,167 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-/* global Hammer, Hamster */
-&#x27;use strict&#x27;;
+(function () {
+  /* global Hammer, Hamster */
+  &#x27;use strict&#x27;;
 
-/*-----------------------
-------- VARIABLES -------
------------------------*/
-var stateOfEvents = {};
-var activeEventListeners = {};
-var detectors = {};
+  /*-----------------------
+  ------- VARIABLES -------
+  -----------------------*/
+  var stateOfEvents = {};
+  var activeEventListeners = {};
+  var detectors = {};
 
-/*-----------------------
---------- IMPORT --------
------------------------*/
-import { mapEvents } from &#x27;bundles/strippedCoreBundle&#x27;;
+  /*-----------------------
+  --------- IMPORT --------
+  -----------------------*/
+  var mapEvents = window.flatworld.mapEvents;
 
-/*-----------------------
----------- API ----------
------------------------*/
-export const eventListeners = eventListenersModule();
+  /*-----------------------
+  ---------- API ----------
+  -----------------------*/
+  window.flatworld.eventListeners = eventListenersModule();
 
-/*-----------------------
--------- PUBLIC ---------
------------------------*/
-/**
- * This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add event listeners with on.
- *
- * @class eventListeners
- */
-function eventListenersModule() {
-  /*---------------------------
-  ------------ API ------------
-  ---------------------------*/
-  return {
-    on,
-    off,
-    isOn,
-    setActivityState,
-    getActivityState,
-    setDetector,
-    clearDetector
-  };
-
-  /*---------------------------
-  ----------- PUBLIC ----------
-  ---------------------------*/
+  /*-----------------------
+  -------- PUBLIC ---------
+  -----------------------*/
   /**
-   * Activates the eventListener.
+   * This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add event listeners with on.
    *
-   * @method on
-   * @event Event that consists of &quot;Map&quot; + the given event type, like such: &quot;MapDrag&quot;
-   * @throws {Error} General error, if detector for this event type has not been set.
-   * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
-   * @param  {Boolean} cb   REQUIRED. Callback to do it&#x27;s eventlistener magic.
+   * @class eventListeners
    */
-  function on(type = &quot;&quot;, cb = false) {
-    if (!detectors[type] &amp;&amp; !detectors[type].size) {
-      throw new Error(&quot;eventlisteners.on needs to have detector set with this event type!&quot;)
-    }
-    detectors[type].on(_createWrapper(&quot;Map&quot; + type, cb));
-    activeEventListeners[type] = activeEventListeners[type] || new Set();
-    activeEventListeners[type].add(cb);
-  }
-  /**
-   * Deactivates the eventListener. Callback is optional. If is not provided will remove all this types eventListeners
-   *
-   * @method off
-   * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
-   * @param  {Boolean} cb   Callback to do it&#x27;s eventlistener magic.
-   */
-  function off(type = &quot;&quot;, cb = false) {
-    detectors[type].off(cb);
-    cb ? activeEventListeners[type].delete(cb) : delete activeEventListeners[type];
-  }
-  /**
-   * Activates the eventListener. Callback is optional. If is not provided will check if the eventlistener type has any listeners active.
-   *
-   * @method isOn
-   * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
-   * @param  {Boolean} cb   Callback to do it&#x27;s eventlistener magic.
-   */
-  function isOn(type = &quot;&quot;, cb = false) {
-    var answer;
-
-    answer = cb ? activeEventListeners[type].has(cb) : !!activeEventListeners[type].size;
-
-    return answer;
-  }
-  /**
-   * Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid selecting units and vice versa, when we keep an event state tracking through this.
-   *
-   * @method setActivityState
-   * @param {String} type     EventType
-   * @param {[type]} newState [description]
-   */
-  function setActivityState(type = &quot;&quot;, newState) {
-    stateOfEvents[type] = newState;
-  }
-  /**
-   * get activity state of the event
-   *
-   * @method getActivityState
-   * @param  {String} type EventType
-   * @return {Boolean}
-   */
-  function getActivityState(type = &quot;&quot;) {
-    return stateOfEvents[type];
-  }
-  /**
-   * Set event detector. If there is already detector of this type, we overwrite it.
-   *
-   * @method setDetector
-   * @param {String}   type  Event type
-   * @param {Function} cbOn  Callback which sets activates the detector
-   * @param {Function} cbOff Callback which sets deactivates the detector
-   */
-  function setDetector(type = &quot;&quot;, cbOn = () =&gt; {}, cbOff = () =&gt; {}) {
-    detectors[type] = {};
-    detectors[type] = {
-      on: cbOn,
-      off: cbOff
+  function eventListenersModule() {
+    /*---------------------------
+    ------------ API ------------
+    ---------------------------*/
+    return {
+      on,
+      off,
+      isOn,
+      setActivityState,
+      getActivityState,
+      setDetector,
+      clearDetector
     };
-  }
-  /**
-   * Clear event detector. We also remove all possible eventlisteners set on this event type.
-   *
-   * @method clearDetector
-   * @param {String}   type  Event type
-   */
-  function clearDetector(type = &quot;&quot;) {
-    /* remove all event listeners before we empty the data */
-    activeEventListeners[type].forEach(cb =&gt; {
-      detectors[type].cbOff(cb);
-    });
 
-    /* remove all data / references to event listeners and detector */
-    delete activeEventListeners[type];
-    delete detectors[type];
-  }
+    /*---------------------------
+    ----------- PUBLIC ----------
+    ---------------------------*/
+    /**
+     * Activates the eventListener.
+     *
+     * @method on
+     * @event Event that consists of &quot;Map&quot; + the given event type, like such: &quot;MapDrag&quot;
+     * @throws {Error} General error, if detector for this event type has not been set.
+     * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
+     * @param  {Boolean} cb   REQUIRED. Callback to do it&#x27;s eventlistener magic.
+     */
+    function on(type = &quot;&quot;, cb = false) {
+      if (!detectors[type] &amp;&amp; !detectors[type].size) {
+        throw new Error(&quot;eventlisteners.on needs to have detector set with this event type!&quot;)
+      }
+      detectors[type].on(_createEventListenerWrapper(&quot;Map&quot; + type, cb));
+      activeEventListeners[type] = activeEventListeners[type] || new Set();
+      activeEventListeners[type].add(cb);
+    }
+    /**
+     * Deactivates the eventListener. Callback is optional. If is not provided will remove all this types eventListeners
+     *
+     * @method off
+     * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
+     * @param  {Boolean} cb   Callback to do it&#x27;s eventlistener magic.
+     */
+    function off(type = &quot;&quot;, cb = false) {
+      detectors[type].off(cb);
+      cb ? activeEventListeners[type].delete(cb) : delete activeEventListeners[type];
+    }
+    /**
+     * Activates the eventListener. Callback is optional. If is not provided will check if the eventlistener type has any listeners active.
+     *
+     * @method isOn
+     * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
+     * @param  {Boolean} cb   Callback to do it&#x27;s eventlistener magic.
+     */
+    function isOn(type = &quot;&quot;, cb = false) {
+      var answer;
 
-  /*-----------------------------
-  ----------- PRIVATE -----------
-  ------------------------------*/
-  /**
-   * This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.
-   *
-   * @method _createWrapper
-   * @private
-   * @static
-   * @param  {String}   type Event type
-   * @param  {Function} cb   Event callback
-   */
-  function _createWrapper(type, cb) {
-    /* NOTE! There can be more than one arguments in an event. E.g. Hamster.js */
-    return (...args) =&gt; {
-      mapEvents.publish(type);
-      cb(...args);
+      answer = cb ? activeEventListeners[type].has(cb) : !!activeEventListeners[type].size;
+
+      return answer;
+    }
+    /**
+     * Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid selecting units and vice versa, when we keep an event state tracking through this.
+     *
+     * @method setActivityState
+     * @param {String} type     EventType
+     * @param {[type]} newState [description]
+     */
+    function setActivityState(type = &quot;&quot;, newState) {
+      stateOfEvents[type] = newState;
+    }
+    /**
+     * get activity state of the event
+     *
+     * @method getActivityState
+     * @param  {String} type EventType
+     * @return {Boolean}
+     */
+    function getActivityState(type = &quot;&quot;) {
+      return stateOfEvents[type];
+    }
+    /**
+     * Set event detector. If there is already detector of this type, we overwrite it.
+     *
+     * @method setDetector
+     * @param {String}   type  Event type
+     * @param {Function} cbOn  Callback which sets activates the detector
+     * @param {Function} cbOff Callback which sets deactivates the detector
+     */
+    function setDetector(type = &quot;&quot;, cbOn = () =&gt; {}, cbOff = () =&gt; {}) {
+      detectors[type] = {};
+      detectors[type] = {
+        on: cbOn,
+        off: cbOff
+      };
+    }
+    /**
+     * Clear event detector. We also remove all possible eventlisteners set on this event type.
+     *
+     * @method clearDetector
+     * @param {String}   type  Event type
+     */
+    function clearDetector(type = &quot;&quot;) {
+      /* remove all event listeners before we empty the data */
+      activeEventListeners[type].forEach(cb =&gt; {
+        detectors[type].cbOff(cb);
+      });
+
+      /* remove all data / references to event listeners and detector */
+      delete activeEventListeners[type];
+      delete detectors[type];
+    }
+
+    /*-----------------------------
+    ----------- PRIVATE -----------
+    ------------------------------*/
+    /**
+     * This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.
+     *
+     * @method _createEventListenerWrapper
+     * @private
+     * @static
+     * @param  {String}   type Event type
+     * @param  {Function} cb   Event callback
+     */
+    function _createEventListenerWrapper(type, cb) {
+      /* NOTE! There can be more than one arguments in an event. E.g. Hamster.js */
+      return (...args) =&gt; {
+        mapEvents.publish(type);
+        cb(...args);
+      }
     }
   }
-}
+})();
     </pre>
 </div>
                     </div>

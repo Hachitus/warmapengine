@@ -48,22 +48,24 @@
                                 <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
                                 <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
                                 <li><a href="../classes/MapLayer.html">MapLayer</a></li>
                                 <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
                                 <li><a href="../classes/mapMovement.html">mapMovement</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
                                 <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
+                                <li><a href="../classes/ObjectSprite.html">ObjectSprite</a></li>
                                 <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
                                 <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIDefault.html">UIDefault</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -115,7 +117,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l24"><code>src\components\map\extensions\mapMovement\mapMovement.js:24</code></a>
+            Defined in: <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l25"><code>src\components\map\extensions\mapMovement\mapMovement.js:25</code></a>
         </div>
 
 
@@ -142,12 +144,17 @@
                     <h3>Methods</h3>
 
                     <ul class="index-list methods">
+                            <li class="index-item method private">
+                                <a href="#method__setMap">_setMap</a>
+
+                                    <span class="flag static">static</span>
+                            </li>
                             <li class="index-item method">
                                 <a href="#method_addAll">addAll</a>
 
                             </li>
                             <li class="index-item method private">
-                                <a href="#method_applyScaleToViewport">applyScaleToViewport</a>
+                                <a href="#method_calculateOffset">calculateOffset</a>
 
                                     <span class="flag static">static</span>
                             </li>
@@ -156,7 +163,7 @@
 
                             </li>
                             <li class="index-item method private">
-                                <a href="#method_getViewportsRightSideCoordinates">getViewportsRightSideCoordinates</a>
+                                <a href="#method_getViewportWithOffset">getViewportWithOffset</a>
 
                                     <span class="flag static">static</span>
                             </li>
@@ -179,6 +186,10 @@
                                     <span class="flag static">static</span>
                             </li>
                             <li class="index-item method">
+                                <a href="#method_viewportWorkerOnMessage">viewportWorkerOnMessage</a>
+
+                            </li>
+                            <li class="index-item method">
                                 <a href="#method_window.FlaTWorld_mapMovement_deactivate">window.FlaTWorld_mapMovement_deactivate</a>
 
                                     <span class="flag static">static</span>
@@ -198,6 +209,38 @@
             <div id="methods" class="api-class-tabpanel">
                 <h2 class="off-left">Methods</h2>
 
+<div id="method__setMap" class="method item private">
+    <h3 class="name"><code>_setMap</code></h3>
+
+        <span class="paren">()</span>
+
+
+
+        <span class="flag private">private</span>
+
+
+        <span class="flag static">static</span>
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l319"><code>src\components\map\extensions\mapMovement\mapMovement.js:319</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        
+    </div>
+
+
+
+
+</div>
 <div id="method_addAll" class="method item">
     <h3 class="name"><code>addAll</code></h3>
 
@@ -219,7 +262,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l92"><code>src\components\map\extensions\mapMovement\mapMovement.js:92</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l112"><code>src\components\map\extensions\mapMovement\mapMovement.js:112</code></a>
         </p>
 
 
@@ -252,19 +295,10 @@
 
 
 </div>
-<div id="method_applyScaleToViewport" class="method item private">
-    <h3 class="name"><code>applyScaleToViewport</code></h3>
+<div id="method_calculateOffset" class="method item private">
+    <h3 class="name"><code>calculateOffset</code></h3>
 
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>viewportArea</code>
-                </li>
-                <li class="arg">
-                        <code>scale</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
+        <span class="paren">()</span>
 
 
 
@@ -278,7 +312,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l257"><code>src\components\map\extensions\mapMovement\mapMovement.js:257</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l311"><code>src\components\map\extensions\mapMovement\mapMovement.js:311</code></a>
         </p>
 
 
@@ -286,79 +320,9 @@
     </div>
 
     <div class="description">
-        <p>Calculates and modifies coordinates and size according to current scale / zoom on the map.</p>
-
+        
     </div>
 
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">viewportArea</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
-
-
-                    <div class="param-description">
-                        <p>ViewportArea location and size</p>
-
-                    </div>
-
-                        <ul class="params-list">
-                            <li class="param">
-                                    <code class="param-name">x</code>
-                                    <span class="type">Integer</span>
-
-                                <div class="param-description">
-                                    <p>X coordinate</p>
-
-                                </div>
-
-                            </li>
-                            <li class="param">
-                                    <code class="param-name">y</code>
-                                    <span class="type">Integer</span>
-
-                                <div class="param-description">
-                                    <p>Y coordinate</p>
-
-                                </div>
-
-                            </li>
-                            <li class="param">
-                                    <code class="param-name">width</code>
-                                    <span class="type">Integer</span>
-
-                                <div class="param-description">
-                                    <p>Viewports width (in pixels)</p>
-
-                                </div>
-
-                            </li>
-                            <li class="param">
-                                    <code class="param-name">height</code>
-                                    <span class="type">Integer</span>
-
-                                <div class="param-description">
-                                    <p>Viewports height (in pixels)</p>
-
-                                </div>
-
-                            </li>
-                        </ul>
-                </li>
-                <li class="param">
-                        <code class="param-name">scale</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-
-
-                    <div class="param-description">
-                         
-                    </div>
-
-                </li>
-            </ul>
-        </div>
 
 
 
@@ -387,7 +351,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l114"><code>src\components\map\extensions\mapMovement\mapMovement.js:114</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l131"><code>src\components\map\extensions\mapMovement\mapMovement.js:131</code></a>
         </p>
 
 
@@ -433,8 +397,8 @@ is another map movement. If there is we set another timeout. This works better w
 
 
 </div>
-<div id="method_getViewportsRightSideCoordinates" class="method item private">
-    <h3 class="name"><code>getViewportsRightSideCoordinates</code></h3>
+<div id="method_getViewportWithOffset" class="method item private">
+    <h3 class="name"><code>getViewportWithOffset</code></h3>
 
         <div class="args">
             <span class="paren">(</span><ul class="args-list inline commas">
@@ -444,6 +408,9 @@ is another map movement. If there is we set another timeout. This works better w
             </ul><span class="paren">)</span>
         </div>
 
+        <span class="returns-inline">
+            <span class="type">TotalViewportArea</span>
+        </span>
 
 
         <span class="flag private">private</span>
@@ -456,7 +423,7 @@ is another map movement. If there is we set another timeout. This works better w
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l236"><code>src\components\map\extensions\mapMovement\mapMovement.js:236</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l281"><code>src\components\map\extensions\mapMovement\mapMovement.js:281</code></a>
         </p>
 
 
@@ -464,7 +431,8 @@ is another map movement. If there is we set another timeout. This works better w
     </div>
 
     <div class="description">
-        
+        <p>forms the total viewport parameters based on the given ones.</p>
+
     </div>
 
         <div class="params">
@@ -473,60 +441,27 @@ is another map movement. If there is we set another timeout. This works better w
             <ul class="params-list">
                 <li class="param">
                         <code class="param-name">viewportArea</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                        <span class="type">AreaSize</span>
 
 
                     <div class="param-description">
-                        <p>ViewportArea location and size</p>
+                        <p>Given viewport area</p>
 
                     </div>
 
-                        <ul class="params-list">
-                            <li class="param">
-                                    <code class="param-name">x</code>
-                                    <span class="type">Integer</span>
-
-                                <div class="param-description">
-                                    <p>X coordinate</p>
-
-                                </div>
-
-                            </li>
-                            <li class="param">
-                                    <code class="param-name">y</code>
-                                    <span class="type">Integer</span>
-
-                                <div class="param-description">
-                                    <p>Y coordinate</p>
-
-                                </div>
-
-                            </li>
-                            <li class="param">
-                                    <code class="param-name">width</code>
-                                    <span class="type">Integer</span>
-
-                                <div class="param-description">
-                                    <p>Viewports width (in pixels)</p>
-
-                                </div>
-
-                            </li>
-                            <li class="param">
-                                    <code class="param-name">height</code>
-                                    <span class="type">Integer</span>
-
-                                <div class="param-description">
-                                    <p>Viewports height (in pixels)</p>
-
-                                </div>
-
-                            </li>
-                        </ul>
                 </li>
             </ul>
         </div>
 
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type">TotalViewportArea</span>:
+                    <p>The total viewportArea</p>
+
+            </div>
+        </div>
 
 
 </div>
@@ -551,7 +486,7 @@ is another map movement. If there is we set another timeout. This works better w
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l44"><code>src\components\map\extensions\mapMovement\mapMovement.js:44</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l54"><code>src\components\map\extensions\mapMovement\mapMovement.js:54</code></a>
         </p>
 
 
@@ -598,9 +533,6 @@ is another map movement. If there is we set another timeout. This works better w
                 <li class="arg">
                         <code>hasParent</code>
                 </li>
-                <li class="arg">
-                        <code>scale</code>
-                </li>
             </ul><span class="paren">)</span>
         </div>
 
@@ -619,7 +551,7 @@ is another map movement. If there is we set another timeout. This works better w
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l213"><code>src\components\map\extensions\mapMovement\mapMovement.js:213</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l190"><code>src\components\map\extensions\mapMovement\mapMovement.js:190</code></a>
         </p>
 
 
@@ -627,7 +559,8 @@ is another map movement. If there is we set another timeout. This works better w
     </div>
 
     <div class="description">
-        
+        <p>See if the given object or subcontainer is outside the given viewportarea. We check intersecting rectangles</p>
+
     </div>
 
         <div class="params">
@@ -709,17 +642,6 @@ is another map movement. If there is we set another timeout. This works better w
                     </div>
 
                 </li>
-                <li class="param">
-                        <code class="param-name">scale</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Number" class="crosslink external" target="_blank">Number</a></span>
-
-
-                    <div class="param-description">
-                        <p>default = 1 (equals to no defaul scale / no scale)</p>
-
-                    </div>
-
-                </li>
             </ul>
         </div>
 
@@ -754,7 +676,7 @@ is another map movement. If there is we set another timeout. This works better w
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l191"><code>src\components\map\extensions\mapMovement\mapMovement.js:191</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l162"><code>src\components\map\extensions\mapMovement\mapMovement.js:162</code></a>
         </p>
 
 
@@ -803,7 +725,7 @@ is another map movement. If there is we set another timeout. This works better w
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l285"><code>src\components\map\extensions\mapMovement\mapMovement.js:285</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l300"><code>src\components\map\extensions\mapMovement\mapMovement.js:300</code></a>
         </p>
 
 
@@ -814,6 +736,74 @@ is another map movement. If there is we set another timeout. This works better w
         
     </div>
 
+
+
+
+</div>
+<div id="method_viewportWorkerOnMessage" class="method item">
+    <h3 class="name"><code>viewportWorkerOnMessage</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>scaledViewport</code>
+                </li>
+                <li class="arg">
+                        <code>primaryLayers</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+
+
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l214"><code>src\components\map\extensions\mapMovement\mapMovement.js:214</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Originally webworker onmessage function, but webworker got refactored away.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">scaledViewport</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+
+
+                    <div class="param-description">
+                        <p>Viewportarea that has been scaled.</p>
+
+                    </div>
+
+                </li>
+                <li class="param">
+                        <code class="param-name">primaryLayers</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+
+
+                    <div class="param-description">
+                        <p>The primarylayers that we handle</p>
+
+                    </div>
+
+                </li>
+            </ul>
+        </div>
 
 
 
@@ -834,7 +824,7 @@ is another map movement. If there is we set another timeout. This works better w
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l75"><code>src\components\map\extensions\mapMovement\mapMovement.js:75</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l94"><code>src\components\map\extensions\mapMovement\mapMovement.js:94</code></a>
         </p>
 
 
@@ -866,7 +856,7 @@ is another map movement. If there is we set another timeout. This works better w
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l54"><code>src\components\map\extensions\mapMovement\mapMovement.js:54</code></a>
+        <a href="../files/src_components_map_extensions_mapMovement_mapMovement.js.html#l69"><code>src\components\map\extensions\mapMovement\mapMovement.js:69</code></a>
         </p>
 
 
@@ -874,7 +864,8 @@ is another map movement. If there is we set another timeout. This works better w
     </div>
 
     <div class="description">
-        <p>For debugging. Shows the amount of currectly active and inactive subcontainers. Console.logs the data. Also extends window object.</p>
+        <p>For debugging. Shows the amount of currectly active and inactive subcontainers. Console.logs the data.
+Also extends window object.</p>
 
     </div>
 

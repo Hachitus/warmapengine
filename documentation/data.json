@@ -10,7 +10,7 @@
             "name": "src\\components\\map\\UIs\\default\\default.js",
             "modules": {},
             "classes": {
-                "UIDefault": 1
+                "UIs.default": 1
             },
             "fors": {},
             "namespaces": {}
@@ -19,7 +19,7 @@
             "name": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
             "modules": {},
             "classes": {
-                "baseEventlisteners": 1
+                "extensions.baseEventlisteners": 1
             },
             "fors": {},
             "namespaces": {}
@@ -28,7 +28,7 @@
             "name": "src\\components\\map\\core\\move\\mapDrag.js",
             "modules": {},
             "classes": {
-                "mapDrag": 1
+                "extensions.mapDrag": 1
             },
             "fors": {},
             "namespaces": {}
@@ -76,7 +76,7 @@
             "name": "src\\components\\map\\core\\zoom\\mapZoom.js",
             "modules": {},
             "classes": {
-                "mapZoom": 1
+                "extensions.mapZoom": 1
             },
             "fors": {},
             "namespaces": {}
@@ -103,9 +103,9 @@
             "name": "src\\components\\map\\core\\MapLayers.js",
             "modules": {},
             "classes": {
-                "MapLayer": 1,
-                "MapLayerParent": 1,
-                "MapSubcontainer": 1
+                "maplayers.MapLayer": 1,
+                "maplayers.MapLayerParent": 1,
+                "maplayers.MapSubcontainer": 1
             },
             "fors": {},
             "namespaces": {}
@@ -123,9 +123,9 @@
             "name": "src\\components\\map\\core\\Objects.js",
             "modules": {},
             "classes": {
-                "ObjectSprite": 1,
-                "ObjectSpriteTerrain": 1,
-                "ObjectSpriteUnit": 1
+                "objects.ObjectSprite": 1,
+                "objects.ObjectSpriteTerrain": 1,
+                "objects.ObjectSpriteUnit": 1
             },
             "fors": {},
             "namespaces": {}
@@ -204,7 +204,7 @@
             "name": "src\\components\\map\\extensions\\hexagons\\eventListeners\\units.js",
             "modules": {},
             "classes": {
-                "hexagonPlugin.setupHexagonClick": 1
+                "extensions.hexagons.setupHexagonClick": 1
             },
             "fors": {},
             "namespaces": {}
@@ -212,7 +212,9 @@
         "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js": {
             "name": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
             "modules": {},
-            "classes": {},
+            "classes": {
+                "extensions.hexagons.utils.getHexagonPoints.utils": 1
+            },
             "fors": {},
             "namespaces": {}
         },
@@ -220,7 +222,7 @@
             "name": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
             "modules": {},
             "classes": {
-                "hexagonPlugin.utils": 1
+                "extensions.hexagons.utils": 1
             },
             "fors": {},
             "namespaces": {}
@@ -229,8 +231,8 @@
             "name": "src\\components\\map\\extensions\\hexagons\\Objects.js",
             "modules": {},
             "classes": {
-                "hexagonPlugin.ObjectHexaTerrain": 1,
-                "hexagonPlugin.ObjectHexaUnit": 1
+                "extensions.hexagons.ObjectHexaTerrain": 1,
+                "extensions.hexagons.ObjectHexaUnit": 1
             },
             "fors": {},
             "namespaces": {}
@@ -239,7 +241,7 @@
             "name": "src\\components\\map\\extensions\\hexagons\\selectHexagonPlugin.js",
             "modules": {},
             "classes": {
-                "hexagonPlugin.setupObject_select_hexagon": 1
+                "extensions.hexagons.selectHexagonObject": 1
             },
             "fors": {},
             "namespaces": {}
@@ -248,7 +250,7 @@
             "name": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
             "modules": {},
             "classes": {
-                "mapMovement": 1
+                "extensions.mapMovement": 1
             },
             "fors": {},
             "namespaces": {}
@@ -299,9 +301,9 @@
     },
     "modules": {},
     "classes": {
-        "UIDefault": {
-            "name": "UIDefault",
-            "shortname": "UIDefault",
+        "UIs.default": {
+            "name": "UIs.default",
+            "shortname": "UIs.default",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -333,9 +335,9 @@
                 }
             ]
         },
-        "baseEventlisteners": {
-            "name": "baseEventlisteners",
-            "shortname": "baseEventlisteners",
+        "extensions.baseEventlisteners": {
+            "name": "extensions.baseEventlisteners",
+            "shortname": "extensions.baseEventlisteners",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -356,9 +358,9 @@
                 }
             ]
         },
-        "mapDrag": {
-            "name": "mapDrag",
-            "shortname": "mapDrag",
+        "extensions.mapDrag": {
+            "name": "extensions.mapDrag",
+            "shortname": "extensions.mapDrag",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -366,7 +368,7 @@
             "extension_for": [],
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
             "line": 18,
-            "description": "Core plugin for the engine. Handles moving the map by dragging the map with mouse or touch event. Core plugins can always be overwrote if needed.",
+            "description": "Core plugin for the engine. Handles moving the map by dragging the map with mouse or touch event. Core plugins can always be\noverwrote if needed.",
             "requires": [
                 "Hammer.js - Mobile part requires"
             ],
@@ -498,9 +500,9 @@
                 "type": "Object"
             }
         },
-        "mapZoom": {
-            "name": "mapZoom",
-            "shortname": "mapZoom",
+        "extensions.mapZoom": {
+            "name": "extensions.mapZoom",
+            "shortname": "extensions.mapZoom",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -619,9 +621,9 @@
                 }
             ]
         },
-        "MapLayer": {
-            "name": "MapLayer",
-            "shortname": "MapLayer",
+        "maplayers.MapLayer": {
+            "name": "maplayers.MapLayer",
+            "shortname": "maplayers.MapLayer",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -680,9 +682,9 @@
                 }
             ]
         },
-        "MapLayerParent": {
-            "name": "MapLayerParent",
-            "shortname": "MapLayerParent",
+        "maplayers.MapLayerParent": {
+            "name": "maplayers.MapLayerParent",
+            "shortname": "maplayers.MapLayerParent",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -746,9 +748,9 @@
                 }
             ]
         },
-        "MapSubcontainer": {
-            "name": "MapSubcontainer",
-            "shortname": "MapSubcontainer",
+        "maplayers.MapSubcontainer": {
+            "name": "maplayers.MapSubcontainer",
+            "shortname": "maplayers.MapSubcontainer",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -796,9 +798,9 @@
                 "It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits.\nIt could use sprites or forms."
             ]
         },
-        "ObjectSprite": {
-            "name": "ObjectSprite",
-            "shortname": "ObjectSprite",
+        "objects.ObjectSprite": {
+            "name": "objects.ObjectSprite",
+            "shortname": "objects.ObjectSprite",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -827,9 +829,9 @@
                 }
             ]
         },
-        "ObjectSpriteTerrain": {
-            "name": "ObjectSpriteTerrain",
-            "shortname": "ObjectSpriteTerrain",
+        "objects.ObjectSpriteTerrain": {
+            "name": "objects.ObjectSpriteTerrain",
+            "shortname": "objects.ObjectSpriteTerrain",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -858,9 +860,9 @@
                 }
             ]
         },
-        "ObjectSpriteUnit": {
-            "name": "ObjectSpriteUnit",
-            "shortname": "ObjectSpriteUnit",
+        "objects.ObjectSpriteUnit": {
+            "name": "objects.ObjectSpriteUnit",
+            "shortname": "objects.ObjectSpriteUnit",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -976,7 +978,7 @@
             "extension_for": [],
             "file": "src\\components\\map\\core\\eventlisteners.js",
             "line": 25,
-            "description": "This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add event listeners with on."
+            "description": "This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add\nevent listeners with on."
         },
         "log": {
             "name": "log",
@@ -1040,16 +1042,16 @@
                 "state-machine library"
             ]
         },
-        "hexagonPlugin.setupHexagonClick": {
-            "name": "hexagonPlugin.setupHexagonClick",
-            "shortname": "hexagonPlugin.setupHexagonClick",
+        "extensions.hexagons.setupHexagonClick": {
+            "name": "extensions.hexagons.setupHexagonClick",
+            "shortname": "extensions.hexagons.setupHexagonClick",
             "classitems": [],
             "plugins": [],
             "extensions": [],
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\extensions\\hexagons\\eventListeners\\units.js",
-            "line": 24,
+            "line": 23,
             "description": "Handles the eventlistner for selecting objects on the map. THe actual logic for detecting the objects under mouse\netc. are in selectHexagonPlugin",
             "requires": [
                 "Hammer.js. Some events are done with Hammer.js",
@@ -1068,9 +1070,21 @@
                 "type": "Boolean"
             }
         },
-        "hexagonPlugin.utils": {
-            "name": "hexagonPlugin.utils",
-            "shortname": "hexagonPlugin.utils",
+        "extensions.hexagons.utils.getHexagonPoints.utils": {
+            "name": "extensions.hexagons.utils.getHexagonPoints.utils",
+            "shortname": "extensions.hexagons.utils.getHexagonPoints.utils",
+            "classitems": [],
+            "plugins": [],
+            "extensions": [],
+            "plugin_for": [],
+            "extension_for": [],
+            "file": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
+            "line": 18,
+            "description": "This manages some utility functionalities for creating hexagons"
+        },
+        "extensions.hexagons.utils": {
+            "name": "extensions.hexagons.utils",
+            "shortname": "extensions.hexagons.utils",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -1080,9 +1094,9 @@
             "line": 18,
             "description": "Utility module, for making different calculations and tests when hexagon based grid map in use"
         },
-        "hexagonPlugin.ObjectHexaTerrain": {
-            "name": "hexagonPlugin.ObjectHexaTerrain",
-            "shortname": "hexagonPlugin.ObjectHexaTerrain",
+        "extensions.hexagons.ObjectHexaTerrain": {
+            "name": "extensions.hexagons.ObjectHexaTerrain",
+            "shortname": "extensions.hexagons.ObjectHexaTerrain",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -1129,9 +1143,9 @@
                 }
             ]
         },
-        "hexagonPlugin.ObjectHexaUnit": {
-            "name": "hexagonPlugin.ObjectHexaUnit",
-            "shortname": "hexagonPlugin.ObjectHexaUnit",
+        "extensions.hexagons.ObjectHexaUnit": {
+            "name": "extensions.hexagons.ObjectHexaUnit",
+            "shortname": "extensions.hexagons.ObjectHexaUnit",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -1178,9 +1192,9 @@
                 }
             ]
         },
-        "hexagonPlugin.setupObject_select_hexagon": {
-            "name": "hexagonPlugin.setupObject_select_hexagon",
-            "shortname": "hexagonPlugin.setupObject_select_hexagon",
+        "extensions.hexagons.selectHexagonObject": {
+            "name": "extensions.hexagons.selectHexagonObject",
+            "shortname": "extensions.hexagons.selectHexagonObject",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -1194,9 +1208,9 @@
                 "type": "Object"
             }
         },
-        "mapMovement": {
-            "name": "mapMovement",
-            "shortname": "mapMovement",
+        "extensions.mapMovement": {
+            "name": "extensions.mapMovement",
+            "shortname": "extensions.mapMovement",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -1275,7 +1289,7 @@
             "line": 46,
             "itemtype": "method",
             "name": "getTemplates\nRequired by the map/core/UI.js API",
-            "class": "UIDefault"
+            "class": "UIs.default"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
@@ -1300,7 +1314,7 @@
                     "type": "Object"
                 }
             ],
-            "class": "UIDefault"
+            "class": "UIs.default"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
@@ -1325,7 +1339,7 @@
                     "type": "Object"
                 }
             ],
-            "class": "UIDefault"
+            "class": "UIs.default"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
@@ -1339,14 +1353,14 @@
                     "type": "PIXI.Point"
                 }
             ],
-            "class": "UIDefault"
+            "class": "UIs.default"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
             "line": 151,
             "itemtype": "method",
             "name": "init",
-            "class": "UIDefault"
+            "class": "UIs.default"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
@@ -1373,7 +1387,7 @@
                     "type": "PIXI.Renderer"
                 }
             ],
-            "class": "UIDefault"
+            "class": "UIs.default"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
@@ -1383,7 +1397,7 @@
             "static": 1,
             "itemtype": "method",
             "name": "createHighlight",
-            "class": "UIDefault"
+            "class": "UIs.default"
         },
         {
             "file": "src\\components\\map\\UIs\\default\\default.js",
@@ -1404,7 +1418,7 @@
                 "description": "[description]",
                 "type": "[type]"
             },
-            "class": "UIDefault"
+            "class": "UIs.default"
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
@@ -1415,7 +1429,7 @@
             "access": "private",
             "tagname": "",
             "static": 1,
-            "class": "baseEventlisteners"
+            "class": "extensions.baseEventlisteners"
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
@@ -1435,7 +1449,7 @@
                 "description": "Return the state of this event",
                 "type": "Boolean"
             },
-            "class": "baseEventlisteners"
+            "class": "extensions.baseEventlisteners"
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
@@ -1455,7 +1469,7 @@
                 "description": "Return the state of this event",
                 "type": "Boolean"
             },
-            "class": "baseEventlisteners"
+            "class": "extensions.baseEventlisteners"
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
@@ -1475,7 +1489,7 @@
                 "description": "Return the state of this event",
                 "type": "Boolean"
             },
-            "class": "baseEventlisteners"
+            "class": "extensions.baseEventlisteners"
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
@@ -1495,7 +1509,7 @@
                 "description": "Return the state of this event",
                 "type": "Boolean"
             },
-            "class": "baseEventlisteners"
+            "class": "extensions.baseEventlisteners"
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
@@ -1515,7 +1529,7 @@
                 "description": "Return the state of this event",
                 "type": "Boolean"
             },
-            "class": "baseEventlisteners"
+            "class": "extensions.baseEventlisteners"
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
@@ -1525,7 +1539,7 @@
             "tagname": "",
             "itemtype": "method",
             "name": "setFullScreen",
-            "class": "baseEventlisteners"
+            "class": "extensions.baseEventlisteners"
         },
         {
             "file": "src\\components\\map\\core\\baseEventlisteners\\baseEventlisteners.js",
@@ -1535,11 +1549,11 @@
             "tagname": "",
             "itemtype": "method",
             "name": "_resizeCanvas",
-            "class": "baseEventlisteners"
+            "class": "extensions.baseEventlisteners"
         },
         {
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
-            "line": 43,
+            "line": 44,
             "description": "Required init functions for the plugin",
             "itemtype": "method",
             "name": "init",
@@ -1550,11 +1564,11 @@
                     "type": "Map"
                 }
             ],
-            "class": "mapDrag"
+            "class": "extensions.mapDrag"
         },
         {
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
-            "line": 59,
+            "line": 60,
             "description": "Mobile version. Starts the functionality, uses Hammer.js heavily for doing the drag. More simple and better than\ndesktop version, since we don't need to calculate the drag with several event listener, one is enough with Hammer",
             "access": "private",
             "tagname": "",
@@ -1568,11 +1582,11 @@
                     "type": "Map"
                 }
             ],
-            "class": "mapDrag"
+            "class": "extensions.mapDrag"
         },
         {
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
-            "line": 101,
+            "line": 102,
             "description": "This handles offset Changes and setting data has map been moved based on it. Also\nsets basic settings like preventDefault etc.",
             "access": "private",
             "tagname": "",
@@ -1596,18 +1610,18 @@
                     "type": "Coordinates"
                 }
             ],
-            "class": "mapDrag"
+            "class": "extensions.mapDrag"
         },
         {
             "file": "src\\components\\map\\core\\move\\mapDrag.js",
-            "line": 134,
+            "line": 135,
             "description": "Function for setting and getting the mouse offset.\nOffset is the distance from the left upper coordinates (global 0, 0 coordinates) on the canvas, to the current /\nlast known mouse coordinates",
             "access": "private",
             "tagname": "",
             "static": 1,
             "itemtype": "method",
             "name": "_offsetCoords",
-            "class": "mapDrag"
+            "class": "extensions.mapDrag"
         },
         {
             "file": "src\\components\\map\\core\\utils\\Quadtree.js",
@@ -2135,7 +2149,7 @@
             "itemtype": "attribute",
             "name": "zoomLimit",
             "type": "{{ farther: Number, closer: Number }}",
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2144,7 +2158,7 @@
             "itemtype": "attribute",
             "name": "zoomModifier",
             "type": "{Number}",
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2163,7 +2177,7 @@
                 "think through should setZoomLimits and setZoomModifier be in map.prototype?\nBut zoomLimit and modifier need to be setable in creation",
                 "init or later with setters"
             ],
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2178,7 +2192,7 @@
                     "type": "Number"
                 }
             ],
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2198,7 +2212,7 @@
                     "type": "Number"
                 }
             ],
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2213,7 +2227,7 @@
                     "type": "Number"
                 }
             ],
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2228,7 +2242,7 @@
                     "type": "Number"
                 }
             ],
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2258,7 +2272,7 @@
                     "type": "Integer"
                 }
             ],
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2273,7 +2287,7 @@
                     "type": "Map"
                 }
             ],
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2288,7 +2302,7 @@
                     "type": "Event"
                 }
             ],
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2299,7 +2313,7 @@
             "static": 1,
             "itemtype": "method",
             "name": "_isOverZoomLimit",
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2309,7 +2323,7 @@
             "static": 1,
             "itemtype": "method",
             "name": "_calculateCenterMoveCoordinates",
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\zoom\\mapZoom.js",
@@ -2319,7 +2333,7 @@
             "static": 1,
             "itemtype": "method",
             "name": "_zoom",
-            "class": "mapZoom"
+            "class": "extensions.mapZoom"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -3179,7 +3193,7 @@
             "itemtype": "attribute",
             "name": "name",
             "type": "{String}",
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3188,7 +3202,7 @@
             "itemtype": "attribute",
             "name": "specialLayer",
             "type": "{Boolean}",
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3197,7 +3211,7 @@
             "itemtype": "attribute",
             "name": "selectable",
             "type": "{Boolean}",
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3206,7 +3220,7 @@
             "itemtype": "attribute",
             "name": "UIObjectList",
             "type": "{Array}",
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3218,7 +3232,7 @@
                 "description": "true = uses subcontainers.",
                 "type": "Boolean"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3230,7 +3244,7 @@
                 "description": "true = is cached",
                 "type": "Boolean"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3257,7 +3271,7 @@
                     ]
                 }
             ],
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3276,7 +3290,7 @@
                 "description": "The same amount that was given, except after transform to 2 decimals and type cast to Number",
                 "type": "Number"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3288,7 +3302,7 @@
                 "description": "current amount of zoom",
                 "type": "Boolean"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3300,7 +3314,7 @@
                 "description": "current UIObjects",
                 "type": "Array"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3312,7 +3326,7 @@
                 "description": "Primary children layers under this layer",
                 "type": "Array"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3324,7 +3338,7 @@
                 "description": "All the objects (not layers) found under this layer",
                 "type": "Array"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3341,7 +3355,7 @@
                     "type": "Boolean"
                 }
             ],
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3377,7 +3391,7 @@
                 "description": "The created UI layer",
                 "type": "MapLayer"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3389,7 +3403,7 @@
                 "description": "",
                 "type": "MapLayer | undefined"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3413,7 +3427,7 @@
                 "description": "All the UIObjects currently on this layer",
                 "type": "Array"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3432,7 +3446,7 @@
                 "description": "empty    UIObjects array",
                 "type": "Array"
             },
-            "class": "MapLayer"
+            "class": "maplayers.MapLayer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3447,7 +3461,7 @@
                     "type": "PIXI.DisplayObject"
                 }
             ],
-            "class": "MapLayerParent"
+            "class": "maplayers.MapLayerParent"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3455,7 +3469,7 @@
             "description": "Returns the configurations set for subcontainers.",
             "itemtype": "method",
             "name": "getSubcontainerConfigs",
-            "class": "MapLayerParent"
+            "class": "maplayers.MapLayerParent"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3494,14 +3508,14 @@
                     ]
                 }
             ],
-            "class": "MapLayerParent"
+            "class": "maplayers.MapLayerParent"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
             "line": 348,
             "itemtype": "method",
             "name": "getSubcontainers",
-            "class": "MapLayerParent"
+            "class": "maplayers.MapLayerParent"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3525,7 +3539,7 @@
                 "description": "x, y, width and height returned inside object.",
                 "type": "Object"
             },
-            "class": "MapSubcontainer"
+            "class": "maplayers.MapSubcontainer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3540,7 +3554,7 @@
                     "type": "Boolean"
                 }
             ],
-            "class": "MapSubcontainer"
+            "class": "maplayers.MapSubcontainer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3563,7 +3577,7 @@
                     "type": "Object"
                 }
             ],
-            "class": "MapSubcontainer"
+            "class": "maplayers.MapSubcontainer"
         },
         {
             "file": "src\\components\\map\\core\\MapLayers.js",
@@ -3624,7 +3638,7 @@
                 "description": "Array of found subcontainers.",
                 "type": "Array"
             },
-            "class": "MapSubcontainer"
+            "class": "maplayers.MapSubcontainer"
         },
         {
             "file": "src\\components\\map\\core\\ObjectManager.js",
@@ -3722,7 +3736,7 @@
             "itemtype": "attribute",
             "name": "",
             "type": "{String}",
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3731,7 +3745,7 @@
             "itemtype": "attribute",
             "name": "",
             "type": "{String}",
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3740,7 +3754,7 @@
             "itemtype": "attribute",
             "name": "",
             "type": "{Boolean}",
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3749,7 +3763,7 @@
             "itemtype": "attribute",
             "name": "",
             "type": "{Object}",
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3758,7 +3772,7 @@
             "itemtype": "attribute",
             "name": "",
             "type": "{Number}",
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3767,7 +3781,7 @@
             "itemtype": "attribute",
             "name": "",
             "type": "{Number}",
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3776,7 +3790,7 @@
             "itemtype": "attribute",
             "name": "",
             "type": "{Number}",
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3799,7 +3813,7 @@
             "return": {
                 "description": "this object instance"
             },
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3827,7 +3841,7 @@
             "return": {
                 "description": "this object instance"
             },
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3846,7 +3860,7 @@
                 "description": "{ x: Number, y: Number, width: Number, height: Number}",
                 "type": "AreaSize"
             },
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3875,7 +3889,7 @@
                 "description": "",
                 "type": "Coordinates"
             },
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3899,7 +3913,7 @@
                 "description": "cloned object",
                 "type": "Object"
             },
-            "class": "ObjectSprite"
+            "class": "objects.ObjectSprite"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3908,7 +3922,7 @@
             "itemtype": "attribute",
             "name": "actions",
             "type": "{Object}",
-            "class": "ObjectSpriteUnit"
+            "class": "objects.ObjectSpriteUnit"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3923,7 +3937,7 @@
                     "type": "String"
                 }
             ],
-            "class": "ObjectSpriteUnit"
+            "class": "objects.ObjectSpriteUnit"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3938,7 +3952,7 @@
                     "type": "String"
                 }
             ],
-            "class": "ObjectSpriteUnit"
+            "class": "objects.ObjectSpriteUnit"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3958,14 +3972,14 @@
                     "type": "Function"
                 }
             ],
-            "class": "ObjectSpriteUnit"
+            "class": "objects.ObjectSpriteUnit"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
             "line": 257,
             "itemtype": "method",
             "name": "dropShadow",
-            "class": "ObjectSpriteUnit"
+            "class": "objects.ObjectSpriteUnit"
         },
         {
             "file": "src\\components\\map\\core\\Objects.js",
@@ -3976,7 +3990,7 @@
             "requires": [
                 "mapAPIa..(\"objectMove\") to be declared"
             ],
-            "class": "ObjectSpriteUnit"
+            "class": "objects.ObjectSpriteUnit"
         },
         {
             "file": "src\\components\\map\\core\\Sound.js",
@@ -4263,7 +4277,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 47,
+            "line": 48,
             "description": "Activates the eventListener.",
             "itemtype": "event",
             "name": "Event that consists of \"Map\" + the given event type, like such: \"MapDrag\"",
@@ -4287,7 +4301,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 64,
+            "line": 65,
             "description": "Deactivates the eventListener. Callback is optional. If is not provided will remove all this types eventListeners",
             "itemtype": "method",
             "name": "off",
@@ -4307,7 +4321,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 75,
+            "line": 76,
             "description": "Activates the eventListener. Callback is optional. If is not provided will check if the eventlistener type has any listeners active.",
             "itemtype": "method",
             "name": "isOn",
@@ -4327,8 +4341,8 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 89,
-            "description": "Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid selecting units and vice versa, when we keep an event state tracking through this.",
+            "line": 90,
+            "description": "Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid\nselecting units and vice versa, when we keep an event state tracking through this.",
             "itemtype": "method",
             "name": "setActivityState",
             "params": [
@@ -4347,7 +4361,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 99,
+            "line": 101,
             "description": "get activity state of the event",
             "itemtype": "method",
             "name": "getActivityState",
@@ -4366,7 +4380,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 109,
+            "line": 111,
             "description": "Set event detector. If there is already detector of this type, we overwrite it.",
             "itemtype": "method",
             "name": "setDetector",
@@ -4391,7 +4405,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 124,
+            "line": 126,
             "description": "Clear event detector. We also remove all possible eventlisteners set on this event type.",
             "itemtype": "method",
             "name": "clearDetector",
@@ -4406,13 +4420,13 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 144,
+            "line": 146,
             "description": "This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.",
-            "itemtype": "method",
-            "name": "_createEventListenerWrapper",
             "access": "private",
             "tagname": "",
             "static": 1,
+            "itemtype": "method",
+            "name": "_createEventListenerWrapper",
             "params": [
                 {
                     "name": "type",
@@ -4554,8 +4568,10 @@
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\eventListeners\\units.js",
-            "line": 52,
+            "line": 51,
             "description": "the listener that received the event object",
+            "access": "private",
+            "tagname": "",
             "itemtype": "method",
             "name": "tapListener",
             "params": [
@@ -4565,12 +4581,14 @@
                     "type": "Event"
                 }
             ],
-            "class": "hexagonPlugin.setupHexagonClick"
+            "class": "extensions.hexagons.setupHexagonClick"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\eventListeners\\units.js",
             "line": 89,
             "description": "This listener is for the situation, where we have an object and we issue an order / action to\nthat unit. For example to move from one hexagon to another.",
+            "access": "private",
+            "tagname": "",
             "itemtype": "method",
             "name": "orderListener",
             "params": [
@@ -4580,7 +4598,7 @@
                     "type": "Event"
                 }
             ],
-            "class": "hexagonPlugin.setupHexagonClick"
+            "class": "extensions.hexagons.setupHexagonClick"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
@@ -4607,7 +4625,7 @@
                 "description": "Hexagon shaped PIXI.Polygon object. That houses the hexagons corner points.",
                 "type": "PIXI.Polygon"
             },
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils.getHexagonPoints.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
@@ -4633,17 +4651,17 @@
                 "description": "Graphics object that is shaped as hexagon, based on given radius and options.",
                 "type": "PIXI.Graphics"
             },
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils.getHexagonPoints.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
-            "line": 65,
+            "line": 66,
             "description": "Converts Array of x- and y-coordinates to new PIXI.Point coordinates",
-            "itemtype": "method",
-            "name": "coordsToPixiPoints",
             "access": "private",
             "tagname": "",
             "static": 1,
+            "itemtype": "method",
+            "name": "coordsToPixiPoints",
             "params": [
                 {
                     "name": "radius",
@@ -4655,16 +4673,16 @@
                 "description": "Array of PIXI.Point coordinates",
                 "type": "Array"
             },
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils.getHexagonPoints.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\createHexagon.js",
-            "line": 80,
-            "itemtype": "method",
-            "name": "getHexagonPoints",
+            "line": 81,
             "access": "private",
             "tagname": "",
             "static": 1,
+            "itemtype": "method",
+            "name": "getHexagonPoints",
             "params": [
                 {
                     "name": "radius",
@@ -4677,7 +4695,7 @@
                     "type": "Object"
                 }
             ],
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils.getHexagonPoints.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
@@ -4703,7 +4721,7 @@
                     "type": "Integer"
                 }
             ],
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
@@ -4729,7 +4747,7 @@
                     "type": "Integer"
                 }
             ],
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
@@ -4783,7 +4801,7 @@
                 "description": "Is the coordinate inside the hexagon or not",
                 "type": "Boolean"
             },
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
@@ -4799,7 +4817,7 @@
                     "type": "Number"
                 }
             ],
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
@@ -4811,7 +4829,7 @@
             "requires": [
                 "setRadius has to be set"
             ],
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\utils\\hexagonMath.js",
@@ -4848,7 +4866,7 @@
                 "description": "Is the coordinate inside the hexagon or not",
                 "type": "Boolean"
             },
-            "class": "hexagonPlugin.utils"
+            "class": "extensions.hexagons.utils"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\Objects.js",
@@ -4865,7 +4883,7 @@
                     "type": "Number"
                 }
             ],
-            "class": "hexagonPlugin.ObjectHexaUnit"
+            "class": "extensions.hexagons.ObjectHexaUnit"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\Objects.js",
@@ -4882,7 +4900,7 @@
                     "type": "Number"
                 }
             ],
-            "class": "hexagonPlugin.ObjectHexaUnit"
+            "class": "extensions.hexagons.ObjectHexaUnit"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\selectHexagonPlugin.js",
@@ -4896,11 +4914,13 @@
                     "type": "Map"
                 }
             ],
-            "class": "hexagonPlugin.setupObject_select_hexagon"
+            "class": "extensions.hexagons.selectHexagonObject"
         },
         {
             "file": "src\\components\\map\\extensions\\hexagons\\selectHexagonPlugin.js",
             "line": 44,
+            "access": "private",
+            "tagname": "",
             "itemtype": "method",
             "name": "startClickListener",
             "params": [
@@ -4910,7 +4930,7 @@
                     "type": "Map"
                 }
             ],
-            "class": "hexagonPlugin.setupObject_select_hexagon"
+            "class": "extensions.hexagons.selectHexagonObject"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -4925,7 +4945,7 @@
                     "type": "Map"
                 }
             ],
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -4934,7 +4954,7 @@
             "itemtype": "method",
             "name": "window.FlaTWorld_mapMovement_subCheck",
             "static": 1,
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -4943,7 +4963,7 @@
             "itemtype": "method",
             "name": "window.FlaTWorld_mapMovement_deactivate",
             "static": 1,
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -4958,7 +4978,7 @@
                     "type": "Map"
                 }
             ],
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -4977,7 +4997,7 @@
                 "description": "True",
                 "type": "Boolean"
             },
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -4991,7 +5011,7 @@
                     "type": "Map"
                 }
             ],
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -5045,7 +5065,7 @@
                 "description": "",
                 "type": "Boolean"
             },
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -5068,7 +5088,7 @@
                     "type": "Array"
                 }
             ],
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -5090,7 +5110,7 @@
                 "description": "The total viewportArea",
                 "type": "TotalViewportArea"
             },
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -5100,7 +5120,7 @@
             "static": 1,
             "itemtype": "method",
             "name": "testRectangleIntersect",
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -5110,7 +5130,7 @@
             "static": 1,
             "itemtype": "method",
             "name": "calculateOffset",
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovement.js",
@@ -5120,11 +5140,11 @@
             "static": 1,
             "itemtype": "method",
             "name": "_setMap",
-            "class": "mapMovement"
+            "class": "extensions.mapMovement"
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovementWorker.js",
-            "line": 66,
+            "line": 70,
             "description": "forms the total viewport parameters based on the given ones.",
             "access": "private",
             "tagname": "",
@@ -5151,7 +5171,7 @@
         },
         {
             "file": "src\\components\\map\\extensions\\mapMovement\\mapMovementWorker.js",
-            "line": 89,
+            "line": 93,
             "access": "private",
             "tagname": "",
             "static": 1,

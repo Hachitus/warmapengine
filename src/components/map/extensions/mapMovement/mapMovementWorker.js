@@ -1,5 +1,9 @@
 /* global self, postMessage */
 
+/*
+ * NOT IN USE
+ */
+
 'use strict';
 
 /* object.assign polyfill for IE11 */

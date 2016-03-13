@@ -16,9 +16,10 @@
   -------- PUBLIC -------
   ----------------------*/
   /**
-   * Core plugin for the engine. Handles moving the map by dragging the map with mouse or touch event. Core plugins can always be overwrote if needed.
+   * Core plugin for the engine. Handles moving the map by dragging the map with mouse or touch event. Core plugins can always be
+   * overwrote if needed.
    *
-   * @class mapDrag
+   * @class extensions.mapDrag
    * @requires Hammer.js - Mobile part requires
    * @return {Object}      init, _startDragListener
    */

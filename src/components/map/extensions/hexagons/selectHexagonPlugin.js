@@ -17,7 +17,7 @@
   /**
    * Handles the selection of hexagons on the map
    *
-   * @class hexagonPlugin.setupObject_select_hexagon
+   * @class extensions.hexagons.selectHexagonObject
    * @return {Object}       Return methods inside object
    */
   function setupObject_select_hexagon() {
@@ -42,6 +42,7 @@
     -------- PRIVATE --------
     -----------------------*/
     /**
+     * @private
      * @method startClickListener
      * @param {Map} map              Instantiated Map class object
      */

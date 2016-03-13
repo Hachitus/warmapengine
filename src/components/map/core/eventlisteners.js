@@ -23,7 +23,8 @@
   -------- PUBLIC ---------
   -----------------------*/
   /**
-   * This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add event listeners with on.
+   * This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add
+   * event listeners with on.
    *
    * @class eventListeners
    */
@@ -87,13 +88,14 @@
       return answer;
     }
     /**
-     * Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid selecting units and vice versa, when we keep an event state tracking through this.
+     * Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid
+     * selecting units and vice versa, when we keep an event state tracking through this.
      *
      * @method setActivityState
      * @param {String} type     EventType
      * @param {[type]} newState [description]
      */
-    function setActivityState(type = "", newState) {
+    function setActivityState(type, newState) {
       stateOfEvents[type] = newState;
     }
     /**
@@ -144,9 +146,9 @@
     /**
      * This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.
      *
-     * @method _createEventListenerWrapper
      * @private
      * @static
+     * @method _createEventListenerWrapper
      * @param  {String}   type Event type
      * @param  {Function} cb   Event callback
      */
@@ -155,7 +157,7 @@
       return (...args) => {
         mapEvents.publish(type);
         cb(...args);
-      }
+      };
     }
   }
 })();

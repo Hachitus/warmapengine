@@ -11,7 +11,6 @@
   var eventListeners = window.flatworld.eventListeners;
   var mapStates = window.flatworld.mapStates;
   var mapLog = window.flatworld.log;
-  var hexagonUtils = window.flatworld.extensions.hexagons.utils;
 
   /*---------------------
   --------- API ---------
@@ -25,7 +24,7 @@
    * Handles the eventlistner for selecting objects on the map. THe actual logic for detecting the objects under mouse
    * etc. are in selectHexagonPlugin
    *
-   * @class hexagonPlugin.setupHexagonClick
+   * @class extensions.hexagons.setupHexagonClick
    * @requires Hammer.js. Some events are done with Hammer.js, so we need it to handle those events correctly
    * @event                 Mapselect and objectsSelected (objectsSelected will have parameter for the objects that were selected)
    * @param  {Map} map      The currently use Map instance
@@ -52,6 +51,7 @@
     /**
      * the listener that received the event object
      *
+     * @private
      * @method tapListener
      * @param  {Event} e      Event object
      */
@@ -90,6 +90,7 @@
      * This listener is for the situation, where we have an object and we issue an order / action to
      * that unit. For example to move from one hexagon to another.
      *
+     * @private
      * @method orderListener
      * @param  {Event} e      Event object
      */

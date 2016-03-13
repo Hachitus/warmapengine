@@ -18,7 +18,7 @@
   /**
    * Utility module, for making different calculations and tests when hexagon based grid map in use
    *
-   * @class hexagonPlugin.utils
+   * @class extensions.hexagons.utils
    */
   /*-----------------------
   --------- PUBLIC --------

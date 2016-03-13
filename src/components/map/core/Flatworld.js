@@ -22,7 +22,7 @@
   ----------------------*/
   class Flatworld {
     /**
-     * #Main class for the engine
+     * Main class for the engine
      *
      * Initializes the whole structure and plugins and is used as primary API for all operations. This class is e.g. passed to every
      * plugin that get initialized with their init-method.

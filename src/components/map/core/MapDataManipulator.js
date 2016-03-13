@@ -23,6 +23,12 @@
         return this._runRules(subcontainers);
       }
     }
+    /**
+     * adds a filter rule
+     *
+     * @method addRule
+     * @param {} rules        Rules to add
+     */
     addRule(rules) {
       this.rules.concat(rules);
     }
@@ -63,23 +69,8 @@
     _getContainer(object, rule) {
       if (object && ( object.parent instanceof this.layerClasses[0] || object && object.parent instanceof this.layerClasses[1] )) {
         return object.parent[rule.property] === rule.value;
-      } else if ( object && object.parent && ( object.parent.parent instanceof this.layerClasses[0] || object.parent.parent instanceof this.layerClasses[0] )) {
-        return object.parent.parent[rule.property] === rule.value;
-      }
-    }
-    /**
-     * This is the actual method that runs through the rules and arranges the data
-     *
-     * @todo Refactor
-     *
-     * @method _getContainer
-     * @private
-     * @return {[type]} [description]
-     **/
-    _getContainer(object, rule) {
-      if (object && ( object.parent instanceof this.layerClasses[0] || object && object.parent instanceof this.layerClasses[1] )) {
-        return object.parent[rule.property] === rule.value;
-      } else if ( object && object.parent && ( object.parent.parent instanceof this.layerClasses[0] || object.parent.parent instanceof this.layerClasses[0] )) {
+      } else if ( object && object.parent && ( object.parent.parent instanceof this.layerClasses[0] ||
+          object.parent.parent instanceof this.layerClasses[0] )) {
         return object.parent.parent[rule.property] === rule.value;
       }
     }

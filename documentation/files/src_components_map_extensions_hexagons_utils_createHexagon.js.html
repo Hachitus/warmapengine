@@ -38,32 +38,35 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
-                                <li><a href="../classes/baseEventlisteners.html">baseEventlisteners</a></li>
                                 <li><a href="../classes/eventListeners.html">eventListeners</a></li>
+                                <li><a href="../classes/extensions.baseEventlisteners.html">extensions.baseEventlisteners</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaTerrain.html">extensions.hexagons.ObjectHexaTerrain</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaUnit.html">extensions.hexagons.ObjectHexaUnit</a></li>
+                                <li><a href="../classes/extensions.hexagons.selectHexagonObject.html">extensions.hexagons.selectHexagonObject</a></li>
+                                <li><a href="../classes/extensions.hexagons.setupHexagonClick.html">extensions.hexagons.setupHexagonClick</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.html">extensions.hexagons.utils</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.getHexagonPoints.utils.html">extensions.hexagons.utils.getHexagonPoints.utils</a></li>
+                                <li><a href="../classes/extensions.mapDrag.html">extensions.mapDrag</a></li>
+                                <li><a href="../classes/extensions.mapMovement.html">extensions.mapMovement</a></li>
+                                <li><a href="../classes/extensions.mapZoom.html">extensions.mapZoom</a></li>
                                 <li><a href="../classes/generalUtils.polyfills.html">generalUtils.polyfills</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaTerrain.html">hexagonPlugin.ObjectHexaTerrain</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaUnit.html">hexagonPlugin.ObjectHexaUnit</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupHexagonClick.html">hexagonPlugin.setupHexagonClick</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupObject_select_hexagon.html">hexagonPlugin.setupObject_select_hexagon</a></li>
-                                <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
-                                <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
-                                <li><a href="../classes/MapLayer.html">MapLayer</a></li>
-                                <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
-                                <li><a href="../classes/mapMovement.html">mapMovement</a></li>
-                                <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
-                                <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
+                                <li><a href="../classes/maplayers.MapLayer.html">maplayers.MapLayer</a></li>
+                                <li><a href="../classes/maplayers.MapLayerParent.html">maplayers.MapLayerParent</a></li>
+                                <li><a href="../classes/maplayers.MapSubcontainer.html">maplayers.MapSubcontainer</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
-                                <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
-                                <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
+                                <li><a href="../classes/objects.ObjectSprite.html">objects.ObjectSprite</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteTerrain.html">objects.ObjectSpriteTerrain</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteUnit.html">objects.ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIs.default.html">UIs.default</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -114,87 +117,118 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-&#x27;use strict&#x27;;
+(function () {
+  &#x27;use strict&#x27;;
 
-/*-----------------------
--------- IMPORTS --------
------------------------*/
-import { getHexagonPoints } from &#x27;./hexagonMath&#x27;;
+  /*---------------------
+  ------- IMPORT --------
+  ----------------------*/
+  var { PIXI } = window.flatworld_libraries;
 
-/*-----------------------
------------ API ---------
------------------------*/
-export default {
-  createHexagon,
-  createVisibleHexagon
-};
-export { createHexagon as createHexagon };
-export { createVisibleHexagon as createVisibleHexagon };
+  /*-----------------------
+  ---------- API ----------
+  -----------------------*/
+  window.flatworld.extensions.hexagons.utils.createHexagon = createHexagon;
+  window.flatworld.extensions.hexagons.utils.createVisibleHexagon = createVisibleHexagon;
 
-/*-----------------------
---------- PUBLIC --------
------------------------*/
-/**
- * This manages some utility functionalities for creating hexagons
- *
- * @class hexagonPlugin.utils
- */
-/**
- * Credits belong to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js
- * Creates a hex shaped polygon that is used for the hex&#x27;s hit area.
- *
- * @private
- * @static
- * @method createHexagon
- * @param {Number} radius       Radius of the hexagon
- * @param {Object} options      Options, such as: isFlatTop (Boolean), is the heaxgon flat-topped
- * @return {PIXI.Polygon}       Hexagon shaped PIXI.Polygon object. That houses the hexagons corner points.
- */
-function createHexagon(radius, options = { isFlatTop: false }) {
-  var points = [];
+  /*-----------------------
+  --------- PUBLIC --------
+  -----------------------*/
+  /**
+   * This manages some utility functionalities for creating hexagons
+   *
+   * @class extensions.hexagons.utils.getHexagonPoints.utils
+   */
+  /**
+   * Credits belong to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js
+   * Creates a hex shaped polygon that is used for the hex&#x27;s hit area.
+   *
+   * @private
+   * @static
+   * @method createHexagon
+   * @param {Number} radius       Radius of the hexagon
+   * @param {Object} options      Options, such as: isFlatTop (Boolean), is the heaxgon flat-topped
+   * @return {PIXI.Polygon}       Hexagon shaped PIXI.Polygon object. That houses the hexagons corner points.
+   */
+  function createHexagon(radius, options = { isFlatTop: false }) {
+    var points = [];
 
-  points = coordsToPixiPoints(radius);
+    points = coordsToPixiPoints(radius);
 
-  return new PIXI.Polygon(points);
-}
-/**
- * @private
- * @static
- * @method createVisibleHexagon
- * @param {Number} radius       Radius of the hexagon
- * @param {Object} options      Options, such as:
- *                              color: The fill color of the hexagon
- *                              isFlatTop (Boolean), is the heaxgon flat-topped
- * @return {PIXI.Graphics}      Graphics object that is shaped as hexagon, based on given radius and options.
- */
-function createVisibleHexagon(radius, options = { color: &quot;#000000&quot;, isFlatTop: false }) {
-  var graphics = new PIXI.Graphics();
-  var points = coordsToPixiPoints(radius);
+    return new PIXI.Polygon(points);
+  }
+  /**
+   * @private
+   * @static
+   * @method createVisibleHexagon
+   * @method createVisibleHexagon
+   * @param {Number} radius       Radius of the hexagon
+   * @param {Object} options      Options, such as:
+   *                              color: The fill color of the hexagon
+   *                              isFlatTop (Boolean), is the heaxgon flat-topped
+   * @return {PIXI.Graphics}      Graphics object that is shaped as hexagon, based on given radius and options.
+   */
+  function createVisibleHexagon(radius, options = { color: &quot;#000000&quot;, isFlatTop: false }) {
+    var graphics = new PIXI.Graphics();
+    var points = coordsToPixiPoints(radius);
 
-  graphics.beginFill(options.color, 1);
-  graphics.drawPolygon(points);
-  graphics.endFill();
+    graphics.beginFill(options.color, 1);
+    graphics.drawPolygon(points);
+    graphics.endFill();
 
-  return graphics;
-}
+    return graphics;
+  }
 
-/*-----------------------
---------- PRIVATE -------
------------------------*/
-/**
- * Converts Array of x- and y-coordinates to new PIXI.Point coordinates
- *
- * @private
- * @static
- * @method coordsToPixiPoints
- * @param  {Number} radius        Hexagons radius
- * @return {Array}                Array of PIXI.Point coordinates
- */
-function coordsToPixiPoints(radius) {
-  return getHexagonPoints(radius).map(function(point) {
-    return new PIXI.Point(point.x, point.y);
-  });
-}
+  /*-----------------------
+  --------- PRIVATE -------
+  -----------------------*/
+  /**
+   * Converts Array of x- and y-coordinates to new PIXI.Point coordinates
+   *
+   * @private
+   * @static
+   * @method coordsToPixiPoints
+   * @method coordsToPixiPoints
+   * @param  {Number} radius        Hexagons radius
+   * @return {Array}                Array of PIXI.Point coordinates
+   */
+  function coordsToPixiPoints(radius) {
+    return getHexagonPoints(radius).map(function(point) {
+      return new PIXI.Point(point.x, point.y);
+    });
+  }
+  /**
+   * @private
+   * @static
+   * @method getHexagonPoints
+   * @param {Float} radius      radius of the hexagon
+   * @param {object} options    extra options, like generating horizontal hexagon points and
+   * how many decimals to round
+  */
+  function getHexagonPoints(radius, options = { isFlatTop: false, precision: 3 }) {
+    const OFFSET = options.isFlatTop ? 0 : 0.5;
+    const CENTER = {
+      x: radius,
+      y: radius
+    };
+    var angle = 2 * Math.PI / 6 * OFFSET;
+    var x = CENTER.x * Math.cos(angle);
+    var y = CENTER.y * Math.sin(angle);
+    var points = [];
+
+    points.push({x, y});
+
+    for (let i = 1; i &lt; 7; i++) {
+      angle = 2 * Math.PI / 6 * (i + OFFSET);
+      x = CENTER.x * Math.cos(angle);
+      y = CENTER.y * Math.sin(angle);
+
+      points.push({x, y});
+    }
+
+    return points;
+  }
+})();
     </pre>
 </div>
                     </div>

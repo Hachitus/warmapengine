@@ -38,32 +38,35 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
-                                <li><a href="../classes/baseEventlisteners.html">baseEventlisteners</a></li>
                                 <li><a href="../classes/eventListeners.html">eventListeners</a></li>
+                                <li><a href="../classes/extensions.baseEventlisteners.html">extensions.baseEventlisteners</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaTerrain.html">extensions.hexagons.ObjectHexaTerrain</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaUnit.html">extensions.hexagons.ObjectHexaUnit</a></li>
+                                <li><a href="../classes/extensions.hexagons.selectHexagonObject.html">extensions.hexagons.selectHexagonObject</a></li>
+                                <li><a href="../classes/extensions.hexagons.setupHexagonClick.html">extensions.hexagons.setupHexagonClick</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.html">extensions.hexagons.utils</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.getHexagonPoints.utils.html">extensions.hexagons.utils.getHexagonPoints.utils</a></li>
+                                <li><a href="../classes/extensions.mapDrag.html">extensions.mapDrag</a></li>
+                                <li><a href="../classes/extensions.mapMovement.html">extensions.mapMovement</a></li>
+                                <li><a href="../classes/extensions.mapZoom.html">extensions.mapZoom</a></li>
                                 <li><a href="../classes/generalUtils.polyfills.html">generalUtils.polyfills</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaTerrain.html">hexagonPlugin.ObjectHexaTerrain</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaUnit.html">hexagonPlugin.ObjectHexaUnit</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupHexagonClick.html">hexagonPlugin.setupHexagonClick</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupObject_select_hexagon.html">hexagonPlugin.setupObject_select_hexagon</a></li>
-                                <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
-                                <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
-                                <li><a href="../classes/MapLayer.html">MapLayer</a></li>
-                                <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
-                                <li><a href="../classes/mapMovement.html">mapMovement</a></li>
-                                <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
-                                <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
+                                <li><a href="../classes/maplayers.MapLayer.html">maplayers.MapLayer</a></li>
+                                <li><a href="../classes/maplayers.MapLayerParent.html">maplayers.MapLayerParent</a></li>
+                                <li><a href="../classes/maplayers.MapSubcontainer.html">maplayers.MapSubcontainer</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
-                                <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
-                                <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
+                                <li><a href="../classes/objects.ObjectSprite.html">objects.ObjectSprite</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteTerrain.html">objects.ObjectSpriteTerrain</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteUnit.html">objects.ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIs.default.html">UIs.default</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -115,7 +118,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_components_map_core_mapEvents.js.html#l11"><code>src\components\map\core\mapEvents.js:11</code></a>
+            Defined in: <a href="../files/src_components_map_core_mapEvents.js.html#l12"><code>src\components\map\core\mapEvents.js:12</code></a>
         </div>
 
 
@@ -123,9 +126,16 @@
 
 
 <div class="box intro">
-    <p>This module handles map events. Like informing map movement, object selection and other changes.
+    <p>This module handles map events. Like informing map movement, object selection and other changes. Not that ALL the eventlisteners and
+their callbacks will throw one event! But that event will have no extra parameters, so when you do special things, like selecting
+objects on the map, you should throw another event when that happens and you can pass on the objects that were selected from the map.
 Events atm:</p>
 <ul>
+<li>mapfullscreen - NO ARGUMENTS</li>
+<li>mapfullSize - NO ARGUMENTS</li>
+<li>mapdrag - NO ARGUMENTS</li>
+<li>mapzoomed - NO ARGUMENTS</li>
+<li>Mapselect - NO ARGUMENTS</li>
 <li>mapMoved</li>
 <li>mapResize</li>
 <li>mapFullscreeActivated</li>
@@ -138,17 +148,98 @@ Events atm:</p>
     <ul class="api-class-tabs">
         <li class="api-class-tab index"><a href="#index">Index</a></li>
 
+            <li class="api-class-tab methods"><a href="#methods">Methods</a></li>
     </ul>
 
     <div>
         <div id="index" class="api-class-tabpanel index">
             <h2 class="off-left">Item Index</h2>
 
+                <div class="index-section methods">
+                    <h3>Methods</h3>
+
+                    <ul class="index-list methods">
+                            <li class="index-item method private">
+                                <a href="#method_createCrossIeEvent">createCrossIeEvent</a>
+
+                            </li>
+                    </ul>
+                </div>
 
 
 
         </div>
 
+            <div id="methods" class="api-class-tabpanel">
+                <h2 class="off-left">Methods</h2>
+
+<div id="method_createCrossIeEvent" class="method item private">
+    <h3 class="name"><code>createCrossIeEvent</code></h3>
+
+        <div class="args">
+            <span class="paren">(</span><ul class="args-list inline commas">
+                <li class="arg">
+                        <code>type</code>
+                </li>
+            </ul><span class="paren">)</span>
+        </div>
+
+        <span class="returns-inline">
+            <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" class="crosslink external" target="_blank">Event</a></span>
+        </span>
+
+
+        <span class="flag private">private</span>
+
+
+
+
+
+    <div class="meta">
+                <p>
+                Defined in
+        <a href="../files/src_components_map_core_mapEvents.js.html#l69"><code>src\components\map\core\mapEvents.js:69</code></a>
+        </p>
+
+
+
+    </div>
+
+    <div class="description">
+        <p>Basically custom events polyfill for IE11.</p>
+
+    </div>
+
+        <div class="params">
+            <h4>Parameters:</h4>
+
+            <ul class="params-list">
+                <li class="param">
+                        <code class="param-name">type</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+
+
+                    <div class="param-description">
+                         
+                    </div>
+
+                </li>
+            </ul>
+        </div>
+
+        <div class="returns">
+            <h4>Returns:</h4>
+
+            <div class="returns-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/API/Event" class="crosslink external" target="_blank">Event</a></span>:
+                    <p>Created event object</p>
+
+            </div>
+        </div>
+
+
+</div>
+            </div>
 
 
 

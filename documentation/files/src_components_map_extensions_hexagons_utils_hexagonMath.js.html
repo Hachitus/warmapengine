@@ -38,32 +38,35 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
-                                <li><a href="../classes/baseEventlisteners.html">baseEventlisteners</a></li>
                                 <li><a href="../classes/eventListeners.html">eventListeners</a></li>
+                                <li><a href="../classes/extensions.baseEventlisteners.html">extensions.baseEventlisteners</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaTerrain.html">extensions.hexagons.ObjectHexaTerrain</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaUnit.html">extensions.hexagons.ObjectHexaUnit</a></li>
+                                <li><a href="../classes/extensions.hexagons.selectHexagonObject.html">extensions.hexagons.selectHexagonObject</a></li>
+                                <li><a href="../classes/extensions.hexagons.setupHexagonClick.html">extensions.hexagons.setupHexagonClick</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.html">extensions.hexagons.utils</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.getHexagonPoints.utils.html">extensions.hexagons.utils.getHexagonPoints.utils</a></li>
+                                <li><a href="../classes/extensions.mapDrag.html">extensions.mapDrag</a></li>
+                                <li><a href="../classes/extensions.mapMovement.html">extensions.mapMovement</a></li>
+                                <li><a href="../classes/extensions.mapZoom.html">extensions.mapZoom</a></li>
                                 <li><a href="../classes/generalUtils.polyfills.html">generalUtils.polyfills</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaTerrain.html">hexagonPlugin.ObjectHexaTerrain</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaUnit.html">hexagonPlugin.ObjectHexaUnit</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupHexagonClick.html">hexagonPlugin.setupHexagonClick</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupObject_select_hexagon.html">hexagonPlugin.setupObject_select_hexagon</a></li>
-                                <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
-                                <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
-                                <li><a href="../classes/MapLayer.html">MapLayer</a></li>
-                                <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
-                                <li><a href="../classes/mapMovement.html">mapMovement</a></li>
-                                <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
-                                <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
+                                <li><a href="../classes/maplayers.MapLayer.html">maplayers.MapLayer</a></li>
+                                <li><a href="../classes/maplayers.MapLayerParent.html">maplayers.MapLayerParent</a></li>
+                                <li><a href="../classes/maplayers.MapSubcontainer.html">maplayers.MapSubcontainer</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
-                                <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
-                                <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
+                                <li><a href="../classes/objects.ObjectSprite.html">objects.ObjectSprite</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteTerrain.html">objects.ObjectSpriteTerrain</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteUnit.html">objects.ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIs.default.html">UIs.default</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -114,168 +117,160 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-&#x27;use strict&#x27;;
+(function () {
+  &#x27;use strict&#x27;;
 
-/*-----------------------
----------- API ----------
------------------------*/
-export default {
-  calcShortDiagonal,
-  calcLongDiagonal,
-  getHexagonPoints,
-  hexaHitTest
-};
-export { calcShortDiagonal as calcShortDiagonal };
-export { calcLongDiagonal as calcLongDiagonal };
-export { getHexagonPoints as getHexagonPoints };
-export { hexaHitTest as hexaHitTest };
+  /*-----------------------
+  ---------- API ----------
+  -----------------------*/
+  window.flatworld.extensions.hexagons.utils.calcShortDiagonal = calcShortDiagonal;
+  window.flatworld.extensions.hexagons.utils.calcLongDiagonal = calcLongDiagonal;
+  window.flatworld.extensions.hexagons.utils.hexaHitTest = hexaHitTest;
+  window.flatworld.extensions.hexagons.utils.getClosestHexagonCenter = getClosestHexagonCenter;
+  window.flatworld.extensions.hexagons.utils.init = init;
 
-/**
- * Utility module, for making different calculations and tests when hexagon based grid map in use
- *
- * @class hexagonPlugin.utils
- */
-/*-----------------------
---------- PUBLIC --------
------------------------*/
-/**
- * Calculates the hexagons:
- * innerDiameter
- * - Vertical / Flat hexagons height
- * - Horizontal / pointy hexagons width
- *
- * @method calcLongDiagonal
- * @static
- * @param {float} value - Usually the radius of the hexagon
- * @param {string} type - If you provide something else than radius, where the calculation is based from
- * @param {integer} precision - How many decimals to round
- */
-function calcShortDiagonal(value, type = &quot;radius&quot;, precision = 3) {
-  var answer;
+  /*-----------------------
+  ------- VARIABLES -------
+  -----------------------*/
+  var point, radius;
 
-  precision = Math.round(precision);
+  /**
+   * Utility module, for making different calculations and tests when hexagon based grid map in use
+   *
+   * @class extensions.hexagons.utils
+   */
+  /*-----------------------
+  --------- PUBLIC --------
+  -----------------------*/
+  /**
+   * Calculates the hexagons:
+   * innerDiameter
+   * - Vertical / Flat hexagons height
+   * - Horizontal / pointy hexagons width
+   *
+   * @method calcLongDiagonal
+   * @static
+   * @param {float} value - Usually the radius of the hexagon
+   * @param {string} type - If you provide something else than radius, where the calculation is based from
+   * @param {integer} precision - How many decimals to round
+   */
+  function calcShortDiagonal(value, type = &quot;radius&quot;, precision = 3) {
+    var answer;
 
-  if (type === &quot;radius&quot;) {
-    answer = value * Math.sqrt(3);
-  }
+    precision = Math.round(precision);
 
-  return Number( answer.toFixed(precision) );
-}
-/** Calculates the hexagons:
- * outerDiameter
- * - Vertical / Flat hexagons width
- * - Horizontal / pointy hexagons height
- *
- * @method calcLongDiagonal
- * @static
- * @param {float} value					Usually the radius of the hexagon
- * @param {string} type					If you provide something else than radius, where the calculation is based from
- * @param {integer} precision 	How many decimals to round
- */
-function calcLongDiagonal(value, type = &quot;radius&quot;, precision = 3) {
-  var answer;
-
-  if (type === &quot;radius&quot;) {
-    answer = value * 2;
-  }
-
-  return Number( answer.toFixed(precision) );
-}
-/**
- * @method getHexagonPoints
- * @static
- * @param {Float} radius			radius of the hexagon
- * @param {object} options		extra options, like generating horizontal hexagon points and
- * how many decimals to round
-*/
-function getHexagonPoints(radius, options = { isFlatTop: false, precision: 3 }) {
-  const OFFSET = options.isFlatTop ? 0 : 0.5;
-  const CENTER = {
-    x: radius,
-    y: radius
-  };
-  var angle = 2 * Math.PI / 6 * OFFSET;
-  var x = CENTER.x * Math.cos(angle);
-  var y = CENTER.y * Math.sin(angle);
-  var points = [];
-
-  points.push({x, y});
-
-  for (let i = 1; i &lt; 7; i++) {
-    angle = 2 * Math.PI / 6 * (i + OFFSET);
-    x = CENTER.x * Math.cos(angle);
-    y = CENTER.y * Math.sin(angle);
-
-    points.push({x, y});
-  }
-
-  return points;
-}
-/**
- * Test do the given coordinates hit the hexagon, given by the points container / array
- *
- * @static
- * @method hexaHitTest
- * @param  {PIXI.Point[]} points             Array of PIXI.points
- * @param  {Object} hitCoords         The coordinates to test against
- * @param  {Integer} hitCoords.x      X coordinate
- * @param  {Integer} hitCoords.y      Y coordinate
- * @param  {Object} offsetCoords      offsetCoordinates that are added to the hitCoordinates. Separate because these are outside the given array.
- * @param  {Integer} offsetCoords.x   X coordinate
- * @param  {Integer} offsetCoords.y   Y coordinate
- * @return {Boolean}                  Is the coordinate inside the hexagon or not
- */
-
-function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) {
-  var realPolygonPoints;
-
-  realPolygonPoints = points.map(point =&gt; {
-    return {
-      x: point.x + offsetCoords.x,
-      y: point.y + offsetCoords.y
-    };
-  });
-
-  return pointInPolygon(hitCoords, realPolygonPoints);
-}
-
-/*-----------------------
---------- PRIVATE -------
------------------------*/
-/**
- * credits to: https://github.com/substack/point-in-polygon
- * Tests whether the given point / coordinate is inside the given points. Assuming the points form a polygon
- *
- * @static
- * @private
- * @method pointInPolygon
- * @param  {Object} point             The coordinates to test against
- * @param  {Integer} hitCoords.x      X coordinate
- * @param  {Integer} hitCoords.y      Y coordinate
- * @param  {Integer[]} vs             The points of the polygon to test [0] === x-point, [1] === y-point
- * @return {Boolean}                  Is the coordinate inside the hexagon or not
- */
-function pointInPolygon(point, vs) {
-  var x = point.x;
-  var y = point.y;
-  var inside = false;
-  var xi, xj, yi, yj, intersect;
-
-  for (let i = 0, j = vs.length - 1; i &lt; vs.length; j = i++) {
-    xi = vs[i].x;
-    yi = vs[i].y;
-    xj = vs[j].x;
-    yj = vs[j].y;
-    intersect = ((yi &gt; y) !== (yj &gt; y)) &amp;&amp;
-        (x &lt; (xj - xi) * (y - yi) / (yj - yi) + xi);
-
-    if (intersect) {
-      inside = !inside;
+    if (type === &quot;radius&quot;) {
+      answer = value * Math.sqrt(3);
     }
-  }
 
-  return inside;
-}
+    return Number( answer.toFixed(precision) );
+  }
+  /** Calculates the hexagons:
+   * outerDiameter
+   * - Vertical / Flat hexagons width
+   * - Horizontal / pointy hexagons height
+   *
+   * @method calcLongDiagonal
+   * @static
+   * @param {float} value         Usually the radius of the hexagon
+   * @param {string} type         If you provide something else than radius, where the calculation is based from
+   * @param {integer} precision   How many decimals to round
+   */
+  function calcLongDiagonal(value, type = &quot;radius&quot;, precision = 3) {
+    var answer;
+
+    if (type === &quot;radius&quot;) {
+      answer = value * 2;
+    }
+
+    return Number( answer.toFixed(precision) );
+  }
+  /**
+   * Test do the given coordinates hit the hexagon, given by the points container / array
+   *
+   * @static
+   * @method hexaHitTest
+   * @param  {PIXI.Point[]} points             Array of PIXI.points
+   * @param  {Object} hitCoords         The coordinates to test against
+   * @param  {Integer} hitCoords.x      X coordinate
+   * @param  {Integer} hitCoords.y      Y coordinate
+   * @param  {Object} offsetCoords      offsetCoordinates that are added to the hitCoordinates. Separate because these are outside the
+   * given array.
+   * @param  {Integer} offsetCoords.x   X coordinate
+   * @param  {Integer} offsetCoords.y   Y coordinate
+   * @return {Boolean}                  Is the coordinate inside the hexagon or not
+   */
+
+  function hexaHitTest(points, hitCoords = {x:0, y:0}, offsetCoords = {x:0, y:0}) {
+    var realPolygonPoints;
+
+    realPolygonPoints = points.map(point =&gt; {
+      return {
+        x: point.x + offsetCoords.x,
+        y: point.y + offsetCoords.y
+      };
+    });
+
+    return pointInPolygon(hitCoords, realPolygonPoints);
+  }
+  /**
+   * Set hexagon radius
+   *
+   * @static
+   * @method setRadius
+   * @param {Number} givenRadius    The radius of the hexagon
+   */
+  function init(givenRadius, givenPoint) {
+    radius = givenRadius;
+    point = givenPoint;
+  }
+  /**
+   * Calculates the closest hexagon center coordinates, for the given coordinates. So aligning the given coordinates to proper hexagon
+   * coordinates
+   *
+   * @static
+   * @method getClosestHexagonCenter
+   * @requires setRadius has to be set
+   */
+  function getClosestHexagonCenter(coordinates) {}
+  /*-----------------------
+  --------- PRIVATE -------
+  -----------------------*/
+  /**
+   * credits to: https://github.com/substack/point-in-polygon
+   * Tests whether the given point / coordinate is inside the given points. Assuming the points form a polygon
+   *
+   * @static
+   * @private
+   * @method pointInPolygon
+   * @param  {Object} point             The coordinates to test against
+   * @param  {Integer} hitCoords.x      X coordinate
+   * @param  {Integer} hitCoords.y      Y coordinate
+   * @param  {Integer[]} vs             The points of the polygon to test [0] === x-point, [1] === y-point
+   * @return {Boolean}                  Is the coordinate inside the hexagon or not
+   */
+  function pointInPolygon(point, vs) {
+    var x = point.x;
+    var y = point.y;
+    var inside = false;
+    var xi, xj, yi, yj, intersect;
+
+    for (let i = 0, j = vs.length - 1; i &lt; vs.length; j = i++) {
+      xi = vs[i].x;
+      yi = vs[i].y;
+      xj = vs[j].x;
+      yj = vs[j].y;
+      intersect = ((yi &gt; y) !== (yj &gt; y)) &amp;&amp;
+          (x &lt; (xj - xi) * (y - yi) / (yj - yi) + xi);
+
+      if (intersect) {
+        inside = !inside;
+      }
+    }
+
+    return inside;
+  }
+})();
     </pre>
 </div>
                     </div>

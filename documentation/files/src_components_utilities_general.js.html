@@ -38,32 +38,35 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
-                                <li><a href="../classes/baseEventlisteners.html">baseEventlisteners</a></li>
                                 <li><a href="../classes/eventListeners.html">eventListeners</a></li>
+                                <li><a href="../classes/extensions.baseEventlisteners.html">extensions.baseEventlisteners</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaTerrain.html">extensions.hexagons.ObjectHexaTerrain</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaUnit.html">extensions.hexagons.ObjectHexaUnit</a></li>
+                                <li><a href="../classes/extensions.hexagons.selectHexagonObject.html">extensions.hexagons.selectHexagonObject</a></li>
+                                <li><a href="../classes/extensions.hexagons.setupHexagonClick.html">extensions.hexagons.setupHexagonClick</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.html">extensions.hexagons.utils</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.getHexagonPoints.utils.html">extensions.hexagons.utils.getHexagonPoints.utils</a></li>
+                                <li><a href="../classes/extensions.mapDrag.html">extensions.mapDrag</a></li>
+                                <li><a href="../classes/extensions.mapMovement.html">extensions.mapMovement</a></li>
+                                <li><a href="../classes/extensions.mapZoom.html">extensions.mapZoom</a></li>
                                 <li><a href="../classes/generalUtils.polyfills.html">generalUtils.polyfills</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaTerrain.html">hexagonPlugin.ObjectHexaTerrain</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaUnit.html">hexagonPlugin.ObjectHexaUnit</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupHexagonClick.html">hexagonPlugin.setupHexagonClick</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupObject_select_hexagon.html">hexagonPlugin.setupObject_select_hexagon</a></li>
-                                <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
-                                <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
-                                <li><a href="../classes/MapLayer.html">MapLayer</a></li>
-                                <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
-                                <li><a href="../classes/mapMovement.html">mapMovement</a></li>
-                                <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
-                                <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
+                                <li><a href="../classes/maplayers.MapLayer.html">maplayers.MapLayer</a></li>
+                                <li><a href="../classes/maplayers.MapLayerParent.html">maplayers.MapLayerParent</a></li>
+                                <li><a href="../classes/maplayers.MapSubcontainer.html">maplayers.MapSubcontainer</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
-                                <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
-                                <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
+                                <li><a href="../classes/objects.ObjectSprite.html">objects.ObjectSprite</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteTerrain.html">objects.ObjectSpriteTerrain</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteUnit.html">objects.ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIs.default.html">UIs.default</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -114,37 +117,57 @@
 
 <div class="file">
     <pre class="code prettyprint linenums">
-&#x27;use strict&#x27;;
+(function () {
+  &#x27;use strict&#x27;;
 
-/*-----------------------
----------- API ----------
------------------------*/
-export var arrays = setupArrays();
+  /*-----------------------
+  ---------- API ----------
+  -----------------------*/
+  window.flatworld.generalUtils.arrays = setupArrays();
 
-/*-----------------------
---------- PUBLIC --------
------------------------*/
-/**
- * Array manipulation
- *
- * @class utilities.arrays
- */
-function setupArrays() {
-  return {
-    flatten2Levels
-  };
-
+  /*-----------------------
+  --------- PUBLIC --------
+  -----------------------*/
   /**
-   * Flattern 2 levels deep, 2-dimensional arrays. Credits: http://stackoverflow.com/a/15030117/1523545
+   * Array manipulation
    *
-   * @method flatten2Levels
-   * @param  {Array} arr        Array to flatten
-   * @return {Array}            Flattened array
+   * @class utilities.arrays
    */
-  function flatten2Levels(arr) {
-    return [].concat.apply([], arr);
+  function setupArrays() {
+    return {
+      flatten2Levels,
+      chunkArray
+    };
+
+    /**
+     * Flattern 2 levels deep, 2-dimensional arrays. Credits: http://stackoverflow.com/a/15030117/1523545
+     *
+     * @method flatten2Levels
+     * @param  {Array} arr        Array to flatten
+     * @return {Array}            Flattened array
+     */
+    function flatten2Levels(arr) {
+      return [].concat.apply([], arr);
+    }
+    /**
+     * This function takes an array and slices it to proper chunks.
+     *
+     * @method chunkArray
+     * @param {Array} array             The array to be chunked
+     * @param {Integer} chunksize       size of the chunks
+     * from: http://stackoverflow.com/a/34847417/1523545
+     */
+    function chunkArray(array, chunkSize) {
+      var result = [];
+
+      for (var i = 0; i &lt; array.length; i += chunkSize) {
+        result.push(array.slice(i, chunkSize + i));
+      }
+
+      return result;
+    }
   }
-}
+})();
     </pre>
 </div>
                     </div>

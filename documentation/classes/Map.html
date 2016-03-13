@@ -38,32 +38,35 @@
                 
                         <div id="api-tabview-panel">
                             <ul id="api-classes" class="apis classes">
-                                <li><a href="../classes/baseEventlisteners.html">baseEventlisteners</a></li>
                                 <li><a href="../classes/eventListeners.html">eventListeners</a></li>
+                                <li><a href="../classes/extensions.baseEventlisteners.html">extensions.baseEventlisteners</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaTerrain.html">extensions.hexagons.ObjectHexaTerrain</a></li>
+                                <li><a href="../classes/extensions.hexagons.ObjectHexaUnit.html">extensions.hexagons.ObjectHexaUnit</a></li>
+                                <li><a href="../classes/extensions.hexagons.selectHexagonObject.html">extensions.hexagons.selectHexagonObject</a></li>
+                                <li><a href="../classes/extensions.hexagons.setupHexagonClick.html">extensions.hexagons.setupHexagonClick</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.html">extensions.hexagons.utils</a></li>
+                                <li><a href="../classes/extensions.hexagons.utils.getHexagonPoints.utils.html">extensions.hexagons.utils.getHexagonPoints.utils</a></li>
+                                <li><a href="../classes/extensions.mapDrag.html">extensions.mapDrag</a></li>
+                                <li><a href="../classes/extensions.mapMovement.html">extensions.mapMovement</a></li>
+                                <li><a href="../classes/extensions.mapZoom.html">extensions.mapZoom</a></li>
                                 <li><a href="../classes/generalUtils.polyfills.html">generalUtils.polyfills</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaTerrain.html">hexagonPlugin.ObjectHexaTerrain</a></li>
-                                <li><a href="../classes/hexagonPlugin.ObjectHexaUnit.html">hexagonPlugin.ObjectHexaUnit</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupHexagonClick.html">hexagonPlugin.setupHexagonClick</a></li>
-                                <li><a href="../classes/hexagonPlugin.setupObject_select_hexagon.html">hexagonPlugin.setupObject_select_hexagon</a></li>
-                                <li><a href="../classes/hexagonPlugin.utils.html">hexagonPlugin.utils</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
                                 <li><a href="../classes/Map.html">Map</a></li>
+                                <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
-                                <li><a href="../classes/mapDrag.html">mapDrag</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
-                                <li><a href="../classes/MapLayer.html">MapLayer</a></li>
-                                <li><a href="../classes/MapLayerParent.html">MapLayerParent</a></li>
-                                <li><a href="../classes/mapMovement.html">mapMovement</a></li>
-                                <li><a href="../classes/MapSubcontainer.html">MapSubcontainer</a></li>
-                                <li><a href="../classes/mapZoom.html">mapZoom</a></li>
-                                <li><a href="../classes/Object_sprite.html">Object_sprite</a></li>
+                                <li><a href="../classes/maplayers.MapLayer.html">maplayers.MapLayer</a></li>
+                                <li><a href="../classes/maplayers.MapLayerParent.html">maplayers.MapLayerParent</a></li>
+                                <li><a href="../classes/maplayers.MapSubcontainer.html">maplayers.MapSubcontainer</a></li>
+                                <li><a href="../classes/mapStates.html">mapStates</a></li>
                                 <li><a href="../classes/ObjectManager.html">ObjectManager</a></li>
-                                <li><a href="../classes/ObjectSpriteTerrain.html">ObjectSpriteTerrain</a></li>
-                                <li><a href="../classes/ObjectSpriteUnit.html">ObjectSpriteUnit</a></li>
+                                <li><a href="../classes/objects.ObjectSprite.html">objects.ObjectSprite</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteTerrain.html">objects.ObjectSpriteTerrain</a></li>
+                                <li><a href="../classes/objects.ObjectSpriteUnit.html">objects.ObjectSpriteUnit</a></li>
                                 <li><a href="../classes/Preload.html">Preload</a></li>
                                 <li><a href="../classes/UI.html">UI</a></li>
-                                <li><a href="../classes/UI_default.html">UI_default</a></li>
-                                <li><a href="../classes/UI_templateBase.html">UI_templateBase</a></li>
+                                <li><a href="../classes/UIs.default.html">UIs.default</a></li>
+                                <li><a href="../classes/UITemplateBase.html">UITemplateBase</a></li>
                                 <li><a href="../classes/utilities.arrays.html">utilities.arrays</a></li>
                                 <li><a href="../classes/utilities.environmentDetections.html">utilities.environmentDetections</a></li>
                                 <li><a href="../classes/utils.dataManipulation.html">utils.dataManipulation</a></li>
@@ -115,7 +118,7 @@
 
 
         <div class="foundat">
-            Defined in: <a href="../files/src_components_map_core_Map.js.html#l23"><code>src\components\map\core\Map.js:23</code></a>
+            Defined in: <a href="../files/src_components_map_core_Flatworld.js.html#l24"><code>src\components\map\core\Flatworld.js:24</code></a>
         </div>
 
 
@@ -124,18 +127,26 @@
 
 <div class="box intro">
     <p>#Main class for the engine</p>
-<p>Initializes the whole structure and plugins and is used as primary API for all operations. This class is e.g. passed to every plugin that get initialized with their init-method.</p>
+<p>Initializes the whole structure and plugins and is used as primary API for all operations. This class is e.g. passed to every
+plugin that get initialized with their init-method.</p>
 <p>You use the class by instantiating it (new) and then finishing initialization with init-method. Please see examples below.</p>
-<p>The biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the tests/data-folder, but the factory is responsible for creating the objects, so you can use your own factory implementation. So to understand more, please see e.g. factories.horizontalHexaFactory.</p>
-<p>The map consists of layer on top of each other. The example is best understood when thinking typical war strategy game. The structure is this:</p>
+<p>The biggest part of creating the map, is the data structure. There is a clear data structure that you can see from the
+tests/data-folder, but the factory is responsible for creating the objects, so you can use your own factory implementation. So to
+understand more, please see e.g. factories.horizontalHexaFactory.</p>
+<p>The map consists of layer on top of each other. The example is best understood when thinking typical war strategy game. The
+structure is this:</p>
 <ol>
 <li>StaticLayer: Handles things like scaling / zooming the map</li>
-<li>MovableLayer: Obviously handles movement of the map. Also is a good place to get map coordinates. Since getting global coordinates won't help you much, half of the time.</li>
+<li>MovableLayer: Obviously handles movement of the map. Also is a good place to get map coordinates. Since getting global
+coordinates won't help you much, half of the time.</li>
 <li>Different layers: like units, terrain, fog of war, UIs etc. Can also contains special layers like dynamically changed UIlayers.</li>
-<li>possible subcontainers (used for optimized object selection and map movement). Can also contains special layers like dynamically changed UIlayers.</li>
+<li>possible subcontainers (used for optimized object selection and map movement). Can also contains special layers like dynamically
+changed UIlayers.</li>
 <li>Individual objects, like units, terrains, cities etc...</li>
 </ol>
-<p>Plugins can be added with activatePlugins-method by sending them to the class. Plugins must always implement init-method, which receives Map instance. Plugins are not yet restricted what they can do and can add functionality without touching map or can modify objects or their prototypes through access to Map instance.</p>
+<p>Plugins can be added with activatePlugins-method by sending them to the class. Plugins must always implement init-method, which
+receives Map instance. Plugins are not yet restricted what they can do and can add functionality without touching map or can modify
+objects or their prototypes through access to Map instance.</p>
 
 </div>
 
@@ -171,7 +182,7 @@
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l23"><code>src\components\map\core\Map.js:23</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l24"><code>src\components\map\core\Flatworld.js:24</code></a>
         </p>
 
 
@@ -251,7 +262,8 @@
                                     <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
 
                                 <div class="param-description">
-                                    <p>Subcontainers size in pixels. If given, will activate subcontainers. If not given or false, subcontainers are not used.area.</p>
+                                    <p>Subcontainers size in pixels. If given, will activate subcontainers. If not
+given or false, subcontainers are not used.area.</p>
 
                                 </div>
 
@@ -282,7 +294,8 @@
 
 
                     <div class="param-description">
-                        <p>Callback function for tracking FPS in renderer. So this is used for debugging and optimizing.</p>
+                        <p>Callback function for tracking FPS in renderer. So this is used for debugging
+and optimizing.</p>
 
                     </div>
 
@@ -342,10 +355,6 @@ promises = map.init( gameData.pluginsToActivate, mapData.startPoint );</code></p
 
                             </li>
                             <li class="index-item method private">
-                                <a href="#method__resizeCanvas">_resizeCanvas</a>
-
-                            </li>
-                            <li class="index-item method private">
                                 <a href="#method__retrieveObjects">_retrieveObjects</a>
 
                             </li>
@@ -359,10 +368,6 @@ promises = map.init( gameData.pluginsToActivate, mapData.startPoint );</code></p
                             </li>
                             <li class="index-item method">
                                 <a href="#method_addUIObject">addUIObject</a>
-
-                            </li>
-                            <li class="index-item method">
-                                <a href="#method_addUIObjects">addUIObjects</a>
 
                             </li>
                             <li class="index-item method private">
@@ -446,10 +451,6 @@ promises = map.init( gameData.pluginsToActivate, mapData.startPoint );</code></p
                                 <a href="#method_removeUIObject">removeUIObject</a>
 
                             </li>
-                            <li class="index-item method private">
-                                <a href="#method_setFullScreen">setFullScreen</a>
-
-                            </li>
                             <li class="index-item method">
                                 <a href="#method_setPrototype">setPrototype</a>
 
@@ -498,6 +499,12 @@ promises = map.init( gameData.pluginsToActivate, mapData.startPoint );</code></p
                                 <a href="#attr_canvas">canvas</a>
                             </li>
                             <li class="index-item attr">
+                                <a href="#attr_currentlySelectedObjects">currentlySelectedObjects</a>
+                            </li>
+                            <li class="index-item attr">
+                                <a href="#attr_isTouch">isTouch</a>
+                            </li>
+                            <li class="index-item attr">
                                 <a href="#attr_layerTypes">layerTypes</a>
                             </li>
                             <li class="index-item attr">
@@ -514,6 +521,9 @@ promises = map.init( gameData.pluginsToActivate, mapData.startPoint );</code></p
                             </li>
                             <li class="index-item attr">
                                 <a href="#attr_trackFPSCB">trackFPSCB</a>
+                            </li>
+                            <li class="index-item attr">
+                                <a href="#attr_VERSION">VERSION</a>
                             </li>
                     </ul>
                 </div>
@@ -539,7 +549,7 @@ promises = map.init( gameData.pluginsToActivate, mapData.startPoint );</code></p
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l694"><code>src\components\map\core\Map.js:694</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l747"><code>src\components\map\core\Flatworld.js:747</code></a>
         </p>
 
 
@@ -584,7 +594,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l633"><code>src\components\map\core\Map.js:633</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l711"><code>src\components\map\core\Flatworld.js:711</code></a>
         </p>
 
 
@@ -662,7 +672,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l647"><code>src\components\map\core\Map.js:647</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l725"><code>src\components\map\core\Flatworld.js:725</code></a>
         </p>
 
 
@@ -714,38 +724,6 @@ callback is always set and should not be removed or overruled</p>
 
 
 </div>
-<div id="method__resizeCanvas" class="method item private">
-    <h3 class="name"><code>_resizeCanvas</code></h3>
-
-        <span class="paren">()</span>
-
-
-
-        <span class="flag private">private</span>
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l680"><code>src\components\map\core\Map.js:680</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Resizes the canvas to the current most wide and high element status. Basically canvas size === window size.</p>
-
-    </div>
-
-
-
-
-</div>
 <div id="method__retrieveObjects" class="method item private">
     <h3 class="name"><code>_retrieveObjects</code></h3>
 
@@ -774,7 +752,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l604"><code>src\components\map\core\Map.js:604</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l682"><code>src\components\map\core\Flatworld.js:682</code></a>
         </p>
 
 
@@ -944,7 +922,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l426"><code>src\components\map\core\Map.js:426</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l488"><code>src\components\map\core\Flatworld.js:488</code></a>
         </p>
 
 
@@ -952,7 +930,8 @@ callback is always set and should not be removed or overruled</p>
     </div>
 
     <div class="description">
-        <p>Activate plugin for the map. Plugins need .pluginName property and .init-method. Plugins init-method activates the plugins and we call them in Map. Plugins init-metho receivse this (Map instance) as their only parameter.</p>
+        <p>Activate plugin for the map. Plugins need .pluginName property and .init-method. Plugins init-method activates the plugins and we
+call them in Map. Plugins init-metho receivse this (Map instance) as their only parameter.</p>
 
     </div>
 
@@ -975,6 +954,15 @@ callback is always set and should not be removed or overruled</p>
         </div>
 
 
+        <div class="throws">
+            <h4>Throws:</h4>
+
+            <div class="throws-description">
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Error" class="crosslink external" target="_blank">Error</a></span>:
+                    <p>Throws a general error if there is an issue activating the plugin</p>
+
+            </div>
+        </div>
 
 </div>
 <div id="method_addLayer" class="method item">
@@ -983,7 +971,7 @@ callback is always set and should not be removed or overruled</p>
         <span class="paren">()</span>
 
         <span class="returns-inline">
-            <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a></span>
+            <span class="type">MapLayer</span>
         </span>
 
 
@@ -995,7 +983,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l295"><code>src\components\map\core\Map.js:295</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l323"><code>src\components\map\core\Flatworld.js:323</code></a>
         </p>
 
 
@@ -1012,7 +1000,7 @@ callback is always set and should not be removed or overruled</p>
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a></span>:
+                        <span class="type">MapLayer</span>:
                     <p>created MapLayer instance</p>
 
             </div>
@@ -1044,7 +1032,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l228"><code>src\components\map\core\Map.js:228</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l269"><code>src\components\map\core\Flatworld.js:269</code></a>
         </p>
 
 
@@ -1066,86 +1054,18 @@ callback is always set and should not be removed or overruled</p>
 
 
                     <div class="param-description">
-                        <p>Type of the layer. layerTypes.STATIC of layerTypes.MOVABLE.</p>
+                        <p>Type of the layer. <a href="http://this.layerTypes.STATIC.id">this.layerTypes.STATIC.id</a> or <a href="http://layerTypes.MOVABLE.id">layerTypes.MOVABLE.id</a>.</p>
 
                     </div>
 
                 </li>
                 <li class="param">
                         <code class="param-name">object</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a> | <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
 
 
                     <div class="param-description">
                         <p>The object to be attached as UI object.</p>
-
-                    </div>
-
-                </li>
-            </ul>
-        </div>
-
-
-
-</div>
-<div id="method_addUIObjects" class="method item">
-    <h3 class="name"><code>addUIObjects</code></h3>
-
-        <div class="args">
-            <span class="paren">(</span><ul class="args-list inline commas">
-                <li class="arg">
-                        <code>layerType</code>
-                </li>
-                <li class="arg">
-                        <code>objects</code>
-                </li>
-            </ul><span class="paren">)</span>
-        </div>
-
-
-
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l262"><code>src\components\map\core\Map.js:262</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Adds an UI object to the map. This method adds it to the given layer and removes it with removeUIObject-method.</p>
-
-    </div>
-
-        <div class="params">
-            <h4>Parameters:</h4>
-
-            <ul class="params-list">
-                <li class="param">
-                        <code class="param-name">layerType</code>
-                        <span class="type">Integer</span>
-
-
-                    <div class="param-description">
-                        <p>map.layerTypes holds the constants used in this.</p>
-
-                    </div>
-
-                </li>
-                <li class="param">
-                        <code class="param-name">objects</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
-
-
-                    <div class="param-description">
-                        <p>Object that are added as UI objects</p>
 
                     </div>
 
@@ -1182,7 +1102,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l743"><code>src\components\map\core\Map.js:743</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l806"><code>src\components\map\core\Flatworld.js:806</code></a>
         </p>
 
 
@@ -1247,7 +1167,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l387"><code>src\components\map\core\Map.js:387</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l447"><code>src\components\map\core\Flatworld.js:447</code></a>
         </p>
 
 
@@ -1255,7 +1175,8 @@ callback is always set and should not be removed or overruled</p>
     </div>
 
     <div class="description">
-        <p>Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches the ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.</p>
+        <p>Cache the map. This provides performance boost when used correctly. CacheMap iterates through all the layers on the map and caches
+the ones that return true from isCached-method. NOT WORKING YET. CACHING IMPLEMENTED SOON.</p>
 
     </div>
 
@@ -1295,7 +1216,7 @@ callback is always set and should not be removed or overruled</p>
         </div>
 
         <span class="returns-inline">
-            <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a></span>
+            <span class="type">MapLayer</span>
         </span>
 
 
@@ -1307,7 +1228,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l274"><code>src\components\map\core\Map.js:274</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l302"><code>src\components\map\core\Flatworld.js:302</code></a>
         </p>
 
 
@@ -1378,7 +1299,7 @@ callback is always set and should not be removed or overruled</p>
                                     <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
 
                                 <div class="param-description">
-                                    <p>To which layer will this layer be added to as UILayer</p>
+                                    <p>To which layer will this layer be added to as UILayer. Default false</p>
 
                                 </div>
 
@@ -1392,7 +1313,7 @@ callback is always set and should not be removed or overruled</p>
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a></span>:
+                        <span class="type">MapLayer</span>:
                     <p>The created UI layer</p>
 
             </div>
@@ -1415,7 +1336,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l220"><code>src\components\map\core\Map.js:220</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l261"><code>src\components\map\core\Flatworld.js:261</code></a>
         </p>
 
 
@@ -1449,7 +1370,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l507"><code>src\components\map\core\Map.js:507</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l578"><code>src\components\map\core\Flatworld.js:578</code></a>
         </p>
 
 
@@ -1480,7 +1401,7 @@ callback is always set and should not be removed or overruled</p>
         <span class="paren">()</span>
 
         <span class="returns-inline">
-            <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a> | PIXI.Container | PIXI.ParticleContainer</span>
+            <span class="type">MapLayer | PIXI.Container | PIXI.ParticleContainer</span>
         </span>
 
 
@@ -1492,7 +1413,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l547"><code>src\components\map\core\Map.js:547</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l621"><code>src\components\map\core\Flatworld.js:621</code></a>
         </p>
 
 
@@ -1500,7 +1421,9 @@ callback is always set and should not be removed or overruled</p>
     </div>
 
     <div class="description">
-        <p>Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative to the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI elements, like effects that happen on certain point on the map.</p>
+        <p>Returns movable layer. This layer is the one that moves when the player moves the map. So this is used for things that are relative
+to the current map position the player is seeing. This can be used e.g. when you want to display some objects on the map or UI
+elements, like effects that happen on certain point on the map.</p>
 
     </div>
 
@@ -1509,7 +1432,7 @@ callback is always set and should not be removed or overruled</p>
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a> | PIXI.Container | PIXI.ParticleContainer</span>:
+                        <span class="type">MapLayer | PIXI.Container | PIXI.ParticleContainer</span>:
             </div>
         </div>
 
@@ -1542,7 +1465,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l457"><code>src\components\map\core\Map.js:457</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l523"><code>src\components\map\core\Flatworld.js:523</code></a>
         </p>
 
 
@@ -1550,7 +1473,8 @@ callback is always set and should not be removed or overruled</p>
     </div>
 
     <div class="description">
-        <p>Gets object under specific map coordinates. Uses the ObjectManagers retrieve method. Using subcontainers if they exist, other methods if not. If you provide type parameter, the method returns only object types that match it.</p>
+        <p>Gets object under specific map coordinates. Uses the ObjectManagers retrieve method. Using subcontainers if they exist, other
+methods if not. If you provide type parameter, the method returns only object types that match it.</p>
 
     </div>
 
@@ -1647,7 +1571,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l498"><code>src\components\map\core\Map.js:498</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l567"><code>src\components\map\core\Flatworld.js:567</code></a>
         </p>
 
 
@@ -1655,7 +1579,9 @@ callback is always set and should not be removed or overruled</p>
     </div>
 
     <div class="description">
-        <p>This returns the normal parent layers that we mostly use for manipulation everything. MovableLayer and staticLayer are built-in layers designed to provide the basic functionalities like zooming and moving the map. These layers provide everything that extends the map more.</p>
+        <p>This returns the normal parent layers that we mostly use for manipulation everything. MovableLayer and staticLayer are built-in
+layers designed to provide the basic functionalities like zooming and moving the map. These layers provide everything that extends
+the map more.</p>
 
     </div>
 
@@ -1690,7 +1616,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l556"><code>src\components\map\core\Map.js:556</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l632"><code>src\components\map\core\Flatworld.js:632</code></a>
         </p>
 
 
@@ -1698,7 +1624,7 @@ callback is always set and should not be removed or overruled</p>
     </div>
 
     <div class="description">
-        <p>Returns the PIXI renderer. Some situations might need this. For more advanced or PIXI specific cases.</p>
+        <p>Returns the PIXI renderer. Don't use this unless you must. For more advanced or PIXI specific cases.</p>
 
     </div>
 
@@ -1728,7 +1654,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l565"><code>src\components\map\core\Map.js:565</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l641"><code>src\components\map\core\Flatworld.js:641</code></a>
         </p>
 
 
@@ -1759,7 +1685,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l322"><code>src\components\map\core\Map.js:322</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l350"><code>src\components\map\core\Flatworld.js:350</code></a>
         </p>
 
 
@@ -1799,7 +1725,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l330"><code>src\components\map\core\Map.js:330</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l358"><code>src\components\map\core\Flatworld.js:358</code></a>
         </p>
 
 
@@ -1821,7 +1747,8 @@ callback is always set and should not be removed or overruled</p>
 
 
                     <div class="param-description">
-                        <p>Do we want to use Map coordinates or global / canvas coordinates. Default = false</p>
+                        <p>Do we want to use Map coordinates or global / canvas
+coordinates. Default = false</p>
 
                     </div>
 
@@ -1834,7 +1761,8 @@ callback is always set and should not be removed or overruled</p>
 
             <div class="returns-description">
                         <span class="type">X: Integer, y: Integer, width: Integer, height: Integer</span>:
-                    <p>}        x- and y-coordinates and the width and height of the viewport</p>
+                    <p>}        x- and y-coordinates and the width and height of the
+viewport</p>
 
             </div>
         </div>
@@ -1847,7 +1775,7 @@ callback is always set and should not be removed or overruled</p>
         <span class="paren">()</span>
 
         <span class="returns-inline">
-            <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a> | PIXI.Container | PIXI.ParticleContainer</span>
+            <span class="type">MapLayer | PIXI.Container | PIXI.ParticleContainer</span>
         </span>
 
 
@@ -1859,7 +1787,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l538"><code>src\components\map\core\Map.js:538</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l612"><code>src\components\map\core\Flatworld.js:612</code></a>
         </p>
 
 
@@ -1876,7 +1804,7 @@ callback is always set and should not be removed or overruled</p>
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a> | PIXI.Container | PIXI.ParticleContainer</span>:
+                        <span class="type">MapLayer | PIXI.Container | PIXI.ParticleContainer</span>:
             </div>
         </div>
 
@@ -1888,7 +1816,7 @@ callback is always set and should not be removed or overruled</p>
         <span class="paren">()</span>
 
         <span class="returns-inline">
-            <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a> | PIXI.Container | PIXI.ParticleContainer</span>
+            <span class="type">MapLayer | PIXI.Container | PIXI.ParticleContainer</span>
         </span>
 
 
@@ -1900,7 +1828,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l519"><code>src\components\map\core\Map.js:519</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l590"><code>src\components\map\core\Flatworld.js:590</code></a>
         </p>
 
 
@@ -1917,7 +1845,7 @@ callback is always set and should not be removed or overruled</p>
             <h4>Returns:</h4>
 
             <div class="returns-description">
-                        <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a> | PIXI.Container | PIXI.ParticleContainer</span>:
+                        <span class="type">MapLayer | PIXI.Container | PIXI.ParticleContainer</span>:
             </div>
         </div>
 
@@ -1956,7 +1884,7 @@ callback is always set and should not be removed or overruled</p>
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l172"><code>src\components\map\core\Map.js:172</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l210"><code>src\components\map\core\Flatworld.js:210</code></a>
         </p>
 
 
@@ -1964,7 +1892,8 @@ callback is always set and should not be removed or overruled</p>
     </div>
 
     <div class="description">
-        <p>This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since normally the plugins have to be activated before the map is shown.</p>
+        <p>This initializes the map and makes everything appear on the map and actually work. Also initializes the given plugins since
+normally the plugins have to be activated before the map is shown.</p>
 
     </div>
 
@@ -2023,7 +1952,8 @@ instead of separately passing them to activatePlugins method. You can provide th
 
 
                     <div class="param-description">
-                        <p>callback function for tick. Tick callback is initiated in every frame. So map draws happen during ticks.</p>
+                        <p>callback function for tick. Tick callback is initiated in every frame. So map draws
+happen during ticks.</p>
 
                     </div>
 
@@ -2059,7 +1989,8 @@ instead of separately passing them to activatePlugins method. You can provide th
 
             <div class="returns-description">
                         <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>:
-                    <p>Returns an array of Promises. If this is empty / zero. Then there is nothing to wait for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.</p>
+                    <p>Returns an array of Promises. If this is empty / zero. Then there is nothing to wait
+for, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.</p>
 
             </div>
         </div>
@@ -2084,7 +2015,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l378"><code>src\components\map\core\Map.js:378</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l438"><code>src\components\map\core\Flatworld.js:438</code></a>
         </p>
 
 
@@ -2131,7 +2062,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l358"><code>src\components\map\core\Map.js:358</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l414"><code>src\components\map\core\Flatworld.js:414</code></a>
         </p>
 
 
@@ -2139,7 +2070,9 @@ instead of separately passing them to activatePlugins method. You can provide th
     </div>
 
     <div class="description">
-        <p>Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale). Draws map after movement.</p>
+        <p>Moves the map the amount of given x and y pixels. Note that this is not the destination coordinate, but the amount of movement that
+the map should move. Internally it moves the movableLayer, taking into account necessary properties (like scale). Draws map after
+movement.</p>
 
     </div>
 
@@ -2153,7 +2086,8 @@ instead of separately passing them to activatePlugins method. You can provide th
 
 
                     <div class="param-description">
-                        <p>The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we want the map to move horizontally 5 pixels and vertically stay at the same position.</p>
+                        <p>The amount of x and y coordinates we want the map to move. I.e. { x: 5, y: 0 }. With this we
+want the map to move horizontally 5 pixels and vertically stay at the same position.</p>
 
                     </div>
 
@@ -2186,7 +2120,8 @@ instead of separately passing them to activatePlugins method. You can provide th
 
 
                     <div class="param-description">
-                        <p>THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN SCALING</p>
+                        <p>THIS IS EXPERIMENTAL, TO FIX THE INCORRECT EVENT COORDINATES THIS SEND TO mapEvents, WHEN
+SCALING</p>
 
                     </div>
 
@@ -2243,7 +2178,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l405"><code>src\components\map\core\Map.js:405</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l466"><code>src\components\map\core\Flatworld.js:466</code></a>
         </p>
 
 
@@ -2251,7 +2186,8 @@ instead of separately passing them to activatePlugins method. You can provide th
     </div>
 
     <div class="description">
-        <p>Activate all plugins for the map. Iterates through the given plugins we wish to activate and does the actual work in activatePlugin-method.</p>
+        <p>Activate all plugins for the map. Iterates through the given plugins we wish to activate and does the actual work in activatePlugin-
+method.</p>
 
     </div>
 
@@ -2306,7 +2242,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l347"><code>src\components\map\core\Map.js:347</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l403"><code>src\components\map\core\Flatworld.js:403</code></a>
         </p>
 
 
@@ -2324,7 +2260,7 @@ instead of separately passing them to activatePlugins method. You can provide th
             <ul class="params-list">
                 <li class="param">
                         <code class="param-name">layer</code>
-                        <span class="type"><a href="../classes/MapLayer.html" class="crosslink">MapLayer</a> | PIXI.Container | PIXI.ParticleContainer</span>
+                        <span class="type">MapLayer | PIXI.Container | PIXI.ParticleContainer</span>
 
 
                     <div class="param-description">
@@ -2348,7 +2284,7 @@ instead of separately passing them to activatePlugins method. You can provide th
                         <code>layer</code>
                 </li>
                 <li class="arg">
-                        <code>object</code>
+                        <code>objectName</code>
                 </li>
             </ul><span class="paren">)</span>
         </div>
@@ -2363,7 +2299,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l245"><code>src\components\map\core\Map.js:245</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l285"><code>src\components\map\core\Flatworld.js:285</code></a>
         </p>
 
 
@@ -2391,8 +2327,8 @@ instead of separately passing them to activatePlugins method. You can provide th
 
                 </li>
                 <li class="param">
-                        <code class="param-name">object</code>
-                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object" class="crosslink external" target="_blank">Object</a></span>
+                        <code class="param-name">objectName</code>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
 
 
                     <div class="param-description">
@@ -2403,38 +2339,6 @@ instead of separately passing them to activatePlugins method. You can provide th
                 </li>
             </ul>
         </div>
-
-
-
-</div>
-<div id="method_setFullScreen" class="method item private">
-    <h3 class="name"><code>setFullScreen</code></h3>
-
-        <span class="paren">()</span>
-
-
-
-        <span class="flag private">private</span>
-
-
-
-
-
-    <div class="meta">
-                <p>
-                Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l669"><code>src\components\map\core\Map.js:669</code></a>
-        </p>
-
-
-
-    </div>
-
-    <div class="description">
-        <p>Activate the browsers fullScreen mode and expand the canvas to fullsize</p>
-
-    </div>
-
 
 
 
@@ -2463,7 +2367,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l445"><code>src\components\map\core\Map.js:445</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l511"><code>src\components\map\core\Flatworld.js:511</code></a>
         </p>
 
 
@@ -2531,7 +2435,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l528"><code>src\components\map\core\Map.js:528</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l599"><code>src\components\map\core\Flatworld.js:599</code></a>
         </p>
 
 
@@ -2588,7 +2492,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l594"><code>src\components\map\core\Map.js:594</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l672"><code>src\components\map\core\Flatworld.js:672</code></a>
         </p>
 
 
@@ -2619,7 +2523,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l588"><code>src\components\map\core\Map.js:588</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l666"><code>src\components\map\core\Flatworld.js:666</code></a>
         </p>
 
 
@@ -2653,7 +2557,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l396"><code>src\components\map\core\Map.js:396</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l457"><code>src\components\map\core\Flatworld.js:457</code></a>
         </p>
 
 
@@ -2693,7 +2597,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l314"><code>src\components\map\core\Map.js:314</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l342"><code>src\components\map\core\Flatworld.js:342</code></a>
         </p>
 
 
@@ -2727,7 +2631,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l211"><code>src\components\map\core\Map.js:211</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l252"><code>src\components\map\core\Flatworld.js:252</code></a>
         </p>
 
 
@@ -2767,7 +2671,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l576"><code>src\components\map\core\Map.js:576</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l652"><code>src\components\map\core\Flatworld.js:652</code></a>
         </p>
 
 
@@ -2775,7 +2679,8 @@ instead of separately passing them to activatePlugins method. You can provide th
     </div>
 
     <div class="description">
-        <p>This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.</p>
+        <p>This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't
+implement your own, I suggest you use it.</p>
 
     </div>
 
@@ -2798,7 +2703,7 @@ instead of separately passing them to activatePlugins method. You can provide th
     <div class="meta">
                 <p>
                 Defined in
-        <a href="../files/src_components_map_core_Map.js.html#l582"><code>src\components\map\core\Map.js:582</code></a>
+        <a href="../files/src_components_map_core_Flatworld.js.html#l659"><code>src\components\map\core\Flatworld.js:659</code></a>
         </p>
 
 
@@ -2806,7 +2711,8 @@ instead of separately passing them to activatePlugins method. You can provide th
     </div>
 
     <div class="description">
-        <p>This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't implement your own, I suggest you use it.</p>
+        <p>This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't
+implement your own, I suggest you use it.</p>
 
     </div>
 
@@ -2836,7 +2742,7 @@ instead of separately passing them to activatePlugins method. You can provide th
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_components_map_core_Map.js.html#l111"><code>src\components\map\core\Map.js:111</code></a>
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l126"><code>src\components\map\core\Flatworld.js:126</code></a>
                             </p>
                     
                     
@@ -2900,6 +2806,164 @@ instead of separately passing them to activatePlugins method. You can provide th
                             </div>
                     
                     </div>
+                    <div id="attr_currentlySelectedObjects" class="attr item">
+                        <a name="config_currentlySelectedObjects"></a> 
+                        <h3 class="name"><code>currentlySelectedObjects</code></h3>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array" class="crosslink external" target="_blank">Array</a></span>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l179"><code>src\components\map\core\Flatworld.js:179</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>The object or objects that are currently selected for details and actions / orders. This gets set by other modules, like plugins.</p>
+                    
+                        </div>
+                    
+                    
+                            <div class="emits box">
+                                <h4>Fires event <code>currentlySelectedObjectsChange</code></h4>
+                    
+                                <p>
+                                Fires when the value for the configuration attribute <code>currentlySelectedObjects</code> is
+                                changed. You can listen for the event using the <code>on</code> method if you
+                                wish to be notified before the attribute's value has changed, or
+                                using the <code>after</code> method if you wish to be notified after the
+                                attribute's value has changed.
+                                </p>
+                    
+                                <div class="params">
+                                    <h4>Parameters:</h4>
+                    
+                                    <ul class="params-list">
+                                        <li class="param">
+                                            <code class="param-name">e</code>
+                                            <span class="type">EventFacade</span>
+                    
+                                            <div class="param-description">
+                                                An Event Facade object with the following
+                                                attribute-specific properties added:
+                                            </div>
+                    
+                                            <ul class="params-list">
+                                                <li class="param">
+                                                    <code class="param-name">prevVal</code>
+                                                    <span class="type">Any</span>
+                                                    <div class="param-description">The value of the attribute, prior to it being set.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">newVal</code>
+                                                    <span class="type">Any</span>
+                                                    <div class="param-description">The value the attribute is to be set to.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">attrName</code>
+                                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                                                    <div class="param-description">The name of the attribute being set.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">subAttrName</code>
+                                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                                                    <div class="param-description">If setting a property within the attribute's value, the name of the sub-attribute property being set.</div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                    
+                    </div>
+                    <div id="attr_isTouch" class="attr item">
+                        <a name="config_isTouch"></a> 
+                        <h3 class="name"><code>isTouch</code></h3>
+                        <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean" class="crosslink external" target="_blank">Boolean</a></span>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l172"><code>src\components\map\core\Flatworld.js:172</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Set variable showing if the device supports touch or not.</p>
+                    
+                        </div>
+                    
+                    
+                            <div class="emits box">
+                                <h4>Fires event <code>isTouchChange</code></h4>
+                    
+                                <p>
+                                Fires when the value for the configuration attribute <code>isTouch</code> is
+                                changed. You can listen for the event using the <code>on</code> method if you
+                                wish to be notified before the attribute's value has changed, or
+                                using the <code>after</code> method if you wish to be notified after the
+                                attribute's value has changed.
+                                </p>
+                    
+                                <div class="params">
+                                    <h4>Parameters:</h4>
+                    
+                                    <ul class="params-list">
+                                        <li class="param">
+                                            <code class="param-name">e</code>
+                                            <span class="type">EventFacade</span>
+                    
+                                            <div class="param-description">
+                                                An Event Facade object with the following
+                                                attribute-specific properties added:
+                                            </div>
+                    
+                                            <ul class="params-list">
+                                                <li class="param">
+                                                    <code class="param-name">prevVal</code>
+                                                    <span class="type">Any</span>
+                                                    <div class="param-description">The value of the attribute, prior to it being set.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">newVal</code>
+                                                    <span class="type">Any</span>
+                                                    <div class="param-description">The value the attribute is to be set to.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">attrName</code>
+                                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                                                    <div class="param-description">The name of the attribute being set.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">subAttrName</code>
+                                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                                                    <div class="param-description">If setting a property within the attribute's value, the name of the sub-attribute property being set.</div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                    
+                    </div>
                     <div id="attr_layerTypes" class="attr item">
                         <a name="config_layerTypes"></a> 
                         <h3 class="name"><code>layerTypes</code></h3>
@@ -2915,7 +2979,7 @@ instead of separately passing them to activatePlugins method. You can provide th
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_components_map_core_Map.js.html#l155"><code>src\components\map\core\Map.js:155</code></a>
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l186"><code>src\components\map\core\Flatworld.js:186</code></a>
                             </p>
                     
                     
@@ -2994,14 +3058,15 @@ instead of separately passing them to activatePlugins method. You can provide th
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_components_map_core_Map.js.html#l141"><code>src\components\map\core\Map.js:141</code></a>
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l156"><code>src\components\map\core\Flatworld.js:156</code></a>
                             </p>
                     
                     
                         </div>
                     
                         <div class="description">
-                            <p>ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks the map to select some object. This uses subcontainers when present.</p>
+                            <p>ObjectManager instance. Responsible for retrieving the objects from the map, on desired occasions. Like when the player clicks
+                    the map to select some object. This uses subcontainers when present.</p>
                     
                         </div>
                     
@@ -3073,14 +3138,15 @@ instead of separately passing them to activatePlugins method. You can provide th
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_components_map_core_Map.js.html#l148"><code>src\components\map\core\Map.js:148</code></a>
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l164"><code>src\components\map\core\Flatworld.js:164</code></a>
                             </p>
                     
                     
                         </div>
                     
                         <div class="description">
-                            <p>Is cache activated for this map at all. This is set for individual layers with a property, but without activating the cache for the whole map, the layers cache property is ignored.</p>
+                            <p>Is cache activated for this map at all. This is set for individual layers with a property, but without activating the cache for
+                    the whole map, the layers cache property is ignored.</p>
                     
                         </div>
                     
@@ -3152,7 +3218,7 @@ instead of separately passing them to activatePlugins method. You can provide th
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_components_map_core_Map.js.html#l119"><code>src\components\map\core\Map.js:119</code></a>
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l134"><code>src\components\map\core\Flatworld.js:134</code></a>
                             </p>
                     
                     
@@ -3231,7 +3297,7 @@ instead of separately passing them to activatePlugins method. You can provide th
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_components_map_core_Map.js.html#l127"><code>src\components\map\core\Map.js:127</code></a>
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l142"><code>src\components\map\core\Flatworld.js:142</code></a>
                             </p>
                     
                     
@@ -3310,7 +3376,7 @@ instead of separately passing them to activatePlugins method. You can provide th
                         <div class="meta">
                                     <p>
                                     Defined in
-                            <a href="../files/src_components_map_core_Map.js.html#l134"><code>src\components\map\core\Map.js:134</code></a>
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l149"><code>src\components\map\core\Flatworld.js:149</code></a>
                             </p>
                     
                     
@@ -3327,6 +3393,85 @@ instead of separately passing them to activatePlugins method. You can provide th
                     
                                 <p>
                                 Fires when the value for the configuration attribute <code>trackFPSCB</code> is
+                                changed. You can listen for the event using the <code>on</code> method if you
+                                wish to be notified before the attribute's value has changed, or
+                                using the <code>after</code> method if you wish to be notified after the
+                                attribute's value has changed.
+                                </p>
+                    
+                                <div class="params">
+                                    <h4>Parameters:</h4>
+                    
+                                    <ul class="params-list">
+                                        <li class="param">
+                                            <code class="param-name">e</code>
+                                            <span class="type">EventFacade</span>
+                    
+                                            <div class="param-description">
+                                                An Event Facade object with the following
+                                                attribute-specific properties added:
+                                            </div>
+                    
+                                            <ul class="params-list">
+                                                <li class="param">
+                                                    <code class="param-name">prevVal</code>
+                                                    <span class="type">Any</span>
+                                                    <div class="param-description">The value of the attribute, prior to it being set.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">newVal</code>
+                                                    <span class="type">Any</span>
+                                                    <div class="param-description">The value the attribute is to be set to.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">attrName</code>
+                                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                                                    <div class="param-description">The name of the attribute being set.</div>
+                                                </li>
+                                                <li class="param">
+                                                    <code class="param-name">subAttrName</code>
+                                                    <span class="type"><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/String" class="crosslink external" target="_blank">String</a></span>
+                                                    <div class="param-description">If setting a property within the attribute's value, the name of the sub-attribute property being set.</div>
+                                                </li>
+                                            </ul>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                    
+                    </div>
+                    <div id="attr_VERSION" class="attr item">
+                        <a name="config_VERSION"></a> 
+                        <h3 class="name"><code>VERSION</code></h3>
+                        <span class="type">SEMVER       http://semver.org/</span>
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                        <div class="meta">
+                                    <p>
+                                    Defined in
+                            <a href="../files/src_components_map_core_Flatworld.js.html#l202"><code>src\components\map\core\Flatworld.js:202</code></a>
+                            </p>
+                    
+                    
+                        </div>
+                    
+                        <div class="description">
+                            <p>Self explanatory</p>
+                    
+                        </div>
+                    
+                    
+                            <div class="emits box">
+                                <h4>Fires event <code>VERSIONChange</code></h4>
+                    
+                                <p>
+                                Fires when the value for the configuration attribute <code>VERSION</code> is
                                 changed. You can listen for the event using the <code>on</code> method if you
                                 wish to be notified before the attribute's value has changed, or
                                 using the <code>after</code> method if you wish to be notified after the

@@ -51,7 +51,7 @@
      *     var map = new Map(divContainer, mapOptions );
      *     promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
      *
-     * @class Map
+     * @class Flatworld
      * @constructor
      * @requires PIXI.JS framework in global namespace
      * @requires Canvas (webGL support recommended) HTML5-element supported.

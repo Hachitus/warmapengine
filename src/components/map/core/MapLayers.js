@@ -341,7 +341,7 @@
       var foundSubcontainers;
       var { filter } = options;
 
-      foundSubcontainers = getClosestSubcontainers(this, coordinates, { filter });
+      foundSubcontainers = _getClosestSubcontainers(this, coordinates, { filter });
 
       return foundSubcontainers;
     }
@@ -458,28 +458,31 @@
    * @method setCorrectSubcontainer
    * @private
    * @static
-   * @method getClosestSubcontainers
+   * @method _getClosestSubcontainers
    * @param  {Object} layer                         Instance of PIXI.Container - The layer being used
-   * @param  {Number} xIndex                        x / horizontal index.
-   * @param  {Number} yIndex                        y / vertical index.
+   * @param  {Object} givenCoordinates              Coordinates or rectangle
+   * @param  {Integer} givenCoordinates.x           x coordinate
+   * @param  {Integer} givenCoordinates.y           y coordinate
+   * @param  {Integer} givenCoordinates.width       width of the rectangle
+   * @param  {Integer} givenCoordinates.height      height of the rectangle
    * @param  {Object} options                       Optional options.
    * @param  {MapDataManipulator} options.filter    Filter for selecting only wanted subcontainers
    * @return {Array}                                Array of found subcontainers.
    */
-  function getClosestSubcontainers(layer, givenCoordinates, options = { filter: undefined }) {
+  function _getClosestSubcontainers(layer, givenCoordinates, options = { filter: undefined }) {
     var { filter } = options;
+    var { width, height, maxDetectionOffset } = layer.getSubcontainerConfigs ();
     var coordinates = {
-      x: givenCoordinates.x >= 0 ? givenCoordinates.x : 0,
-      y: givenCoordinates.y >= 0 ? givenCoordinates.y : 0,
-      width: givenCoordinates.width,
-      height: givenCoordinates.height
+      x: givenCoordinates.x >= 0 ? givenCoordinates.x - maxDetectionOffset : -maxDetectionOffset,
+      y: givenCoordinates.y >= 0 ? givenCoordinates.y - maxDetectionOffset : -maxDetectionOffset,
+      width: ( givenCoordinates.width || 0 ) + maxDetectionOffset * 2,
+      height: ( givenCoordinates.height || 0 ) + maxDetectionOffset * 2
     };
-    var { width, height } = layer.getSubcontainerConfigs ();
     var allFoundSubcontainers = [];
     var xIndex = Math.floor( coordinates.x / width );
     var yIndex = Math.floor( coordinates.y / height );
-    var x2 = coordinates.width ? coordinates.x + coordinates.width :  + coordinates.x;
-    var y2 = coordinates.height ? coordinates.y + coordinates.height :  + coordinates.y;
+    var x2 = coordinates.width ? coordinates.x + coordinates.width :  +coordinates.x;
+    var y2 = coordinates.height ? coordinates.y + coordinates.height :  +coordinates.y;
     var widthIndex = Math.floor( x2 / width );
     var heightIndex = Math.floor( y2 / height );
     var subcontainerList = layer.subcontainerList;

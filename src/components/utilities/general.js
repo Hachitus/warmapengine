@@ -31,6 +31,11 @@
       return [].concat.apply([], arr);
     }
     /**
+     * This function takes an array and slices it to proper chunks.
+     *
+     * @method chunkArray
+     * @param {Array} array             The array to be chunked
+     * @param {Integer} chunksize       size of the chunks
      * from: http://stackoverflow.com/a/34847417/1523545
      */
     function chunkArray(array, chunkSize) {

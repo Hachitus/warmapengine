@@ -212,9 +212,12 @@
       return isOutside;
     }
     /**
-     * The onmessage callback that handles things after we get reply from the worker
+     * Originally webworker onmessage function, but webworker got refactored away.
      *
-     * @param  {Object} e   Event object from worker
+     * @todo rename and generally refactor
+     * @method viewportWorkerOnMessage
+     * @param  {Object} scaledViewport    Viewportarea that has been scaled.
+     * @param  {Array} primaryLayers      The primarylayers that we handle
      */
     function viewportWorkerOnMessage(scaledViewport, primaryLayers) {
       var containersUnderChangedArea = [];

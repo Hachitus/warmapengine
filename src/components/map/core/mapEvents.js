@@ -63,8 +63,16 @@
     }
   }
 
+  /*---------------------
+  ------- PRIVATE -------
+  ----------------------*/
   /**
    * Basically custom events polyfill for IE11.
+   *
+   * @private
+   * @method createCrossIeEvent
+   * @param {String}            type
+   * @return {Event}            Created event object
    */
   function createCrossIeEvent(type) {
     var event;

@@ -1,5 +1,4 @@
 (function () {
-  /* global Hammer, Hamster */
   'use strict';
 
   /*-----------------------
@@ -51,12 +50,12 @@
      * @method on
      * @event Event that consists of "Map" + the given event type, like such: "MapDrag"
      * @throws {Error} General error, if detector for this event type has not been set.
-     * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
-     * @param  {Boolean} cb   REQUIRED. Callback to do it's eventlistener magic.
+     * @param {String}  type   REQUIRED. The type of event. This type has been created with setDetector.
+     * @param {Boolean} cb     REQUIRED. Callback to do it's eventlistener magic.
      */
     function on(type = "", cb = false) {
       if (!detectors[type] && !detectors[type].size) {
-        throw new Error("eventlisteners.on needs to have detector set with this event type!")
+        throw new Error("eventlisteners.on needs to have detector set with this event type!");
       }
       detectors[type].on(_createEventListenerWrapper("Map" + type, cb));
       activeEventListeners[type] = activeEventListeners[type] || new Set();
@@ -66,8 +65,8 @@
      * Deactivates the eventListener. Callback is optional. If is not provided will remove all this types eventListeners
      *
      * @method off
-     * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
-     * @param  {Boolean} cb   Callback to do it's eventlistener magic.
+     * @param  {String}  type   REQUIRED. The type of event. This type has been created with setDetector.
+     * @param  {Boolean} cb     Callback to do it's eventlistener magic.
      */
     function off(type = "", cb = false) {
       detectors[type].off(cb);
@@ -77,8 +76,8 @@
      * Activates the eventListener. Callback is optional. If is not provided will check if the eventlistener type has any listeners active.
      *
      * @method isOn
-     * @param  {String}  type REQUIRED. The type of event. This type has been created with setDetector.
-     * @param  {Boolean} cb   Callback to do it's eventlistener magic.
+     * @param  {String}  type   REQUIRED. The type of event. This type has been created with setDetector.
+     * @param  {Boolean} cb     Callback to do it's eventlistener magic.
      */
     function isOn(type = "", cb = false) {
       var answer;
@@ -92,8 +91,8 @@
      * selecting units and vice versa, when we keep an event state tracking through this.
      *
      * @method setActivityState
-     * @param {String} type     EventType
-     * @param {[type]} newState [description]
+     * @param {String} type        EventType
+     * @param {Boolean} newState   The new state value
      */
     function setActivityState(type, newState) {
       stateOfEvents[type] = newState;

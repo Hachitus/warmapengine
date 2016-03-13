@@ -201,7 +201,9 @@
       };
       /**
        * Self explanatory
-       * @type {SEMVER}     http://semver.org/
+       *
+       * @attribute VERSION
+       * @type {SEMVER}       http://semver.org/
        */
       this.VERSION = VERSION;
     }

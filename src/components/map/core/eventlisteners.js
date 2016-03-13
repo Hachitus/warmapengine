@@ -48,15 +48,15 @@
      * Activates the eventListener.
      *
      * @method on
-     * @event Event that consists of "Map" + the given event type, like such: "MapDrag"
-     * @throws {Error} General error, if detector for this event type has not been set.
-     * @param {String}  type   REQUIRED. The type of event. This type has been created with setDetector.
-     * @param {Boolean} cb     REQUIRED. Callback to do it's eventlistener magic.
+     * @throws {Error}          General error, if detector for this event type has not been set.
+     * @param  {String}  type   REQUIRED. The type of event. This type has been created with setDetector.
+     * @param  {Boolean} cb     REQUIRED. Callback to do it's eventlistener magic.
      */
     function on(type = "", cb = false) {
       if (!detectors[type] && !detectors[type].size) {
         throw new Error("eventlisteners.on needs to have detector set with this event type!");
       }
+
       detectors[type].on(_createEventListenerWrapper("Map" + type, cb));
       activeEventListeners[type] = activeEventListeners[type] || new Set();
       activeEventListeners[type].add(cb);
@@ -101,7 +101,7 @@
      * get activity state of the event
      *
      * @method getActivityState
-     * @param  {String} type EventType
+     * @param  {String} type   EventType
      * @return {Boolean}
      */
     function getActivityState(type = "") {
@@ -111,9 +111,9 @@
      * Set event detector. If there is already detector of this type, we overwrite it.
      *
      * @method setDetector
-     * @param {String}   type  Event type
-     * @param {Function} cbOn  Callback which sets activates the detector
-     * @param {Function} cbOff Callback which sets deactivates the detector
+     * @param {String}   type    Event type
+     * @param {Function} cbOn    Callback which sets activates the detector
+     * @param {Function} cbOff   Callback which sets deactivates the detector
      */
     function setDetector(type = "", cbOn = () => {}, cbOff = () => {}) {
       detectors[type] = {};
@@ -148,12 +148,16 @@
      * @private
      * @static
      * @method _createEventListenerWrapper
-     * @param  {String}   type Event type
-     * @param  {Function} cb   Event callback
+     * @param  {String}   type   Event type
+     * @param  {Function} cb     Event callback
      */
     function _createEventListenerWrapper(type, cb) {
       /* NOTE! There can be more than one arguments in an event. E.g. Hamster.js */
       return (...args) => {
+        /**
+         * @event Event gets fired when the specific eventListener trigger. The name consists of "Map" + the given event type, like such:
+         * "MapDrag"
+         */
         mapEvents.publish(type);
         cb(...args);
       };

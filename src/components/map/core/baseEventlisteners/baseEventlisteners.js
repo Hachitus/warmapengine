@@ -24,9 +24,9 @@
    * eventlistener management. Creates window.flatworld.setFullScreen function to be used when switching to fullscreen.
    *
    * @class extensions.baseEventlisteners
-   * @requires Hammer.js (for touch events)
-   * @requires Hamster.js (for good cross-browser mousewheel events)
-   * @param {HTMLElement} canvasElement   The canvas element we listen events from. Will try to search the first canvas in the DOM,
+   * @requires Hammer.js                    (for touch events)
+   * @requires Hamster.js                   (for good cross-browser mousewheel events)
+   * @param {HTMLElement} canvasElement     The canvas element we listen events from. Will try to search the first canvas in the DOM,
    * if none is provided
    */
   function baseEventlistenersModule() {
@@ -37,9 +37,27 @@
     ---------------------------*/
     return {
       init,
+      toggleFullSize,
+      toggleFullscreen,
+      toggleZoom,
+      toggleDrag,
+      toggleSelect,
+      toggleOrder,
+
+      /**
+       * Plugins name
+       *
+       * @attribute pluginName
+       * @type {String}
+       */
       pluginName: "baseEventlisteners"
     };
 
+    /**
+     * Initialize plugin
+     *
+     * @method init
+     */
     function init(map) {
       const orderToggle = toggleOrder();
       const selectToggle = toggleSelect();
@@ -65,8 +83,6 @@
      * Sets the canvas to fullsize as in the same size of the window / content area. But not fullscreen. Note that
      *
      * @method toggleFullSize
-     * @private
-     * @static
      */
     function toggleFullSize() {
       var activeCB;
@@ -86,7 +102,6 @@
      * Sets the browser in fullscreen mode.
      *
      * @method toggleFullscreen
-     * @static
      * @param {Function} cb     Callback that fires when this event activates
      * @return {Boolean}        Return the state of this event
      */
@@ -107,10 +122,9 @@
     /**
      * Zoom the map. Mousewheel (desktop) and pinch (mobile)
      *
-     * @method toggleZoomListener
-     * @static
-     * @param {Function} cb     Callback that fires when this event activates
-     * @return {Boolean}        Return the state of this event
+     * @method toggleZoom
+     * @param {Function} cb         Callback that fires when this event activates
+     * @return {Boolean}            Return the state of this event
      */
     function toggleZoom() {
       var activeCB;
@@ -134,8 +148,7 @@
     /**
      * DragListener (normally used for moving the map)
      *
-     * @method toggleDragListener
-     * @static
+     * @method toggleDrag
      * @param {Function} cb     Callback that fires when this event activates
      * @return {Boolean}        Return the state of this event
      */
@@ -161,8 +174,7 @@
     /**
      * Selecting something from the map
      *
-     * @method toggleSelectListener
-     * @static
+     * @method toggleSelect
      * @param {Function} cb     Callback that fires when this event activates
      * @return {Boolean}        Return the state of this event
      */
@@ -185,8 +197,7 @@
     /**
      * Selecting something from the map
      *
-     * @method toggleSelectListener
-     * @static
+     * @method toggleOrder
      * @param {Function} cb     Callback that fires when this event activates
      * @return {Boolean}        Return the state of this event
      */
@@ -229,7 +240,7 @@
      * Activate the browsers fullScreen mode and expand the canvas to fullsize
      *
      * @private
-     * @method setFullScreen
+     * @method _setFullScreen
      */
     function _setFullScreen() {
       utils.resize.toggleFullScreen();

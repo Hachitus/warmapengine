@@ -85,7 +85,7 @@
             "name": "src\\components\\map\\core\\Flatworld.js",
             "modules": {},
             "classes": {
-                "Map": 1
+                "Flatworld": 1
             },
             "fors": {},
             "namespaces": {}
@@ -516,9 +516,9 @@
                 "type": "Object"
             }
         },
-        "Map": {
-            "name": "Map",
-            "shortname": "Map",
+        "Flatworld": {
+            "name": "Flatworld",
+            "shortname": "Flatworld",
             "classitems": [],
             "plugins": [],
             "extensions": [],
@@ -977,7 +977,7 @@
             "plugin_for": [],
             "extension_for": [],
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 25,
+            "line": 24,
             "description": "This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add\nevent listeners with on."
         },
         "log": {
@@ -2352,7 +2352,7 @@
             "name": "canvas",
             "type": "{HTMLElement}",
             "required": 1,
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2364,7 +2364,7 @@
             "itemtype": "attribute",
             "name": "plugins",
             "type": "{Set}",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2373,7 +2373,7 @@
             "itemtype": "attribute",
             "name": "subcontainersConfig",
             "type": "{{width: Integer, height: Int}}",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2382,7 +2382,7 @@
             "itemtype": "attribute",
             "name": "trackFPSCB",
             "type": "{Function}",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2391,7 +2391,7 @@
             "itemtype": "attribute",
             "name": "objectManager",
             "type": "{ObjectManager}",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2400,7 +2400,7 @@
             "itemtype": "attribute",
             "name": "objectManager",
             "type": "{ObjectManager}",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2409,7 +2409,7 @@
             "itemtype": "attribute",
             "name": "isTouch",
             "type": "{Boolean}",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2418,7 +2418,7 @@
             "itemtype": "attribute",
             "name": "currentlySelectedObjects",
             "type": "{Array}",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2427,7 +2427,7 @@
             "itemtype": "attribute",
             "name": "layerTypes",
             "type": "{Object}",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2436,7 +2436,7 @@
             "itemtype": "attribute",
             "name": "VERSION",
             "type": "{SEMVER}       http://semver.org/",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2489,7 +2489,7 @@
                 "description": "Returns an array of Promises. If this is empty / zero. Then there is nothing to wait\nfor, if it contains promises, you have to wait for them to finish for the plugins to work and map be ready.",
                 "type": "Array"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2501,7 +2501,7 @@
                 "description": "Promise that holds all the individual plugin loading promises",
                 "type": "Promise"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2509,7 +2509,7 @@
             "description": "The correct way to update / redraw the map. Check happens at every tick and thus in every frame.",
             "itemtype": "method",
             "name": "drawOnNextTick",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2529,7 +2529,7 @@
                     "type": "Object | Array"
                 }
             ],
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2549,7 +2549,7 @@
                     "type": "String"
                 }
             ],
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2597,7 +2597,7 @@
                 "description": "The created UI layer",
                 "type": "MapLayer"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2612,7 +2612,7 @@
                 "description": "created MapLayer instance",
                 "type": "MapLayer"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2620,7 +2620,7 @@
             "description": "Just a convenience function (for usability and readability), for checking if the map uses subcontainers.",
             "itemtype": "method",
             "name": "usesSubcontainers",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2628,7 +2628,7 @@
             "description": "Returns current subcontainers configurations (like subcontainers size).",
             "itemtype": "method",
             "name": "getSubcontainerConfigs",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2647,7 +2647,7 @@
                 "description": "}        x- and y-coordinates and the width and height of the\nviewport",
                 "type": "X: Integer, y: Integer, width: Integer, height: Integer"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2662,7 +2662,7 @@
                     "type": "MapLayer|PIXI.Container|PIXI.ParticleContainer"
                 }
             ],
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2706,7 +2706,7 @@
                     ]
                 }
             ],
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2718,7 +2718,7 @@
                 "description": "",
                 "type": "Boolean"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2733,7 +2733,7 @@
                     "type": "Object"
                 }
             ],
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2745,7 +2745,7 @@
                 "description": "this map instance",
                 "type": "Map"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2764,7 +2764,7 @@
                 "description": "Promise. If string are provided resolved those with System.import, otherwise resolves immediately.",
                 "type": "Promise"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2783,7 +2783,7 @@
                     "type": "Object"
                 }
             ],
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2803,7 +2803,7 @@
                     "type": "*"
                 }
             ],
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2846,7 +2846,7 @@
                 "description": "Array of object found on the map.",
                 "type": "Array"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2858,7 +2858,7 @@
                 "description": "Basically anything in the map that is used as a layer (not really counting subcontainers).",
                 "type": "Object"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2870,7 +2870,7 @@
                 "description": "}          current coordinates for the moved map",
                 "type": "X: Integer, y: Integer"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2882,7 +2882,7 @@
                 "description": "",
                 "type": "MapLayer|PIXI.Container|PIXI.ParticleContainer"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2901,7 +2901,7 @@
                 "description": "The amount of zoom applied",
                 "type": "Number"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2913,7 +2913,7 @@
                 "description": "",
                 "type": "MapLayer|PIXI.Container|PIXI.ParticleContainer"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2925,7 +2925,7 @@
                 "description": "",
                 "type": "MapLayer|PIXI.Container|PIXI.ParticleContainer"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2937,7 +2937,7 @@
                 "description": "",
                 "type": "PIXI.Renderer"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2945,7 +2945,7 @@
             "description": "Return static layer. The static layer is the topmost of all layers. It handles zooming and other non-movable operations.",
             "itemtype": "method",
             "name": "getStaticLayer",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2953,7 +2953,7 @@
             "description": "This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't\nimplement your own, I suggest you use it.",
             "itemtype": "method",
             "name": "zoomIn",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2961,7 +2961,7 @@
             "description": "This is abstract method and needs to be implemented with a plugin. Core module has an implementation for this and if you don't\nimplement your own, I suggest you use it.",
             "itemtype": "method",
             "name": "zoomOut",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2969,7 +2969,7 @@
             "description": "Resize the canvas to fill the whole browser content area. Defined by the baseEventlisteners-module (core modules plugin)",
             "itemtype": "method",
             "name": "toggleFullsize",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -2977,7 +2977,7 @@
             "description": "Toggles fullscreen mode. Defined by the baseEventlisteners-module (core modules plugin)",
             "itemtype": "method",
             "name": "toggleFullScreen",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -3061,7 +3061,7 @@
                 "description": "Found objects",
                 "type": "Array"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -3086,7 +3086,7 @@
             "return": {
                 "description": "the current map instance"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -3112,7 +3112,7 @@
                 "description": "All subcontainers that matched the critea",
                 "type": "Array"
             },
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -3122,7 +3122,7 @@
             "tagname": "",
             "itemtype": "method",
             "name": "_defaultTick",
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\Flatworld.js",
@@ -3145,7 +3145,7 @@
                     "type": "Boolean"
                 }
             ],
-            "class": "Map"
+            "class": "Flatworld"
         },
         {
             "file": "src\\components\\map\\core\\MapDataManipulator.js",
@@ -4286,7 +4286,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 48,
+            "line": 47,
             "description": "Activates the eventListener.",
             "itemtype": "method",
             "name": "on",
@@ -4310,7 +4310,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 65,
+            "line": 64,
             "description": "Deactivates the eventListener. Callback is optional. If is not provided will remove all this types eventListeners",
             "itemtype": "method",
             "name": "off",
@@ -4330,7 +4330,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 76,
+            "line": 75,
             "description": "Activates the eventListener. Callback is optional. If is not provided will check if the eventlistener type has any listeners active.",
             "itemtype": "method",
             "name": "isOn",
@@ -4350,7 +4350,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 90,
+            "line": 89,
             "description": "Sets the state of the event. State is very important e.g. for fluent dragging and selecting. When we start to drag, we avoid\nselecting units and vice versa, when we keep an event state tracking through this.",
             "itemtype": "method",
             "name": "setActivityState",
@@ -4362,15 +4362,15 @@
                 },
                 {
                     "name": "newState",
-                    "description": "[description]",
-                    "type": "[type]"
+                    "description": "The new state value",
+                    "type": "Boolean"
                 }
             ],
             "class": "eventListeners"
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 101,
+            "line": 100,
             "description": "get activity state of the event",
             "itemtype": "method",
             "name": "getActivityState",
@@ -4389,7 +4389,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 111,
+            "line": 110,
             "description": "Set event detector. If there is already detector of this type, we overwrite it.",
             "itemtype": "method",
             "name": "setDetector",
@@ -4414,7 +4414,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 126,
+            "line": 125,
             "description": "Clear event detector. We also remove all possible eventlisteners set on this event type.",
             "itemtype": "method",
             "name": "clearDetector",
@@ -4429,7 +4429,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 146,
+            "line": 145,
             "description": "This creates a wrapper for callback. The idea is to send map events from this wrapper for all events.",
             "access": "private",
             "tagname": "",
@@ -4452,7 +4452,7 @@
         },
         {
             "file": "src\\components\\map\\core\\eventlisteners.js",
-            "line": 158,
+            "line": 157,
             "itemtype": "event",
             "name": "Event gets fired when the specific eventListener trigger. The name consists of \"Map\" + the given event type, like such:\n\"MapDrag\"",
             "class": "eventListeners"

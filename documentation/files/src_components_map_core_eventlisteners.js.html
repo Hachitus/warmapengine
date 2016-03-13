@@ -49,9 +49,9 @@
                                 <li><a href="../classes/extensions.mapDrag.html">extensions.mapDrag</a></li>
                                 <li><a href="../classes/extensions.mapMovement.html">extensions.mapMovement</a></li>
                                 <li><a href="../classes/extensions.mapZoom.html">extensions.mapZoom</a></li>
+                                <li><a href="../classes/Flatworld.html">Flatworld</a></li>
                                 <li><a href="../classes/generalUtils.polyfills.html">generalUtils.polyfills</a></li>
                                 <li><a href="../classes/log.html">log</a></li>
-                                <li><a href="../classes/Map.html">Map</a></li>
                                 <li><a href="../classes/mapApi.html">mapApi</a></li>
                                 <li><a href="../classes/MapDataManipulator.html">MapDataManipulator</a></li>
                                 <li><a href="../classes/mapEvents.html">mapEvents</a></li>
@@ -118,7 +118,6 @@
 <div class="file">
     <pre class="code prettyprint linenums">
 (function () {
-  /* global Hammer, Hamster */
   &#x27;use strict&#x27;;
 
   /*-----------------------
@@ -174,7 +173,7 @@
      */
     function on(type = &quot;&quot;, cb = false) {
       if (!detectors[type] &amp;&amp; !detectors[type].size) {
-        throw new Error(&quot;eventlisteners.on needs to have detector set with this event type!&quot;)
+        throw new Error(&quot;eventlisteners.on needs to have detector set with this event type!&quot;);
       }
 
       detectors[type].on(_createEventListenerWrapper(&quot;Map&quot; + type, cb));
@@ -211,8 +210,8 @@
      * selecting units and vice versa, when we keep an event state tracking through this.
      *
      * @method setActivityState
-     * @param {String} type       EventType
-     * @param {[type]} newState   [description]
+     * @param {String} type        EventType
+     * @param {Boolean} newState   The new state value
      */
     function setActivityState(type, newState) {
       stateOfEvents[type] = newState;

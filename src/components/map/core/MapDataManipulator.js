@@ -8,7 +8,8 @@
   ----------------------*/
   class MapDataManipulator {
     /**
-     * Class to get a consistent standard for the engine to be able to filter objects, when retrieving or sorting them.
+     * Class to get a consistent standard for the engine to be able to filter objects, when retrieving or sorting them. This is used
+     * when some method uses filters.
      *
      * @class MapDataManipulator
      * @constructor

@@ -43,6 +43,7 @@
       toggleDrag,
       toggleSelect,
       toggleOrder,
+      toggleMouseTextSelection,
 
       /**
        * Plugins name
@@ -234,6 +235,21 @@
 
         activeCB(e);
       }
+    }
+    /**
+     * Deactivate the selection of text, by dragging
+     *
+     * @method toggleMouseTextSelection
+     */
+    function toggleMouseTextSelection() {
+      var bodyStyles = document.getElementsByTagName("body")[0].style;
+
+      bodyStyles.webkitTouchCallout = "none";
+      bodyStyles.webkitUserSelect = "none";
+      bodyStyles.khtmlUserSelect = "none";
+      bodyStyles.mozUserSelect = "none";
+      bodyStyles.msUserSelect = "none";
+      bodyStyles.userSelect = "none";
     }
 
     /**

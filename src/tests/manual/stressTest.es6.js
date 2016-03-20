@@ -31,6 +31,7 @@
   /* REQUIRED FOR IE11 */
   polyfills.arrayFind();
   polyfills.es6String();
+  hexagons.utils.init(HEXAGON_RADIUS);
 
   /* Start the whole functionality */
   (function () {
@@ -84,10 +85,10 @@
       y: mapsize
     };
     var gridSize = {
-      rows: coordMapsize.x / hexagons.utils.calcShortDiagonal(HEXAGON_RADIUS),
-      columns: coordMapsize.y / hexagons.utils.calcLongDiagonal(HEXAGON_RADIUS)
+      rows: coordMapsize.x / hexagons.utils.calcShortDiagonal(),
+      columns: coordMapsize.y / hexagons.utils.calcLongDiagonal()
     };
-    var hexagonGridCoordinates = hexagons.utils.createHexagonGridCoordinates(gridSize, { radius: HEXAGON_RADIUS });
+    var hexagonGridCoordinates = hexagons.utils.createHexagonGridCoordinates(gridSize);
     var terrainLayer;
 
     terrainLayer = populateTerrainLayer(hexagonGridCoordinates, TERRAIN_TYPE_COUNT);
@@ -258,7 +259,7 @@
 
   function populateTerrainLayer(hexagonGrid, typeCount) {
     var layerData = addBase_spriteLayerData("terrainLayer", "terrain");
-
+console.log("HEP", hexagonGrid)
     hexagonGrid.forEach((coordinates) => {
       var { x, y } = coordinates;
 
@@ -280,13 +281,10 @@
       });
     });
 
-    console.log("POPULATING-1-2", layerData);
-
     return layerData;
   }
 
   function populateUnitLayer(hexagonGrid, typeCount) {
-    console.log("POPULATING2");
     var layerData = addBase_spriteLayerData("unitLayer", "unit");
 
     hexagonGrid.forEach((coordinates) => {

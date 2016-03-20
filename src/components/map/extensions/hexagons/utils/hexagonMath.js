@@ -46,8 +46,8 @@
    * @param {object} options    extra options, like generating horizontal hexagon points and
    * how many decimals to round
   */
-  function getHexagonPoints({ radius = globalRadius, isFlatTop = false } = {}) {
-    const OFFSET = isFlatTop ? 0 : 0.5;
+  function getHexagonPoints({ radius = globalRadius, orientation = "horizontal" } = {}) {
+    const OFFSET = orientation === "horizontal" ? 0.5 : 0;
     const CENTER = {
       x: radius,
       y: radius
@@ -127,7 +127,8 @@
    * @param  {Object} hitCoords         The coordinates to test against
    * @param  {Integer} hitCoords.x      X coordinate
    * @param  {Integer} hitCoords.y      Y coordinate
-   * @param  {Object} offsetCoords      *OPTIONAL* offsetCoordinates that are added to the hitCoordinates. Separate because these are outside the
+   * @param  {Object} offsetCoords      *OPTIONAL* offsetCoordinates that are added to the hitCoordinates.
+   * Separate because these are outside the
    * given array.
    * @param  {Integer} offsetCoords.x   X coordinate
    * @param  {Integer} offsetCoords.y   Y coordinate
@@ -195,6 +196,10 @@
   function getClosestHexagonCenter(coordinates) {
     var radius = globalRadius;
     var closestHexagonCenter;
+
+    if (!globalOrientation || !radius || !globalStartingPoint) {
+      throw new Error("getClosestHexagonCenter requirements not filled");
+    }
 
     if (globalOrientation === "horizontal") {
       closestHexagonCenter = {

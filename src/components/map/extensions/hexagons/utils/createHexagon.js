@@ -33,7 +33,7 @@
    * @param {Object} {}.orientation   Is the heaxgon grid horizontal or vertical. Default: "horizontal"
    * @return {PIXI.Polygon}           Hexagon shaped PIXI.Polygon object. That houses the hexagons corner points.
    */
-  function createHexagon(radius, { orientation = "horizontal" }) {
+  function createHexagon(radius, { orientation = "horizontal" } = {}) {
     var points = [];
 
     if (orientation !== "horizontal") {

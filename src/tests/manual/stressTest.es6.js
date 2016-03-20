@@ -25,10 +25,7 @@
 
   /** ===== CONFIGS ===== */
   /* Note the y is 3/4 of the actual height */
-  var HEXAGON_DISTANCES = {
-    x: 82,
-    y: 94 * 0.75
-  };
+  const HEXAGON_RADIUS = gameData.hexagonRadius;
   const BASE_URL = "/requests/";
 
   /* REQUIRED FOR IE11 */
@@ -80,12 +77,20 @@
   ****** GENERATE RANDOM MAP DATA *******
   **************************************/
   function getMapData(mapsize) {
-    var terrainTypeCount = 4;
-    var unitTypeCount = 56;
+    const TERRAIN_TYPE_COUNT = 5;
+    const UNIT_TYPE_COUNT = 56;
     var coordMapsize = {
       x: mapsize,
       y: mapsize
     };
+    var gridSize = {
+      rows: coordMapsize.x / hexagons.utils.calcShortDiagonal(HEXAGON_RADIUS),
+      columns: coordMapsize.y / hexagons.utils.calcLongDiagonal(HEXAGON_RADIUS)
+    };
+    var hexagonGridCoordinates = hexagons.utils.createHexagonGridCoordinates(gridSize, { radius: HEXAGON_RADIUS });
+    var terrainLayer;
+
+    terrainLayer = populateTerrainLayer(hexagonGridCoordinates, TERRAIN_TYPE_COUNT);
 
     return {
       gameID: "53837d47976fed3b24000005",
@@ -93,8 +98,8 @@
       startPoint: { x: 0, y: 0 },
       element: "#mapCanvas",
       layers: [
-      populateTerrainLayer(HEXAGON_DISTANCES, terrainTypeCount, coordMapsize),
-      populateUnitLayer(HEXAGON_DISTANCES, unitTypeCount, coordMapsize)
+      terrainLayer,
+      populateUnitLayer(hexagonGridCoordinates, UNIT_TYPE_COUNT)
       ]
     };
   }
@@ -251,85 +256,68 @@
     };
   }
 
-  function populateTerrainLayer(size, typeCount, mapsize) {
+  function populateTerrainLayer(hexagonGrid, typeCount) {
     var layerData = addBase_spriteLayerData("terrainLayer", "terrain");
 
-    for (var y = 0; y < mapsize.y; y += size.y ) {
-      var x = 0;
+    hexagonGrid.forEach((coordinates) => {
+      var { x, y } = coordinates;
 
-      if (y / size.y % 2 === 0) {
-        x += size.x / 2;
-      }
+      layerData.objectGroups.push({
+        type: "ObjectTerrain",
+        name: "Terrain", // For quadTrees and debugging
+        typeImageData: "terrainBase",
+        objects: [{
+          objType: Math.floor(Math.random() * typeCount),
+          name:"random_" + Math.random(),
+          _id: Math.random(),
+          coord:{
+            x: x,
+            y: y
+          },
+          data: {},
+          lastSeenTurn:Math.floor(Math.random() * 10)
+        }]
+      });
+    });
 
-      while ( x < mapsize.x ) {
-        var realX = x;
-
-        layerData.objectGroups.push({
-          type: "ObjectTerrain",
-          name: "Terrain", // For quadTrees and debugging
-          typeImageData: "terrainBase",
-          objects: [{
-            objType: Math.floor(Math.random() * typeCount),
-            name:"random_" + Math.random(),
-            _id: Math.random(),
-            coord:{
-              x: realX,
-              y: y
-            },
-            data: {},
-            lastSeenTurn:Math.floor(Math.random() * 10)
-          }]
-        });
-
-        x += size.x;
-      }
-    }
+    console.log("POPULATING-1-2", layerData);
 
     return layerData;
   }
 
-  function populateUnitLayer(size, typeCount, mapsize) {
+  function populateUnitLayer(hexagonGrid, typeCount) {
+    console.log("POPULATING2");
     var layerData = addBase_spriteLayerData("unitLayer", "unit");
 
-    for (var y = 0; y < mapsize.y; y += size.y ) {
-      var x = 0;
+    hexagonGrid.forEach((coordinates) => {
+      var { x, y } = coordinates;
 
-      if (y / size.y % 2 === 0) {
-        x += size.x / 2;
-      }
-
-      while ( x < mapsize.x ) {
-        var realX = x;
-
-        layerData.objectGroups.push({
-          type: "ObjectUnit",
-          name: "Unit", // For quadTrees and debugging
-          typeImageData: "unit",
-          objects: [{
-            objType: Math.floor(Math.random() * typeCount),
-            name: "random_" + Math.random(),
-            _id: Math.random(),
-            coord:{
-              x: realX,
-              y: y
-            },
-            data: {
-              playerID: Math.floor(Math.random() * 10),
-              hp: Math.floor(Math.random() * 100),
-              someStuff: "jalajajajajaja" + Math.random(),
-              someStuff2: "jalajajajajaja" + Math.random(),
-              someStuff3: "jalajajajajaja" + Math.random(),
-              someStuff4: "jalajajajajaja" + Math.random(),
-              someStuff5: "jalajajajajaja" + Math.random(),
-              someStuff6: ("jalajajajajaja" + Math.random()).repeat(30)
-            },
-            lastSeenTurn:Math.floor(Math.random() * 10)
-          }]
-        });
-
-        x += size.x;
-      }
-    }
+      layerData.objectGroups.push({
+        type: "ObjectUnit",
+        name: "Unit", // For quadTrees and debugging
+        typeImageData: "unit",
+        objects: [{
+          objType: Math.floor(Math.random() * typeCount),
+          name: "random_" + Math.random(),
+          _id: Math.random(),
+          coord:{
+            x: x,
+            y: y
+          },
+          data: {
+            playerID: Math.floor(Math.random() * 10),
+            hp: Math.floor(Math.random() * 100),
+            someStuff: "jalajajajajaja" + Math.random(),
+            someStuff2: "jalajajajajaja" + Math.random(),
+            someStuff3: "jalajajajajaja" + Math.random(),
+            someStuff4: "jalajajajajaja" + Math.random(),
+            someStuff5: "jalajajajajaja" + Math.random(),
+            someStuff6: ("jalajajajajaja" + Math.random()).repeat(30)
+          },
+          lastSeenTurn:Math.floor(Math.random() * 10)
+        }]
+      });
+    });
 
     return layerData;
   }

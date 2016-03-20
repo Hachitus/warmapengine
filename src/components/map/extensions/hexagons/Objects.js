@@ -77,7 +77,7 @@
 
     const HEIGHT = Math.round(calcLongDiagonal(radius));
     const WIDTH = Math.round(calcShortDiagonal(radius));
-    const SIDE = Math.round(radius.toFixed(3));
+    const SIDE = Math.round(radius);
 
     this.anchor.set(0.5, 0.5);
     this.areaHeight = this.HEIGHT = HEIGHT;

@@ -5,6 +5,7 @@
   ------- IMPORT --------
   ----------------------*/
   var { PIXI } = window.flatworld_libraries;
+  var getHexagonPoints = window.flatworld.extensions.hexagons.utils.getHexagonPoints;
 
   /*-----------------------
   ---------- API ----------
@@ -18,7 +19,7 @@
   /**
    * This manages some utility functionalities for creating hexagons
    *
-   * @class extensions.hexagons.utils.getHexagonPoints.utils
+   * @class extensions.hexagons.utils
    */
   /**
    * Credits belong to: https://github.com/alforno-productions/HexPixiJs/blob/master/lib/hexPixi.js
@@ -27,13 +28,17 @@
    * @private
    * @static
    * @method createHexagon
-   * @param {Number} radius       Radius of the hexagon
-   * @param {Object} options      Options, such as: isFlatTop (Boolean), is the heaxgon flat-topped
-   * @return {PIXI.Polygon}       Hexagon shaped PIXI.Polygon object. That houses the hexagons corner points.
+   * @param {Number} radius           Radius of the hexagon
+   * @param {Object} {}               *OPTIONAL*
+   * @param {Object} {}.orientation   Is the heaxgon grid horizontal or vertical. Default: "horizontal"
+   * @return {PIXI.Polygon}           Hexagon shaped PIXI.Polygon object. That houses the hexagons corner points.
    */
-  function createHexagon(radius, options = { isFlatTop: false }) {
+  function createHexagon(radius, { orientation = "horizontal" }) {
     var points = [];
 
+    if (orientation !== "horizontal") {
+      throw new Error("Nothing else than horizontal supported so far!");
+    }
     points = coordsToPixiPoints(radius);
 
     return new PIXI.Polygon(points);
@@ -77,36 +82,5 @@
     return getHexagonPoints(radius).map(function(point) {
       return new PIXI.Point(point.x, point.y);
     });
-  }
-  /**
-   * @private
-   * @static
-   * @method getHexagonPoints
-   * @param {Float} radius      radius of the hexagon
-   * @param {object} options    extra options, like generating horizontal hexagon points and
-   * how many decimals to round
-  */
-  function getHexagonPoints(radius, options = { isFlatTop: false, precision: 3 }) {
-    const OFFSET = options.isFlatTop ? 0 : 0.5;
-    const CENTER = {
-      x: radius,
-      y: radius
-    };
-    var angle = 2 * Math.PI / 6 * OFFSET;
-    var x = CENTER.x * Math.cos(angle);
-    var y = CENTER.y * Math.sin(angle);
-    var points = [];
-
-    points.push({x, y});
-
-    for (let i = 1; i < 7; i++) {
-      angle = 2 * Math.PI / 6 * (i + OFFSET);
-      x = CENTER.x * Math.cos(angle);
-      y = CENTER.y * Math.sin(angle);
-
-      points.push({x, y});
-    }
-
-    return points;
   }
 })();

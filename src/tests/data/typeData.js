@@ -3,7 +3,7 @@
 window.typeData = {
   graphicData: {
     terrainBase:{
-      json: "/tests/testAssets/images/testHexagons/testHexagonSpritesheet.json"
+      json: "/tests/testAssets/images/terrain/terrains.json"
     },
     unit:{
       json: "/tests/testAssets/images/units/testHexagonUnits.json"
@@ -11,25 +11,30 @@ window.typeData = {
   },
   objectData: {
     terrainBase:[{
-        image:"terrain_blueHexagon.png",
+        image:"parkingLot",
         attachedToTerrains:["0"],
         propability:"100%",
-        name: "forDebugging - terrainBase 0"
+        name: "forDebugging - parkingLot"
       },{
-        image:"terrain_greenHexagon.png",
+        image:"park",
         attachedToTerrains:["2"],
         propability:"100%",
-        name: "forDebugging - terrainBase 1"
+        name: "forDebugging - park"
       },{
-        image:"terrain_redHexagon.png",
+        image:"fountainPark",
         attachedToTerrains:["1"],
         propability:"100%",
-        name: "forDebugging - terrainBase 2"
+        name: "forDebugging - fountainPark"
       },{
-        image:"terrain_yellowHexagon.png",
+        image:"fountain",
         attachedToTerrains:["4"],
         propability:"100%",
-        name: "forDebugging - terrainBase 3"
+        name: "forDebugging - fountain"
+      },{
+        image:"crystalMountain",
+        attachedToTerrains:["4"],
+        propability:"100%",
+        name: "forDebugging - crystalMountain"
       }],
     terrain:[{
       name:"desert",

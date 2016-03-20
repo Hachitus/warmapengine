@@ -36,7 +36,7 @@ window.mapData = {
         _id:"53837d49976fed3b240006bd",
         coord:{
           x:"0",
-          y:"140"
+          y:"208"
         },
         data: {},
         lastSeenTurn:"1"
@@ -46,8 +46,8 @@ window.mapData = {
         name:"tundra",
         _id:"53837d49976fed3b240006c2",
         coord:{
-          x:"41",
-          y:"70"
+          x:"60",
+          y:"103"
         },
         data: {},
         lastSeenTurn:"1"
@@ -57,8 +57,8 @@ window.mapData = {
         name:"forest",
         _id:"53837d49976fed3b240006c7",
         coord:{
-          x:"82",
-          y:"140"
+          x:"120",
+          y:"208"
         },
         data: {},
         lastSeenTurn:"1"
@@ -83,7 +83,8 @@ window.mapData = {
         objType:0,
         name: "Tank you",
         coord: {
-          x: "41", y: "70"
+          x:"60",
+          y:"103"
         },
         data: {
           playerID: 0,

@@ -31,47 +31,21 @@ describe("mapMovement extension => ", function () {
   it("getViewportCoordinates", function () {
     var calculatedViewportArea;
 
-    calculatedViewportArea = flatworld.extensions.mapMovement._testObject.getViewportCoordinates(viewportArea, {
+    calculatedViewportArea = flatworld.extensions.mapMovement._testObject.getViewportWithOffset(viewportArea, {
       scale: 0.9
     });
     expect(calculatedViewportArea).toEqual({
       x: -61,
       y: -61,
-      x2: 717,
-      y2: 717,
-      width: 778,
-      height: 778
+      width: 722,
+      height: 722
     });
-  });
-  it("viewportWorkerOnMessage", function (done) {
-    var subcontainers = [{
-      visible: undefined
-    }];
-    var primaryLayers = [{
-      getSubcontainersByCoordinates: function () {
-        return subcontainers;
-      }
-    }];
-    var calculatedViewportArea;
-
-    calculatedViewportArea = flatworld.extensions.mapMovement._testObject.viewportWorkerOnMessage(viewportArea, primaryLayers);
-
-    calculatedViewportArea.then(() => {
-      expect(subcontainers[0].visible).toEqual(true);
-    }).then(done);
   });
   it("testRectangleIntersect", function () {
     var calculatedViewportArea;
 
-    calculatedViewportArea = flatworld.extensions.mapMovement._testObject.testRectangleIntersect(viewportArea);
-    expect(calculatedViewportArea).toEqual({
-      x: -200,
-      y: -200,
-      x2: 800,
-      y2: 800,
-      width: 1000,
-      height: 1000
-    });
+    calculatedViewportArea = flatworld.extensions.mapMovement._testObject.testRectangleIntersect(viewportArea, viewportArea);
+    expect(calculatedViewportArea).toEqual(true);
   });
   it("isObjectOutsideViewport", function () {
     var isOutside, isNotOutside;

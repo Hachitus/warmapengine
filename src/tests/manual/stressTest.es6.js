@@ -45,6 +45,7 @@
 
     var mapsizeElement = document.getElementById("hexaTiles");
     var cacheElement = document.getElementById("cache");
+    var UIThemeIndex = document.getElementById("UItheme").value;
     var cacheMap = true;
     var currentMapSize, mapData;
 
@@ -57,9 +58,11 @@
       cacheMap = cacheElement.checked;
 
       mapData = getMapData(currentMapSize);
+
       initFlatworld(mapData, {
         mapsize: currentMapSize,
         cache: cacheMap,
+        UITheme: window.flatworld.UIs[UIThemeIndex],
         canvasContainer: document.getElementById("mapCanvasContainer"),
         automatic: window.automaticTest,
         trackFPSCB: function (data) {
@@ -106,12 +109,7 @@
   }
 
   function initFlatworld(mapData, options) {
-    options = options || {};
-    var mapsize = options.mapSize;
-    var canvasContainer = options.canvasContainer;
-    var trackFPSCB = options.trackFPSCB;
-    var cache = options.cache;
-    var automatic = options.automatic;
+    var { mapsize, canvasContainer, trackFPSCB, UITheme, cache, automatic} = options;
     var map = {};
     var globalMap = {
       data: {}
@@ -204,7 +202,9 @@
           game: gameData,
           map: mapData,
           type: typeData
-        }, {
+        },
+        UITheme,
+        {
           trackFPSCB: trackFPSCB,
           isHiddenByDefault: true,
           cache: options.cache
@@ -259,7 +259,7 @@
 
   function populateTerrainLayer(hexagonGrid, typeCount) {
     var layerData = addBase_spriteLayerData("terrainLayer", "terrain");
-console.log("HEP", hexagonGrid)
+
     hexagonGrid.forEach((coordinates) => {
       var { x, y } = coordinates;
 

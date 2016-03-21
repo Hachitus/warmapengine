@@ -1,7 +1,9 @@
 (function () {
   "use strict";
 
-  window.flatworld.UIs.default.utils = window.flatworld.UIs.default.utils || {};
+  /*---------------------
+  --------- API ---------
+  ----------------------*/
   window.flatworld.UIs.default.utils.drawShapes = (function() {
     return {
       normal: drawArrow,

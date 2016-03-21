@@ -51,6 +51,10 @@
      *     var map = new Map(divContainer, mapOptions );
      *     promises = map.init( gameData.pluginsToActivate, mapData.startPoint );
      *
+     * A note on the UI part of the map. The UI is not the primary UI interface for the map, but instead it is the UI that is used when
+     * interacting with the map and objects in it. So e.g. when user selects a unit on the map. How that unit is highlighted as selected
+     * and what kind of possible info-box we show to the user regarding that object, movement of units etc.
+     *
      * @class Flatworld
      * @constructor
      * @requires PIXI.JS framework in global namespace

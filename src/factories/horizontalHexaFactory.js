@@ -6,7 +6,6 @@
   ----------------------*/
   var PIXI = window.flatworld_libraries.PIXI;
   var { Flatworld, UI, utils, log }  = window.flatworld;
-  var UIDefault = window.flatworld.UIs.default.init;
   var hexagonPlugin = window.flatworld.extensions.hexagons;
 
   /*---------------------
@@ -28,11 +27,15 @@
    * @param {Object} datas.map                    Holds all the stage, layer and object data needed to construct a full map
    * @param {Object} datas.game                   More general game data (like turn number, map size etc.)
    * @param {Object} datas.type                   Type data such as different unit types and their graphics (tank, soldier etc.)
+   * @param {UITheme} UITheme                     An instance of the UITheme class that the map uses.
    * @param {Object} options                      Optional options
    * @param {Object} options.isHiddenByDefault    When we use mapMovement plugin, it is best to keep all the obejcts hidden at the beginnig.
    * @param {Function} options.trackFPSCB         Callback to track FPS
    **/
-  function hexaFactory(canvasContainerElement, datas, options = { trackFPSCB: false, isHiddenByDefault: true, cache: false }) {
+  function hexaFactory(canvasContainerElement, datas, UITheme, options = {
+        trackFPSCB: false,
+        isHiddenByDefault: true,
+        cache: false }) {
     console.log("============== Horizontal hexagonal Map factory started =============");
     const pixelRatio = utils.environmentDetection.getPixelRatio();
     const DATA_MAP = (typeof datas.map === "string") ? JSON.parse(datas.map) : datas.map;
@@ -75,7 +78,9 @@
 
     map = new Flatworld(canvasContainerElement, mapProperties, mapOptions );
     dialog_selection = document.getElementById("selectionDialog");
-    defaultUI = new UIDefault(dialog_selection, map);
+    console.log(UITheme === window.flatworld.UIs.default, "UITheme");
+    defaultUI = new UITheme.init(dialog_selection, map);
+    console.log(UITheme, "UITheme");
 
     /* Initialize UI as singleton */
     UI(defaultUI, map);

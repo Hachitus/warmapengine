@@ -56,24 +56,31 @@
      * @param  {Event} e      Event object
      */
     function tapListener(e) {
-      var globalCoords = utils.mouse.eventData.getHAMMERPointerCoords(e);
-      var getData = {
+      const globalCoords = utils.mouse.eventData.getHAMMERPointerCoords(e);
+      const getData = {
         allData: function (object) {
           return object.data.typeData;
         }
       };
-      var objects, filter;
-
-      filter = new MapDataManipulator({
+      const containerFilter = new MapDataManipulator({
         type: "filter",
         object: "container",
         property: "name",
         value: "unitLayer"
       });
+      const selectionOptions = {
+        filters: new MapDataManipulator({
+            type: "filter",
+            object: "object",
+            property: "highlightable",
+            value: true
+          })
+      };
+      var objects;
 
       mapStates.objectSelect();
 
-      objects = map.getObjectsUnderArea(globalCoords, { filter });
+      objects = map.getObjectsUnderArea(globalCoords, { containerFilter });
       objects = utils.dataManipulation.mapObjectsToArray(objects);
       objects = utils.dataManipulation.flattenArrayBy1Level(objects);
 
@@ -83,7 +90,7 @@
       }
 
       map.currentlySelectedObjects = objects;
-      ui.showSelections(objects, getData);
+      ui.showSelections(objects, getData, selectionOptions);
       map.drawOnNextTick();
     }
     /**

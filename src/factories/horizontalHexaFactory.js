@@ -78,9 +78,7 @@
 
     map = new Flatworld(canvasContainerElement, mapProperties, mapOptions );
     dialog_selection = document.getElementById("selectionDialog");
-    console.log(UITheme === window.flatworld.UIs.default, "UITheme");
     defaultUI = new UITheme.init(dialog_selection, map);
-    console.log(UITheme, "UITheme");
 
     /* Initialize UI as singleton */
     UI(defaultUI, map);

@@ -1,7 +1,7 @@
 /* global describe, beforeEach, it, expect */
 'use strict';
 
-describe("mapMovement extension => ", function () {
+describe("hexagon extension, testing utils => ", function () {
   const HEXAGONS_UTILS = window.flatworld.extensions.hexagons.utils;
   var radius, shortDiagonal, longDiagonal, hexagonPoints, gridSize;
 

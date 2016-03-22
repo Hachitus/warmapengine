@@ -10,9 +10,10 @@
   -------- PUBLIC -------
   ----------------------*/
   /**
-   * Main class for showing UI on the map. Like unit selections and such. Has nothing to do with showing off-map data.
-   * Good examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit) and bringing the
-   * unit on top in the map. UI themes must implement this core UI module
+   * Main class for showing UI on the map, like unit selections, movements and such. Has nothing to do with showing off-map data, like
+   * datagrams of the resources player has or other players status etc.
+   * Good examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit), unit movement.
+   * How it works is that this is basically the interface that shows what the UI theme class can (or must) implement.
    *
    * @todo Not implemented fully yet and probably need refactoring
    *
@@ -51,8 +52,8 @@
      * @param {Object} options        Extra options
      * @return {Boolean}
      * */
-    scope.showSelections = function (objects, getDatas, options) {
-      objects = filterObjectsForHighlighting(objects);
+    scope.showSelections = function (objects, getDatas, { filters }) {
+      objects = filters.filterObjects(objects);
 
       if (objects.length === 1) {
         return UITheme.highlightSelectedObject(objects[0], getDatas);
@@ -74,37 +75,16 @@
      * @param {Object} getDatas.name  Retrieves object name
      * @param {Object} options        Extra options. Like dropping a shadow etc.
      * */
-    scope.highlightSelectedObject = function (object, getDatas, options) {
-      UITheme.highlightSelectedObject(object);
-    };
+    scope.highlightSelectedObject = UITheme.highlightSelectedObject.bind(UITheme);
     /**
      * Shows arrow or movement or what ever to indicate the selected unit is moving to the given location
      *
      * @method showUnitMovement
      * @static
      * */
-    scope.showUnitMovement = function (object, from, to, options) {
-      UITheme.showUnitMovement(object, from, to, options);
-    };
+    scope.showUnitMovement = UITheme.showUnitMovement.bind(UITheme);
 
     return scope;
-  }
-  /*--------------------------------
-  ------------ PRIVATE -------------
-  --------------------------------*/
-  /**
-   * This is a general function which filters only highlightable object for use in UI operations
-   *
-   * @static
-   * @method filterObjectsForHighlighting
-   * @param  {Array} objects
-   */
-  function filterObjectsForHighlighting (objects) {
-    var newObjects = objects.filter(obj => {
-      return obj.highlightable === true ? true : false;
-    });
-
-    return newObjects;
   }
 
   /*---------------------

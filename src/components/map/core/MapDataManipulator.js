@@ -1,7 +1,8 @@
 (function () {
   'use strict';
 
-  var mapLayers = window.flatworld.mapLayers;
+  const mapLayers = window.flatworld.mapLayers;
+  const objects = window.flatworld.objects;
 
   /*---------------------
   --------- API ---------
@@ -16,13 +17,35 @@
      * @param {Array|Object} rules        REQUIRED. The rules that apply for this instance. Multiple rules in Array or one as Object.
      **/
     constructor(rules) {
-      this.rules = Array.isArray(rules) ?  rules : [rules];
-      this.layerClasses = [mapLayers.MapLayer, mapLayers.MapLayerParent];
+      this.rules = Array.isArray(rules) ? rules : [rules];
+      this.layerClasses = Object.keys(mapLayers).map((k) => mapLayers[k]);
+      this.objectClasses = Object.keys(objects).map((k) => objects[k]);
     }
-    filterSubcontainers(subcontainers) {
-      if (!Array.isArray(subcontainers)) {
-        return this._runRules(subcontainers);
+    filterLayers(layers) {
+      var found;
+
+      if (!Array.isArray(layers)) {
+        found = [this._runRule(layers, "layer")];
+      } else {
+        found = layers.filter((layer) => {
+          return this._runRule(layer, "layer");
+        });
       }
+
+      return found;
+    }
+    filterObjects(objects) {
+      var found;
+
+      if (!Array.isArray(objects)) {
+        found = [this._runRule(objects, "object")];
+      } else {
+        found = objects.filter((object) => {
+          return this._runRule(object, "object");
+        });
+      }
+
+      return found;
     }
     /**
      * adds a filter rule
@@ -36,43 +59,60 @@
     /**
      * This is the actual method that runs through the rules and arranges the data
      *
-     * @method _runRules
+     * @method _runRule
      * @private
-     * @return {[type]} [description]
+     * @param {Array} [varname] [description]
      **/
-    _runRules(object) {
-      var foundObjects;
+    _runRule(object, type) {
+      var ruleMatches;
 
       this.rules.forEach((rule) => {
         if (rule.type === "filter") {
-          switch (rule.object) {
-            case "container":
-              foundObjects = this._getContainer(object, rule);
-              break;
-            case "object":
-              foundObjects = this._getObject(object, rule);
-              break;
+          if (rule.object === type === "layer") {
+            ruleMatches = this._getLayer(object, rule);
+          } else if (rule.object === type &&  type === "object") {
+            ruleMatches = this._getObject(object, rule);
           }
         }
       });
 
-      return foundObjects;
+      return ruleMatches;
     }
     /**
      * This is the actual method that runs through the rules and arranges the data
      *
      * @todo Refactor
      *
-     * @method _getContainer
+     * @method _getLayer
      * @private
      * @return {[type]} [description]
      **/
-    _getContainer(object, rule) {
+    _getLayer(object, rule) {
       if (object && ( object.parent instanceof this.layerClasses[0] || object && object.parent instanceof this.layerClasses[1] )) {
         return object.parent[rule.property] === rule.value;
       } else if ( object && object.parent && ( object.parent.parent instanceof this.layerClasses[0] ||
           object.parent.parent instanceof this.layerClasses[0] )) {
         return object.parent.parent[rule.property] === rule.value;
+      }
+    }
+    /**
+     * This is the actual method that runs through the rules and arranges the data
+     *
+     * @todo Refactor
+     *
+     * @method _getObject
+     * @private
+     * @return {[type]} [description]
+     **/
+    _getObject(object, rule) {
+      var objectIsOfType;
+
+      objectIsOfType = this.objectClasses.filter((objectClass) => {
+        return object instanceof objectClass;
+      });
+
+      if (objectIsOfType.length) {
+        return object[rule.property] === rule.value;
       }
     }
   }

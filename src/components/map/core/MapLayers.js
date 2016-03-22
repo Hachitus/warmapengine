@@ -491,7 +491,7 @@
       if (thisXIndex >= 0 && subcontainerList && subcontainerList[thisXIndex]) {
         for (let thisYIndex = yIndex; thisYIndex <= heightIndex; thisYIndex++) {
           if (thisYIndex >= 0 && subcontainerList[thisXIndex][thisYIndex]) {
-            if (filter && !filter.filterSubcontainers(subcontainerList[thisXIndex][thisYIndex])) {
+            if (filter && !filter.filterLayers(subcontainerList[thisXIndex][thisYIndex]).length) {
               continue;
             }
             allFoundSubcontainers.push(subcontainerList[thisXIndex][thisYIndex]);

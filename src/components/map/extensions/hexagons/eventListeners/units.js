@@ -63,7 +63,7 @@
       };
       const containerFilter = new MapDataManipulator({
         type: "filter",
-        object: "subContainer",
+        object: "layer",
         property: "name",
         value: "unitLayer"
       });
@@ -74,7 +74,7 @@
       objects = FTW.getObjectsUnderArea(globalCoords, { filters: containerFilter });
       objects = utils.dataManipulation.mapObjectsToArray(objects);
       objects = utils.dataManipulation.flattenArrayBy1Level(objects);
-console.log("OBJECTS", objects, containerFilter)
+
       /* Throw a mapEvent if there are objects found. It might be required to throw this event later on, not yet here. */
       if (objects.length) {
         mapEvents.publish("objectsSelected", objects);

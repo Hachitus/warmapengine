@@ -21,6 +21,12 @@
       this.layerClasses = Object.keys(mapLayers).map((k) => mapLayers[k]);
       this.objectClasses = Object.keys(objects).map((k) => objects[k]);
     }
+    /**
+     * This has exceptional query, since it actually queries it's parent. Subcontainers have really no useful values and they are dumb
+     * containers of objects, every data is on their parent container
+     * @param  {[type]} layers [description]
+     * @return {[type]}        [description]
+     */
     filterSubContainers(layers) {
       var found;
 

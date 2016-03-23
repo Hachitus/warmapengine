@@ -140,9 +140,13 @@
      * @method getPrimaryLayers
      * @return {Array}                            Primary children layers under this layer
      * */
-    getPrimaryLayers() {
+    getPrimaryLayers({ filters } = {}) {
       return this.children.filter(thisChild => {
-        return !thisChild.specialLayer;
+        if ( (filters && !filters.filterLayers(thisChild).length ) || thisChild.specialLayer ) {
+          return false;
+        }
+
+        return true;
       });
     }
     /**

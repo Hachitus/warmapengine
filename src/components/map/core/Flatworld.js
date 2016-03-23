@@ -565,8 +565,8 @@
      * @method getPrimaryLayers
      * @return {Object} Basically anything in the map that is used as a layer (not really counting subcontainers).
      */
-    getPrimaryLayers () {
-      return this.getMovableLayer().getPrimaryLayers();
+    getPrimaryLayers ({ filters } = {}) {
+      return this.getMovableLayer().getPrimaryLayers({ filters });
     }
     /**
      * Get current map coordinates. Basically the same as movable layers position.
@@ -725,12 +725,12 @@
      * @return {Array}                        All subcontainers that matched the critea
      */
     _getSubcontainersUnderArea(allCoords, { filters } = {} ) {
-      var primaryLayers = this.getMovableLayer().getPrimaryLayers();
+      var primaryLayers = this.getPrimaryLayers({ filters });
       var allMatchingSubcontainers = [];
       var thisLayersSubcontainers;
 
       primaryLayers.forEach(layer => {
-        thisLayersSubcontainers = layer.getSubcontainersByCoordinates(allCoords.localCoords, { filters: filters });
+        thisLayersSubcontainers = layer.getSubcontainersByCoordinates(allCoords.localCoords);
         allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
       });
 

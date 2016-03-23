@@ -113,7 +113,7 @@
           }
 
           objectGroup.objects.forEach( object => {
-            var objTypeData, objData, objectOptions, currentFrame, newObject;
+            var objTypeData, objectOptions, texture, newObject;
 
             try {
               objTypeData = DATA_TYPE.objectData[spritesheetType][object.objType];
@@ -122,17 +122,16 @@
                 throw new Error("Bad mapData for type:", spritesheetType, object.objType, object.name);
               }
 
-              objData = {
-                typeData: objTypeData,
-                activeData: object.data
-              };
-              currentFrame = PIXI.Texture.fromFrame(objTypeData.image);
+              texture = PIXI.Texture.fromFrame(objTypeData.image);
               objectOptions = {
-                currentFrame,
+                data: {
+                  typeData: objTypeData,
+                  activeData: object.data
+                },
                 radius: DATA_GAME.hexagonRadius
               };
 
-              newObject = new functionsInObj[objectGroup.type]( object.coord, objData, objectOptions );
+              newObject = new functionsInObj[objectGroup.type]( texture, object.coord, objectOptions );
 
               thisLayer.addChild(newObject);
             } catch (e) {

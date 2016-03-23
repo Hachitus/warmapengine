@@ -19,16 +19,13 @@
      * @class objects.ObjectSprite
      * @constructor
      * @extends PIXI.Sprite
-     * @param {PIXI.Point} coords                         the coordinate where the object is located at, relative to it's parent
-     * @param {Object} data                               objects data, that will be used in the game. It will not actually be mainly used
+     * @param {PIXI.Point} coords       the coordinate where the object is located at, relative to it's parent
+     * @param {Object} {}
+     * @param {Object} {}.data          objects data, that will be used in the game. It will not actually be mainly used
      * in graphical but rather things  like unit-data and city-data presentations etc.
-     * @param {Object} options.currFrame       currFrame the current frames number. This is basically the initial image, we can change it
-     * later for animation or such
      */
-    constructor(coord = { x: 0, y: 0 }, data = {}, options = { currentFrame: {} }) {
-      var { currentFrame } = options;
-
-      super(currentFrame);
+    constructor(texture, coord = { x: 0, y: 0 }, { data = null } = {}) {
+      super(texture);
 
       /* We need to round the numbers. If there are decimal values, the graphics will get blurry */
       let exactCoords = {
@@ -64,13 +61,6 @@
        * @type {Object}
        */
       this.data = data;
-      /**
-       * Current frame (from spritesheet) we are showing.
-       *
-       * @attribute
-       * @type {Number}
-       */
-      this.currentFrame = currentFrame;
       /**
        * Object area width in pixels.
        *
@@ -184,10 +174,9 @@
      * @extends ObjectSprite
      * @param {Coordinates} coords        format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
      * @param {object} data               This units custom data
-     * @param {object} options            other specific options for constructing this terrain
      */
-    constructor(coords, data, options) {
-      super(coords, data, options);
+    constructor(texture, coords, { data = null } = {}) {
+      super(texture, coords, { data });
 
       this.name = "DefaultTerrainObject";
       this.type = "terrain";
@@ -208,11 +197,9 @@
      * @param {Integer} coords.x            X coordinate
      * @param {Integer} coords.y            Y coordinate
      * @param {object} data                 This units data
-     * @param {object} options              other specific options for constructing this unit, like options.throwShadow
-     * @param {object} options.throwShadow  Can we throw a shadow under this object
      */
-    constructor(coords, data, options) {
-      super(coords, data, options);
+    constructor(texture, coords, { data = null } = {}) {
+      super(texture, coords, { data });
 
       this.name = "DefaultUnitObjects";
       this.type = "unit";

@@ -333,15 +333,14 @@
      * @param  {Object} options                         Optional options.
      * @param  {MapDataManipulator} options.filter      Filter for selecting only certain subcontainers
      */
-    getSubcontainersByCoordinates(coordinates, options = { filter: undefined }) {
+    getSubcontainersByCoordinates(coordinates, { filters } = {}) {
       if (!this.hasSubcontainers()) {
         throw new Error("tried to retrieve subcontainers, when they are not present");
       }
 
       var foundSubcontainers;
-      var { filter } = options;
 
-      foundSubcontainers = _getClosestSubcontainers(this, coordinates, { filter });
+      foundSubcontainers = _getClosestSubcontainers(this, coordinates, { filters });
 
       return foundSubcontainers;
     }
@@ -469,8 +468,7 @@
    * @param  {MapDataManipulator} options.filter    Filter for selecting only wanted subcontainers
    * @return {Array}                                Array of found subcontainers.
    */
-  function _getClosestSubcontainers(layer, givenCoordinates, options = { filter: undefined }) {
-    var { filter } = options;
+  function _getClosestSubcontainers(layer, givenCoordinates, { filters } = {}) {
     var { width, height, maxDetectionOffset } = layer.getSubcontainerConfigs ();
     var coordinates = {
       x: givenCoordinates.x >= 0 ? givenCoordinates.x - maxDetectionOffset : -maxDetectionOffset,
@@ -491,7 +489,7 @@
       if (thisXIndex >= 0 && subcontainerList && subcontainerList[thisXIndex]) {
         for (let thisYIndex = yIndex; thisYIndex <= heightIndex; thisYIndex++) {
           if (thisYIndex >= 0 && subcontainerList[thisXIndex][thisYIndex]) {
-            if (filter && !filter.filterLayers(subcontainerList[thisXIndex][thisYIndex]).length) {
+            if (filters && !filters.filterSubContainers(subcontainerList[thisXIndex][thisYIndex]).length) {
               continue;
             }
             allFoundSubcontainers.push(subcontainerList[thisXIndex][thisYIndex]);

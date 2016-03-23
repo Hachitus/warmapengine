@@ -536,8 +536,7 @@
      * @param  {Object} options.filter          The filter to apply to subcontainers
      * @return {Array}                          Array of object found on the map.
      */
-    getObjectsUnderArea(globalCoords = { x: 0, y: 0, width: 0, height: 0 }, options = { filter: undefined }) {
-      var { filter } = options;
+    getObjectsUnderArea(globalCoords = { x: 0, y: 0, width: 0, height: 0 }, { filters = null } = {}) {
       /* We need both coordinates later on and it's logical to do the work here */
       var allCoords = {
         globalCoords: globalCoords,
@@ -548,18 +547,8 @@
       allCoords.localCoords.width = globalCoords.width;
       allCoords.localCoords.height = globalCoords.height;
 
-      if (filter) {
-        let selectableContainerfilter = new MapDataManipulator({
-            type: "filter",
-            object: "container",
-            property: "selectable",
-            value: true
-          });
-        filter.addRule(selectableContainerfilter);
-      }
-
       if (this.usesSubcontainers()) {
-        let allMatchingSubcontainers = this._getSubcontainersUnderArea(allCoords, { filter } );
+        let allMatchingSubcontainers = this._getSubcontainersUnderArea(allCoords, { filters } );
 
         objects = this._retrieveObjects(allCoords, {
           subcontainers: allMatchingSubcontainers
@@ -735,14 +724,13 @@
      * @param {Object} options              Optional options.
      * @return {Array}                        All subcontainers that matched the critea
      */
-    _getSubcontainersUnderArea(allCoords, options = { filter: undefined } ) {
+    _getSubcontainersUnderArea(allCoords, { filters } = {} ) {
       var primaryLayers = this.getMovableLayer().getPrimaryLayers();
       var allMatchingSubcontainers = [];
-      var { filter } = options;
       var thisLayersSubcontainers;
 
       primaryLayers.forEach(layer => {
-        thisLayersSubcontainers = layer.getSubcontainersByCoordinates(allCoords.localCoords, { filter: filter });
+        thisLayersSubcontainers = layer.getSubcontainersByCoordinates(allCoords.localCoords, { filters: filters });
         allMatchingSubcontainers = allMatchingSubcontainers.concat(thisLayersSubcontainers);
       });
 

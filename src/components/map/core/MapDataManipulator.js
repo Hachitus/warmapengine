@@ -21,11 +21,24 @@
       this.layerClasses = Object.keys(mapLayers).map((k) => mapLayers[k]);
       this.objectClasses = Object.keys(objects).map((k) => objects[k]);
     }
+    filterSubContainers(layers) {
+      var found;
+
+      if (!Array.isArray(layers)) {
+        found = this._runRule(layers, "subContainer") ? [layers] : [];
+      } else {
+        found = layers.filter((layer) => {
+          return this._runRule(layer, "subContainer");
+        });
+      }
+
+      return found;
+    }
     filterLayers(layers) {
       var found;
 
       if (!Array.isArray(layers)) {
-        found = [this._runRule(layers, "layer")];
+        found = this._runRule(layers, "layer") ? [layers] : [];
       } else {
         found = layers.filter((layer) => {
           return this._runRule(layer, "layer");
@@ -38,7 +51,7 @@
       var found;
 
       if (!Array.isArray(objects)) {
-        found = [this._runRule(objects, "object")];
+        found = this._runRule(objects, "object") ? [objects] : [];
       } else {
         found = objects.filter((object) => {
           return this._runRule(object, "object");
@@ -68,10 +81,16 @@
 
       this.rules.forEach((rule) => {
         if (rule.type === "filter") {
-          if (rule.object === type === "layer") {
-            ruleMatches = this._getLayer(object, rule);
-          } else if (rule.object === type &&  type === "object") {
-            ruleMatches = this._getObject(object, rule);
+          if (rule.object !== type) {
+            return;
+          }
+
+          if (type === "layer") {
+            ruleMatches = this._getObject(object, rule, this.layerClasses);
+          } else if (type === "object") {
+            ruleMatches = this._getObject(object, rule, this.objectClasses);
+          } else if (type === "subContainer") {
+            ruleMatches = this._getSubContainer(object, rule, this.layerClasses);
           }
         }
       });
@@ -79,35 +98,40 @@
       return ruleMatches;
     }
     /**
-     * This is the actual method that runs through the rules and arranges the data
+     * When checking subcontainers. The subcontainers PARENT has to be of type from flatworld.mapLayers.
      *
-     * @todo Refactor
-     *
-     * @method _getLayer
+     * @method _getSubContainer
      * @private
      * @return {[type]} [description]
      **/
-    _getLayer(object, rule) {
-      if (object && ( object.parent instanceof this.layerClasses[0] || object && object.parent instanceof this.layerClasses[1] )) {
-        return object.parent[rule.property] === rule.value;
-      } else if ( object && object.parent && ( object.parent.parent instanceof this.layerClasses[0] ||
-          object.parent.parent instanceof this.layerClasses[0] )) {
-        return object.parent.parent[rule.property] === rule.value;
+    _getSubContainer(object, rule, classes) {
+      var objectIsOfType;
+
+      if (!object || !object.parent) {
+        return false;
       }
+
+      objectIsOfType = classes.filter((objectClass) => {
+        return object.parent instanceof objectClass;
+      });
+
+      if (!objectIsOfType.length) {
+        return false;
+      }
+
+      return object.parent[rule.property] === rule.value;
     }
     /**
      * This is the actual method that runs through the rules and arranges the data
-     *
-     * @todo Refactor
      *
      * @method _getObject
      * @private
      * @return {[type]} [description]
      **/
-    _getObject(object, rule) {
+    _getObject(object, rule, classes) {
       var objectIsOfType;
 
-      objectIsOfType = this.objectClasses.filter((objectClass) => {
+      objectIsOfType = classes.filter((objectClass) => {
         return object instanceof objectClass;
       });
 

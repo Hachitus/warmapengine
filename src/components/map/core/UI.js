@@ -45,15 +45,19 @@
      *
      * @method showSelections
      * @static
-     * @param  {Array} objects     Objects that have been selected.
-     * @param {Object} getDatas       This is an object made of functions, that get wanted data from the object. For example if you have
+     * @param  {Array|Object} objects   Objects that have been selected.
+     * @param {Object} getDatas         This is an object made of functions, that get wanted data from the object. For example if you have
      * objects name in object.data.specialData.name, then you have an object getDatas.name(), which retrieves this.
-     * @param {Object} getDatas.name  Retrieves object name
-     * @param {Object} options        Extra options
+     * @param {Object} getDatas.name    Retrieves object name
+     * @param {Object} options          Extra options
      * @return {Boolean}
      * */
-    scope.showSelections = function (objects, getDatas, { filters }) {
-      objects = filters.filterObjects(objects);
+    scope.showSelections = function (objects, getDatas, { filters } = {}) {
+      if (filters) {
+        objects = filters.filterObjects(objects);
+      }
+
+      objects = Array.isArray(objects) ? objects : [objects];
 
       if (objects.length === 1) {
         return UITheme.highlightSelectedObject(objects[0], getDatas);

@@ -30,14 +30,13 @@
    * @param  {Map} map      The currently use Map instance
    * @return {Boolean}      True
    */
-  function _setupUnitsHexagonClick(map) {
-    var ui, mapInstance;
+  function _setupUnitsHexagonClick(FTW) {
+    var ui;
 
-    if (!map) {
-      throw new Error("eventlisteners initialization require map arguments");
+    if (!FTW) {
+      throw new Error("eventlisteners initialization requires flatworld instance as a parameter");
     }
 
-    mapInstance = map;
     ui = UI();
 
     eventListeners.on("select", tapListener);
@@ -64,34 +63,26 @@
       };
       const containerFilter = new MapDataManipulator({
         type: "filter",
-        object: "container",
+        object: "subContainer",
         property: "name",
         value: "unitLayer"
       });
-      const selectionOptions = {
-        filters: new MapDataManipulator({
-            type: "filter",
-            object: "object",
-            property: "highlightable",
-            value: true
-          })
-      };
       var objects;
 
       mapStates.objectSelect();
 
-      objects = map.getObjectsUnderArea(globalCoords, { containerFilter });
+      objects = FTW.getObjectsUnderArea(globalCoords, { filters: containerFilter });
       objects = utils.dataManipulation.mapObjectsToArray(objects);
       objects = utils.dataManipulation.flattenArrayBy1Level(objects);
-
+console.log("OBJECTS", objects, containerFilter)
       /* Throw a mapEvent if there are objects found. It might be required to throw this event later on, not yet here. */
       if (objects.length) {
         mapEvents.publish("objectsSelected", objects);
       }
 
-      map.currentlySelectedObjects = objects;
-      ui.showSelections(objects, getData, selectionOptions);
-      map.drawOnNextTick();
+      FTW.currentlySelectedObjects = objects;
+      ui.showSelections(objects, getData);
+      FTW.drawOnNextTick();
     }
     /**
      * This listener is for the situation, where we have an object and we issue an order / action to
@@ -104,7 +95,7 @@
     function orderListener(e) {
       const filter = new MapDataManipulator({
         type: "filter",
-        object: "container",
+        object: "layer",
         property: "name",
         value: "unitLayer"
       });
@@ -113,18 +104,18 @@
           return object.data.typeData;
         }
       };
-      var selectedObject = mapInstance.currentlySelectedObjects[0];
+      var selectedObject = FTW.currentlySelectedObjects[0];
       var globalCoords;
 
-      if (mapInstance.currentlySelectedObjects.length > 1) {
-        mapLog.error("the selected object is only supported to be one atm." + JSON.stringify(mapInstance.currentlySelectedObjects));
+      if (FTW.currentlySelectedObjects.length > 1) {
+        mapLog.error("the selected object is only supported to be one atm." + JSON.stringify(FTW.currentlySelectedObjects));
       } else if (!selectedObject) {
         mapLog.error("No objects selected for orders! " + JSON.stringify(selectedObject));
       }
 
       mapStates.objectOrder();
 
-      if (mapInstance.isSupportedTouch) {
+      if (FTW.isSupportedTouch) {
         globalCoords = utils.mouse.eventData.getHAMMERPointerCoords(e);
       } else {
         globalCoords = utils.mouse.eventData.getPointerCoords(e);
@@ -136,7 +127,7 @@
       ui.showUnitMovement(selectedObject, globalCoords);
 
       mapStates.objectOrderEnd();
-      mapInstance.drawOnNextTick();
+      FTW.drawOnNextTick();
     }
   }
 })();

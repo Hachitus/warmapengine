@@ -142,7 +142,7 @@
      * */
     getPrimaryLayers({ filters } = {}) {
       return this.children.filter(thisChild => {
-        if ( (filters && !filters.filterLayers(thisChild).length ) || thisChild.specialLayer ) {
+        if ( (filters && !filters.filter(thisChild).length ) || thisChild.specialLayer ) {
           return false;
         }
 
@@ -334,17 +334,16 @@
      * @param  {Object} coordinates
      * @param  {Integer} coordinates.x                  X coordinate
      * @param  {Integer} coordinates.y                  Y coordinate
-     * @param  {Object} options                         Optional options.
      * @param  {MapDataManipulator} options.filter      Filter for selecting only certain subcontainers
      */
-    getSubcontainersByCoordinates(coordinates, { filters } = {}) {
+    getSubcontainersByCoordinates(coordinates) {
       if (!this.hasSubcontainers()) {
         throw new Error("tried to retrieve subcontainers, when they are not present");
       }
 
       var foundSubcontainers;
 
-      foundSubcontainers = _getClosestSubcontainers(this, coordinates, { filters });
+      foundSubcontainers = _getClosestSubcontainers(this, coordinates);
 
       return foundSubcontainers;
     }
@@ -469,10 +468,9 @@
    * @param  {Integer} givenCoordinates.width       width of the rectangle
    * @param  {Integer} givenCoordinates.height      height of the rectangle
    * @param  {Object} options                       Optional options.
-   * @param  {MapDataManipulator} options.filter    Filter for selecting only wanted subcontainers
    * @return {Array}                                Array of found subcontainers.
    */
-  function _getClosestSubcontainers(layer, givenCoordinates, { filters } = {}) {
+  function _getClosestSubcontainers(layer, givenCoordinates) {
     var { width, height, maxDetectionOffset } = layer.getSubcontainerConfigs ();
     var coordinates = {
       x: givenCoordinates.x >= 0 ? givenCoordinates.x - maxDetectionOffset : -maxDetectionOffset,
@@ -493,9 +491,6 @@
       if (thisXIndex >= 0 && subcontainerList && subcontainerList[thisXIndex]) {
         for (let thisYIndex = yIndex; thisYIndex <= heightIndex; thisYIndex++) {
           if (thisYIndex >= 0 && subcontainerList[thisXIndex][thisYIndex]) {
-            if (filters && !filters.filterSubContainers(subcontainerList[thisXIndex][thisYIndex]).length) {
-              continue;
-            }
             allFoundSubcontainers.push(subcontainerList[thisXIndex][thisYIndex]);
           }
         }

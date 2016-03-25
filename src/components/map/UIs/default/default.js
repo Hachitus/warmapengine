@@ -7,12 +7,12 @@
   var { PIXI } = window.flatworld_libraries;
   var templates = window.flatworld.UIs.default.templates;
   var createVisibleHexagon = window.flatworld.extensions.hexagons.utils.createVisibleHexagon;
-  var UITemplateBase = window.flatworld.UITemplateBase;
   var drawShapes = window.flatworld.UIs.default.utils.drawShapes;
 
   /*---------------------
   ------ VARIABLES ------
   ----------------------*/
+  var styleSheetElement;
   var cssClasses = {
     select: "#dialog_select"
   };
@@ -21,7 +21,7 @@
   /*---------------------
   --------- API ---------
   ----------------------*/
-  class UIDefault extends UITemplateBase {
+  class UIDefault {
     /**
      * The simplest default UI implementation. Implemented UI functionalities for: showSelections, highlightSelectedObject
      *
@@ -34,7 +34,23 @@
      * @param  {Object} options
      */
     constructor(modal, map, options = { styles: "#F0F0F0" }) {
-      super(cssClasses);
+      styleSheetElement = this.addStyleElement();
+      /* For testing. This is deeefinitely supposed to not be here, but it has stayed there for testing. */
+      let createdCSS = `
+        ${cssClasses.select} {
+          z-index: 9999;
+          opacity: 0.9;
+          position: fixed;
+          left: 0px;
+          bottom: 0px;
+          background-color: brown;
+          border: 1px solid rgb(255, 186, 148);;
+          border-bottom: 0px;
+          padding:15px;
+          margin-left:10px;
+        }`;
+      this.addCSSRulesToScriptTag(styleSheetElement, createdCSS);
+
       // Add a media (and/or media query) here if you'd like!
       // style.setAttribute("media", "screen")
       // style.setAttribute("media", "only screen and (max-width : 1024px)")
@@ -213,7 +229,38 @@
       this.map.removeUIObject(this.map.layerTypes.movableType.id);
       this.map.addUIObject(this.map.layerTypes.movableType.id, container, UI_CONTAINER_NAME);
     }
+    /**
+     * @method addCSSRulesToScriptTag
+     *
+     * @param {Object} sheet
+     * @param {Object} rules
+     */
+    addCSSRulesToScriptTag(sheet, rules) {
+      sheet.insertRule(rules, 0);
+    }
+    /**
+     * @method addStyleElement
+     */
+    addStyleElement() {
+      var _styleElement = document.createElement("style");
+      // WebKit hack :(
+      _styleElement.appendChild(document.createTextNode(""));
+      document.head.appendChild(_styleElement);
 
+      return _styleElement.sheet;
+    }
+    /**
+     * @method showModal
+     *
+     * @param {HTMLElement} modalElem
+     * @param {Object} cssClasses
+     * @todo make sure / check, that modalElem.classList.add gets added only once
+     */
+    showModal(modalElem, cssClasses) {
+      modalElem.classList.add(cssClasses.select);
+      /* Would be HTML 5.1 standard, but that might be a long way
+        this.modal.show();*/
+    }
   }
 
   /*----------------------

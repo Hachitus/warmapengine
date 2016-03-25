@@ -18,49 +18,27 @@
      **/
     constructor(rules) {
       this.rules = Array.isArray(rules) ? rules : [rules];
-      this.layerClasses = Object.keys(mapLayers).map((k) => mapLayers[k]);
-      this.objectClasses = Object.keys(objects).map((k) => objects[k]);
+      this.classes = {
+        layer: Object.keys(mapLayers).map((k) => mapLayers[k]),
+        object: Object.keys(objects).map((k) => objects[k])
+      };
     }
     /**
      * This has exceptional query, since it actually queries it's parent. Subcontainers have really no useful values and they are dumb
      * containers of objects, every data is on their parent container
-     * @param  {[type]} layers [description]
-     * @return {[type]}        [description]
+     *
+     * @method filter
+     * @param  {Array | Object} objects     The objects that are being filtered
+     * @return {Array}                      The found objects in an Array
      */
-    filterSubContainers(layers) {
-      var found;
-
-      if (!Array.isArray(layers)) {
-        found = this._runRule(layers, "subContainer") ? [layers] : [];
-      } else {
-        found = layers.filter((layer) => {
-          return this._runRule(layer, "subContainer");
-        });
-      }
-
-      return found;
-    }
-    filterLayers(layers) {
-      var found;
-
-      if (!Array.isArray(layers)) {
-        found = this._runRule(layers, "layer") ? [layers] : [];
-      } else {
-        found = layers.filter((layer) => {
-          return this._runRule(layer, "layer");
-        });
-      }
-
-      return found;
-    }
-    filterObjects(objects) {
+    filter(objects) {
       var found;
 
       if (!Array.isArray(objects)) {
-        found = this._runRule(objects, "object") ? [objects] : [];
+        found = this._runRule(objects) ? [objects] : [];
       } else {
         found = objects.filter((object) => {
-          return this._runRule(object, "object");
+          return this._runRule(object);
         });
       }
 
@@ -82,50 +60,32 @@
      * @private
      * @param {Array} [varname] [description]
      **/
-    _runRule(object, type) {
-      var ruleMatches;
+    _runRule(object) {
+      var ruleMatches, matchedType;
+
+      Object.keys(this.classes).forEach((type) => {
+        var filtered = this.classes[type].filter((thisClass) => {
+          return object instanceof thisClass;
+        });
+
+        matchedType = filtered.length ? type : matchedType;
+      });
 
       this.rules.forEach((rule) => {
         if (rule.type === "filter") {
-          if (rule.object !== type) {
+          if (rule.object !== matchedType) {
             return;
           }
 
-          if (type === "layer") {
-            ruleMatches = this._getObject(object, rule, this.layerClasses);
-          } else if (type === "object") {
-            ruleMatches = this._getObject(object, rule, this.objectClasses);
-          } else if (type === "subContainer") {
-            ruleMatches = this._getSubContainer(object, rule, this.layerClasses);
+          if (matchedType === "layer") {
+            ruleMatches = this._getObject(object, rule);
+          } else if (matchedType === "object") {
+            ruleMatches = this._getObject(object, rule);
           }
         }
       });
 
       return ruleMatches;
-    }
-    /**
-     * When checking subcontainers. The subcontainers PARENT has to be of type from flatworld.mapLayers.
-     *
-     * @method _getSubContainer
-     * @private
-     * @return {[type]} [description]
-     **/
-    _getSubContainer(object, rule, classes) {
-      var objectIsOfType;
-
-      if (!object || !object.parent) {
-        return false;
-      }
-
-      objectIsOfType = classes.filter((objectClass) => {
-        return object.parent instanceof objectClass;
-      });
-
-      if (!objectIsOfType.length) {
-        return false;
-      }
-
-      return object.parent[rule.property] === rule.value;
     }
     /**
      * This is the actual method that runs through the rules and arranges the data
@@ -134,16 +94,8 @@
      * @private
      * @return {[type]} [description]
      **/
-    _getObject(object, rule, classes) {
-      var objectIsOfType;
-
-      objectIsOfType = classes.filter((objectClass) => {
-        return object instanceof objectClass;
-      });
-
-      if (objectIsOfType.length) {
-        return object[rule.property] === rule.value;
-      }
+    _getObject(object, rule) {
+      return object[rule.property] === rule.value;
     }
   }
 

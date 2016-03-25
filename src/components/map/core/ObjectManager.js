@@ -35,6 +35,8 @@
      * @param {Integer} options.size.width
      * @param {Integer} options.size.height
      * @return {Array}                                          matched objects
+     *
+     * @todo add checks for rectangles. Now we can only check with width = 0 && height = 0
      */
     retrieve(allCoords, options = { type: false, subcontainers: [], size: { width: 0, height: 0 } }) {
       var { subcontainers, size, type } = options;

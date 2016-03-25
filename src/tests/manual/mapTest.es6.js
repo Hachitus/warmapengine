@@ -15,15 +15,12 @@
   var mapZoom = window.flatworld.extensions.mapZoom;
   var mapDrag = window.flatworld.extensions.mapDrag;
   var hexagons = window.flatworld.extensions.hexagons;
+  var UITheme = window.flatworld.UIs.default;
 
   /* DATA FILES used for testing */
   var gameData = window.gameData;
   var typeData = window.typeData;
   var mapData = window.mapData;
-
-  /* REQUIRED FOR IE11 */
-  polyfills.arrayFind();
-  polyfills.es6String();
 
   var pluginsToActivate = [
     baseEventlisteners,
@@ -31,6 +28,13 @@
     mapDrag,
     hexagons.selectHexagonObject
   ];
+  const HEXAGON_RADIUS = gameData.hexagonRadius;
+
+  /* REQUIRED FOR IE11 */
+  polyfills.arrayFind();
+  polyfills.es6String();
+
+  hexagons.utils.init(HEXAGON_RADIUS);
 
   initFlatworld(mapData, {
     canvasContainer: document.getElementById("mapCanvasContainer")
@@ -73,7 +77,9 @@
           game: gameData,
           map: mapData,
           type: typeData
-        }, {
+        },
+        UITheme,
+        {
           isHiddenByDefault: false
         });
 

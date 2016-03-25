@@ -5,7 +5,7 @@
   ------- IMPORT --------
   ----------------------*/
   var { Q, PIXI } = window.flatworld_libraries;
-  var { mapLayers, ObjectManager, mapEvents, MapDataManipulator, generalUtils, log }  = window.flatworld;
+  var { mapLayers, ObjectManager, mapEvents, generalUtils, log }  = window.flatworld;
 
   /*---------------------
   ------ VARIABLES ------

@@ -1,6 +1,11 @@
 (function () {
   'use strict';
 
+  /*---------------------
+  ------- IMPORT --------
+  ----------------------*/
+  var mapLog = window.flatworld.log;
+
   /*-----------------------
   ---------- API ----------
   -----------------------*/
@@ -47,6 +52,9 @@
    * how many decimals to round
   */
   function getHexagonPoints({ radius = globalRadius, orientation = "horizontal" } = {}) {
+    if (!radius) {
+      mapLog.error("You need to define at least globalRadius for the hexagonMath utils class");
+    }
     const OFFSET = orientation === "horizontal" ? 0.5 : 0;
     const CENTER = {
       x: radius,

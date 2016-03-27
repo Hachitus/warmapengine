@@ -340,7 +340,6 @@
     mapAPI.add(
       "objectMove",
       function (type, data, movementData) {
-        console.log("TYPE", type)
         if (type === "get") {
           return {
             url: data.baseUrl + movementData.id

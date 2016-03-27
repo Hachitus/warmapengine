@@ -5,51 +5,23 @@ This engine is still in development. It is not well tested for other uses than t
 
 Also I am very happy to get feedback on any projects or tests that might be using this engine and very eager to help with getting issues resolved.
 
-Things to do:
-- Make the ES6 bundling work.
-- Refactor / rework UI system. It is not simple enough now and it is too tied to weird test-cases like CSS-classes etc. + take the jquery example away from UI and put something more useful there.
-- Go through the whole API and see what could be simplified and streamlined.
-- Move everything under flatworld repository
-...
-
+#Hot links
+[Contribution guidelines](https://github.com/Hachitus/warmapengine/blob/master/CONTRIBUTING.md)
+[API documentation](http://hachitus.github.io/warmapengine/documentation/)
+[Changelog (after it is in use)](https://github.com/Hachitus/warmapengine/blob/master/CHANGELOG.md)
 
 #Introduction
-2D strategy game engine for browsers. Project will move forward at its own pace. The very core functionality has been done, that practically manages adding the objects to the map, moving the map around and selecting + highlighting objects on the map. Other functionality outside of that, has not yet been done. But rough roadmap for thise exist.
+2D strategy game engine for browsers. Project will move forward at its own pace. The very core functionality has been done, that practically manages adding the objects to the map, moving the map around and selecting + highlighting objects on the map. Other functionality outside of that, has not yet been done. But rough roadmap for these exist.
 
 Basically the core functionality will appear mostly in the pace of making a simple example 2D strategy game for the engine. A much later on there will be a full-blown game made based on this, but after the core engine is ready.
 
-The development is done in ES6, which should be well enough supported by the time the games made with this framework are done. I aim to have the supported platforms from IE11+.
+The development is done in ES6 and transpiled to work on all browsers that are supported. the official support for the engine is IE11+, since there are a lot of other features that will not be available for browser outside of that.
 
 If you are interested contact me (http://hyytia.level7.fi/)
 
 #Developing
-##Installing on fresh server
-This is an example install for a fresh Debian 8.0 (Jessie) based virtual server. You may naturally skip any step you wish, if there are alternatives on your server, step you want to perform differently or something you already have on your server. The installation has been tested on upcloud.com servers and works there fine, from start to finish.
-
-Update repositories & install node.js, npm and git
-
-    apt-get update && apt-get -y install nodejs npm git
-
-Clone the repository and change directory
-
-    git clone https://github.com/Hachitus/warmapengine.git && cd warmapengine
-
-Install package.json packages and JSPM packages. NOTE! Forever is installed as global module!
-
-    npm run init
-
-##Commanding the backend server
-
-start server
-
-    npm run start
-
-stop server
-
-    npm run stop
-
 ##Testing and development
-Tests can be found with index-file in tests/-folder. For example working example should be found in: *http://warmapengine.level7.fi/tests/*, but naturally on your server it is http://server_address/tests/.
+Tests can be found with index-file in tests/-folder. A working example should be found in: *http://warmapengine.level7.fi/tests/*, but naturally on your server it is http://server_address/tests/.
 
 There are no unit tests at the moment, since I didn't find them worth the time and effort as many things in canvas game can not be unit tested easily, I decided to skip them all together for now.
 
@@ -99,10 +71,6 @@ Simple unfinished example:
 		newObject = new ObjectTerrain({ x: 1, y: 1 }, objData, objectOptions);
 		thisLayer.addChild(newObject);
 	})
-
-
-##API documentation
-*http://hachitus.github.io/warmapengine/documentation/*
 
 ##Plugins
 The map supports adding plugins and even some of the core functionalities have been implemented as plugins. You must comply to just to a couplr rules. Plugins have a lot of freedom to mess around with the map data, this is subject to change if there are issues with this later on. Plugin objects must have init method and pluginName variable, in the format of:

@@ -35,7 +35,8 @@
     }
 
     if (!UITheme || !givenMap) {
-      throw new Error("UI-module requires UITheme and map object");
+      throw new Error("UI-module requires UITheme and map object, This is an singletong class, so it's possible it should have been "+
+        "already called earlier");
     }
 
     map = givenMap;

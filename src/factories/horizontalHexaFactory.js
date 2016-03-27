@@ -5,7 +5,7 @@
   ------- IMPORT --------
   ----------------------*/
   var PIXI = window.flatworld_libraries.PIXI;
-  var { Flatworld, UI, utils, log }  = window.flatworld;
+  var { Flatworld, utils, log }  = window.flatworld;
   var hexagonPlugin = window.flatworld.extensions.hexagons;
 
   /*---------------------
@@ -32,7 +32,7 @@
    * @param {Object} options.isHiddenByDefault    When we use mapMovement plugin, it is best to keep all the obejcts hidden at the beginnig.
    * @param {Function} options.trackFPSCB         Callback to track FPS
    **/
-  function hexaFactory(canvasContainerElement, datas, UITheme, options = {
+  function hexaFactory(canvasContainerElement, datas, options = {
         trackFPSCB: false,
         isHiddenByDefault: true,
         cache: false }) {
@@ -74,14 +74,7 @@
       trackFPSCB: options.trackFPSCB,
       cache: options.cache
     };
-    var map, dialog_selection, defaultUI;
-
-    map = new Flatworld(canvasContainerElement, mapProperties, mapOptions );
-    dialog_selection = document.getElementById("selectionDialog");
-    defaultUI = new UITheme.init(dialog_selection, map);
-
-    /* Initialize UI as singleton */
-    UI(defaultUI, map);
+    var map = new Flatworld(canvasContainerElement, mapProperties, mapOptions );
 
     DATA_MAP.layers.forEach( layerData => {
       if (typeof layerData !== "object") {

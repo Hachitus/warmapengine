@@ -16,6 +16,7 @@
   var mapDrag = window.flatworld.extensions.mapDrag;
   var hexagons = window.flatworld.extensions.hexagons;
   var UITheme = window.flatworld.UIs.default;
+  var UI = window.flatworld.UI;
 
   /* DATA FILES used for testing */
   var gameData = window.gameData;
@@ -78,10 +79,13 @@
           map: mapData,
           type: typeData
         },
-        UITheme,
         {
           isHiddenByDefault: false
         });
+
+      let dialog_selection = document.getElementById("selectionDialog");
+      let initializedUITheme = new UITheme.init(dialog_selection, map);
+      UI(initializedUITheme, map);
 
       promises = map.init( pluginsToActivate, mapData.startPoint );
 

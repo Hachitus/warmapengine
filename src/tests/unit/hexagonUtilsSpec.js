@@ -7,6 +7,7 @@ describe("hexagon extension, testing utils => ", function () {
 
   beforeEach(function () {
     radius = 60;
+    HEXAGONS_UTILS.init(radius);
     hexagonPoints = HEXAGONS_UTILS.getHexagonPoints(radius);
     gridSize = {
       rows: 10,

@@ -2566,1677 +2566,6 @@ if (typeof define === 'function' && define.amd) {
 }
 
 })(window, document, 'Hammer');
-/*
- * Hamster.js v1.0.5
- * (c) 2013 Monospaced http://monospaced.com
- * License: MIT
- */
-
-(function(window, document){
-'use strict';
-
-/**
- * Hamster
- * use this to create instances
- * @returns {Hamster.Instance}
- * @constructor
- */
-var Hamster = function(element) {
-  return new Hamster.Instance(element);
-};
-
-// default event name
-Hamster.SUPPORT = 'wheel';
-
-// default DOM methods
-Hamster.ADD_EVENT = 'addEventListener';
-Hamster.REMOVE_EVENT = 'removeEventListener';
-Hamster.PREFIX = '';
-
-// until browser inconsistencies have been fixed...
-Hamster.READY = false;
-
-Hamster.Instance = function(element){
-  if (!Hamster.READY) {
-    // fix browser inconsistencies
-    Hamster.normalise.browser();
-
-    // Hamster is ready...!
-    Hamster.READY = true;
-  }
-
-  this.element = element;
-
-  // store attached event handlers
-  this.handlers = [];
-
-  // return instance
-  return this;
-};
-
-/**
- * create new hamster instance
- * all methods should return the instance itself, so it is chainable.
- * @param   {HTMLElement}       element
- * @returns {Hamster.Instance}
- * @constructor
- */
-Hamster.Instance.prototype = {
-  /**
-   * bind events to the instance
-   * @param   {Function}    handler
-   * @param   {Boolean}     useCapture
-   * @returns {Hamster.Instance}
-   */
-  wheel: function onEvent(handler, useCapture){
-    Hamster.event.add(this, Hamster.SUPPORT, handler, useCapture);
-
-    // handle MozMousePixelScroll in older Firefox
-    if (Hamster.SUPPORT === 'DOMMouseScroll') {
-      Hamster.event.add(this, 'MozMousePixelScroll', handler, useCapture);
-    }
-
-    return this;
-  },
-
-  /**
-   * unbind events to the instance
-   * @param   {Function}    handler
-   * @param   {Boolean}     useCapture
-   * @returns {Hamster.Instance}
-   */
-  unwheel: function offEvent(handler, useCapture){
-    // if no handler argument,
-    // unbind the last bound handler (if exists)
-    if (handler === undefined && (handler = this.handlers.slice(-1)[0])) {
-      handler = handler.original;
-    }
-
-    Hamster.event.remove(this, Hamster.SUPPORT, handler, useCapture);
-
-    // handle MozMousePixelScroll in older Firefox
-    if (Hamster.SUPPORT === 'DOMMouseScroll') {
-      Hamster.event.remove(this, 'MozMousePixelScroll', handler, useCapture);
-    }
-
-    return this;
-  }
-};
-
-Hamster.event = {
-  /**
-   * cross-browser 'addWheelListener'
-   * @param   {Instance}    hamster
-   * @param   {String}      eventName
-   * @param   {Function}    handler
-   * @param   {Boolean}     useCapture
-   */
-  add: function add(hamster, eventName, handler, useCapture){
-    // store the original handler
-    var originalHandler = handler;
-
-    // redefine the handler
-    handler = function(originalEvent){
-
-      if (!originalEvent) {
-        originalEvent = window.event;
-      }
-
-      // create a normalised event object,
-      // and normalise "deltas" of the mouse wheel
-      var event = Hamster.normalise.event(originalEvent),
-          delta = Hamster.normalise.delta(originalEvent);
-
-      // fire the original handler with normalised arguments
-      return originalHandler(event, delta[0], delta[1], delta[2]);
-
-    };
-
-    // cross-browser addEventListener
-    hamster.element[Hamster.ADD_EVENT](Hamster.PREFIX + eventName, handler, useCapture || false);
-
-    // store original and normalised handlers on the instance
-    hamster.handlers.push({
-      original: originalHandler,
-      normalised: handler
-    });
-  },
-
-  /**
-   * removeWheelListener
-   * @param   {Instance}    hamster
-   * @param   {String}      eventName
-   * @param   {Function}    handler
-   * @param   {Boolean}     useCapture
-   */
-  remove: function remove(hamster, eventName, handler, useCapture){
-    // find the normalised handler on the instance
-    var originalHandler = handler,
-        lookup = {},
-        handlers;
-    for (var i = 0, len = hamster.handlers.length; i < len; ++i) {
-      lookup[hamster.handlers[i].original] = hamster.handlers[i];
-    }
-    handlers = lookup[originalHandler];
-    handler = handlers.normalised;
-
-    // cross-browser removeEventListener
-    hamster.element[Hamster.REMOVE_EVENT](Hamster.PREFIX + eventName, handler, useCapture || false);
-
-    // remove original and normalised handlers from the instance
-    for (var h in hamster.handlers) {
-      if (hamster.handlers[h] == handlers) {
-        hamster.handlers.splice(h, 1);
-        break;
-      }
-    }
-  }
-};
-
-/**
- * these hold the lowest deltas,
- * used to normalise the delta values
- * @type {Number}
- */
-var lowestDelta,
-    lowestDeltaXY;
-
-Hamster.normalise = {
-  /**
-   * fix browser inconsistencies
-   */
-  browser: function normaliseBrowser(){
-    // detect deprecated wheel events
-    if (!('onwheel' in document || document.documentMode >= 9)) {
-      Hamster.SUPPORT = document.onmousewheel !== undefined ?
-                        'mousewheel' : // webkit and IE < 9 support at least "mousewheel"
-                        'DOMMouseScroll'; // assume remaining browsers are older Firefox
-    }
-
-    // detect deprecated event model
-    if (!window.addEventListener) {
-      // assume IE < 9
-      Hamster.ADD_EVENT = 'attachEvent';
-      Hamster.REMOVE_EVENT = 'detachEvent';
-      Hamster.PREFIX = 'on';
-    }
-
-  },
-
-  /**
-   * create a normalised event object
-   * @param   {Function}    originalEvent
-   * @returns {Object}      event
-   */
-  event: function normaliseEvent(originalEvent){
-    var event = {
-          // keep a reference to the original event object
-          originalEvent: originalEvent,
-          target: originalEvent.target || originalEvent.srcElement,
-          type: 'wheel',
-          deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
-          deltaX: 0,
-          delatZ: 0,
-          preventDefault: function(){
-            if (originalEvent.preventDefault) {
-              originalEvent.preventDefault();
-            } else {
-              originalEvent.returnValue = false;
-            }
-          },
-          stopPropagation: function(){
-            if (originalEvent.stopPropagation) {
-              originalEvent.stopPropagation();
-            } else {
-              originalEvent.cancelBubble = false;
-            }
-          }
-        };
-
-    // calculate deltaY (and deltaX) according to the event
-
-    // 'mousewheel'
-    if (originalEvent.wheelDelta) {
-      event.deltaY = - 1/40 * originalEvent.wheelDelta;
-    }
-    // webkit
-    if (originalEvent.wheelDeltaX) {
-      event.deltaX = - 1/40 * originalEvent.wheelDeltaX;
-    }
-
-    // 'DomMouseScroll'
-    if (originalEvent.detail) {
-      event.deltaY = originalEvent.detail;
-    }
-
-    return event;
-  },
-
-  /**
-   * normalise 'deltas' of the mouse wheel
-   * @param   {Function}    originalEvent
-   * @returns {Array}       deltas
-   */
-  delta: function normaliseDelta(originalEvent){
-    var delta = 0,
-      deltaX = 0,
-      deltaY = 0,
-      absDelta = 0,
-      absDeltaXY = 0,
-      fn;
-
-    // normalise deltas according to the event
-
-    // 'wheel' event
-    if (originalEvent.deltaY) {
-      deltaY = originalEvent.deltaY * -1;
-      delta  = deltaY;
-    }
-    if (originalEvent.deltaX) {
-      deltaX = originalEvent.deltaX;
-      delta  = deltaX * -1;
-    }
-
-    // 'mousewheel' event
-    if (originalEvent.wheelDelta) {
-      delta = originalEvent.wheelDelta;
-    }
-    // webkit
-    if (originalEvent.wheelDeltaY) {
-      deltaY = originalEvent.wheelDeltaY;
-    }
-    if (originalEvent.wheelDeltaX) {
-      deltaX = originalEvent.wheelDeltaX * -1;
-    }
-
-    // 'DomMouseScroll' event
-    if (originalEvent.detail) {
-      delta = originalEvent.detail * -1;
-    }
-
-    // look for lowest delta to normalize the delta values
-    absDelta = Math.abs(delta);
-    if (!lowestDelta || absDelta < lowestDelta) {
-      lowestDelta = absDelta;
-    }
-    absDeltaXY = Math.max(Math.abs(deltaY), Math.abs(deltaX));
-    if (!lowestDeltaXY || absDeltaXY < lowestDeltaXY) {
-      lowestDeltaXY = absDeltaXY;
-    }
-
-    // convert deltas to whole numbers
-    fn = delta > 0 ? 'floor' : 'ceil';
-    delta  = Math[fn](delta / lowestDelta);
-    deltaX = Math[fn](deltaX / lowestDeltaXY);
-    deltaY = Math[fn](deltaY / lowestDeltaXY);
-
-    return [delta, deltaX, deltaY];
-  }
-};
-
-// Expose Hamster to the global object
-window.Hamster = Hamster;
-
-// requireJS module definition
-if (typeof window.define === 'function' && window.define.amd) {
-  window.define('hamster', [], function(){
-    return Hamster;
-  });
-}
-
-})(window, window.document);
-/*!
- *  howler.js v1.1.29
- *  howlerjs.com
- *
- *  (c) 2013-2016, James Simpson of GoldFire Studios
- *  goldfirestudios.com
- *
- *  MIT License
- */
-
-(function() {
-  // setup
-  var cache = {};
-
-  // setup the audio context
-  var ctx = null,
-    usingWebAudio = true,
-    noAudio = false;
-  try {
-    if (typeof AudioContext !== 'undefined') {
-      ctx = new AudioContext();
-    } else if (typeof webkitAudioContext !== 'undefined') {
-      ctx = new webkitAudioContext();
-    } else {
-      usingWebAudio = false;
-    }
-  } catch(e) {
-    usingWebAudio = false;
-  }
-
-  if (!usingWebAudio) {
-    if (typeof Audio !== 'undefined') {
-      try {
-        new Audio();
-      } catch(e) {
-        noAudio = true;
-      }
-    } else {
-      noAudio = true;
-    }
-  }
-
-  // create a master gain node
-  if (usingWebAudio) {
-    var masterGain = (typeof ctx.createGain === 'undefined') ? ctx.createGainNode() : ctx.createGain();
-    masterGain.gain.value = 1;
-    masterGain.connect(ctx.destination);
-  }
-
-  // create global controller
-  var HowlerGlobal = function(codecs) {
-    this._volume = 1;
-    this._muted = false;
-    this.usingWebAudio = usingWebAudio;
-    this.ctx = ctx;
-    this.noAudio = noAudio;
-    this._howls = [];
-    this._codecs = codecs;
-    this.iOSAutoEnable = true;
-  };
-  HowlerGlobal.prototype = {
-    /**
-     * Get/set the global volume for all sounds.
-     * @param  {Float} vol Volume from 0.0 to 1.0.
-     * @return {Howler/Float}     Returns self or current volume.
-     */
-    volume: function(vol) {
-      var self = this;
-
-      // make sure volume is a number
-      vol = parseFloat(vol);
-
-      if (vol >= 0 && vol <= 1) {
-        self._volume = vol;
-
-        if (usingWebAudio) {
-          masterGain.gain.value = vol;
-        }
-
-        // loop through cache and change volume of all nodes that are using HTML5 Audio
-        for (var key in self._howls) {
-          if (self._howls.hasOwnProperty(key) && self._howls[key]._webAudio === false) {
-            // loop through the audio nodes
-            for (var i=0; i<self._howls[key]._audioNode.length; i++) {
-              self._howls[key]._audioNode[i].volume = self._howls[key]._volume * self._volume;
-            }
-          }
-        }
-
-        return self;
-      }
-
-      // return the current global volume
-      return (usingWebAudio) ? masterGain.gain.value : self._volume;
-    },
-
-    /**
-     * Mute all sounds.
-     * @return {Howler}
-     */
-    mute: function() {
-      this._setMuted(true);
-
-      return this;
-    },
-
-    /**
-     * Unmute all sounds.
-     * @return {Howler}
-     */
-    unmute: function() {
-      this._setMuted(false);
-
-      return this;
-    },
-
-    /**
-     * Handle muting and unmuting globally.
-     * @param  {Boolean} muted Is muted or not.
-     */
-    _setMuted: function(muted) {
-      var self = this;
-
-      self._muted = muted;
-
-      if (usingWebAudio) {
-        masterGain.gain.value = muted ? 0 : self._volume;
-      }
-
-      for (var key in self._howls) {
-        if (self._howls.hasOwnProperty(key) && self._howls[key]._webAudio === false) {
-          // loop through the audio nodes
-          for (var i=0; i<self._howls[key]._audioNode.length; i++) {
-            self._howls[key]._audioNode[i].muted = muted;
-          }
-        }
-      }
-    },
-
-    /**
-     * Check for codec support.
-     * @param  {String} ext Audio file extension.
-     * @return {Boolean}
-     */
-    codecs: function(ext) {
-      return this._codecs[ext];
-    },
-
-    /**
-     * iOS will only allow audio to be played after a user interaction.
-     * Attempt to automatically unlock audio on the first user interaction.
-     * Concept from: http://paulbakaus.com/tutorials/html5/web-audio-on-ios/
-     * @return {Howler}
-     */
-    _enableiOSAudio: function() {
-      var self = this;
-
-      // only run this on iOS if audio isn't already eanbled
-      if (ctx && (self._iOSEnabled || !/iPhone|iPad|iPod/i.test(navigator.userAgent))) {
-        return;
-      }
-
-      self._iOSEnabled = false;
-
-      // call this method on touch start to create and play a buffer,
-      // then check if the audio actually played to determine if
-      // audio has now been unlocked on iOS
-      var unlock = function() {
-        // create an empty buffer
-        var buffer = ctx.createBuffer(1, 1, 22050);
-        var source = ctx.createBufferSource();
-        source.buffer = buffer;
-        source.connect(ctx.destination);
-
-        // play the empty buffer
-        if (typeof source.start === 'undefined') {
-          source.noteOn(0);
-        } else {
-          source.start(0);
-        }
-
-        // setup a timeout to check that we are unlocked on the next event loop
-        setTimeout(function() {
-          if ((source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE)) {
-            // update the unlocked state and prevent this check from happening again
-            self._iOSEnabled = true;
-            self.iOSAutoEnable = false;
-
-            // remove the touch start listener
-            window.removeEventListener('touchend', unlock, false);
-          }
-        }, 0);
-      };
-
-      // setup a touch start listener to attempt an unlock in
-      window.addEventListener('touchend', unlock, false);
-
-      return self;
-    }
-  };
-
-  // check for browser codec support
-  var audioTest = null;
-  var codecs = {};
-  if (!noAudio) {
-    audioTest = new Audio();
-    codecs = {
-      mp3: !!audioTest.canPlayType('audio/mpeg;').replace(/^no$/, ''),
-      opus: !!audioTest.canPlayType('audio/ogg; codecs="opus"').replace(/^no$/, ''),
-      ogg: !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, ''),
-      wav: !!audioTest.canPlayType('audio/wav; codecs="1"').replace(/^no$/, ''),
-      aac: !!audioTest.canPlayType('audio/aac;').replace(/^no$/, ''),
-      m4a: !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
-      mp4: !!(audioTest.canPlayType('audio/x-mp4;') || audioTest.canPlayType('audio/mp4;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
-      weba: !!audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '')
-    };
-  }
-
-  // allow access to the global audio controls
-  var Howler = new HowlerGlobal(codecs);
-
-  // setup the audio object
-  var Howl = function(o) {
-    var self = this;
-
-    // setup the defaults
-    self._autoplay = o.autoplay || false;
-    self._buffer = o.buffer || false;
-    self._duration = o.duration || 0;
-    self._format = o.format || null;
-    self._loop = o.loop || false;
-    self._loaded = false;
-    self._sprite = o.sprite || {};
-    self._src = o.src || '';
-    self._pos3d = o.pos3d || [0, 0, -0.5];
-    self._volume = o.volume !== undefined ? o.volume : 1;
-    self._urls = o.urls || [];
-    self._rate = o.rate || 1;
-
-    // allow forcing of a specific panningModel ('equalpower' or 'HRTF'),
-    // if none is specified, defaults to 'equalpower' and switches to 'HRTF'
-    // if 3d sound is used
-    self._model = o.model || null;
-
-    // setup event functions
-    self._onload = [o.onload || function() {}];
-    self._onloaderror = [o.onloaderror || function() {}];
-    self._onend = [o.onend || function() {}];
-    self._onpause = [o.onpause || function() {}];
-    self._onplay = [o.onplay || function() {}];
-
-    self._onendTimer = [];
-
-    // Web Audio or HTML5 Audio?
-    self._webAudio = usingWebAudio && !self._buffer;
-
-    // check if we need to fall back to HTML5 Audio
-    self._audioNode = [];
-    if (self._webAudio) {
-      self._setupAudioNode();
-    }
-
-    // automatically try to enable audio on iOS
-    if (typeof ctx !== 'undefined' && ctx && Howler.iOSAutoEnable) {
-      Howler._enableiOSAudio();
-    }
-
-    // add this to an array of Howl's to allow global control
-    Howler._howls.push(self);
-
-    // load the track
-    self.load();
-  };
-
-  // setup all of the methods
-  Howl.prototype = {
-    /**
-     * Load an audio file.
-     * @return {Howl}
-     */
-    load: function() {
-      var self = this,
-        url = null;
-
-      // if no audio is available, quit immediately
-      if (noAudio) {
-        self.on('loaderror', new Error('No audio support.'));
-        return;
-      }
-
-      // loop through source URLs and pick the first one that is compatible
-      for (var i=0; i<self._urls.length; i++) {
-        var ext, urlItem;
-
-        if (self._format) {
-          // use specified audio format if available
-          ext = self._format;
-        } else {
-          // figure out the filetype (whether an extension or base64 data)
-          urlItem = self._urls[i];
-          ext = /^data:audio\/([^;,]+);/i.exec(urlItem);
-          if (!ext) {
-            ext = /\.([^.]+)$/.exec(urlItem.split('?', 1)[0]);
-          }
-
-          if (ext) {
-            ext = ext[1].toLowerCase();
-          } else {
-            self.on('loaderror', new Error('Could not extract format from passed URLs, please add format parameter.'));
-            return;
-          }
-        }
-
-        if (codecs[ext]) {
-          url = self._urls[i];
-          break;
-        }
-      }
-
-      if (!url) {
-        self.on('loaderror', new Error('No codec support for selected audio sources.'));
-        return;
-      }
-
-      self._src = url;
-
-      if (self._webAudio) {
-        loadBuffer(self, url);
-      } else {
-        var newNode = new Audio();
-
-        // listen for errors with HTML5 audio (http://dev.w3.org/html5/spec-author-view/spec.html#mediaerror)
-        newNode.addEventListener('error', function () {
-          if (newNode.error && newNode.error.code === 4) {
-            HowlerGlobal.noAudio = true;
-          }
-
-          self.on('loaderror', {type: newNode.error ? newNode.error.code : 0});
-        }, false);
-
-        self._audioNode.push(newNode);
-
-        // setup the new audio node
-        newNode.src = url;
-        newNode._pos = 0;
-        newNode.preload = 'auto';
-        newNode.volume = (Howler._muted) ? 0 : self._volume * Howler.volume();
-
-        // setup the event listener to start playing the sound
-        // as soon as it has buffered enough
-        var listener = function() {
-          // round up the duration when using HTML5 Audio to account for the lower precision
-          self._duration = Math.ceil(newNode.duration * 10) / 10;
-
-          // setup a sprite if none is defined
-          if (Object.getOwnPropertyNames(self._sprite).length === 0) {
-            self._sprite = {_default: [0, self._duration * 1000]};
-          }
-
-          if (!self._loaded) {
-            self._loaded = true;
-            self.on('load');
-          }
-
-          if (self._autoplay) {
-            self.play();
-          }
-
-          // clear the event listener
-          newNode.removeEventListener('canplaythrough', listener, false);
-        };
-        newNode.addEventListener('canplaythrough', listener, false);
-        newNode.load();
-      }
-
-      return self;
-    },
-
-    /**
-     * Get/set the URLs to be pulled from to play in this source.
-     * @param  {Array} urls  Arry of URLs to load from
-     * @return {Howl}        Returns self or the current URLs
-     */
-    urls: function(urls) {
-      var self = this;
-
-      if (urls) {
-        self.stop();
-        self._urls = (typeof urls === 'string') ? [urls] : urls;
-        self._loaded = false;
-        self.load();
-
-        return self;
-      } else {
-        return self._urls;
-      }
-    },
-
-    /**
-     * Play a sound from the current time (0 by default).
-     * @param  {String}   sprite   (optional) Plays from the specified position in the sound sprite definition.
-     * @param  {Function} callback (optional) Returns the unique playback id for this sound instance.
-     * @return {Howl}
-     */
-    play: function(sprite, callback) {
-      var self = this;
-
-      // if no sprite was passed but a callback was, update the variables
-      if (typeof sprite === 'function') {
-        callback = sprite;
-      }
-
-      // use the default sprite if none is passed
-      if (!sprite || typeof sprite === 'function') {
-        sprite = '_default';
-      }
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('load', function() {
-          self.play(sprite, callback);
-        });
-
-        return self;
-      }
-
-      // if the sprite doesn't exist, play nothing
-      if (!self._sprite[sprite]) {
-        if (typeof callback === 'function') callback();
-        return self;
-      }
-
-      // get the node to playback
-      self._inactiveNode(function(node) {
-        // persist the sprite being played
-        node._sprite = sprite;
-
-        // determine where to start playing from
-        var pos = (node._pos > 0) ? node._pos : self._sprite[sprite][0] / 1000;
-
-        // determine how long to play for
-        var duration = 0;
-        if (self._webAudio) {
-          duration = self._sprite[sprite][1] / 1000 - node._pos;
-          if (node._pos > 0) {
-            pos = self._sprite[sprite][0] / 1000 + pos;
-          }
-        } else {
-          duration = self._sprite[sprite][1] / 1000 - (pos - self._sprite[sprite][0] / 1000);
-        }
-
-        // determine if this sound should be looped
-        var loop = !!(self._loop || self._sprite[sprite][2]);
-
-        // set timer to fire the 'onend' event
-        var soundId = (typeof callback === 'string') ? callback : Math.round(Date.now() * Math.random()) + '',
-          timerId;
-        (function() {
-          var data = {
-            id: soundId,
-            sprite: sprite,
-            loop: loop
-          };
-          timerId = setTimeout(function() {
-            // if looping, restart the track
-            if (!self._webAudio && loop) {
-              self.stop(data.id).play(sprite, data.id);
-            }
-
-            // set web audio node to paused at end
-            if (self._webAudio && !loop) {
-              self._nodeById(data.id).paused = true;
-              self._nodeById(data.id)._pos = 0;
-
-              // clear the end timer
-              self._clearEndTimer(data.id);
-            }
-
-            // end the track if it is HTML audio and a sprite
-            if (!self._webAudio && !loop) {
-              self.stop(data.id);
-            }
-
-            // fire ended event
-            self.on('end', soundId);
-          }, (duration / self._rate) * 1000);
-
-          // store the reference to the timer
-          self._onendTimer.push({timer: timerId, id: data.id});
-        })();
-
-        if (self._webAudio) {
-          var loopStart = self._sprite[sprite][0] / 1000,
-            loopEnd = self._sprite[sprite][1] / 1000;
-
-          // set the play id to this node and load into context
-          node.id = soundId;
-          node.paused = false;
-          refreshBuffer(self, [loop, loopStart, loopEnd], soundId);
-          self._playStart = ctx.currentTime;
-          node.gain.value = self._volume;
-
-          if (typeof node.bufferSource.start === 'undefined') {
-            loop ? node.bufferSource.noteGrainOn(0, pos, 86400) : node.bufferSource.noteGrainOn(0, pos, duration);
-          } else {
-            loop ? node.bufferSource.start(0, pos, 86400) : node.bufferSource.start(0, pos, duration);
-          }
-        } else {
-          if (node.readyState === 4 || !node.readyState && navigator.isCocoonJS) {
-            node.readyState = 4;
-            node.id = soundId;
-            node.currentTime = pos;
-            node.muted = Howler._muted || node.muted;
-            node.volume = self._volume * Howler.volume();
-            setTimeout(function() { node.play(); }, 0);
-          } else {
-            self._clearEndTimer(soundId);
-
-            (function(){
-              var sound = self,
-                playSprite = sprite,
-                fn = callback,
-                newNode = node;
-              var listener = function() {
-                sound.play(playSprite, fn);
-
-                // clear the event listener
-                newNode.removeEventListener('canplaythrough', listener, false);
-              };
-              newNode.addEventListener('canplaythrough', listener, false);
-            })();
-
-            return self;
-          }
-        }
-
-        // fire the play event and send the soundId back in the callback
-        self.on('play');
-        if (typeof callback === 'function') callback(soundId);
-
-        return self;
-      });
-
-      return self;
-    },
-
-    /**
-     * Pause playback and save the current position.
-     * @param {String} id (optional) The play instance ID.
-     * @return {Howl}
-     */
-    pause: function(id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.pause(id);
-        });
-
-        return self;
-      }
-
-      // clear 'onend' timer
-      self._clearEndTimer(id);
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        activeNode._pos = self.pos(null, id);
-
-        if (self._webAudio) {
-          // make sure the sound has been created
-          if (!activeNode.bufferSource || activeNode.paused) {
-            return self;
-          }
-
-          activeNode.paused = true;
-          if (typeof activeNode.bufferSource.stop === 'undefined') {
-            activeNode.bufferSource.noteOff(0);
-          } else {
-            activeNode.bufferSource.stop(0);
-          }
-        } else {
-          activeNode.pause();
-        }
-      }
-
-      self.on('pause');
-
-      return self;
-    },
-
-    /**
-     * Stop playback and reset to start.
-     * @param  {String} id  (optional) The play instance ID.
-     * @return {Howl}
-     */
-    stop: function(id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.stop(id);
-        });
-
-        return self;
-      }
-
-      // clear 'onend' timer
-      self._clearEndTimer(id);
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        activeNode._pos = 0;
-
-        if (self._webAudio) {
-          // make sure the sound has been created
-          if (!activeNode.bufferSource || activeNode.paused) {
-            return self;
-          }
-
-          activeNode.paused = true;
-
-          if (typeof activeNode.bufferSource.stop === 'undefined') {
-            activeNode.bufferSource.noteOff(0);
-          } else {
-            activeNode.bufferSource.stop(0);
-          }
-        } else if (!isNaN(activeNode.duration)) {
-          activeNode.pause();
-          activeNode.currentTime = 0;
-        }
-      }
-
-      return self;
-    },
-
-    /**
-     * Mute this sound.
-     * @param  {String} id (optional) The play instance ID.
-     * @return {Howl}
-     */
-    mute: function(id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.mute(id);
-        });
-
-        return self;
-      }
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        if (self._webAudio) {
-          activeNode.gain.value = 0;
-        } else {
-          activeNode.muted = true;
-        }
-      }
-
-      return self;
-    },
-
-    /**
-     * Unmute this sound.
-     * @param  {String} id (optional) The play instance ID.
-     * @return {Howl}
-     */
-    unmute: function(id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.unmute(id);
-        });
-
-        return self;
-      }
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        if (self._webAudio) {
-          activeNode.gain.value = self._volume;
-        } else {
-          activeNode.muted = false;
-        }
-      }
-
-      return self;
-    },
-
-    /**
-     * Get/set volume of this sound.
-     * @param  {Float}  vol Volume from 0.0 to 1.0.
-     * @param  {String} id  (optional) The play instance ID.
-     * @return {Howl/Float}     Returns self or current volume.
-     */
-    volume: function(vol, id) {
-      var self = this;
-
-      // make sure volume is a number
-      vol = parseFloat(vol);
-
-      if (vol >= 0 && vol <= 1) {
-        self._volume = vol;
-
-        // if the sound hasn't been loaded, add it to the event queue
-        if (!self._loaded) {
-          self.on('play', function() {
-            self.volume(vol, id);
-          });
-
-          return self;
-        }
-
-        var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-        if (activeNode) {
-          if (self._webAudio) {
-            activeNode.gain.value = vol;
-          } else {
-            activeNode.volume = vol * Howler.volume();
-          }
-        }
-
-        return self;
-      } else {
-        return self._volume;
-      }
-    },
-
-    /**
-     * Get/set whether to loop the sound.
-     * @param  {Boolean} loop To loop or not to loop, that is the question.
-     * @return {Howl/Boolean}      Returns self or current looping value.
-     */
-    loop: function(loop) {
-      var self = this;
-
-      if (typeof loop === 'boolean') {
-        self._loop = loop;
-
-        return self;
-      } else {
-        return self._loop;
-      }
-    },
-
-    /**
-     * Get/set sound sprite definition.
-     * @param  {Object} sprite Example: {spriteName: [offset, duration, loop]}
-     *                @param {Integer} offset   Where to begin playback in milliseconds
-     *                @param {Integer} duration How long to play in milliseconds
-     *                @param {Boolean} loop     (optional) Set true to loop this sprite
-     * @return {Howl}        Returns current sprite sheet or self.
-     */
-    sprite: function(sprite) {
-      var self = this;
-
-      if (typeof sprite === 'object') {
-        self._sprite = sprite;
-
-        return self;
-      } else {
-        return self._sprite;
-      }
-    },
-
-    /**
-     * Get/set the position of playback.
-     * @param  {Float}  pos The position to move current playback to.
-     * @param  {String} id  (optional) The play instance ID.
-     * @return {Howl/Float}      Returns self or current playback position.
-     */
-    pos: function(pos, id) {
-      var self = this;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('load', function() {
-          self.pos(pos);
-        });
-
-        return typeof pos === 'number' ? self : self._pos || 0;
-      }
-
-      // make sure we are dealing with a number for pos
-      pos = parseFloat(pos);
-
-      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-      if (activeNode) {
-        if (pos >= 0) {
-          self.pause(id);
-          activeNode._pos = pos;
-          self.play(activeNode._sprite, id);
-
-          return self;
-        } else {
-          return self._webAudio ? activeNode._pos + (ctx.currentTime - self._playStart) : activeNode.currentTime;
-        }
-      } else if (pos >= 0) {
-        return self;
-      } else {
-        // find the first inactive node to return the pos for
-        for (var i=0; i<self._audioNode.length; i++) {
-          if (self._audioNode[i].paused && self._audioNode[i].readyState === 4) {
-            return (self._webAudio) ? self._audioNode[i]._pos : self._audioNode[i].currentTime;
-          }
-        }
-      }
-    },
-
-    /**
-     * Get/set the 3D position of the audio source.
-     * The most common usage is to set the 'x' position
-     * to affect the left/right ear panning. Setting any value higher than
-     * 1.0 will begin to decrease the volume of the sound as it moves further away.
-     * NOTE: This only works with Web Audio API, HTML5 Audio playback
-     * will not be affected.
-     * @param  {Float}  x  The x-position of the playback from -1000.0 to 1000.0
-     * @param  {Float}  y  The y-position of the playback from -1000.0 to 1000.0
-     * @param  {Float}  z  The z-position of the playback from -1000.0 to 1000.0
-     * @param  {String} id (optional) The play instance ID.
-     * @return {Howl/Array}   Returns self or the current 3D position: [x, y, z]
-     */
-    pos3d: function(x, y, z, id) {
-      var self = this;
-
-      // set a default for the optional 'y' & 'z'
-      y = (typeof y === 'undefined' || !y) ? 0 : y;
-      z = (typeof z === 'undefined' || !z) ? -0.5 : z;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('play', function() {
-          self.pos3d(x, y, z, id);
-        });
-
-        return self;
-      }
-
-      if (x >= 0 || x < 0) {
-        if (self._webAudio) {
-          var activeNode = (id) ? self._nodeById(id) : self._activeNode();
-          if (activeNode) {
-            self._pos3d = [x, y, z];
-            activeNode.panner.setPosition(x, y, z);
-            activeNode.panner.panningModel = self._model || 'HRTF';
-          }
-        }
-      } else {
-        return self._pos3d;
-      }
-
-      return self;
-    },
-
-    /**
-     * Fade a currently playing sound between two volumes.
-     * @param  {Number}   from     The volume to fade from (0.0 to 1.0).
-     * @param  {Number}   to       The volume to fade to (0.0 to 1.0).
-     * @param  {Number}   len      Time in milliseconds to fade.
-     * @param  {Function} callback (optional) Fired when the fade is complete.
-     * @param  {String}   id       (optional) The play instance ID.
-     * @return {Howl}
-     */
-    fade: function(from, to, len, callback, id) {
-      var self = this,
-        diff = Math.abs(from - to),
-        dir = from > to ? 'down' : 'up',
-        steps = diff / 0.01,
-        stepTime = len / steps;
-
-      // if the sound hasn't been loaded, add it to the event queue
-      if (!self._loaded) {
-        self.on('load', function() {
-          self.fade(from, to, len, callback, id);
-        });
-
-        return self;
-      }
-
-      // set the volume to the start position
-      self.volume(from, id);
-
-      for (var i=1; i<=steps; i++) {
-        (function() {
-          var change = self._volume + (dir === 'up' ? 0.01 : -0.01) * i,
-            vol = Math.round(1000 * change) / 1000,
-            toVol = to;
-
-          setTimeout(function() {
-            self.volume(vol, id);
-
-            if (vol === toVol) {
-              if (callback) callback();
-            }
-          }, stepTime * i);
-        })();
-      }
-    },
-
-    /**
-     * [DEPRECATED] Fade in the current sound.
-     * @param  {Float}    to      Volume to fade to (0.0 to 1.0).
-     * @param  {Number}   len     Time in milliseconds to fade.
-     * @param  {Function} callback
-     * @return {Howl}
-     */
-    fadeIn: function(to, len, callback) {
-      return this.volume(0).play().fade(0, to, len, callback);
-    },
-
-    /**
-     * [DEPRECATED] Fade out the current sound and pause when finished.
-     * @param  {Float}    to       Volume to fade to (0.0 to 1.0).
-     * @param  {Number}   len      Time in milliseconds to fade.
-     * @param  {Function} callback
-     * @param  {String}   id       (optional) The play instance ID.
-     * @return {Howl}
-     */
-    fadeOut: function(to, len, callback, id) {
-      var self = this;
-
-      return self.fade(self._volume, to, len, function() {
-        if (callback) callback();
-        self.pause(id);
-
-        // fire ended event
-        self.on('end');
-      }, id);
-    },
-
-    /**
-     * Get an audio node by ID.
-     * @return {Howl} Audio node.
-     */
-    _nodeById: function(id) {
-      var self = this,
-        node = self._audioNode[0];
-
-      // find the node with this ID
-      for (var i=0; i<self._audioNode.length; i++) {
-        if (self._audioNode[i].id === id) {
-          node = self._audioNode[i];
-          break;
-        }
-      }
-
-      return node;
-    },
-
-    /**
-     * Get the first active audio node.
-     * @return {Howl} Audio node.
-     */
-    _activeNode: function() {
-      var self = this,
-        node = null;
-
-      // find the first playing node
-      for (var i=0; i<self._audioNode.length; i++) {
-        if (!self._audioNode[i].paused) {
-          node = self._audioNode[i];
-          break;
-        }
-      }
-
-      // remove excess inactive nodes
-      self._drainPool();
-
-      return node;
-    },
-
-    /**
-     * Get the first inactive audio node.
-     * If there is none, create a new one and add it to the pool.
-     * @param  {Function} callback Function to call when the audio node is ready.
-     */
-    _inactiveNode: function(callback) {
-      var self = this,
-        node = null;
-
-      // find first inactive node to recycle
-      for (var i=0; i<self._audioNode.length; i++) {
-        if (self._audioNode[i].paused && self._audioNode[i].readyState === 4) {
-          // send the node back for use by the new play instance
-          callback(self._audioNode[i]);
-          node = true;
-          break;
-        }
-      }
-
-      // remove excess inactive nodes
-      self._drainPool();
-
-      if (node) {
-        return;
-      }
-
-      // create new node if there are no inactives
-      var newNode;
-      if (self._webAudio) {
-        newNode = self._setupAudioNode();
-        callback(newNode);
-      } else {
-        self.load();
-        newNode = self._audioNode[self._audioNode.length - 1];
-
-        // listen for the correct load event and fire the callback
-        var listenerEvent = navigator.isCocoonJS ? 'canplaythrough' : 'loadedmetadata';
-        var listener = function() {
-          newNode.removeEventListener(listenerEvent, listener, false);
-          callback(newNode);
-        };
-        newNode.addEventListener(listenerEvent, listener, false);
-      }
-    },
-
-    /**
-     * If there are more than 5 inactive audio nodes in the pool, clear out the rest.
-     */
-    _drainPool: function() {
-      var self = this,
-        inactive = 0,
-        i;
-
-      // count the number of inactive nodes
-      for (i=0; i<self._audioNode.length; i++) {
-        if (self._audioNode[i].paused) {
-          inactive++;
-        }
-      }
-
-      // remove excess inactive nodes
-      for (i=self._audioNode.length-1; i>=0; i--) {
-        if (inactive <= 5) {
-          break;
-        }
-
-        if (self._audioNode[i].paused) {
-          // disconnect the audio source if using Web Audio
-          if (self._webAudio) {
-            self._audioNode[i].disconnect(0);
-          }
-
-          inactive--;
-          self._audioNode.splice(i, 1);
-        }
-      }
-    },
-
-    /**
-     * Clear 'onend' timeout before it ends.
-     * @param  {String} soundId  The play instance ID.
-     */
-    _clearEndTimer: function(soundId) {
-      var self = this,
-        index = -1;
-
-      // loop through the timers to find the one associated with this sound
-      for (var i=0; i<self._onendTimer.length; i++) {
-        if (self._onendTimer[i].id === soundId) {
-          index = i;
-          break;
-        }
-      }
-
-      var timer = self._onendTimer[index];
-      if (timer) {
-        clearTimeout(timer.timer);
-        self._onendTimer.splice(index, 1);
-      }
-    },
-
-    /**
-     * Setup the gain node and panner for a Web Audio instance.
-     * @return {Object} The new audio node.
-     */
-    _setupAudioNode: function() {
-      var self = this,
-        node = self._audioNode,
-        index = self._audioNode.length;
-
-      // create gain node
-      node[index] = (typeof ctx.createGain === 'undefined') ? ctx.createGainNode() : ctx.createGain();
-      node[index].gain.value = self._volume;
-      node[index].paused = true;
-      node[index]._pos = 0;
-      node[index].readyState = 4;
-      node[index].connect(masterGain);
-
-      // create the panner
-      node[index].panner = ctx.createPanner();
-      node[index].panner.panningModel = self._model || 'equalpower';
-      node[index].panner.setPosition(self._pos3d[0], self._pos3d[1], self._pos3d[2]);
-      node[index].panner.connect(node[index]);
-
-      return node[index];
-    },
-
-    /**
-     * Call/set custom events.
-     * @param  {String}   event Event type.
-     * @param  {Function} fn    Function to call.
-     * @return {Howl}
-     */
-    on: function(event, fn) {
-      var self = this,
-        events = self['_on' + event];
-
-      if (typeof fn === 'function') {
-        events.push(fn);
-      } else {
-        for (var i=0; i<events.length; i++) {
-          if (fn) {
-            events[i].call(self, fn);
-          } else {
-            events[i].call(self);
-          }
-        }
-      }
-
-      return self;
-    },
-
-    /**
-     * Remove a custom event.
-     * @param  {String}   event Event type.
-     * @param  {Function} fn    Listener to remove.
-     * @return {Howl}
-     */
-    off: function(event, fn) {
-      var self = this,
-        events = self['_on' + event];
-
-      if (fn) {
-        // loop through functions in the event for comparison
-        for (var i=0; i<events.length; i++) {
-          if (fn === events[i]) {
-            events.splice(i, 1);
-            break;
-          }
-        }
-      } else {
-        self['_on' + event] = [];
-      }
-
-      return self;
-    },
-
-    /**
-     * Unload and destroy the current Howl object.
-     * This will immediately stop all play instances attached to this sound.
-     */
-    unload: function() {
-      var self = this;
-
-      // stop playing any active nodes
-      var nodes = self._audioNode;
-      for (var i=0; i<self._audioNode.length; i++) {
-        // stop the sound if it is currently playing
-        if (!nodes[i].paused) {
-          self.stop(nodes[i].id);
-          self.on('end', nodes[i].id);
-        }
-
-        if (!self._webAudio) {
-          // remove the source if using HTML5 Audio
-          nodes[i].src = '';
-        } else {
-          // disconnect the output from the master gain
-          nodes[i].disconnect(0);
-        }
-      }
-
-      // make sure all timeouts are cleared
-      for (i=0; i<self._onendTimer.length; i++) {
-        clearTimeout(self._onendTimer[i].timer);
-      }
-
-      // remove the reference in the global Howler object
-      var index = Howler._howls.indexOf(self);
-      if (index !== null && index >= 0) {
-        Howler._howls.splice(index, 1);
-      }
-
-      // delete this sound from the cache
-      delete cache[self._src];
-      self = null;
-    }
-
-  };
-
-  // only define these functions when using WebAudio
-  if (usingWebAudio) {
-
-    /**
-     * Buffer a sound from URL (or from cache) and decode to audio source (Web Audio API).
-     * @param  {Object} obj The Howl object for the sound to load.
-     * @param  {String} url The path to the sound file.
-     */
-    var loadBuffer = function(obj, url) {
-      // check if the buffer has already been cached
-      if (url in cache) {
-        // set the duration from the cache
-        obj._duration = cache[url].duration;
-
-        // load the sound into this object
-        loadSound(obj);
-        return;
-      }
-      
-      if (/^data:[^;]+;base64,/.test(url)) {
-        // Decode base64 data-URIs because some browsers cannot load data-URIs with XMLHttpRequest.
-        var data = atob(url.split(',')[1]);
-        var dataView = new Uint8Array(data.length);
-        for (var i=0; i<data.length; ++i) {
-          dataView[i] = data.charCodeAt(i);
-        }
-        
-        decodeAudioData(dataView.buffer, obj, url);
-      } else {
-        // load the buffer from the URL
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', url, true);
-        xhr.responseType = 'arraybuffer';
-        xhr.onload = function() {
-          decodeAudioData(xhr.response, obj, url);
-        };
-        xhr.onerror = function() {
-          // if there is an error, switch the sound to HTML Audio
-          if (obj._webAudio) {
-            obj._buffer = true;
-            obj._webAudio = false;
-            obj._audioNode = [];
-            delete obj._gainNode;
-            delete cache[url];
-            obj.load();
-          }
-        };
-        try {
-          xhr.send();
-        } catch (e) {
-          xhr.onerror();
-        }
-      }
-    };
-
-    /**
-     * Decode audio data from an array buffer.
-     * @param  {ArrayBuffer} arraybuffer The audio data.
-     * @param  {Object} obj The Howl object for the sound to load.
-     * @param  {String} url The path to the sound file.
-     */
-    var decodeAudioData = function(arraybuffer, obj, url) {
-      // decode the buffer into an audio source
-      ctx.decodeAudioData(
-        arraybuffer,
-        function(buffer) {
-          if (buffer) {
-            cache[url] = buffer;
-            loadSound(obj, buffer);
-          }
-        },
-        function(err) {
-          obj.on('loaderror', err);
-        }
-      );
-    };
-
-    /**
-     * Finishes loading the Web Audio API sound and fires the loaded event
-     * @param  {Object}  obj    The Howl object for the sound to load.
-     * @param  {Objecct} buffer The decoded buffer sound source.
-     */
-    var loadSound = function(obj, buffer) {
-      // set the duration
-      obj._duration = (buffer) ? buffer.duration : obj._duration;
-
-      // setup a sprite if none is defined
-      if (Object.getOwnPropertyNames(obj._sprite).length === 0) {
-        obj._sprite = {_default: [0, obj._duration * 1000]};
-      }
-
-      // fire the loaded event
-      if (!obj._loaded) {
-        obj._loaded = true;
-        obj.on('load');
-      }
-
-      if (obj._autoplay) {
-        obj.play();
-      }
-    };
-
-    /**
-     * Load the sound back into the buffer source.
-     * @param  {Object} obj   The sound to load.
-     * @param  {Array}  loop  Loop boolean, pos, and duration.
-     * @param  {String} id    (optional) The play instance ID.
-     */
-    var refreshBuffer = function(obj, loop, id) {
-      // determine which node to connect to
-      var node = obj._nodeById(id);
-
-      // setup the buffer source for playback
-      node.bufferSource = ctx.createBufferSource();
-      node.bufferSource.buffer = cache[obj._src];
-      node.bufferSource.connect(node.panner);
-      node.bufferSource.loop = loop[0];
-      if (loop[0]) {
-        node.bufferSource.loopStart = loop[1];
-        node.bufferSource.loopEnd = loop[1] + loop[2];
-      }
-      node.bufferSource.playbackRate.value = obj._rate;
-    };
-
-  }
-
-  /**
-   * Add support for AMD (Asynchronous Module Definition) libraries such as require.js.
-   */
-  if (typeof define === 'function' && define.amd) {
-    define(function() {
-      return {
-        Howler: Howler,
-        Howl: Howl
-      };
-    });
-  }
-
-  /**
-   * Add support for CommonJS libraries such as browserify.
-   */
-  if (typeof exports !== 'undefined') {
-    exports.Howler = Howler;
-    exports.Howl = Howl;
-  }
-
-  // define globally in case AMD is not available or available but not used
-
-  if (typeof window !== 'undefined') {
-    window.Howler = Howler;
-    window.Howl = Howl;
-  }
-
-})();
 /*!
 
  handlebars v4.0.5
@@ -8845,6 +7174,1904 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ ])
 });
 ;
+/*
+
+  Javascript State Machine Library - https://github.com/jakesgordon/javascript-state-machine
+
+  Copyright (c) 2012, 2013, 2014, 2015, Jake Gordon and contributors
+  Released under the MIT license - https://github.com/jakesgordon/javascript-state-machine/blob/master/LICENSE
+
+*/
+
+(function () {
+
+  var StateMachine = {
+
+    //---------------------------------------------------------------------------
+
+    VERSION: "2.3.5",
+
+    //---------------------------------------------------------------------------
+
+    Result: {
+      SUCCEEDED:    1, // the event transitioned successfully from one state to another
+      NOTRANSITION: 2, // the event was successfull but no state transition was necessary
+      CANCELLED:    3, // the event was cancelled by the caller in a beforeEvent callback
+      PENDING:      4  // the event is asynchronous and the caller is in control of when the transition occurs
+    },
+
+    Error: {
+      INVALID_TRANSITION: 100, // caller tried to fire an event that was innapropriate in the current state
+      PENDING_TRANSITION: 200, // caller tried to fire an event while an async transition was still pending
+      INVALID_CALLBACK:   300 // caller provided callback function threw an exception
+    },
+
+    WILDCARD: '*',
+    ASYNC: 'async',
+
+    //---------------------------------------------------------------------------
+
+    create: function(cfg, target) {
+
+      var initial      = (typeof cfg.initial == 'string') ? { state: cfg.initial } : cfg.initial; // allow for a simple string, or an object with { state: 'foo', event: 'setup', defer: true|false }
+      var terminal     = cfg.terminal || cfg['final'];
+      var fsm          = target || cfg.target  || {};
+      var events       = cfg.events || [];
+      var callbacks    = cfg.callbacks || {};
+      var map          = {}; // track state transitions allowed for an event { event: { from: [ to ] } }
+      var transitions  = {}; // track events allowed from a state            { state: [ event ] }
+
+      var add = function(e) {
+        var from = (e.from instanceof Array) ? e.from : (e.from ? [e.from] : [StateMachine.WILDCARD]); // allow 'wildcard' transition if 'from' is not specified
+        map[e.name] = map[e.name] || {};
+        for (var n = 0 ; n < from.length ; n++) {
+          transitions[from[n]] = transitions[from[n]] || [];
+          transitions[from[n]].push(e.name);
+
+          map[e.name][from[n]] = e.to || from[n]; // allow no-op transition if 'to' is not specified
+        }
+      };
+
+      if (initial) {
+        initial.event = initial.event || 'startup';
+        add({ name: initial.event, from: 'none', to: initial.state });
+      }
+
+      for(var n = 0 ; n < events.length ; n++)
+        add(events[n]);
+
+      for(var name in map) {
+        if (map.hasOwnProperty(name))
+          fsm[name] = StateMachine.buildEvent(name, map[name]);
+      }
+
+      for(var name in callbacks) {
+        if (callbacks.hasOwnProperty(name))
+          fsm[name] = callbacks[name]
+      }
+
+      fsm.current     = 'none';
+      fsm.is          = function(state) { return (state instanceof Array) ? (state.indexOf(this.current) >= 0) : (this.current === state); };
+      fsm.can         = function(event) { return !this.transition && (map[event].hasOwnProperty(this.current) || map[event].hasOwnProperty(StateMachine.WILDCARD)); }
+      fsm.cannot      = function(event) { return !this.can(event); };
+      fsm.transitions = function()      { return transitions[this.current]; };
+      fsm.isFinished  = function()      { return this.is(terminal); };
+      fsm.error       = cfg.error || function(name, from, to, args, error, msg, e) { throw e || msg; }; // default behavior when something unexpected happens is to throw an exception, but caller can override this behavior if desired (see github issue #3 and #17)
+
+      if (initial && !initial.defer)
+        fsm[initial.event]();
+
+      return fsm;
+
+    },
+
+    //===========================================================================
+
+    doCallback: function(fsm, func, name, from, to, args) {
+      if (func) {
+        try {
+          return func.apply(fsm, [name, from, to].concat(args));
+        }
+        catch(e) {
+          return fsm.error(name, from, to, args, StateMachine.Error.INVALID_CALLBACK, "an exception occurred in a caller-provided callback function", e);
+        }
+      }
+    },
+
+    beforeAnyEvent:  function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onbeforeevent'],                       name, from, to, args); },
+    afterAnyEvent:   function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onafterevent'] || fsm['onevent'],      name, from, to, args); },
+    leaveAnyState:   function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onleavestate'],                        name, from, to, args); },
+    enterAnyState:   function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onenterstate'] || fsm['onstate'],      name, from, to, args); },
+    changeState:     function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onchangestate'],                       name, from, to, args); },
+
+    beforeThisEvent: function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onbefore' + name],                     name, from, to, args); },
+    afterThisEvent:  function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onafter'  + name] || fsm['on' + name], name, from, to, args); },
+    leaveThisState:  function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onleave'  + from],                     name, from, to, args); },
+    enterThisState:  function(fsm, name, from, to, args) { return StateMachine.doCallback(fsm, fsm['onenter'  + to]   || fsm['on' + to],   name, from, to, args); },
+
+    beforeEvent: function(fsm, name, from, to, args) {
+      if ((false === StateMachine.beforeThisEvent(fsm, name, from, to, args)) ||
+          (false === StateMachine.beforeAnyEvent( fsm, name, from, to, args)))
+        return false;
+    },
+
+    afterEvent: function(fsm, name, from, to, args) {
+      StateMachine.afterThisEvent(fsm, name, from, to, args);
+      StateMachine.afterAnyEvent( fsm, name, from, to, args);
+    },
+
+    leaveState: function(fsm, name, from, to, args) {
+      var specific = StateMachine.leaveThisState(fsm, name, from, to, args),
+          general  = StateMachine.leaveAnyState( fsm, name, from, to, args);
+      if ((false === specific) || (false === general))
+        return false;
+      else if ((StateMachine.ASYNC === specific) || (StateMachine.ASYNC === general))
+        return StateMachine.ASYNC;
+    },
+
+    enterState: function(fsm, name, from, to, args) {
+      StateMachine.enterThisState(fsm, name, from, to, args);
+      StateMachine.enterAnyState( fsm, name, from, to, args);
+    },
+
+    //===========================================================================
+
+    buildEvent: function(name, map) {
+      return function() {
+
+        var from  = this.current;
+        var to    = map[from] || map[StateMachine.WILDCARD] || from;
+        var args  = Array.prototype.slice.call(arguments); // turn arguments into pure array
+
+        if (this.transition)
+          return this.error(name, from, to, args, StateMachine.Error.PENDING_TRANSITION, "event " + name + " inappropriate because previous transition did not complete");
+
+        if (this.cannot(name))
+          return this.error(name, from, to, args, StateMachine.Error.INVALID_TRANSITION, "event " + name + " inappropriate in current state " + this.current);
+
+        if (false === StateMachine.beforeEvent(this, name, from, to, args))
+          return StateMachine.Result.CANCELLED;
+
+        if (from === to) {
+          StateMachine.afterEvent(this, name, from, to, args);
+          return StateMachine.Result.NOTRANSITION;
+        }
+
+        // prepare a transition method for use EITHER lower down, or by caller if they want an async transition (indicated by an ASYNC return value from leaveState)
+        var fsm = this;
+        this.transition = function() {
+          fsm.transition = null; // this method should only ever be called once
+          fsm.current = to;
+          StateMachine.enterState( fsm, name, from, to, args);
+          StateMachine.changeState(fsm, name, from, to, args);
+          StateMachine.afterEvent( fsm, name, from, to, args);
+          return StateMachine.Result.SUCCEEDED;
+        };
+        this.transition.cancel = function() { // provide a way for caller to cancel async transition if desired (issue #22)
+          fsm.transition = null;
+          StateMachine.afterEvent(fsm, name, from, to, args);
+        }
+
+        var leave = StateMachine.leaveState(this, name, from, to, args);
+        if (false === leave) {
+          this.transition = null;
+          return StateMachine.Result.CANCELLED;
+        }
+        else if (StateMachine.ASYNC === leave) {
+          return StateMachine.Result.PENDING;
+        }
+        else {
+          if (this.transition) // need to check in case user manually called transition() but forgot to return StateMachine.ASYNC
+            return this.transition();
+        }
+
+      };
+    }
+
+  }; // StateMachine
+
+  //===========================================================================
+
+  //======
+  // NODE
+  //======
+  if (typeof exports !== 'undefined') {
+    if (typeof module !== 'undefined' && module.exports) {
+      exports = module.exports = StateMachine;
+    }
+    exports.StateMachine = StateMachine;
+  }
+  //============
+  // AMD/REQUIRE
+  //============
+  else if (typeof define === 'function' && define.amd) {
+    define(function(require) { return StateMachine; });
+  }
+  //========
+  // BROWSER
+  //========
+  else if (typeof window !== 'undefined') {
+    window.StateMachine = StateMachine;
+  }
+  //===========
+  // WEB WORKER
+  //===========
+  else if (typeof self !== 'undefined') {
+    self.StateMachine = StateMachine;
+  }
+
+}());
+/*!
+ *  howler.js v1.1.29
+ *  howlerjs.com
+ *
+ *  (c) 2013-2016, James Simpson of GoldFire Studios
+ *  goldfirestudios.com
+ *
+ *  MIT License
+ */
+
+(function() {
+  // setup
+  var cache = {};
+
+  // setup the audio context
+  var ctx = null,
+    usingWebAudio = true,
+    noAudio = false;
+  try {
+    if (typeof AudioContext !== 'undefined') {
+      ctx = new AudioContext();
+    } else if (typeof webkitAudioContext !== 'undefined') {
+      ctx = new webkitAudioContext();
+    } else {
+      usingWebAudio = false;
+    }
+  } catch(e) {
+    usingWebAudio = false;
+  }
+
+  if (!usingWebAudio) {
+    if (typeof Audio !== 'undefined') {
+      try {
+        new Audio();
+      } catch(e) {
+        noAudio = true;
+      }
+    } else {
+      noAudio = true;
+    }
+  }
+
+  // create a master gain node
+  if (usingWebAudio) {
+    var masterGain = (typeof ctx.createGain === 'undefined') ? ctx.createGainNode() : ctx.createGain();
+    masterGain.gain.value = 1;
+    masterGain.connect(ctx.destination);
+  }
+
+  // create global controller
+  var HowlerGlobal = function(codecs) {
+    this._volume = 1;
+    this._muted = false;
+    this.usingWebAudio = usingWebAudio;
+    this.ctx = ctx;
+    this.noAudio = noAudio;
+    this._howls = [];
+    this._codecs = codecs;
+    this.iOSAutoEnable = true;
+  };
+  HowlerGlobal.prototype = {
+    /**
+     * Get/set the global volume for all sounds.
+     * @param  {Float} vol Volume from 0.0 to 1.0.
+     * @return {Howler/Float}     Returns self or current volume.
+     */
+    volume: function(vol) {
+      var self = this;
+
+      // make sure volume is a number
+      vol = parseFloat(vol);
+
+      if (vol >= 0 && vol <= 1) {
+        self._volume = vol;
+
+        if (usingWebAudio) {
+          masterGain.gain.value = vol;
+        }
+
+        // loop through cache and change volume of all nodes that are using HTML5 Audio
+        for (var key in self._howls) {
+          if (self._howls.hasOwnProperty(key) && self._howls[key]._webAudio === false) {
+            // loop through the audio nodes
+            for (var i=0; i<self._howls[key]._audioNode.length; i++) {
+              self._howls[key]._audioNode[i].volume = self._howls[key]._volume * self._volume;
+            }
+          }
+        }
+
+        return self;
+      }
+
+      // return the current global volume
+      return (usingWebAudio) ? masterGain.gain.value : self._volume;
+    },
+
+    /**
+     * Mute all sounds.
+     * @return {Howler}
+     */
+    mute: function() {
+      this._setMuted(true);
+
+      return this;
+    },
+
+    /**
+     * Unmute all sounds.
+     * @return {Howler}
+     */
+    unmute: function() {
+      this._setMuted(false);
+
+      return this;
+    },
+
+    /**
+     * Handle muting and unmuting globally.
+     * @param  {Boolean} muted Is muted or not.
+     */
+    _setMuted: function(muted) {
+      var self = this;
+
+      self._muted = muted;
+
+      if (usingWebAudio) {
+        masterGain.gain.value = muted ? 0 : self._volume;
+      }
+
+      for (var key in self._howls) {
+        if (self._howls.hasOwnProperty(key) && self._howls[key]._webAudio === false) {
+          // loop through the audio nodes
+          for (var i=0; i<self._howls[key]._audioNode.length; i++) {
+            self._howls[key]._audioNode[i].muted = muted;
+          }
+        }
+      }
+    },
+
+    /**
+     * Check for codec support.
+     * @param  {String} ext Audio file extension.
+     * @return {Boolean}
+     */
+    codecs: function(ext) {
+      return this._codecs[ext];
+    },
+
+    /**
+     * iOS will only allow audio to be played after a user interaction.
+     * Attempt to automatically unlock audio on the first user interaction.
+     * Concept from: http://paulbakaus.com/tutorials/html5/web-audio-on-ios/
+     * @return {Howler}
+     */
+    _enableiOSAudio: function() {
+      var self = this;
+
+      // only run this on iOS if audio isn't already eanbled
+      if (ctx && (self._iOSEnabled || !/iPhone|iPad|iPod/i.test(navigator.userAgent))) {
+        return;
+      }
+
+      self._iOSEnabled = false;
+
+      // call this method on touch start to create and play a buffer,
+      // then check if the audio actually played to determine if
+      // audio has now been unlocked on iOS
+      var unlock = function() {
+        // create an empty buffer
+        var buffer = ctx.createBuffer(1, 1, 22050);
+        var source = ctx.createBufferSource();
+        source.buffer = buffer;
+        source.connect(ctx.destination);
+
+        // play the empty buffer
+        if (typeof source.start === 'undefined') {
+          source.noteOn(0);
+        } else {
+          source.start(0);
+        }
+
+        // setup a timeout to check that we are unlocked on the next event loop
+        setTimeout(function() {
+          if ((source.playbackState === source.PLAYING_STATE || source.playbackState === source.FINISHED_STATE)) {
+            // update the unlocked state and prevent this check from happening again
+            self._iOSEnabled = true;
+            self.iOSAutoEnable = false;
+
+            // remove the touch start listener
+            window.removeEventListener('touchend', unlock, false);
+          }
+        }, 0);
+      };
+
+      // setup a touch start listener to attempt an unlock in
+      window.addEventListener('touchend', unlock, false);
+
+      return self;
+    }
+  };
+
+  // check for browser codec support
+  var audioTest = null;
+  var codecs = {};
+  if (!noAudio) {
+    audioTest = new Audio();
+    codecs = {
+      mp3: !!audioTest.canPlayType('audio/mpeg;').replace(/^no$/, ''),
+      opus: !!audioTest.canPlayType('audio/ogg; codecs="opus"').replace(/^no$/, ''),
+      ogg: !!audioTest.canPlayType('audio/ogg; codecs="vorbis"').replace(/^no$/, ''),
+      wav: !!audioTest.canPlayType('audio/wav; codecs="1"').replace(/^no$/, ''),
+      aac: !!audioTest.canPlayType('audio/aac;').replace(/^no$/, ''),
+      m4a: !!(audioTest.canPlayType('audio/x-m4a;') || audioTest.canPlayType('audio/m4a;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
+      mp4: !!(audioTest.canPlayType('audio/x-mp4;') || audioTest.canPlayType('audio/mp4;') || audioTest.canPlayType('audio/aac;')).replace(/^no$/, ''),
+      weba: !!audioTest.canPlayType('audio/webm; codecs="vorbis"').replace(/^no$/, '')
+    };
+  }
+
+  // allow access to the global audio controls
+  var Howler = new HowlerGlobal(codecs);
+
+  // setup the audio object
+  var Howl = function(o) {
+    var self = this;
+
+    // setup the defaults
+    self._autoplay = o.autoplay || false;
+    self._buffer = o.buffer || false;
+    self._duration = o.duration || 0;
+    self._format = o.format || null;
+    self._loop = o.loop || false;
+    self._loaded = false;
+    self._sprite = o.sprite || {};
+    self._src = o.src || '';
+    self._pos3d = o.pos3d || [0, 0, -0.5];
+    self._volume = o.volume !== undefined ? o.volume : 1;
+    self._urls = o.urls || [];
+    self._rate = o.rate || 1;
+
+    // allow forcing of a specific panningModel ('equalpower' or 'HRTF'),
+    // if none is specified, defaults to 'equalpower' and switches to 'HRTF'
+    // if 3d sound is used
+    self._model = o.model || null;
+
+    // setup event functions
+    self._onload = [o.onload || function() {}];
+    self._onloaderror = [o.onloaderror || function() {}];
+    self._onend = [o.onend || function() {}];
+    self._onpause = [o.onpause || function() {}];
+    self._onplay = [o.onplay || function() {}];
+
+    self._onendTimer = [];
+
+    // Web Audio or HTML5 Audio?
+    self._webAudio = usingWebAudio && !self._buffer;
+
+    // check if we need to fall back to HTML5 Audio
+    self._audioNode = [];
+    if (self._webAudio) {
+      self._setupAudioNode();
+    }
+
+    // automatically try to enable audio on iOS
+    if (typeof ctx !== 'undefined' && ctx && Howler.iOSAutoEnable) {
+      Howler._enableiOSAudio();
+    }
+
+    // add this to an array of Howl's to allow global control
+    Howler._howls.push(self);
+
+    // load the track
+    self.load();
+  };
+
+  // setup all of the methods
+  Howl.prototype = {
+    /**
+     * Load an audio file.
+     * @return {Howl}
+     */
+    load: function() {
+      var self = this,
+        url = null;
+
+      // if no audio is available, quit immediately
+      if (noAudio) {
+        self.on('loaderror', new Error('No audio support.'));
+        return;
+      }
+
+      // loop through source URLs and pick the first one that is compatible
+      for (var i=0; i<self._urls.length; i++) {
+        var ext, urlItem;
+
+        if (self._format) {
+          // use specified audio format if available
+          ext = self._format;
+        } else {
+          // figure out the filetype (whether an extension or base64 data)
+          urlItem = self._urls[i];
+          ext = /^data:audio\/([^;,]+);/i.exec(urlItem);
+          if (!ext) {
+            ext = /\.([^.]+)$/.exec(urlItem.split('?', 1)[0]);
+          }
+
+          if (ext) {
+            ext = ext[1].toLowerCase();
+          } else {
+            self.on('loaderror', new Error('Could not extract format from passed URLs, please add format parameter.'));
+            return;
+          }
+        }
+
+        if (codecs[ext]) {
+          url = self._urls[i];
+          break;
+        }
+      }
+
+      if (!url) {
+        self.on('loaderror', new Error('No codec support for selected audio sources.'));
+        return;
+      }
+
+      self._src = url;
+
+      if (self._webAudio) {
+        loadBuffer(self, url);
+      } else {
+        var newNode = new Audio();
+
+        // listen for errors with HTML5 audio (http://dev.w3.org/html5/spec-author-view/spec.html#mediaerror)
+        newNode.addEventListener('error', function () {
+          if (newNode.error && newNode.error.code === 4) {
+            HowlerGlobal.noAudio = true;
+          }
+
+          self.on('loaderror', {type: newNode.error ? newNode.error.code : 0});
+        }, false);
+
+        self._audioNode.push(newNode);
+
+        // setup the new audio node
+        newNode.src = url;
+        newNode._pos = 0;
+        newNode.preload = 'auto';
+        newNode.volume = (Howler._muted) ? 0 : self._volume * Howler.volume();
+
+        // setup the event listener to start playing the sound
+        // as soon as it has buffered enough
+        var listener = function() {
+          // round up the duration when using HTML5 Audio to account for the lower precision
+          self._duration = Math.ceil(newNode.duration * 10) / 10;
+
+          // setup a sprite if none is defined
+          if (Object.getOwnPropertyNames(self._sprite).length === 0) {
+            self._sprite = {_default: [0, self._duration * 1000]};
+          }
+
+          if (!self._loaded) {
+            self._loaded = true;
+            self.on('load');
+          }
+
+          if (self._autoplay) {
+            self.play();
+          }
+
+          // clear the event listener
+          newNode.removeEventListener('canplaythrough', listener, false);
+        };
+        newNode.addEventListener('canplaythrough', listener, false);
+        newNode.load();
+      }
+
+      return self;
+    },
+
+    /**
+     * Get/set the URLs to be pulled from to play in this source.
+     * @param  {Array} urls  Arry of URLs to load from
+     * @return {Howl}        Returns self or the current URLs
+     */
+    urls: function(urls) {
+      var self = this;
+
+      if (urls) {
+        self.stop();
+        self._urls = (typeof urls === 'string') ? [urls] : urls;
+        self._loaded = false;
+        self.load();
+
+        return self;
+      } else {
+        return self._urls;
+      }
+    },
+
+    /**
+     * Play a sound from the current time (0 by default).
+     * @param  {String}   sprite   (optional) Plays from the specified position in the sound sprite definition.
+     * @param  {Function} callback (optional) Returns the unique playback id for this sound instance.
+     * @return {Howl}
+     */
+    play: function(sprite, callback) {
+      var self = this;
+
+      // if no sprite was passed but a callback was, update the variables
+      if (typeof sprite === 'function') {
+        callback = sprite;
+      }
+
+      // use the default sprite if none is passed
+      if (!sprite || typeof sprite === 'function') {
+        sprite = '_default';
+      }
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('load', function() {
+          self.play(sprite, callback);
+        });
+
+        return self;
+      }
+
+      // if the sprite doesn't exist, play nothing
+      if (!self._sprite[sprite]) {
+        if (typeof callback === 'function') callback();
+        return self;
+      }
+
+      // get the node to playback
+      self._inactiveNode(function(node) {
+        // persist the sprite being played
+        node._sprite = sprite;
+
+        // determine where to start playing from
+        var pos = (node._pos > 0) ? node._pos : self._sprite[sprite][0] / 1000;
+
+        // determine how long to play for
+        var duration = 0;
+        if (self._webAudio) {
+          duration = self._sprite[sprite][1] / 1000 - node._pos;
+          if (node._pos > 0) {
+            pos = self._sprite[sprite][0] / 1000 + pos;
+          }
+        } else {
+          duration = self._sprite[sprite][1] / 1000 - (pos - self._sprite[sprite][0] / 1000);
+        }
+
+        // determine if this sound should be looped
+        var loop = !!(self._loop || self._sprite[sprite][2]);
+
+        // set timer to fire the 'onend' event
+        var soundId = (typeof callback === 'string') ? callback : Math.round(Date.now() * Math.random()) + '',
+          timerId;
+        (function() {
+          var data = {
+            id: soundId,
+            sprite: sprite,
+            loop: loop
+          };
+          timerId = setTimeout(function() {
+            // if looping, restart the track
+            if (!self._webAudio && loop) {
+              self.stop(data.id).play(sprite, data.id);
+            }
+
+            // set web audio node to paused at end
+            if (self._webAudio && !loop) {
+              self._nodeById(data.id).paused = true;
+              self._nodeById(data.id)._pos = 0;
+
+              // clear the end timer
+              self._clearEndTimer(data.id);
+            }
+
+            // end the track if it is HTML audio and a sprite
+            if (!self._webAudio && !loop) {
+              self.stop(data.id);
+            }
+
+            // fire ended event
+            self.on('end', soundId);
+          }, (duration / self._rate) * 1000);
+
+          // store the reference to the timer
+          self._onendTimer.push({timer: timerId, id: data.id});
+        })();
+
+        if (self._webAudio) {
+          var loopStart = self._sprite[sprite][0] / 1000,
+            loopEnd = self._sprite[sprite][1] / 1000;
+
+          // set the play id to this node and load into context
+          node.id = soundId;
+          node.paused = false;
+          refreshBuffer(self, [loop, loopStart, loopEnd], soundId);
+          self._playStart = ctx.currentTime;
+          node.gain.value = self._volume;
+
+          if (typeof node.bufferSource.start === 'undefined') {
+            loop ? node.bufferSource.noteGrainOn(0, pos, 86400) : node.bufferSource.noteGrainOn(0, pos, duration);
+          } else {
+            loop ? node.bufferSource.start(0, pos, 86400) : node.bufferSource.start(0, pos, duration);
+          }
+        } else {
+          if (node.readyState === 4 || !node.readyState && navigator.isCocoonJS) {
+            node.readyState = 4;
+            node.id = soundId;
+            node.currentTime = pos;
+            node.muted = Howler._muted || node.muted;
+            node.volume = self._volume * Howler.volume();
+            setTimeout(function() { node.play(); }, 0);
+          } else {
+            self._clearEndTimer(soundId);
+
+            (function(){
+              var sound = self,
+                playSprite = sprite,
+                fn = callback,
+                newNode = node;
+              var listener = function() {
+                sound.play(playSprite, fn);
+
+                // clear the event listener
+                newNode.removeEventListener('canplaythrough', listener, false);
+              };
+              newNode.addEventListener('canplaythrough', listener, false);
+            })();
+
+            return self;
+          }
+        }
+
+        // fire the play event and send the soundId back in the callback
+        self.on('play');
+        if (typeof callback === 'function') callback(soundId);
+
+        return self;
+      });
+
+      return self;
+    },
+
+    /**
+     * Pause playback and save the current position.
+     * @param {String} id (optional) The play instance ID.
+     * @return {Howl}
+     */
+    pause: function(id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.pause(id);
+        });
+
+        return self;
+      }
+
+      // clear 'onend' timer
+      self._clearEndTimer(id);
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        activeNode._pos = self.pos(null, id);
+
+        if (self._webAudio) {
+          // make sure the sound has been created
+          if (!activeNode.bufferSource || activeNode.paused) {
+            return self;
+          }
+
+          activeNode.paused = true;
+          if (typeof activeNode.bufferSource.stop === 'undefined') {
+            activeNode.bufferSource.noteOff(0);
+          } else {
+            activeNode.bufferSource.stop(0);
+          }
+        } else {
+          activeNode.pause();
+        }
+      }
+
+      self.on('pause');
+
+      return self;
+    },
+
+    /**
+     * Stop playback and reset to start.
+     * @param  {String} id  (optional) The play instance ID.
+     * @return {Howl}
+     */
+    stop: function(id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.stop(id);
+        });
+
+        return self;
+      }
+
+      // clear 'onend' timer
+      self._clearEndTimer(id);
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        activeNode._pos = 0;
+
+        if (self._webAudio) {
+          // make sure the sound has been created
+          if (!activeNode.bufferSource || activeNode.paused) {
+            return self;
+          }
+
+          activeNode.paused = true;
+
+          if (typeof activeNode.bufferSource.stop === 'undefined') {
+            activeNode.bufferSource.noteOff(0);
+          } else {
+            activeNode.bufferSource.stop(0);
+          }
+        } else if (!isNaN(activeNode.duration)) {
+          activeNode.pause();
+          activeNode.currentTime = 0;
+        }
+      }
+
+      return self;
+    },
+
+    /**
+     * Mute this sound.
+     * @param  {String} id (optional) The play instance ID.
+     * @return {Howl}
+     */
+    mute: function(id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.mute(id);
+        });
+
+        return self;
+      }
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        if (self._webAudio) {
+          activeNode.gain.value = 0;
+        } else {
+          activeNode.muted = true;
+        }
+      }
+
+      return self;
+    },
+
+    /**
+     * Unmute this sound.
+     * @param  {String} id (optional) The play instance ID.
+     * @return {Howl}
+     */
+    unmute: function(id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.unmute(id);
+        });
+
+        return self;
+      }
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        if (self._webAudio) {
+          activeNode.gain.value = self._volume;
+        } else {
+          activeNode.muted = false;
+        }
+      }
+
+      return self;
+    },
+
+    /**
+     * Get/set volume of this sound.
+     * @param  {Float}  vol Volume from 0.0 to 1.0.
+     * @param  {String} id  (optional) The play instance ID.
+     * @return {Howl/Float}     Returns self or current volume.
+     */
+    volume: function(vol, id) {
+      var self = this;
+
+      // make sure volume is a number
+      vol = parseFloat(vol);
+
+      if (vol >= 0 && vol <= 1) {
+        self._volume = vol;
+
+        // if the sound hasn't been loaded, add it to the event queue
+        if (!self._loaded) {
+          self.on('play', function() {
+            self.volume(vol, id);
+          });
+
+          return self;
+        }
+
+        var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+        if (activeNode) {
+          if (self._webAudio) {
+            activeNode.gain.value = vol;
+          } else {
+            activeNode.volume = vol * Howler.volume();
+          }
+        }
+
+        return self;
+      } else {
+        return self._volume;
+      }
+    },
+
+    /**
+     * Get/set whether to loop the sound.
+     * @param  {Boolean} loop To loop or not to loop, that is the question.
+     * @return {Howl/Boolean}      Returns self or current looping value.
+     */
+    loop: function(loop) {
+      var self = this;
+
+      if (typeof loop === 'boolean') {
+        self._loop = loop;
+
+        return self;
+      } else {
+        return self._loop;
+      }
+    },
+
+    /**
+     * Get/set sound sprite definition.
+     * @param  {Object} sprite Example: {spriteName: [offset, duration, loop]}
+     *                @param {Integer} offset   Where to begin playback in milliseconds
+     *                @param {Integer} duration How long to play in milliseconds
+     *                @param {Boolean} loop     (optional) Set true to loop this sprite
+     * @return {Howl}        Returns current sprite sheet or self.
+     */
+    sprite: function(sprite) {
+      var self = this;
+
+      if (typeof sprite === 'object') {
+        self._sprite = sprite;
+
+        return self;
+      } else {
+        return self._sprite;
+      }
+    },
+
+    /**
+     * Get/set the position of playback.
+     * @param  {Float}  pos The position to move current playback to.
+     * @param  {String} id  (optional) The play instance ID.
+     * @return {Howl/Float}      Returns self or current playback position.
+     */
+    pos: function(pos, id) {
+      var self = this;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('load', function() {
+          self.pos(pos);
+        });
+
+        return typeof pos === 'number' ? self : self._pos || 0;
+      }
+
+      // make sure we are dealing with a number for pos
+      pos = parseFloat(pos);
+
+      var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+      if (activeNode) {
+        if (pos >= 0) {
+          self.pause(id);
+          activeNode._pos = pos;
+          self.play(activeNode._sprite, id);
+
+          return self;
+        } else {
+          return self._webAudio ? activeNode._pos + (ctx.currentTime - self._playStart) : activeNode.currentTime;
+        }
+      } else if (pos >= 0) {
+        return self;
+      } else {
+        // find the first inactive node to return the pos for
+        for (var i=0; i<self._audioNode.length; i++) {
+          if (self._audioNode[i].paused && self._audioNode[i].readyState === 4) {
+            return (self._webAudio) ? self._audioNode[i]._pos : self._audioNode[i].currentTime;
+          }
+        }
+      }
+    },
+
+    /**
+     * Get/set the 3D position of the audio source.
+     * The most common usage is to set the 'x' position
+     * to affect the left/right ear panning. Setting any value higher than
+     * 1.0 will begin to decrease the volume of the sound as it moves further away.
+     * NOTE: This only works with Web Audio API, HTML5 Audio playback
+     * will not be affected.
+     * @param  {Float}  x  The x-position of the playback from -1000.0 to 1000.0
+     * @param  {Float}  y  The y-position of the playback from -1000.0 to 1000.0
+     * @param  {Float}  z  The z-position of the playback from -1000.0 to 1000.0
+     * @param  {String} id (optional) The play instance ID.
+     * @return {Howl/Array}   Returns self or the current 3D position: [x, y, z]
+     */
+    pos3d: function(x, y, z, id) {
+      var self = this;
+
+      // set a default for the optional 'y' & 'z'
+      y = (typeof y === 'undefined' || !y) ? 0 : y;
+      z = (typeof z === 'undefined' || !z) ? -0.5 : z;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('play', function() {
+          self.pos3d(x, y, z, id);
+        });
+
+        return self;
+      }
+
+      if (x >= 0 || x < 0) {
+        if (self._webAudio) {
+          var activeNode = (id) ? self._nodeById(id) : self._activeNode();
+          if (activeNode) {
+            self._pos3d = [x, y, z];
+            activeNode.panner.setPosition(x, y, z);
+            activeNode.panner.panningModel = self._model || 'HRTF';
+          }
+        }
+      } else {
+        return self._pos3d;
+      }
+
+      return self;
+    },
+
+    /**
+     * Fade a currently playing sound between two volumes.
+     * @param  {Number}   from     The volume to fade from (0.0 to 1.0).
+     * @param  {Number}   to       The volume to fade to (0.0 to 1.0).
+     * @param  {Number}   len      Time in milliseconds to fade.
+     * @param  {Function} callback (optional) Fired when the fade is complete.
+     * @param  {String}   id       (optional) The play instance ID.
+     * @return {Howl}
+     */
+    fade: function(from, to, len, callback, id) {
+      var self = this,
+        diff = Math.abs(from - to),
+        dir = from > to ? 'down' : 'up',
+        steps = diff / 0.01,
+        stepTime = len / steps;
+
+      // if the sound hasn't been loaded, add it to the event queue
+      if (!self._loaded) {
+        self.on('load', function() {
+          self.fade(from, to, len, callback, id);
+        });
+
+        return self;
+      }
+
+      // set the volume to the start position
+      self.volume(from, id);
+
+      for (var i=1; i<=steps; i++) {
+        (function() {
+          var change = self._volume + (dir === 'up' ? 0.01 : -0.01) * i,
+            vol = Math.round(1000 * change) / 1000,
+            toVol = to;
+
+          setTimeout(function() {
+            self.volume(vol, id);
+
+            if (vol === toVol) {
+              if (callback) callback();
+            }
+          }, stepTime * i);
+        })();
+      }
+    },
+
+    /**
+     * [DEPRECATED] Fade in the current sound.
+     * @param  {Float}    to      Volume to fade to (0.0 to 1.0).
+     * @param  {Number}   len     Time in milliseconds to fade.
+     * @param  {Function} callback
+     * @return {Howl}
+     */
+    fadeIn: function(to, len, callback) {
+      return this.volume(0).play().fade(0, to, len, callback);
+    },
+
+    /**
+     * [DEPRECATED] Fade out the current sound and pause when finished.
+     * @param  {Float}    to       Volume to fade to (0.0 to 1.0).
+     * @param  {Number}   len      Time in milliseconds to fade.
+     * @param  {Function} callback
+     * @param  {String}   id       (optional) The play instance ID.
+     * @return {Howl}
+     */
+    fadeOut: function(to, len, callback, id) {
+      var self = this;
+
+      return self.fade(self._volume, to, len, function() {
+        if (callback) callback();
+        self.pause(id);
+
+        // fire ended event
+        self.on('end');
+      }, id);
+    },
+
+    /**
+     * Get an audio node by ID.
+     * @return {Howl} Audio node.
+     */
+    _nodeById: function(id) {
+      var self = this,
+        node = self._audioNode[0];
+
+      // find the node with this ID
+      for (var i=0; i<self._audioNode.length; i++) {
+        if (self._audioNode[i].id === id) {
+          node = self._audioNode[i];
+          break;
+        }
+      }
+
+      return node;
+    },
+
+    /**
+     * Get the first active audio node.
+     * @return {Howl} Audio node.
+     */
+    _activeNode: function() {
+      var self = this,
+        node = null;
+
+      // find the first playing node
+      for (var i=0; i<self._audioNode.length; i++) {
+        if (!self._audioNode[i].paused) {
+          node = self._audioNode[i];
+          break;
+        }
+      }
+
+      // remove excess inactive nodes
+      self._drainPool();
+
+      return node;
+    },
+
+    /**
+     * Get the first inactive audio node.
+     * If there is none, create a new one and add it to the pool.
+     * @param  {Function} callback Function to call when the audio node is ready.
+     */
+    _inactiveNode: function(callback) {
+      var self = this,
+        node = null;
+
+      // find first inactive node to recycle
+      for (var i=0; i<self._audioNode.length; i++) {
+        if (self._audioNode[i].paused && self._audioNode[i].readyState === 4) {
+          // send the node back for use by the new play instance
+          callback(self._audioNode[i]);
+          node = true;
+          break;
+        }
+      }
+
+      // remove excess inactive nodes
+      self._drainPool();
+
+      if (node) {
+        return;
+      }
+
+      // create new node if there are no inactives
+      var newNode;
+      if (self._webAudio) {
+        newNode = self._setupAudioNode();
+        callback(newNode);
+      } else {
+        self.load();
+        newNode = self._audioNode[self._audioNode.length - 1];
+
+        // listen for the correct load event and fire the callback
+        var listenerEvent = navigator.isCocoonJS ? 'canplaythrough' : 'loadedmetadata';
+        var listener = function() {
+          newNode.removeEventListener(listenerEvent, listener, false);
+          callback(newNode);
+        };
+        newNode.addEventListener(listenerEvent, listener, false);
+      }
+    },
+
+    /**
+     * If there are more than 5 inactive audio nodes in the pool, clear out the rest.
+     */
+    _drainPool: function() {
+      var self = this,
+        inactive = 0,
+        i;
+
+      // count the number of inactive nodes
+      for (i=0; i<self._audioNode.length; i++) {
+        if (self._audioNode[i].paused) {
+          inactive++;
+        }
+      }
+
+      // remove excess inactive nodes
+      for (i=self._audioNode.length-1; i>=0; i--) {
+        if (inactive <= 5) {
+          break;
+        }
+
+        if (self._audioNode[i].paused) {
+          // disconnect the audio source if using Web Audio
+          if (self._webAudio) {
+            self._audioNode[i].disconnect(0);
+          }
+
+          inactive--;
+          self._audioNode.splice(i, 1);
+        }
+      }
+    },
+
+    /**
+     * Clear 'onend' timeout before it ends.
+     * @param  {String} soundId  The play instance ID.
+     */
+    _clearEndTimer: function(soundId) {
+      var self = this,
+        index = -1;
+
+      // loop through the timers to find the one associated with this sound
+      for (var i=0; i<self._onendTimer.length; i++) {
+        if (self._onendTimer[i].id === soundId) {
+          index = i;
+          break;
+        }
+      }
+
+      var timer = self._onendTimer[index];
+      if (timer) {
+        clearTimeout(timer.timer);
+        self._onendTimer.splice(index, 1);
+      }
+    },
+
+    /**
+     * Setup the gain node and panner for a Web Audio instance.
+     * @return {Object} The new audio node.
+     */
+    _setupAudioNode: function() {
+      var self = this,
+        node = self._audioNode,
+        index = self._audioNode.length;
+
+      // create gain node
+      node[index] = (typeof ctx.createGain === 'undefined') ? ctx.createGainNode() : ctx.createGain();
+      node[index].gain.value = self._volume;
+      node[index].paused = true;
+      node[index]._pos = 0;
+      node[index].readyState = 4;
+      node[index].connect(masterGain);
+
+      // create the panner
+      node[index].panner = ctx.createPanner();
+      node[index].panner.panningModel = self._model || 'equalpower';
+      node[index].panner.setPosition(self._pos3d[0], self._pos3d[1], self._pos3d[2]);
+      node[index].panner.connect(node[index]);
+
+      return node[index];
+    },
+
+    /**
+     * Call/set custom events.
+     * @param  {String}   event Event type.
+     * @param  {Function} fn    Function to call.
+     * @return {Howl}
+     */
+    on: function(event, fn) {
+      var self = this,
+        events = self['_on' + event];
+
+      if (typeof fn === 'function') {
+        events.push(fn);
+      } else {
+        for (var i=0; i<events.length; i++) {
+          if (fn) {
+            events[i].call(self, fn);
+          } else {
+            events[i].call(self);
+          }
+        }
+      }
+
+      return self;
+    },
+
+    /**
+     * Remove a custom event.
+     * @param  {String}   event Event type.
+     * @param  {Function} fn    Listener to remove.
+     * @return {Howl}
+     */
+    off: function(event, fn) {
+      var self = this,
+        events = self['_on' + event];
+
+      if (fn) {
+        // loop through functions in the event for comparison
+        for (var i=0; i<events.length; i++) {
+          if (fn === events[i]) {
+            events.splice(i, 1);
+            break;
+          }
+        }
+      } else {
+        self['_on' + event] = [];
+      }
+
+      return self;
+    },
+
+    /**
+     * Unload and destroy the current Howl object.
+     * This will immediately stop all play instances attached to this sound.
+     */
+    unload: function() {
+      var self = this;
+
+      // stop playing any active nodes
+      var nodes = self._audioNode;
+      for (var i=0; i<self._audioNode.length; i++) {
+        // stop the sound if it is currently playing
+        if (!nodes[i].paused) {
+          self.stop(nodes[i].id);
+          self.on('end', nodes[i].id);
+        }
+
+        if (!self._webAudio) {
+          // remove the source if using HTML5 Audio
+          nodes[i].src = '';
+        } else {
+          // disconnect the output from the master gain
+          nodes[i].disconnect(0);
+        }
+      }
+
+      // make sure all timeouts are cleared
+      for (i=0; i<self._onendTimer.length; i++) {
+        clearTimeout(self._onendTimer[i].timer);
+      }
+
+      // remove the reference in the global Howler object
+      var index = Howler._howls.indexOf(self);
+      if (index !== null && index >= 0) {
+        Howler._howls.splice(index, 1);
+      }
+
+      // delete this sound from the cache
+      delete cache[self._src];
+      self = null;
+    }
+
+  };
+
+  // only define these functions when using WebAudio
+  if (usingWebAudio) {
+
+    /**
+     * Buffer a sound from URL (or from cache) and decode to audio source (Web Audio API).
+     * @param  {Object} obj The Howl object for the sound to load.
+     * @param  {String} url The path to the sound file.
+     */
+    var loadBuffer = function(obj, url) {
+      // check if the buffer has already been cached
+      if (url in cache) {
+        // set the duration from the cache
+        obj._duration = cache[url].duration;
+
+        // load the sound into this object
+        loadSound(obj);
+        return;
+      }
+      
+      if (/^data:[^;]+;base64,/.test(url)) {
+        // Decode base64 data-URIs because some browsers cannot load data-URIs with XMLHttpRequest.
+        var data = atob(url.split(',')[1]);
+        var dataView = new Uint8Array(data.length);
+        for (var i=0; i<data.length; ++i) {
+          dataView[i] = data.charCodeAt(i);
+        }
+        
+        decodeAudioData(dataView.buffer, obj, url);
+      } else {
+        // load the buffer from the URL
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', url, true);
+        xhr.responseType = 'arraybuffer';
+        xhr.onload = function() {
+          decodeAudioData(xhr.response, obj, url);
+        };
+        xhr.onerror = function() {
+          // if there is an error, switch the sound to HTML Audio
+          if (obj._webAudio) {
+            obj._buffer = true;
+            obj._webAudio = false;
+            obj._audioNode = [];
+            delete obj._gainNode;
+            delete cache[url];
+            obj.load();
+          }
+        };
+        try {
+          xhr.send();
+        } catch (e) {
+          xhr.onerror();
+        }
+      }
+    };
+
+    /**
+     * Decode audio data from an array buffer.
+     * @param  {ArrayBuffer} arraybuffer The audio data.
+     * @param  {Object} obj The Howl object for the sound to load.
+     * @param  {String} url The path to the sound file.
+     */
+    var decodeAudioData = function(arraybuffer, obj, url) {
+      // decode the buffer into an audio source
+      ctx.decodeAudioData(
+        arraybuffer,
+        function(buffer) {
+          if (buffer) {
+            cache[url] = buffer;
+            loadSound(obj, buffer);
+          }
+        },
+        function(err) {
+          obj.on('loaderror', err);
+        }
+      );
+    };
+
+    /**
+     * Finishes loading the Web Audio API sound and fires the loaded event
+     * @param  {Object}  obj    The Howl object for the sound to load.
+     * @param  {Objecct} buffer The decoded buffer sound source.
+     */
+    var loadSound = function(obj, buffer) {
+      // set the duration
+      obj._duration = (buffer) ? buffer.duration : obj._duration;
+
+      // setup a sprite if none is defined
+      if (Object.getOwnPropertyNames(obj._sprite).length === 0) {
+        obj._sprite = {_default: [0, obj._duration * 1000]};
+      }
+
+      // fire the loaded event
+      if (!obj._loaded) {
+        obj._loaded = true;
+        obj.on('load');
+      }
+
+      if (obj._autoplay) {
+        obj.play();
+      }
+    };
+
+    /**
+     * Load the sound back into the buffer source.
+     * @param  {Object} obj   The sound to load.
+     * @param  {Array}  loop  Loop boolean, pos, and duration.
+     * @param  {String} id    (optional) The play instance ID.
+     */
+    var refreshBuffer = function(obj, loop, id) {
+      // determine which node to connect to
+      var node = obj._nodeById(id);
+
+      // setup the buffer source for playback
+      node.bufferSource = ctx.createBufferSource();
+      node.bufferSource.buffer = cache[obj._src];
+      node.bufferSource.connect(node.panner);
+      node.bufferSource.loop = loop[0];
+      if (loop[0]) {
+        node.bufferSource.loopStart = loop[1];
+        node.bufferSource.loopEnd = loop[1] + loop[2];
+      }
+      node.bufferSource.playbackRate.value = obj._rate;
+    };
+
+  }
+
+  /**
+   * Add support for AMD (Asynchronous Module Definition) libraries such as require.js.
+   */
+  if (typeof define === 'function' && define.amd) {
+    define(function() {
+      return {
+        Howler: Howler,
+        Howl: Howl
+      };
+    });
+  }
+
+  /**
+   * Add support for CommonJS libraries such as browserify.
+   */
+  if (typeof exports !== 'undefined') {
+    exports.Howler = Howler;
+    exports.Howl = Howl;
+  }
+
+  // define globally in case AMD is not available or available but not used
+
+  if (typeof window !== 'undefined') {
+    window.Howler = Howler;
+    window.Howl = Howl;
+  }
+
+})();
+/*
+ * Hamster.js v1.0.5
+ * (c) 2013 Monospaced http://monospaced.com
+ * License: MIT
+ */
+
+(function(window, document){
+'use strict';
+
+/**
+ * Hamster
+ * use this to create instances
+ * @returns {Hamster.Instance}
+ * @constructor
+ */
+var Hamster = function(element) {
+  return new Hamster.Instance(element);
+};
+
+// default event name
+Hamster.SUPPORT = 'wheel';
+
+// default DOM methods
+Hamster.ADD_EVENT = 'addEventListener';
+Hamster.REMOVE_EVENT = 'removeEventListener';
+Hamster.PREFIX = '';
+
+// until browser inconsistencies have been fixed...
+Hamster.READY = false;
+
+Hamster.Instance = function(element){
+  if (!Hamster.READY) {
+    // fix browser inconsistencies
+    Hamster.normalise.browser();
+
+    // Hamster is ready...!
+    Hamster.READY = true;
+  }
+
+  this.element = element;
+
+  // store attached event handlers
+  this.handlers = [];
+
+  // return instance
+  return this;
+};
+
+/**
+ * create new hamster instance
+ * all methods should return the instance itself, so it is chainable.
+ * @param   {HTMLElement}       element
+ * @returns {Hamster.Instance}
+ * @constructor
+ */
+Hamster.Instance.prototype = {
+  /**
+   * bind events to the instance
+   * @param   {Function}    handler
+   * @param   {Boolean}     useCapture
+   * @returns {Hamster.Instance}
+   */
+  wheel: function onEvent(handler, useCapture){
+    Hamster.event.add(this, Hamster.SUPPORT, handler, useCapture);
+
+    // handle MozMousePixelScroll in older Firefox
+    if (Hamster.SUPPORT === 'DOMMouseScroll') {
+      Hamster.event.add(this, 'MozMousePixelScroll', handler, useCapture);
+    }
+
+    return this;
+  },
+
+  /**
+   * unbind events to the instance
+   * @param   {Function}    handler
+   * @param   {Boolean}     useCapture
+   * @returns {Hamster.Instance}
+   */
+  unwheel: function offEvent(handler, useCapture){
+    // if no handler argument,
+    // unbind the last bound handler (if exists)
+    if (handler === undefined && (handler = this.handlers.slice(-1)[0])) {
+      handler = handler.original;
+    }
+
+    Hamster.event.remove(this, Hamster.SUPPORT, handler, useCapture);
+
+    // handle MozMousePixelScroll in older Firefox
+    if (Hamster.SUPPORT === 'DOMMouseScroll') {
+      Hamster.event.remove(this, 'MozMousePixelScroll', handler, useCapture);
+    }
+
+    return this;
+  }
+};
+
+Hamster.event = {
+  /**
+   * cross-browser 'addWheelListener'
+   * @param   {Instance}    hamster
+   * @param   {String}      eventName
+   * @param   {Function}    handler
+   * @param   {Boolean}     useCapture
+   */
+  add: function add(hamster, eventName, handler, useCapture){
+    // store the original handler
+    var originalHandler = handler;
+
+    // redefine the handler
+    handler = function(originalEvent){
+
+      if (!originalEvent) {
+        originalEvent = window.event;
+      }
+
+      // create a normalised event object,
+      // and normalise "deltas" of the mouse wheel
+      var event = Hamster.normalise.event(originalEvent),
+          delta = Hamster.normalise.delta(originalEvent);
+
+      // fire the original handler with normalised arguments
+      return originalHandler(event, delta[0], delta[1], delta[2]);
+
+    };
+
+    // cross-browser addEventListener
+    hamster.element[Hamster.ADD_EVENT](Hamster.PREFIX + eventName, handler, useCapture || false);
+
+    // store original and normalised handlers on the instance
+    hamster.handlers.push({
+      original: originalHandler,
+      normalised: handler
+    });
+  },
+
+  /**
+   * removeWheelListener
+   * @param   {Instance}    hamster
+   * @param   {String}      eventName
+   * @param   {Function}    handler
+   * @param   {Boolean}     useCapture
+   */
+  remove: function remove(hamster, eventName, handler, useCapture){
+    // find the normalised handler on the instance
+    var originalHandler = handler,
+        lookup = {},
+        handlers;
+    for (var i = 0, len = hamster.handlers.length; i < len; ++i) {
+      lookup[hamster.handlers[i].original] = hamster.handlers[i];
+    }
+    handlers = lookup[originalHandler];
+    handler = handlers.normalised;
+
+    // cross-browser removeEventListener
+    hamster.element[Hamster.REMOVE_EVENT](Hamster.PREFIX + eventName, handler, useCapture || false);
+
+    // remove original and normalised handlers from the instance
+    for (var h in hamster.handlers) {
+      if (hamster.handlers[h] == handlers) {
+        hamster.handlers.splice(h, 1);
+        break;
+      }
+    }
+  }
+};
+
+/**
+ * these hold the lowest deltas,
+ * used to normalise the delta values
+ * @type {Number}
+ */
+var lowestDelta,
+    lowestDeltaXY;
+
+Hamster.normalise = {
+  /**
+   * fix browser inconsistencies
+   */
+  browser: function normaliseBrowser(){
+    // detect deprecated wheel events
+    if (!('onwheel' in document || document.documentMode >= 9)) {
+      Hamster.SUPPORT = document.onmousewheel !== undefined ?
+                        'mousewheel' : // webkit and IE < 9 support at least "mousewheel"
+                        'DOMMouseScroll'; // assume remaining browsers are older Firefox
+    }
+
+    // detect deprecated event model
+    if (!window.addEventListener) {
+      // assume IE < 9
+      Hamster.ADD_EVENT = 'attachEvent';
+      Hamster.REMOVE_EVENT = 'detachEvent';
+      Hamster.PREFIX = 'on';
+    }
+
+  },
+
+  /**
+   * create a normalised event object
+   * @param   {Function}    originalEvent
+   * @returns {Object}      event
+   */
+  event: function normaliseEvent(originalEvent){
+    var event = {
+          // keep a reference to the original event object
+          originalEvent: originalEvent,
+          target: originalEvent.target || originalEvent.srcElement,
+          type: 'wheel',
+          deltaMode: originalEvent.type === 'MozMousePixelScroll' ? 0 : 1,
+          deltaX: 0,
+          delatZ: 0,
+          preventDefault: function(){
+            if (originalEvent.preventDefault) {
+              originalEvent.preventDefault();
+            } else {
+              originalEvent.returnValue = false;
+            }
+          },
+          stopPropagation: function(){
+            if (originalEvent.stopPropagation) {
+              originalEvent.stopPropagation();
+            } else {
+              originalEvent.cancelBubble = false;
+            }
+          }
+        };
+
+    // calculate deltaY (and deltaX) according to the event
+
+    // 'mousewheel'
+    if (originalEvent.wheelDelta) {
+      event.deltaY = - 1/40 * originalEvent.wheelDelta;
+    }
+    // webkit
+    if (originalEvent.wheelDeltaX) {
+      event.deltaX = - 1/40 * originalEvent.wheelDeltaX;
+    }
+
+    // 'DomMouseScroll'
+    if (originalEvent.detail) {
+      event.deltaY = originalEvent.detail;
+    }
+
+    return event;
+  },
+
+  /**
+   * normalise 'deltas' of the mouse wheel
+   * @param   {Function}    originalEvent
+   * @returns {Array}       deltas
+   */
+  delta: function normaliseDelta(originalEvent){
+    var delta = 0,
+      deltaX = 0,
+      deltaY = 0,
+      absDelta = 0,
+      absDeltaXY = 0,
+      fn;
+
+    // normalise deltas according to the event
+
+    // 'wheel' event
+    if (originalEvent.deltaY) {
+      deltaY = originalEvent.deltaY * -1;
+      delta  = deltaY;
+    }
+    if (originalEvent.deltaX) {
+      deltaX = originalEvent.deltaX;
+      delta  = deltaX * -1;
+    }
+
+    // 'mousewheel' event
+    if (originalEvent.wheelDelta) {
+      delta = originalEvent.wheelDelta;
+    }
+    // webkit
+    if (originalEvent.wheelDeltaY) {
+      deltaY = originalEvent.wheelDeltaY;
+    }
+    if (originalEvent.wheelDeltaX) {
+      deltaX = originalEvent.wheelDeltaX * -1;
+    }
+
+    // 'DomMouseScroll' event
+    if (originalEvent.detail) {
+      delta = originalEvent.detail * -1;
+    }
+
+    // look for lowest delta to normalize the delta values
+    absDelta = Math.abs(delta);
+    if (!lowestDelta || absDelta < lowestDelta) {
+      lowestDelta = absDelta;
+    }
+    absDeltaXY = Math.max(Math.abs(deltaY), Math.abs(deltaX));
+    if (!lowestDeltaXY || absDeltaXY < lowestDeltaXY) {
+      lowestDeltaXY = absDeltaXY;
+    }
+
+    // convert deltas to whole numbers
+    fn = delta > 0 ? 'floor' : 'ceil';
+    delta  = Math[fn](delta / lowestDelta);
+    deltaX = Math[fn](deltaX / lowestDeltaXY);
+    deltaY = Math[fn](deltaY / lowestDeltaXY);
+
+    return [delta, deltaX, deltaY];
+  }
+};
+
+// Expose Hamster to the global object
+window.Hamster = Hamster;
+
+// requireJS module definition
+if (typeof window.define === 'function' && window.define.amd) {
+  window.define('hamster', [], function(){
+    return Hamster;
+  });
+}
+
+})(window, window.document);
 // AJAX + CSS + EVENTS, FROM : http://projects.jga.me/jquery-builder/
 /*! jQuery v2.1.1 -deprecated,-dimensions,-event-alias,-offset,-css/hiddenVisibleSelectors,-effects/animatedSelector,-wrap | (c) 2005, 2014 jQuery Foundation, Inc. | jquery.org/license */
 !function(a,b){"object"==typeof module&&"object"==typeof module.exports?module.exports=a.document?b(a, !0):function(a){if (!a.document)throw new Error("jQuery requires a window with a document");return b(a)}:b(a)}("undefined"!=typeof window?window:this, function(a,b){var c=[],d=c.slice,e=c.concat,f=c.push,g=c.indexOf,h={},i=h.toString,j=h.hasOwnProperty,k={},l=a.document,m="2.1.1 -deprecated,-dimensions,-event-alias,-offset,-css/hiddenVisibleSelectors,-effects/animatedSelector,-wrap",n=function(a,b){return new n.fn.init(a,b)},o=/^[\s\uFEFF\xA0]+|[\s\uFEFF\xA0]+$/g,p=/^-ms-/,q=/-([\da-z])/gi,r=function(a,b){return b.toUpperCase()};n.fn=n.prototype={jquery:m,constructor:n,selector:"",length:0,toArray:function(){return d.call(this)},get:function(a){return null!=a?0>a?this[a+this.length]:this[a]:d.call(this)},pushStack:function(a){var b=n.merge(this.constructor(), a);return b.prevObject=this,b.context=this.context,b},each:function(a,b){return n.each(this, a, b)},map:function(a){return this.pushStack(n.map(this, function(b,c){return a.call(b, c, b)}))},slice:function(){return this.pushStack(d.apply(this, arguments))},first:function(){return this.eq(0)},last:function(){return this.eq(-1)},eq:function(a){var b=this.length,c=+a+(0>a?b:0);return this.pushStack(c>=0&&b>c?[this[c]]:[])},end:function(){return this.prevObject||this.constructor(null)},push:f,sort:c.sort,splice:c.splice},n.extend=n.fn.extend=function(){var a,b,c,d,e,f,g=arguments[0]||{},h=1,i=arguments.length,j=!1;for ("boolean"==typeof g&&(j=g,g=arguments[h]||{},h++),"object"==typeof g||n.isFunction(g)||(g={}),h===i&&(g=this,h--); i>h; h++)if (null!=(a=arguments[h]))for (b in a)c=g[b],d=a[b],g!==d&&(j&&d&&(n.isPlainObject(d)||(e=n.isArray(d)))?(e?(e=!1,f=c&&n.isArray(c)?c:[]):f=c&&n.isPlainObject(c)?c:{},g[b]=n.extend(j, f, d)):void 0!==d&&(g[b]=d));return g},n.extend({expando:"jQuery"+(m+Math.random()).replace(/\D/g, ""),isReady:!0,error:function(a){throw new Error(a)},noop:function(){},isFunction:function(a){return "function"===n.type(a)},isArray:Array.isArray,isWindow:function(a){return null!=a&&a===a.window},isNumeric:function(a){return !n.isArray(a)&&a-parseFloat(a)>=0},isPlainObject:function(a){return "object"!==n.type(a)||a.nodeType||n.isWindow(a)?!1:a.constructor&&!j.call(a.constructor.prototype, "isPrototypeOf")?!1:!0},isEmptyObject:function(a){var b;for (b in a)return !1;return !0},type:function(a){return null==a?a+"":"object"==typeof a||"function"==typeof a?h[i.call(a)]||"object":typeof a},globalEval:function(a){var b,c=eval;a=n.trim(a),a&&(1===a.indexOf("use strict")?(b=l.createElement("script"),b.text=a,l.head.appendChild(b).parentNode.removeChild(b)):c(a))},camelCase:function(a){return a.replace(p, "ms-").replace(q, r)},nodeName:function(a,b){return a.nodeName&&a.nodeName.toLowerCase()===b.toLowerCase()},each:function(a,b,c){var d,e=0,f=a.length,g=s(a);if (c){if (g){for (; f>e; e++)if (d=b.apply(a[e], c),d===!1)break}else for (e in a)if (d=b.apply(a[e], c),d===!1)break}else if (g){for (; f>e; e++)if (d=b.call(a[e], e, a[e]),d===!1)break}else for (e in a)if (d=b.call(a[e], e, a[e]),d===!1)break;return a},trim:function(a){return null==a?"":(a+"").replace(o, "")},makeArray:function(a,b){var c=b||[];return null!=a&&(s(Object(a))?n.merge(c, "string"==typeof a?[a]:a):f.call(c, a)),c},inArray:function(a,b,c){return null==b?-1:g.call(b, a, c)},merge:function(a,b){for (var c=+b.length,d=0,e=a.length; c>d; d++)a[e++]=b[d];return a.length=e,a},grep:function(a,b,c){for (var d,e=[],f=0,g=a.length,h=!c; g>f; f++)d=!b(a[f], f),d!==h&&e.push(a[f]);return e},map:function(a,b,c){var d,f=0,g=a.length,h=s(a),i=[];if (h)for (; g>f; f++)d=b(a[f], f, c),null!=d&&i.push(d);else for (f in a)d=b(a[f], f, c),null!=d&&i.push(d);return e.apply([], i)},guid:1,proxy:function(a,b){var c,e,f;return "string"==typeof b&&(c=a[b],b=a,a=c),n.isFunction(a)?(e=d.call(arguments, 2),f=function(){return a.apply(b||this, e.concat(d.call(arguments)))},f.guid=a.guid=a.guid||n.guid++,f):void 0},now:Date.now,support:k}),n.each("Boolean Number String Function Array Date RegExp Object Error".split(" "), function(a,b){h["[object "+b+"]"]=b.toLowerCase()});function s(a){var b=a.length,c=n.type(a);return "function"===c||n.isWindow(a)?!1:1===a.nodeType&&b?!0:"array"===c||0===b||"number"==typeof b&&b>0&&b-1 in a}var t=a.document.documentElement,u,v=t.matches||t.webkitMatchesSelector||t.mozMatchesSelector||t.oMatchesSelector||t.msMatchesSelector,w=function(a,b){if (a===b)return u=!0,0;var c=b.compareDocumentPosition&&a.compareDocumentPosition&&a.compareDocumentPosition(b);return c?1&c?a===l||n.contains(l, a)?-1:b===l||n.contains(l, b)?1:0:4&c?-1:1:a.compareDocumentPosition?-1:1};n.extend({find:function(a,b,c,d){var e,f,g=0;if (c=c||[],b=b||l,!a||"string"!=typeof a)return c;if (1!==(f=b.nodeType)&&9!==f)return [];if (d)while (e=d[g++])n.find.matchesSelector(e, a)&&c.push(e);else n.merge(c, b.querySelectorAll(a));return c},unique:function(a){var b,c=[],d=0,e=0;if (u=!1,a.sort(w),u){while (b=a[d++])b===a[d]&&(e=c.push(d));while (e--)a.splice(c[e], 1)}return a},text:function(a){var b,c="",d=0,e=a.nodeType;if (e){if (1===e||9===e||11===e)return a.textContent;if (3===e||4===e)return a.nodeValue}else while (b=a[d++])c+=n.text(b);return c},contains:function(a,b){var c=9===a.nodeType?a.documentElement:a,d=b&&b.parentNode;return a===d||!(!d||1!==d.nodeType||!c.contains(d))},isXMLDoc:function(a){return "HTML"!==(a.ownerDocument||a).documentElement.nodeName},expr:{attrHandle:{},match:{bool:/^(?:checked|selected|async|autofocus|autoplay|controls|defer|disabled|hidden|ismap|loop|multiple|open|readonly|required|scoped)$/i,needsContext:/^[\x20\t\r\n\f]*[>+~]/}}}),n.extend(n.find, {matches:function(a,b){return n.find(a, null, null, b)},matchesSelector:function(a,b){return v.call(a, b)},attr:function(a,b){return a.getAttribute(b)}});var x=n.expr.match.needsContext,y=/^<(\w+)\s*\/?>(?:<\/\1>|)$/,z=/^.[^:#\[\.,]*$/;function A(a,b,c){if (n.isFunction(b))return n.grep(a, function(a,d){return !!b.call(a, d, a)!==c});if (b.nodeType)return n.grep(a, function(a){return a===b!==c});if ("string"==typeof b){if (z.test(b))return n.filter(b, a, c);b=n.filter(b, a)}return n.grep(a, function(a){return g.call(b, a)>=0!==c})}n.filter=function(a,b,c){var d=b[0];return c&&(a=":not("+a+")"),1===b.length&&1===d.nodeType?n.find.matchesSelector(d, a)?[d]:[]:n.find.matches(a, n.grep(b, function(a){return 1===a.nodeType}))},n.fn.extend({find:function(a){var b,c=this.length,d=[],e=this;if ("string"!=typeof a)return this.pushStack(n(a).filter(function(){for (b=0; c>b; b++)if (n.contains(e[b], this))return !0}));for (b=0; c>b; b++)n.find(a, e[b], d);return d=this.pushStack(c>1?n.unique(d):d),d.selector=this.selector?this.selector+" "+a:a,d},filter:function(a){return this.pushStack(A(this, a||[], !1))},not:function(a){return this.pushStack(A(this, a||[], !0))},is:function(a){return !!A(this, "string"==typeof a&&x.test(a)?n(a):a||[], !1).length}});var B,C=/^(?:\s*(<[\w\W]+>)[^>]*|#([\w-]*))$/,D=n.fn.init=function(a,b){var c,d;if (!a)return this;if ("string"==typeof a){if (c="<"===a[0]&&">"===a[a.length-1]&&a.length>=3?[null,a,null]:C.exec(a),!c||!c[1]&&b)return !b||b.jquery?(b||B).find(a):this.constructor(b).find(a);if (c[1]){if (b=b instanceof n?b[0]:b,n.merge(this, n.parseHTML(c[1], b&&b.nodeType?b.ownerDocument||b:l, !0)),y.test(c[1])&&n.isPlainObject(b))for (c in b)n.isFunction(this[c])?this[c](b[c]):this.attr(c, b[c]);return this}return d=l.getElementById(c[2]),d&&d.parentNode&&(this.length=1,this[0]=d),this.context=l,this.selector=a,this}return a.nodeType?(this.context=this[0]=a,this.length=1,this):n.isFunction(a)?"undefined"!=typeof B.ready?B.ready(a):a(n):(void 0!==a.selector&&(this.selector=a.selector,this.context=a.context),n.makeArray(a, this))};D.prototype=n.fn,B=n(l);var E=/^(?:parents|prev(?:Until|All))/,F={children:!0,contents:!0,next:!0,prev:!0};n.extend({dir:function(a,b,c){var d=[],e=void 0!==c;while ((a=a[b])&&9!==a.nodeType)if (1===a.nodeType){if (e&&n(a).is(c))break;d.push(a)}return d},sibling:function(a,b){for (var c=[]; a; a=a.nextSibling)1===a.nodeType&&a!==b&&c.push(a);return c}}),n.fn.extend({has:function(a){var b=n(a, this),c=b.length;return this.filter(function(){for (var a=0; c>a; a++)if (n.contains(this, b[a]))return !0})},closest:function(a,b){for (var c,d=0,e=this.length,f=[],g=x.test(a)||"string"!=typeof a?n(a, b||this.context):0; e>d; d++)for (c=this[d]; c&&c!==b; c=c.parentNode)if (c.nodeType<11&&(g?g.index(c)>-1:1===c.nodeType&&n.find.matchesSelector(c, a))){f.push(c);break}return this.pushStack(f.length>1?n.unique(f):f)},index:function(a){return a?"string"==typeof a?g.call(n(a), this[0]):g.call(this, a.jquery?a[0]:a):this[0]&&this[0].parentNode?this.first().prevAll().length:-1},add:function(a,b){return this.pushStack(n.unique(n.merge(this.get(), n(a, b))))},addBack:function(a){return this.add(null==a?this.prevObject:this.prevObject.filter(a))}});function G(a,b){while ((a=a[b])&&1!==a.nodeType);return a}n.each({parent:function(a){var b=a.parentNode;return b&&11!==b.nodeType?b:null},parents:function(a){return n.dir(a, "parentNode")},parentsUntil:function(a,b,c){return n.dir(a, "parentNode", c)},next:function(a){return G(a, "nextSibling")},prev:function(a){return G(a, "previousSibling")},nextAll:function(a){return n.dir(a, "nextSibling")},prevAll:function(a){return n.dir(a, "previousSibling")},nextUntil:function(a,b,c){return n.dir(a, "nextSibling", c)},prevUntil:function(a,b,c){return n.dir(a, "previousSibling", c)},siblings:function(a){return n.sibling((a.parentNode||{}).firstChild, a)},children:function(a){return n.sibling(a.firstChild)},contents:function(a){return a.contentDocument||n.merge([], a.childNodes)}}, function(a,b){n.fn[a]=function(c,d){var e=n.map(this, b, c);return "Until"!==a.slice(-5)&&(d=c),d&&"string"==typeof d&&(e=n.filter(d, e)),this.length>1&&(F[a]||n.unique(e),E.test(a)&&e.reverse()),this.pushStack(e)}});var H=/\S+/g,I={};function J(a){var b=I[a]={};return n.each(a.match(H)||[], function(a,c){b[c]=!0}),b}n.Callbacks=function(a){a="string"==typeof a?I[a]||J(a):n.extend({}, a);var b,c,d,e,f,g,h=[],i=!a.once&&[],j=function(l){for (b=a.memory&&l,c=!0,g=e||0,e=0,f=h.length,d=!0; h&&f>g; g++)if (h[g].apply(l[0], l[1])===!1&&a.stopOnFalse){b=!1;break}d=!1,h&&(i?i.length&&j(i.shift()):b?h=[]:k.disable())},k={add:function(){if (h){var c=h.length;!function g(b){n.each(b, function(b,c){var d=n.type(c);"function"===d?a.unique&&k.has(c)||h.push(c):c&&c.length&&"string"!==d&&g(c)})}(arguments),d?f=h.length:b&&(e=c,j(b))}return this},remove:function(){return h&&n.each(arguments, function(a,b){var c;while ((c=n.inArray(b, h, c))>-1)h.splice(c, 1),d&&(f>=c&&f--,g>=c&&g--)}),this},has:function(a){return a?n.inArray(a, h)>-1:!(!h||!h.length)},empty:function(){return h=[],f=0,this},disable:function(){return h=i=b=void 0,this},disabled:function(){return !h},lock:function(){return i=void 0,b||k.disable(),this},locked:function(){return !i},fireWith:function(a,b){return !h||c&&!i||(b=b||[],b=[a,b.slice?b.slice():b],d?i.push(b):j(b)),this},fire:function(){return k.fireWith(this, arguments),this},fired:function(){return !!c}};return k},n.extend({Deferred:function(a){var b=[["resolve","done",n.Callbacks("once memory"),"resolved"],["reject","fail",n.Callbacks("once memory"),"rejected"],["notify","progress",n.Callbacks("memory")]],c="pending",d={state:function(){return c},always:function(){return e.done(arguments).fail(arguments),this},then:function(){var a=arguments;return n.Deferred(function(c){n.each(b, function(b,f){var g=n.isFunction(a[b])&&a[b];e[f[1]](function(){var a=g&&g.apply(this, arguments);a&&n.isFunction(a.promise)?a.promise().done(c.resolve).fail(c.reject).progress(c.notify):c[f[0]+"With"](this===d?c.promise():this, g?[a]:arguments)})}),a=null}).promise()},promise:function(a){return null!=a?n.extend(a, d):d}},e={};return d.pipe=d.then,n.each(b, function(a,f){var g=f[2],h=f[3];d[f[1]]=g.add,h&&g.add(function(){c=h}, b[1^a][2].disable, b[2][2].lock),e[f[0]]=function(){return e[f[0]+"With"](this===e?d:this, arguments),this},e[f[0]+"With"]=g.fireWith}),d.promise(e),a&&a.call(e, e),e},when:function(a){var b=0,c=d.call(arguments),e=c.length,f=1!==e||a&&n.isFunction(a.promise)?e:0,g=1===f?a:n.Deferred(),h=function(a,b,c){return function(e){b[a]=this,c[a]=arguments.length>1?d.call(arguments):e,c===i?g.notifyWith(b, c):--f||g.resolveWith(b, c)}},i,j,k;if (e>1)for (i=new Array(e),j=new Array(e),k=new Array(e); e>b; b++)c[b]&&n.isFunction(c[b].promise)?c[b].promise().done(h(b, k, c)).fail(g.reject).progress(h(b, j, i)):--f;return f||g.resolveWith(k, c),g.promise()}});var K;n.fn.ready=function(a){return n.ready.promise().done(a),this},n.extend({isReady:!1,readyWait:1,holdReady:function(a){a?n.readyWait++:n.ready(!0)},ready:function(a){(a===!0?--n.readyWait:n.isReady)||(n.isReady=!0,a!==!0&&--n.readyWait>0||(K.resolveWith(l, [n]),n.fn.triggerHandler&&(n(l).triggerHandler("ready"),n(l).off("ready"))))}});function L(){l.removeEventListener("DOMContentLoaded", L, !1),a.removeEventListener("load", L, !1),n.ready()}n.ready.promise=function(b){return K||(K=n.Deferred(),"complete"===l.readyState?setTimeout(n.ready):(l.addEventListener("DOMContentLoaded", L, !1),a.addEventListener("load", L, !1))),K.promise(b)},n.ready.promise();var M=n.access=function(a,b,c,d,e,f,g){var h=0,i=a.length,j=null==c;if ("object"===n.type(c)){e=!0;for (h in c)n.access(a, b, h, c[h], !0, f, g)}else if (void 0!==d&&(e=!0,n.isFunction(d)||(g=!0),j&&(g?(b.call(a, d),b=null):(j=b,b=function(a,b,c){return j.call(n(a), c)})),b))for (; i>h; h++)b(a[h], c, g?d:d.call(a[h], h, b(a[h], c)));return e?a:j?b.call(a):i?b(a[0], c):f};n.acceptData=function(a){return 1===a.nodeType||9===a.nodeType||!+a.nodeType};function N(){Object.defineProperty(this.cache={}, 0, {get:function(){return {}}}),this.expando=n.expando+Math.random()}N.uid=1,N.accepts=n.acceptData,N.prototype={key:function(a){if (!N.accepts(a))return 0;var b={},c=a[this.expando];if (!c){c=N.uid++;try {b[this.expando]={value:c},Object.defineProperties(a, b)}catch (d){b[this.expando]=c,n.extend(a, b)}}return this.cache[c]||(this.cache[c]={}),c},set:function(a,b,c){var d,e=this.key(a),f=this.cache[e];if ("string"==typeof b)f[b]=c;else if (n.isEmptyObject(f))n.extend(this.cache[e], b);else for (d in b)f[d]=b[d];return f},get:function(a,b){var c=this.cache[this.key(a)];return void 0===b?c:c[b]},access:function(a,b,c){var d;return void 0===b||b&&"string"==typeof b&&void 0===c?(d=this.get(a, b),void 0!==d?d:this.get(a, n.camelCase(b))):(this.set(a, b, c),void 0!==c?c:b)},remove:function(a,b){var c,d,e,f=this.key(a),g=this.cache[f];if (void 0===b)this.cache[f]={};else {n.isArray(b)?d=b.concat(b.map(n.camelCase)):(e=n.camelCase(b),b in g?d=[b,e]:(d=e,d=d in g?[d]:d.match(H)||[])),c=d.length;while (c--)delete g[d[c]]}},hasData:function(a){return !n.isEmptyObject(this.cache[a[this.expando]]||{})},discard:function(a){a[this.expando]&&delete this.cache[a[this.expando]]}};var O=new N,P=new N,Q=/^(?:\{[\w\W]*\}|\[[\w\W]*\])$/,R=/([A-Z])/g;function S(a,b,c){var d;if (void 0===c&&1===a.nodeType)if (d="data-"+b.replace(R, "-$1").toLowerCase(),c=a.getAttribute(d),"string"==typeof c){try {c="true"===c?!0:"false"===c?!1:"null"===c?null:+c+""===c?+c:Q.test(c)?n.parseJSON(c):c}catch (e){}P.set(a, b, c)}else c=void 0;return c}n.extend({hasData:function(a){return P.hasData(a)||O.hasData(a)},data:function(a,b,c){return P.access(a, b, c)},removeData:function(a,b){P.remove(a, b)},_data:function(a,b,c){return O.access(a, b, c)},_removeData:function(a,b){O.remove(a, b)}}),n.fn.extend({data:function(a,b){var c,d,e,f=this[0],g=f&&f.attributes;if (void 0===a){if (this.length&&(e=P.get(f),1===f.nodeType&&!O.get(f, "hasDataAttrs"))){c=g.length;while (c--)g[c]&&(d=g[c].name,0===d.indexOf("data-")&&(d=n.camelCase(d.slice(5)),S(f, d, e[d])));O.set(f, "hasDataAttrs", !0)}return e}return "object"==typeof a?this.each(function(){P.set(this, a)}):M(this, function(b){var c,d=n.camelCase(a);if (f&&void 0===b){if (c=P.get(f, a),void 0!==c)return c;if (c=P.get(f, d),void 0!==c)return c;if (c=S(f, d, void 0),void 0!==c)return c}else this.each(function(){var c=P.get(this, d);P.set(this, d, b),-1!==a.indexOf("-")&&void 0!==c&&P.set(this, a, b)})}, null, b, arguments.length>1, null, !0)},removeData:function(a){return this.each(function(){P.remove(this, a)})}}),n.extend({queue:function(a,b,c){var d;return a?(b=(b||"fx")+"queue",d=O.get(a, b),c&&(!d||n.isArray(c)?d=O.access(a, b, n.makeArray(c)):d.push(c)),d||[]):void 0},dequeue:function(a,b){b=b||"fx";var c=n.queue(a, b),d=c.length,e=c.shift(),f=n._queueHooks(a, b),g=function(){n.dequeue(a, b)};"inprogress"===e&&(e=c.shift(),d--),e&&("fx"===b&&c.unshift("inprogress"),delete f.stop,e.call(a, g, f)),!d&&f&&f.empty.fire()},_queueHooks:function(a,b){var c=b+"queueHooks";return O.get(a, c)||O.access(a, c, {empty:n.Callbacks("once memory").add(function(){O.remove(a, [b+"queue",c])})})}}),n.fn.extend({queue:function(a,b){var c=2;return "string"!=typeof a&&(b=a,a="fx",c--),arguments.length<c?n.queue(this[0], a):void 0===b?this:this.each(function(){var c=n.queue(this, a, b);n._queueHooks(this, a),"fx"===a&&"inprogress"!==c[0]&&n.dequeue(this, a)})},dequeue:function(a){return this.each(function(){n.dequeue(this, a)})},clearQueue:function(a){return this.queue(a||"fx", [])},promise:function(a,b){var c,d=1,e=n.Deferred(),f=this,g=this.length,h=function(){--d||e.resolveWith(f, [f])};"string"!=typeof a&&(b=a,a=void 0),a=a||"fx";while (g--)c=O.get(f[g], a+"queueHooks"),c&&c.empty&&(d++,c.empty.add(h));return h(),e.promise(b)}});var T=/[+-]?(?:\d*\.|)\d+(?:[eE][+-]?\d+|)/.source,U=["Top","Right","Bottom","Left"],V=function(a,b){return a=b||a,"none"===n.css(a, "display")||!n.contains(a.ownerDocument, a)},W=/^(?:checkbox|radio)$/i;!function(){var a=l.createDocumentFragment(),b=a.appendChild(l.createElement("div")),c=l.createElement("input");c.setAttribute("type", "radio"),c.setAttribute("checked", "checked"),c.setAttribute("name", "t"),b.appendChild(c),k.checkClone=b.cloneNode(!0).cloneNode(!0).lastChild.checked,b.innerHTML="<textarea>x</textarea>",k.noCloneChecked=!!b.cloneNode(!0).lastChild.defaultValue}();var X="undefined";k.focusinBubbles="onfocusin"in a;var Y=/^key/,Z=/^(?:mouse|pointer|contextmenu)|click/,$=/^(?:focusinfocus|focusoutblur)$/,_=/^([^.]*)(?:\.(.+)|)$/;function ab(){return !0}function bb(){return !1}function cb(){try {return l.activeElement}catch (a){}}n.event={global:{},add:function(a,b,c,d,e){var f,g,h,i,j,k,l,m,o,p,q,r=O.get(a);if (r){c.handler&&(f=c,c=f.handler,e=f.selector),c.guid||(c.guid=n.guid++),(i=r.events)||(i=r.events={}),(g=r.handle)||(g=r.handle=function(b){return typeof n!==X&&n.event.triggered!==b.type?n.event.dispatch.apply(a, arguments):void 0}),b=(b||"").match(H)||[""],j=b.length;while (j--)h=_.exec(b[j])||[],o=q=h[1],p=(h[2]||"").split(".").sort(),o&&(l=n.event.special[o]||{},o=(e?l.delegateType:l.bindType)||o,l=n.event.special[o]||{},k=n.extend({type:o,origType:q,data:d,handler:c,guid:c.guid,selector:e,needsContext:e&&n.expr.match.needsContext.test(e),namespace:p.join(".")}, f),(m=i[o])||(m=i[o]=[],m.delegateCount=0,l.setup&&l.setup.call(a, d, p, g)!==!1||a.addEventListener&&a.addEventListener(o, g, !1)),l.add&&(l.add.call(a, k),k.handler.guid||(k.handler.guid=c.guid)),e?m.splice(m.delegateCount++, 0, k):m.push(k),n.event.global[o]=!0)}},remove:function(a,b,c,d,e){var f,g,h,i,j,k,l,m,o,p,q,r=O.hasData(a)&&O.get(a);if (r&&(i=r.events)){b=(b||"").match(H)||[""],j=b.length;while (j--)if (h=_.exec(b[j])||[],o=q=h[1],p=(h[2]||"").split(".").sort(),o){l=n.event.special[o]||{},o=(d?l.delegateType:l.bindType)||o,m=i[o]||[],h=h[2]&&new RegExp("(^|\\.)"+p.join("\\.(?:.*\\.|)")+"(\\.|$)"),g=f=m.length;while (f--)k=m[f],!e&&q!==k.origType||c&&c.guid!==k.guid||h&&!h.test(k.namespace)||d&&d!==k.selector&&("**"!==d||!k.selector)||(m.splice(f, 1),k.selector&&m.delegateCount--,l.remove&&l.remove.call(a, k));g&&!m.length&&(l.teardown&&l.teardown.call(a, p, r.handle)!==!1||n.removeEvent(a, o, r.handle),delete i[o])}else for (o in i)n.event.remove(a, o+b[j], c, d, !0);n.isEmptyObject(i)&&(delete r.handle,O.remove(a, "events"))}},trigger:function(b,c,d,e){var f,g,h,i,k,m,o,p=[d||l],q=j.call(b, "type")?b.type:b,r=j.call(b, "namespace")?b.namespace.split("."):[];if (g=h=d=d||l,3!==d.nodeType&&8!==d.nodeType&&!$.test(q+n.event.triggered)&&(q.indexOf(".")>=0&&(r=q.split("."),q=r.shift(),r.sort()),k=q.indexOf(":")<0&&"on"+q,b=b[n.expando]?b:new n.Event(q,"object"==typeof b&&b),b.isTrigger=e?2:3,b.namespace=r.join("."),b.namespace_re=b.namespace?new RegExp("(^|\\.)"+r.join("\\.(?:.*\\.|)")+"(\\.|$)"):null,b.result=void 0,b.target||(b.target=d),c=null==c?[b]:n.makeArray(c, [b]),o=n.event.special[q]||{},e||!o.trigger||o.trigger.apply(d, c)!==!1)){if (!e&&!o.noBubble&&!n.isWindow(d)){for (i=o.delegateType||q,$.test(i+q)||(g=g.parentNode); g; g=g.parentNode)p.push(g),h=g;h===(d.ownerDocument||l)&&p.push(h.defaultView||h.parentWindow||a)}f=0;while ((g=p[f++])&&!b.isPropagationStopped())b.type=f>1?i:o.bindType||q,m=(O.get(g, "events")||{})[b.type]&&O.get(g, "handle"),m&&m.apply(g, c),m=k&&g[k],m&&m.apply&&n.acceptData(g)&&(b.result=m.apply(g, c),b.result===!1&&b.preventDefault());return b.type=q,e||b.isDefaultPrevented()||o._default&&o._default.apply(p.pop(), c)!==!1||!n.acceptData(d)||k&&n.isFunction(d[q])&&!n.isWindow(d)&&(h=d[k],h&&(d[k]=null),n.event.triggered=q,d[q](),n.event.triggered=void 0,h&&(d[k]=h)),b.result}},dispatch:function(a){a=n.event.fix(a);var b,c,e,f,g,h=[],i=d.call(arguments),j=(O.get(this, "events")||{})[a.type]||[],k=n.event.special[a.type]||{};if (i[0]=a,a.delegateTarget=this,!k.preDispatch||k.preDispatch.call(this, a)!==!1){h=n.event.handlers.call(this, a, j),b=0;while ((f=h[b++])&&!a.isPropagationStopped()){a.currentTarget=f.elem,c=0;while ((g=f.handlers[c++])&&!a.isImmediatePropagationStopped())(!a.namespace_re||a.namespace_re.test(g.namespace))&&(a.handleObj=g,a.data=g.data,e=((n.event.special[g.origType]||{}).handle||g.handler).apply(f.elem, i),void 0!==e&&(a.result=e)===!1&&(a.preventDefault(),a.stopPropagation()))}return k.postDispatch&&k.postDispatch.call(this, a),a.result}},handlers:function(a,b){var c,d,e,f,g=[],h=b.delegateCount,i=a.target;if (h&&i.nodeType&&(!a.button||"click"!==a.type))for (; i!==this; i=i.parentNode||this)if (i.disabled!==!0||"click"!==a.type){for (d=[],c=0; h>c; c++)f=b[c],e=f.selector+" ",void 0===d[e]&&(d[e]=f.needsContext?n(e, this).index(i)>=0:n.find(e, this, null, [i]).length),d[e]&&d.push(f);d.length&&g.push({elem:i,handlers:d})}return h<b.length&&g.push({elem:this,handlers:b.slice(h)}),g},props:"altKey bubbles cancelable ctrlKey currentTarget eventPhase metaKey relatedTarget shiftKey target timeStamp view which".split(" "),fixHooks:{},keyHooks:{props:"char charCode key keyCode".split(" "),filter:function(a,b){return null==a.which&&(a.which=null!=b.charCode?b.charCode:b.keyCode),a}},mouseHooks:{props:"button buttons clientX clientY offsetX offsetY pageX pageY screenX screenY toElement".split(" "),filter:function(a,b){var c,d,e,f=b.button;return null==a.pageX&&null!=b.clientX&&(c=a.target.ownerDocument||l,d=c.documentElement,e=c.body,a.pageX=b.clientX+(d&&d.scrollLeft||e&&e.scrollLeft||0)-(d&&d.clientLeft||e&&e.clientLeft||0),a.pageY=b.clientY+(d&&d.scrollTop||e&&e.scrollTop||0)-(d&&d.clientTop||e&&e.clientTop||0)),a.which||void 0===f||(a.which=1&f?1:2&f?3:4&f?2:0),a}},fix:function(a){if (a[n.expando])return a;var b,c,d,e=a.type,f=a,g=this.fixHooks[e];g||(this.fixHooks[e]=g=Z.test(e)?this.mouseHooks:Y.test(e)?this.keyHooks:{}),d=g.props?this.props.concat(g.props):this.props,a=new n.Event(f),b=d.length;while (b--)c=d[b],a[c]=f[c];return a.target||(a.target=l),3===a.target.nodeType&&(a.target=a.target.parentNode),g.filter?g.filter(a, f):a},special:{load:{noBubble:!0},focus:{trigger:function(){return this!==cb()&&this.focus?(this.focus(),!1):void 0},delegateType:"focusin"},blur:{trigger:function(){return this===cb()&&this.blur?(this.blur(),!1):void 0},delegateType:"focusout"},click:{trigger:function(){return "checkbox"===this.type&&this.click&&n.nodeName(this, "input")?(this.click(),!1):void 0},_default:function(a){return n.nodeName(a.target, "a")}},beforeunload:{postDispatch:function(a){void 0!==a.result&&a.originalEvent&&(a.originalEvent.returnValue=a.result)}}},simulate:function(a,b,c,d){var e=n.extend(new n.Event, c, {type:a,isSimulated:!0,originalEvent:{}});d?n.event.trigger(e, null, b):n.event.dispatch.call(b, e),e.isDefaultPrevented()&&c.preventDefault()}},n.removeEvent=function(a,b,c){a.removeEventListener&&a.removeEventListener(b, c, !1)},n.Event=function(a,b){return this instanceof n.Event?(a&&a.type?(this.originalEvent=a,this.type=a.type,this.isDefaultPrevented=a.defaultPrevented||void 0===a.defaultPrevented&&a.returnValue===!1?ab:bb):this.type=a,b&&n.extend(this, b),this.timeStamp=a&&a.timeStamp||n.now(),void(this[n.expando]=!0)):new n.Event(a,b)},n.Event.prototype={isDefaultPrevented:bb,isPropagationStopped:bb,isImmediatePropagationStopped:bb,preventDefault:function(){var a=this.originalEvent;this.isDefaultPrevented=ab,a&&a.preventDefault&&a.preventDefault()},stopPropagation:function(){var a=this.originalEvent;this.isPropagationStopped=ab,a&&a.stopPropagation&&a.stopPropagation()},stopImmediatePropagation:function(){var a=this.originalEvent;this.isImmediatePropagationStopped=ab,a&&a.stopImmediatePropagation&&a.stopImmediatePropagation(),this.stopPropagation()}},n.each({mouseenter:"mouseover",mouseleave:"mouseout",pointerenter:"pointerover",pointerleave:"pointerout"}, function(a,b){n.event.special[a]={delegateType:b,bindType:b,handle:function(a){var c,d=this,e=a.relatedTarget,f=a.handleObj;return (!e||e!==d&&!n.contains(d, e))&&(a.type=f.origType,c=f.handler.apply(this, arguments),a.type=b),c}}}),k.focusinBubbles||n.each({focus:"focusin",blur:"focusout"}, function(a,b){var c=function(a){n.event.simulate(b, a.target, n.event.fix(a), !0)};n.event.special[b]={setup:function(){var d=this.ownerDocument||this,e=O.access(d, b);e||d.addEventListener(a, c, !0),O.access(d, b, (e||0)+1)},teardown:function(){var d=this.ownerDocument||this,e=O.access(d, b)-1;e?O.access(d, b, e):(d.removeEventListener(a, c, !0),O.remove(d, b))}}}),n.fn.extend({on:function(a,b,c,d,e){var f,g;if ("object"==typeof a){"string"!=typeof b&&(c=c||b,b=void 0);for (g in a)this.on(g, b, c, a[g], e);return this}if (null==c&&null==d?(d=b,c=b=void 0):null==d&&("string"==typeof b?(d=c,c=void 0):(d=c,c=b,b=void 0)),d===!1)d=bb;else if (!d)return this;return 1===e&&(f=d,d=function(a){return n().off(a),f.apply(this, arguments)},d.guid=f.guid||(f.guid=n.guid++)),this.each(function(){n.event.add(this, a, d, c, b)})},one:function(a,b,c,d){return this.on(a, b, c, d, 1)},off:function(a,b,c){var d,e;if (a&&a.preventDefault&&a.handleObj)return d=a.handleObj,n(a.delegateTarget).off(d.namespace?d.origType+"."+d.namespace:d.origType, d.selector, d.handler),this;if ("object"==typeof a){for (e in a)this.off(e, b, a[e]);return this}return (b===!1||"function"==typeof b)&&(c=b,b=void 0),c===!1&&(c=bb),this.each(function(){n.event.remove(this, a, c, b)})},trigger:function(a,b){return this.each(function(){n.event.trigger(a, b, this)})},triggerHandler:function(a,b){var c=this[0];return c?n.event.trigger(a, b, c, !0):void 0}});var db=/<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi,eb=/<([\w:]+)/,fb=/<|&#?\w+;/,gb=/<(?:script|style|link)/i,hb=/checked\s*(?:[^=]|=\s*.checked.)/i,ib=/^$|\/(?:java|ecma)script/i,jb=/^true\/(.*)/,kb=/^\s*<!(?:\[CDATA\[|--)|(?:\]\]|--)>\s*$/g,lb={option:[1,"<select multiple='multiple'>","</select>"],thead:[1,"<table>","</table>"],col:[2,"<table><colgroup>","</colgroup></table>"],tr:[2,"<table><tbody>","</tbody></table>"],td:[3,"<table><tbody><tr>","</tr></tbody></table>"],_default:[0,"",""]};lb.optgroup=lb.option,lb.tbody=lb.tfoot=lb.colgroup=lb.caption=lb.thead,lb.th=lb.td;function mb(a,b){return n.nodeName(a, "table")&&n.nodeName(11!==b.nodeType?b:b.firstChild, "tr")?a.getElementsByTagName("tbody")[0]||a.appendChild(a.ownerDocument.createElement("tbody")):a}function nb(a){return a.type=(null!==a.getAttribute("type"))+"/"+a.type,a}function ob(a){var b=jb.exec(a.type);return b?a.type=b[1]:a.removeAttribute("type"),a}function pb(a,b){for (var c=0,d=a.length; d>c; c++)O.set(a[c], "globalEval", !b||O.get(b[c], "globalEval"))}function qb(a,b){var c,d,e,f,g,h,i,j;if (1===b.nodeType){if (O.hasData(a)&&(f=O.access(a),g=O.set(b, f),j=f.events)){delete g.handle,g.events={};for (e in j)for (c=0,d=j[e].length; d>c; c++)n.event.add(b, e, j[e][c])}P.hasData(a)&&(h=P.access(a),i=n.extend({}, h),P.set(b, i))}}function rb(a,b){var c=a.getElementsByTagName?a.getElementsByTagName(b||"*"):a.querySelectorAll?a.querySelectorAll(b||"*"):[];return void 0===b||b&&n.nodeName(a, b)?n.merge([a], c):c}function sb(a,b){var c=b.nodeName.toLowerCase();"input"===c&&W.test(a.type)?b.checked=a.checked:("input"===c||"textarea"===c)&&(b.defaultValue=a.defaultValue)}n.extend({clone:function(a,b,c){var d,e,f,g,h=a.cloneNode(!0),i=n.contains(a.ownerDocument, a);if (!(k.noCloneChecked||1!==a.nodeType&&11!==a.nodeType||n.isXMLDoc(a)))for (g=rb(h),f=rb(a),d=0,e=f.length; e>d; d++)sb(f[d], g[d]);if (b)if (c)for (f=f||rb(a),g=g||rb(h),d=0,e=f.length; e>d; d++)qb(f[d], g[d]);else qb(a, h);return g=rb(h, "script"),g.length>0&&pb(g, !i&&rb(a, "script")),h},buildFragment:function(a,b,c,d){for (var e,f,g,h,i,j,k=b.createDocumentFragment(),l=[],m=0,o=a.length; o>m; m++)if (e=a[m],e||0===e)if ("object"===n.type(e))n.merge(l, e.nodeType?[e]:e);else if (fb.test(e)){f=f||k.appendChild(b.createElement("div")),g=(eb.exec(e)||["",""])[1].toLowerCase(),h=lb[g]||lb._default,f.innerHTML=h[1]+e.replace(db, "<$1></$2>")+h[2],j=h[0];while (j--)f=f.lastChild;n.merge(l, f.childNodes),f=k.firstChild,f.textContent=""}else l.push(b.createTextNode(e));k.textContent="",m=0;while (e=l[m++])if ((!d||-1===n.inArray(e, d))&&(i=n.contains(e.ownerDocument, e),f=rb(k.appendChild(e), "script"),i&&pb(f),c)){j=0;while (e=f[j++])ib.test(e.type||"")&&c.push(e)}return k},cleanData:function(a){for (var b,c,d,e,f=n.event.special,g=0; void 0!==(c=a[g]); g++){if (n.acceptData(c)&&(e=c[O.expando],e&&(b=O.cache[e]))){if (b.events)for (d in b.events)f[d]?n.event.remove(c, d):n.removeEvent(c, d, b.handle);O.cache[e]&&delete O.cache[e]}delete P.cache[c[P.expando]]}}}),n.fn.extend({text:function(a){return M(this, function(a){return void 0===a?n.text(this):this.empty().each(function(){(1===this.nodeType||11===this.nodeType||9===this.nodeType)&&(this.textContent=a)})}, null, a, arguments.length)},append:function(){return this.domManip(arguments, function(a){if (1===this.nodeType||11===this.nodeType||9===this.nodeType){var b=mb(this, a);b.appendChild(a)}})},prepend:function(){return this.domManip(arguments, function(a){if (1===this.nodeType||11===this.nodeType||9===this.nodeType){var b=mb(this, a);b.insertBefore(a, b.firstChild)}})},before:function(){return this.domManip(arguments, function(a){this.parentNode&&this.parentNode.insertBefore(a, this)})},after:function(){return this.domManip(arguments, function(a){this.parentNode&&this.parentNode.insertBefore(a, this.nextSibling)})},remove:function(a,b){for (var c,d=a?n.filter(a, this):this,e=0; null!=(c=d[e]); e++)b||1!==c.nodeType||n.cleanData(rb(c)),c.parentNode&&(b&&n.contains(c.ownerDocument, c)&&pb(rb(c, "script")),c.parentNode.removeChild(c));return this},empty:function(){for (var a,b=0; null!=(a=this[b]); b++)1===a.nodeType&&(n.cleanData(rb(a, !1)),a.textContent="");return this},clone:function(a,b){return a=null==a?!1:a,b=null==b?a:b,this.map(function(){return n.clone(this, a, b)})},html:function(a){return M(this, function(a){var b=this[0]||{},c=0,d=this.length;if (void 0===a&&1===b.nodeType)return b.innerHTML;if ("string"==typeof a&&!gb.test(a)&&!lb[(eb.exec(a)||["",""])[1].toLowerCase()]){a=a.replace(db, "<$1></$2>");try {for (; d>c; c++)b=this[c]||{},1===b.nodeType&&(n.cleanData(rb(b, !1)),b.innerHTML=a);b=0}catch (e){}}b&&this.empty().append(a)}, null, a, arguments.length)},replaceWith:function(){var a=arguments[0];return this.domManip(arguments, function(b){a=this.parentNode,n.cleanData(rb(this)),a&&a.replaceChild(b, this)}),a&&(a.length||a.nodeType)?this:this.remove()},detach:function(a){return this.remove(a, !0)},domManip:function(a,b){a=e.apply([], a);var c,d,f,g,h,i,j=0,l=this.length,m=this,o=l-1,p=a[0],q=n.isFunction(p);if (q||l>1&&"string"==typeof p&&!k.checkClone&&hb.test(p))return this.each(function(c){var d=m.eq(c);q&&(a[0]=p.call(this, c, d.html())),d.domManip(a, b)});if (l&&(c=n.buildFragment(a, this[0].ownerDocument, !1, this),d=c.firstChild,1===c.childNodes.length&&(c=d),d)){for (f=n.map(rb(c, "script"), nb),g=f.length; l>j; j++)h=c,j!==o&&(h=n.clone(h, !0, !0),g&&n.merge(f, rb(h, "script"))),b.call(this[j], h, j);
@@ -9068,6 +9295,2057 @@ if (g)for (i=f[f.length-1].ownerDocument,n.map(f, ob),j=0; g>j; j++)h=f[j],ib.te
 
     return defaultLogger;
 }));
+// vim:ts=4:sts=4:sw=4:
+/*!
+ *
+ * Copyright 2009-2012 Kris Kowal under the terms of the MIT
+ * license found at http://github.com/kriskowal/q/raw/master/LICENSE
+ *
+ * With parts by Tyler Close
+ * Copyright 2007-2009 Tyler Close under the terms of the MIT X license found
+ * at http://www.opensource.org/licenses/mit-license.html
+ * Forked at ref_send.js version: 2009-05-11
+ *
+ * With parts by Mark Miller
+ * Copyright (C) 2011 Google Inc.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ *
+ */
+
+(function (definition) {
+  "use strict";
+
+  // This file will function properly as a <script> tag, or a module
+  // using CommonJS and NodeJS or RequireJS module formats.  In
+  // Common/Node/RequireJS, the module exports the Q API and when
+  // executed as a simple <script>, it creates a Q global instead.
+
+  // Montage Require
+  if (typeof bootstrap === "function") {
+    bootstrap("promise", definition);
+
+// CommonJS
+  } else if (typeof exports === "object" && typeof module === "object") {
+    module.exports = definition();
+
+// RequireJS
+  } else if (typeof define === "function" && define.amd) {
+    define(definition);
+
+// SES (Secure EcmaScript)
+  } else if (typeof ses !== "undefined") {
+    if (!ses.ok()) {
+      return;
+    } else {
+      ses.makeQ = definition;
+    }
+
+// <script>
+  } else if (typeof window !== "undefined" || typeof self !== "undefined") {
+    // Prefer window over self for add-on scripts. Use self for
+    // non-windowed contexts.
+    var global = typeof window !== "undefined" ? window : self;
+
+    // Get the `window` object, save the previous Q global
+    // and initialize Q as a global.
+    var previousQ = global.Q;
+    global.Q = definition();
+
+    // Add a noConflict function so Q can be removed from the
+    // global namespace.
+    global.Q.noConflict = function () {
+      global.Q = previousQ;
+      return this;
+    };
+
+  } else {
+    throw new Error("This environment was not anticipated by Q. Please file a bug.");
+  }
+
+})(function () {
+"use strict";
+
+var hasStacks = false;
+try {
+  throw new Error();
+} catch (e) {
+  hasStacks = !!e.stack;
+}
+
+// All code after this point will be filtered from stack traces reported
+// by Q.
+var qStartingLine = captureLine();
+var qFileName;
+
+// shims
+
+// used for fallback in "allResolved"
+var noop = function () {};
+
+// Use the fastest possible means to execute a task in a future turn
+// of the event loop.
+var nextTick =(function () {
+  // linked list of tasks (single, with head node)
+  var head = {task: void 0, next: null};
+  var tail = head;
+  var flushing = false;
+  var requestTick = void 0;
+  var isNodeJS = false;
+  // queue for late tasks, used by unhandled rejection tracking
+  var laterQueue = [];
+
+  function flush() {
+    /* jshint loopfunc: true */
+    var task, domain;
+
+    while (head.next) {
+      head = head.next;
+      task = head.task;
+      head.task = void 0;
+      domain = head.domain;
+
+      if (domain) {
+        head.domain = void 0;
+        domain.enter();
+      }
+      runSingle(task, domain);
+
+    }
+    while (laterQueue.length) {
+      task = laterQueue.pop();
+      runSingle(task);
+    }
+    flushing = false;
+  }
+  // runs a single function in the async queue
+  function runSingle(task, domain) {
+    try {
+      task();
+
+    } catch (e) {
+      if (isNodeJS) {
+        // In node, uncaught exceptions are considered fatal errors.
+        // Re-throw them synchronously to interrupt flushing!
+
+        // Ensure continuation if the uncaught exception is suppressed
+        // listening "uncaughtException" events (as domains does).
+        // Continue in next event to avoid tick recursion.
+        if (domain) {
+          domain.exit();
+        }
+        setTimeout(flush, 0);
+        if (domain) {
+          domain.enter();
+        }
+
+        throw e;
+
+      } else {
+        // In browsers, uncaught exceptions are not fatal.
+        // Re-throw them asynchronously to avoid slow-downs.
+        setTimeout(function () {
+          throw e;
+        }, 0);
+      }
+    }
+
+    if (domain) {
+      domain.exit();
+    }
+  }
+
+  nextTick = function (task) {
+    tail = tail.next = {
+      task: task,
+      domain: isNodeJS && process.domain,
+      next: null
+    };
+
+    if (!flushing) {
+      flushing = true;
+      requestTick();
+    }
+  };
+
+  if (typeof process === "object" &&
+      process.toString() === "[object process]" && process.nextTick) {
+    // Ensure Q is in a real Node environment, with a `process.nextTick`.
+    // To see through fake Node environments:
+    // * Mocha test runner - exposes a `process` global without a `nextTick`
+    // * Browserify - exposes a `process.nexTick` function that uses
+    //   `setTimeout`. In this case `setImmediate` is preferred because
+    //    it is faster. Browserify's `process.toString()` yields
+    //   "[object Object]", while in a real Node environment
+    //   `process.nextTick()` yields "[object process]".
+    isNodeJS = true;
+
+    requestTick = function () {
+      process.nextTick(flush);
+    };
+
+  } else if (typeof setImmediate === "function") {
+    // In IE10, Node.js 0.9+, or https://github.com/NobleJS/setImmediate
+    if (typeof window !== "undefined") {
+      requestTick = setImmediate.bind(window, flush);
+    } else {
+      requestTick = function () {
+        setImmediate(flush);
+      };
+    }
+
+  } else if (typeof MessageChannel !== "undefined") {
+    // modern browsers
+    // http://www.nonblocking.io/2011/06/windownexttick.html
+    var channel = new MessageChannel();
+    // At least Safari Version 6.0.5 (8536.30.1) intermittently cannot create
+    // working message ports the first time a page loads.
+    channel.port1.onmessage = function () {
+      requestTick = requestPortTick;
+      channel.port1.onmessage = flush;
+      flush();
+    };
+    var requestPortTick = function () {
+      // Opera requires us to provide a message payload, regardless of
+      // whether we use it.
+      channel.port2.postMessage(0);
+    };
+    requestTick = function () {
+      setTimeout(flush, 0);
+      requestPortTick();
+    };
+
+  } else {
+    // old browsers
+    requestTick = function () {
+      setTimeout(flush, 0);
+    };
+  }
+  // runs a task after all other tasks have been run
+  // this is useful for unhandled rejection tracking that needs to happen
+  // after all `then`d tasks have been run.
+  nextTick.runAfter = function (task) {
+    laterQueue.push(task);
+    if (!flushing) {
+      flushing = true;
+      requestTick();
+    }
+  };
+  return nextTick;
+})();
+
+// Attempt to make generics safe in the face of downstream
+// modifications.
+// There is no situation where this is necessary.
+// If you need a security guarantee, these primordials need to be
+// deeply frozen anyway, and if you don’t need a security guarantee,
+// this is just plain paranoid.
+// However, this **might** have the nice side-effect of reducing the size of
+// the minified code by reducing x.call() to merely x()
+// See Mark Miller’s explanation of what this does.
+// http://wiki.ecmascript.org/doku.php?id=conventions:safe_meta_programming
+var call = Function.call;
+function uncurryThis(f) {
+  return function () {
+    return call.apply(f, arguments);
+  };
+}
+// This is equivalent, but slower:
+// uncurryThis = Function_bind.bind(Function_bind.call);
+// http://jsperf.com/uncurrythis
+
+var array_slice = uncurryThis(Array.prototype.slice);
+
+var array_reduce = uncurryThis(
+    Array.prototype.reduce || function (callback, basis) {
+      var index = 0,
+          length = this.length;
+      // concerning the initial value, if one is not provided
+      if (arguments.length === 1) {
+        // seek to the first value in the array, accounting
+        // for the possibility that is is a sparse array
+        do {
+          if (index in this) {
+            basis = this[index++];
+            break;
+          }
+          if (++index >= length) {
+            throw new TypeError();
+          }
+        } while (1);
+      }
+      // reduce
+      for (; index < length; index++) {
+        // account for the possibility that the array is sparse
+        if (index in this) {
+          basis = callback(basis, this[index], index);
+        }
+      }
+      return basis;
+    }
+);
+
+var array_indexOf = uncurryThis(
+    Array.prototype.indexOf || function (value) {
+      // not a very good shim, but good enough for our one use of it
+      for (var i = 0; i < this.length; i++) {
+        if (this[i] === value) {
+          return i;
+        }
+      }
+      return -1;
+    }
+);
+
+var array_map = uncurryThis(
+    Array.prototype.map || function (callback, thisp) {
+      var self = this;
+      var collect = [];
+      array_reduce(self, function (undefined, value, index) {
+        collect.push(callback.call(thisp, value, index, self));
+      }, void 0);
+      return collect;
+    }
+);
+
+var object_create = Object.create || function (prototype) {
+  function Type() { }
+  Type.prototype = prototype;
+  return new Type();
+};
+
+var object_hasOwnProperty = uncurryThis(Object.prototype.hasOwnProperty);
+
+var object_keys = Object.keys || function (object) {
+  var keys = [];
+  for (var key in object) {
+    if (object_hasOwnProperty(object, key)) {
+      keys.push(key);
+    }
+  }
+  return keys;
+};
+
+var object_toString = uncurryThis(Object.prototype.toString);
+
+function isObject(value) {
+  return value === Object(value);
+}
+
+// generator related shims
+
+// FIXME: Remove this function once ES6 generators are in SpiderMonkey.
+function isStopIteration(exception) {
+  return (
+      object_toString(exception) === "[object StopIteration]" ||
+      exception instanceof QReturnValue
+  );
+}
+
+// FIXME: Remove this helper and Q.return once ES6 generators are in
+// SpiderMonkey.
+var QReturnValue;
+if (typeof ReturnValue !== "undefined") {
+  QReturnValue = ReturnValue;
+} else {
+  QReturnValue = function (value) {
+    this.value = value;
+  };
+}
+
+// long stack traces
+
+var STACK_JUMP_SEPARATOR = "From previous event:";
+
+function makeStackTraceLong(error, promise) {
+  // If possible, transform the error stack trace by removing Node and Q
+  // cruft, then concatenating with the stack trace of `promise`. See #57.
+  if (hasStacks &&
+      promise.stack &&
+      typeof error === "object" &&
+      error !== null &&
+      error.stack &&
+      error.stack.indexOf(STACK_JUMP_SEPARATOR) === -1
+  ) {
+    var stacks = [];
+    for (var p = promise; !!p; p = p.source) {
+      if (p.stack) {
+        stacks.unshift(p.stack);
+      }
+    }
+    stacks.unshift(error.stack);
+
+    var concatedStacks = stacks.join("\n" + STACK_JUMP_SEPARATOR + "\n");
+    error.stack = filterStackString(concatedStacks);
+  }
+}
+
+function filterStackString(stackString) {
+  var lines = stackString.split("\n");
+  var desiredLines = [];
+  for (var i = 0; i < lines.length; ++i) {
+    var line = lines[i];
+
+    if (!isInternalFrame(line) && !isNodeFrame(line) && line) {
+      desiredLines.push(line);
+    }
+  }
+  return desiredLines.join("\n");
+}
+
+function isNodeFrame(stackLine) {
+  return stackLine.indexOf("(module.js:") !== -1 ||
+         stackLine.indexOf("(node.js:") !== -1;
+}
+
+function getFileNameAndLineNumber(stackLine) {
+  // Named functions: "at functionName (filename:lineNumber:columnNumber)"
+  // In IE10 function name can have spaces ("Anonymous function") O_o
+  var attempt1 = /at .+ \((.+):(\d+):(?:\d+)\)$/.exec(stackLine);
+  if (attempt1) {
+    return [attempt1[1], Number(attempt1[2])];
+  }
+
+  // Anonymous functions: "at filename:lineNumber:columnNumber"
+  var attempt2 = /at ([^ ]+):(\d+):(?:\d+)$/.exec(stackLine);
+  if (attempt2) {
+    return [attempt2[1], Number(attempt2[2])];
+  }
+
+  // Firefox style: "function@filename:lineNumber or @filename:lineNumber"
+  var attempt3 = /.*@(.+):(\d+)$/.exec(stackLine);
+  if (attempt3) {
+    return [attempt3[1], Number(attempt3[2])];
+  }
+}
+
+function isInternalFrame(stackLine) {
+  var fileNameAndLineNumber = getFileNameAndLineNumber(stackLine);
+
+  if (!fileNameAndLineNumber) {
+    return false;
+  }
+
+  var fileName = fileNameAndLineNumber[0];
+  var lineNumber = fileNameAndLineNumber[1];
+
+  return fileName === qFileName &&
+      lineNumber >= qStartingLine &&
+      lineNumber <= qEndingLine;
+}
+
+// discover own file name and line number range for filtering stack
+// traces
+function captureLine() {
+  if (!hasStacks) {
+    return;
+  }
+
+  try {
+    throw new Error();
+  } catch (e) {
+    var lines = e.stack.split("\n");
+    var firstLine = lines[0].indexOf("@") > 0 ? lines[1] : lines[2];
+    var fileNameAndLineNumber = getFileNameAndLineNumber(firstLine);
+    if (!fileNameAndLineNumber) {
+      return;
+    }
+
+    qFileName = fileNameAndLineNumber[0];
+    return fileNameAndLineNumber[1];
+  }
+}
+
+function deprecate(callback, name, alternative) {
+  return function () {
+    if (typeof console !== "undefined" &&
+        typeof console.warn === "function") {
+      console.warn(name + " is deprecated, use " + alternative +
+                   " instead.", new Error("").stack);
+    }
+    return callback.apply(callback, arguments);
+  };
+}
+
+// end of shims
+// beginning of real work
+
+/**
+ * Constructs a promise for an immediate reference, passes promises through, or
+ * coerces promises from different systems.
+ * @param value immediate reference or promise
+ */
+function Q(value) {
+  // If the object is already a Promise, return it directly.  This enables
+  // the resolve function to both be used to created references from objects,
+  // but to tolerably coerce non-promises to promises.
+  if (value instanceof Promise) {
+    return value;
+  }
+
+  // assimilate thenables
+  if (isPromiseAlike(value)) {
+    return coerce(value);
+  } else {
+    return fulfill(value);
+  }
+}
+Q.resolve = Q;
+
+/**
+ * Performs a task in a future turn of the event loop.
+ * @param {Function} task
+ */
+Q.nextTick = nextTick;
+
+/**
+ * Controls whether or not long stack traces will be on
+ */
+Q.longStackSupport = false;
+
+// enable long stacks if Q_DEBUG is set
+if (typeof process === "object" && process && process.env && process.env.Q_DEBUG) {
+  Q.longStackSupport = true;
+}
+
+/**
+ * Constructs a {promise, resolve, reject} object.
+ *
+ * `resolve` is a callback to invoke with a more resolved value for the
+ * promise. To fulfill the promise, invoke `resolve` with any value that is
+ * not a thenable. To reject the promise, invoke `resolve` with a rejected
+ * thenable, or invoke `reject` with the reason directly. To resolve the
+ * promise to another thenable, thus putting it in the same state, invoke
+ * `resolve` with that other thenable.
+ */
+Q.defer = defer;
+function defer() {
+  // if "messages" is an "Array", that indicates that the promise has not yet
+  // been resolved.  If it is "undefined", it has been resolved.  Each
+  // element of the messages array is itself an array of complete arguments to
+  // forward to the resolved promise.  We coerce the resolution value to a
+  // promise using the `resolve` function because it handles both fully
+  // non-thenable values and other thenables gracefully.
+  var messages = [], progressListeners = [], resolvedPromise;
+
+  var deferred = object_create(defer.prototype);
+  var promise = object_create(Promise.prototype);
+
+  promise.promiseDispatch = function (resolve, op, operands) {
+    var args = array_slice(arguments);
+    if (messages) {
+      messages.push(args);
+      if (op === "when" && operands[1]) { // progress operand
+        progressListeners.push(operands[1]);
+      }
+    } else {
+      Q.nextTick(function () {
+        resolvedPromise.promiseDispatch.apply(resolvedPromise, args);
+      });
+    }
+  };
+
+  // XXX deprecated
+  promise.valueOf = function () {
+    if (messages) {
+      return promise;
+    }
+    var nearerValue = nearer(resolvedPromise);
+    if (isPromise(nearerValue)) {
+      resolvedPromise = nearerValue; // shorten chain
+    }
+    return nearerValue;
+  };
+
+  promise.inspect = function () {
+    if (!resolvedPromise) {
+      return { state: "pending" };
+    }
+    return resolvedPromise.inspect();
+  };
+
+  if (Q.longStackSupport && hasStacks) {
+    try {
+      throw new Error();
+    } catch (e) {
+      // NOTE: don't try to use `Error.captureStackTrace` or transfer the
+      // accessor around; that causes memory leaks as per GH-111. Just
+      // reify the stack trace as a string ASAP.
+      //
+      // At the same time, cut off the first line; it's always just
+      // "[object Promise]\n", as per the `toString`.
+      promise.stack = e.stack.substring(e.stack.indexOf("\n") + 1);
+    }
+  }
+
+  // NOTE: we do the checks for `resolvedPromise` in each method, instead of
+  // consolidating them into `become`, since otherwise we'd create new
+  // promises with the lines `become(whatever(value))`. See e.g. GH-252.
+
+  function become(newPromise) {
+    resolvedPromise = newPromise;
+    promise.source = newPromise;
+
+    array_reduce(messages, function (undefined, message) {
+      Q.nextTick(function () {
+        newPromise.promiseDispatch.apply(newPromise, message);
+      });
+    }, void 0);
+
+    messages = void 0;
+    progressListeners = void 0;
+  }
+
+  deferred.promise = promise;
+  deferred.resolve = function (value) {
+    if (resolvedPromise) {
+      return;
+    }
+
+    become(Q(value));
+  };
+
+  deferred.fulfill = function (value) {
+    if (resolvedPromise) {
+      return;
+    }
+
+    become(fulfill(value));
+  };
+  deferred.reject = function (reason) {
+    if (resolvedPromise) {
+      return;
+    }
+
+    become(reject(reason));
+  };
+  deferred.notify = function (progress) {
+    if (resolvedPromise) {
+      return;
+    }
+
+    array_reduce(progressListeners, function (undefined, progressListener) {
+      Q.nextTick(function () {
+        progressListener(progress);
+      });
+    }, void 0);
+  };
+
+  return deferred;
+}
+
+/**
+ * Creates a Node-style callback that will resolve or reject the deferred
+ * promise.
+ * @returns a nodeback
+ */
+defer.prototype.makeNodeResolver = function () {
+  var self = this;
+  return function (error, value) {
+    if (error) {
+      self.reject(error);
+    } else if (arguments.length > 2) {
+      self.resolve(array_slice(arguments, 1));
+    } else {
+      self.resolve(value);
+    }
+  };
+};
+
+/**
+ * @param resolver {Function} a function that returns nothing and accepts
+ * the resolve, reject, and notify functions for a deferred.
+ * @returns a promise that may be resolved with the given resolve and reject
+ * functions, or rejected by a thrown exception in resolver
+ */
+Q.Promise = promise; // ES6
+Q.promise = promise;
+function promise(resolver) {
+  if (typeof resolver !== "function") {
+    throw new TypeError("resolver must be a function.");
+  }
+  var deferred = defer();
+  try {
+    resolver(deferred.resolve, deferred.reject, deferred.notify);
+  } catch (reason) {
+    deferred.reject(reason);
+  }
+  return deferred.promise;
+}
+
+promise.race = race; // ES6
+promise.all = all; // ES6
+promise.reject = reject; // ES6
+promise.resolve = Q; // ES6
+
+// XXX experimental.  This method is a way to denote that a local value is
+// serializable and should be immediately dispatched to a remote upon request,
+// instead of passing a reference.
+Q.passByCopy = function (object) {
+  //freeze(object);
+  //passByCopies.set(object, true);
+  return object;
+};
+
+Promise.prototype.passByCopy = function () {
+  //freeze(object);
+  //passByCopies.set(object, true);
+  return this;
+};
+
+/**
+ * If two promises eventually fulfill to the same value, promises that value,
+ * but otherwise rejects.
+ * @param x {Any*}
+ * @param y {Any*}
+ * @returns {Any*} a promise for x and y if they are the same, but a rejection
+ * otherwise.
+ *
+ */
+Q.join = function (x, y) {
+  return Q(x).join(y);
+};
+
+Promise.prototype.join = function (that) {
+  return Q([this, that]).spread(function (x, y) {
+    if (x === y) {
+      // TODO: "===" should be Object.is or equiv
+      return x;
+    } else {
+      throw new Error("Can't join: not the same: " + x + " " + y);
+    }
+  });
+};
+
+/**
+ * Returns a promise for the first of an array of promises to become settled.
+ * @param answers {Array[Any*]} promises to race
+ * @returns {Any*} the first promise to be settled
+ */
+Q.race = race;
+function race(answerPs) {
+  return promise(function (resolve, reject) {
+    // Switch to this once we can assume at least ES5
+    // answerPs.forEach(function (answerP) {
+    //     Q(answerP).then(resolve, reject);
+    // });
+    // Use this in the meantime
+    for (var i = 0, len = answerPs.length; i < len; i++) {
+      Q(answerPs[i]).then(resolve, reject);
+    }
+  });
+}
+
+Promise.prototype.race = function () {
+  return this.then(Q.race);
+};
+
+/**
+ * Constructs a Promise with a promise descriptor object and optional fallback
+ * function.  The descriptor contains methods like when(rejected), get(name),
+ * set(name, value), post(name, args), and delete(name), which all
+ * return either a value, a promise for a value, or a rejection.  The fallback
+ * accepts the operation name, a resolver, and any further arguments that would
+ * have been forwarded to the appropriate method above had a method been
+ * provided with the proper name.  The API makes no guarantees about the nature
+ * of the returned object, apart from that it is usable whereever promises are
+ * bought and sold.
+ */
+Q.makePromise = Promise;
+function Promise(descriptor, fallback, inspect) {
+  if (fallback === void 0) {
+    fallback = function (op) {
+      return reject(new Error(
+          "Promise does not support operation: " + op
+      ));
+    };
+  }
+  if (inspect === void 0) {
+    inspect = function () {
+      return {state: "unknown"};
+    };
+  }
+
+  var promise = object_create(Promise.prototype);
+
+  promise.promiseDispatch = function (resolve, op, args) {
+    var result;
+    try {
+      if (descriptor[op]) {
+        result = descriptor[op].apply(promise, args);
+      } else {
+        result = fallback.call(promise, op, args);
+      }
+    } catch (exception) {
+      result = reject(exception);
+    }
+    if (resolve) {
+      resolve(result);
+    }
+  };
+
+  promise.inspect = inspect;
+
+  // XXX deprecated `valueOf` and `exception` support
+  if (inspect) {
+    var inspected = inspect();
+    if (inspected.state === "rejected") {
+      promise.exception = inspected.reason;
+    }
+
+    promise.valueOf = function () {
+      var inspected = inspect();
+      if (inspected.state === "pending" ||
+          inspected.state === "rejected") {
+        return promise;
+      }
+      return inspected.value;
+    };
+  }
+
+  return promise;
+}
+
+Promise.prototype.toString = function () {
+  return "[object Promise]";
+};
+
+Promise.prototype.then = function (fulfilled, rejected, progressed) {
+  var self = this;
+  var deferred = defer();
+  var done = false;   // ensure the untrusted promise makes at most a
+  // single call to one of the callbacks
+
+  function _fulfilled(value) {
+    try {
+      return typeof fulfilled === "function" ? fulfilled(value) : value;
+    } catch (exception) {
+      return reject(exception);
+    }
+  }
+
+  function _rejected(exception) {
+    if (typeof rejected === "function") {
+      makeStackTraceLong(exception, self);
+      try {
+        return rejected(exception);
+      } catch (newException) {
+        return reject(newException);
+      }
+    }
+    return reject(exception);
+  }
+
+  function _progressed(value) {
+    return typeof progressed === "function" ? progressed(value) : value;
+  }
+
+  Q.nextTick(function () {
+    self.promiseDispatch(function (value) {
+      if (done) {
+        return;
+      }
+      done = true;
+
+      deferred.resolve(_fulfilled(value));
+    }, "when", [function (exception) {
+      if (done) {
+        return;
+      }
+      done = true;
+
+      deferred.resolve(_rejected(exception));
+    }]);
+  });
+
+  // Progress propagator need to be attached in the current tick.
+  self.promiseDispatch(void 0, "when", [void 0, function (value) {
+    var newValue;
+    var threw = false;
+    try {
+      newValue = _progressed(value);
+    } catch (e) {
+      threw = true;
+      if (Q.onerror) {
+        Q.onerror(e);
+      } else {
+        throw e;
+      }
+    }
+
+    if (!threw) {
+      deferred.notify(newValue);
+    }
+  }]);
+
+  return deferred.promise;
+};
+
+Q.tap = function (promise, callback) {
+  return Q(promise).tap(callback);
+};
+
+/**
+ * Works almost like "finally", but not called for rejections.
+ * Original resolution value is passed through callback unaffected.
+ * Callback may return a promise that will be awaited for.
+ * @param {Function} callback
+ * @returns {Q.Promise}
+ * @example
+ * doSomething()
+ *   .then(...)
+ *   .tap(console.log)
+ *   .then(...);
+ */
+Promise.prototype.tap = function (callback) {
+  callback = Q(callback);
+
+  return this.then(function (value) {
+    return callback.fcall(value).thenResolve(value);
+  });
+};
+
+/**
+ * Registers an observer on a promise.
+ *
+ * Guarantees:
+ *
+ * 1. that fulfilled and rejected will be called only once.
+ * 2. that either the fulfilled callback or the rejected callback will be
+ *    called, but not both.
+ * 3. that fulfilled and rejected will not be called in this turn.
+ *
+ * @param value      promise or immediate reference to observe
+ * @param fulfilled  function to be called with the fulfilled value
+ * @param rejected   function to be called with the rejection exception
+ * @param progressed function to be called on any progress notifications
+ * @return promise for the return value from the invoked callback
+ */
+Q.when = when;
+function when(value, fulfilled, rejected, progressed) {
+  return Q(value).then(fulfilled, rejected, progressed);
+}
+
+Promise.prototype.thenResolve = function (value) {
+  return this.then(function () { return value; });
+};
+
+Q.thenResolve = function (promise, value) {
+  return Q(promise).thenResolve(value);
+};
+
+Promise.prototype.thenReject = function (reason) {
+  return this.then(function () { throw reason; });
+};
+
+Q.thenReject = function (promise, reason) {
+  return Q(promise).thenReject(reason);
+};
+
+/**
+ * If an object is not a promise, it is as "near" as possible.
+ * If a promise is rejected, it is as "near" as possible too.
+ * If it’s a fulfilled promise, the fulfillment value is nearer.
+ * If it’s a deferred promise and the deferred has been resolved, the
+ * resolution is "nearer".
+ * @param object
+ * @returns most resolved (nearest) form of the object
+ */
+
+// XXX should we re-do this?
+Q.nearer = nearer;
+function nearer(value) {
+  if (isPromise(value)) {
+    var inspected = value.inspect();
+    if (inspected.state === "fulfilled") {
+      return inspected.value;
+    }
+  }
+  return value;
+}
+
+/**
+ * @returns whether the given object is a promise.
+ * Otherwise it is a fulfilled value.
+ */
+Q.isPromise = isPromise;
+function isPromise(object) {
+  return object instanceof Promise;
+}
+
+Q.isPromiseAlike = isPromiseAlike;
+function isPromiseAlike(object) {
+  return isObject(object) && typeof object.then === "function";
+}
+
+/**
+ * @returns whether the given object is a pending promise, meaning not
+ * fulfilled or rejected.
+ */
+Q.isPending = isPending;
+function isPending(object) {
+  return isPromise(object) && object.inspect().state === "pending";
+}
+
+Promise.prototype.isPending = function () {
+  return this.inspect().state === "pending";
+};
+
+/**
+ * @returns whether the given object is a value or fulfilled
+ * promise.
+ */
+Q.isFulfilled = isFulfilled;
+function isFulfilled(object) {
+  return !isPromise(object) || object.inspect().state === "fulfilled";
+}
+
+Promise.prototype.isFulfilled = function () {
+  return this.inspect().state === "fulfilled";
+};
+
+/**
+ * @returns whether the given object is a rejected promise.
+ */
+Q.isRejected = isRejected;
+function isRejected(object) {
+  return isPromise(object) && object.inspect().state === "rejected";
+}
+
+Promise.prototype.isRejected = function () {
+  return this.inspect().state === "rejected";
+};
+
+//// BEGIN UNHANDLED REJECTION TRACKING
+
+// This promise library consumes exceptions thrown in handlers so they can be
+// handled by a subsequent promise.  The exceptions get added to this array when
+// they are created, and removed when they are handled.  Note that in ES6 or
+// shimmed environments, this would naturally be a `Set`.
+var unhandledReasons = [];
+var unhandledRejections = [];
+var reportedUnhandledRejections = [];
+var trackUnhandledRejections = true;
+
+function resetUnhandledRejections() {
+  unhandledReasons.length = 0;
+  unhandledRejections.length = 0;
+
+  if (!trackUnhandledRejections) {
+    trackUnhandledRejections = true;
+  }
+}
+
+function trackRejection(promise, reason) {
+  if (!trackUnhandledRejections) {
+    return;
+  }
+  if (typeof process === "object" && typeof process.emit === "function") {
+    Q.nextTick.runAfter(function () {
+      if (array_indexOf(unhandledRejections, promise) !== -1) {
+        process.emit("unhandledRejection", reason, promise);
+        reportedUnhandledRejections.push(promise);
+      }
+    });
+  }
+
+  unhandledRejections.push(promise);
+  if (reason && typeof reason.stack !== "undefined") {
+    unhandledReasons.push(reason.stack);
+  } else {
+    unhandledReasons.push("(no stack) " + reason);
+  }
+}
+
+function untrackRejection(promise) {
+  if (!trackUnhandledRejections) {
+    return;
+  }
+
+  var at = array_indexOf(unhandledRejections, promise);
+  if (at !== -1) {
+    if (typeof process === "object" && typeof process.emit === "function") {
+      Q.nextTick.runAfter(function () {
+        var atReport = array_indexOf(reportedUnhandledRejections, promise);
+        if (atReport !== -1) {
+          process.emit("rejectionHandled", unhandledReasons[at], promise);
+          reportedUnhandledRejections.splice(atReport, 1);
+        }
+      });
+    }
+    unhandledRejections.splice(at, 1);
+    unhandledReasons.splice(at, 1);
+  }
+}
+
+Q.resetUnhandledRejections = resetUnhandledRejections;
+
+Q.getUnhandledReasons = function () {
+  // Make a copy so that consumers can't interfere with our internal state.
+  return unhandledReasons.slice();
+};
+
+Q.stopUnhandledRejectionTracking = function () {
+  resetUnhandledRejections();
+  trackUnhandledRejections = false;
+};
+
+resetUnhandledRejections();
+
+//// END UNHANDLED REJECTION TRACKING
+
+/**
+ * Constructs a rejected promise.
+ * @param reason value describing the failure
+ */
+Q.reject = reject;
+function reject(reason) {
+  var rejection = Promise({
+    when: function (rejected) {
+      // note that the error has been handled
+      if (rejected) {
+        untrackRejection(this);
+      }
+      return rejected ? rejected(reason) : this;
+    }
+  }, function fallback() {
+    return this;
+  }, function inspect() {
+    return { state: "rejected", reason: reason };
+  });
+
+  // Note that the reason has not been handled.
+  trackRejection(rejection, reason);
+
+  return rejection;
+}
+
+/**
+ * Constructs a fulfilled promise for an immediate reference.
+ * @param value immediate reference
+ */
+Q.fulfill = fulfill;
+function fulfill(value) {
+  return Promise({
+    when: function () {
+      return value;
+    },
+    get: function (name) {
+      return value[name];
+    },
+    set: function (name, rhs) {
+      value[name] = rhs;
+    },
+    delete: function (name) {
+      delete value[name];
+    },
+    post: function (name, args) {
+      // Mark Miller proposes that post with no name should apply a
+      // promised function.
+      if (name === null || name === void 0) {
+        return value.apply(void 0, args);
+      } else {
+        return value[name].apply(value, args);
+      }
+    },
+    apply: function (thisp, args) {
+      return value.apply(thisp, args);
+    },
+    keys: function () {
+      return object_keys(value);
+    }
+  }, void 0, function inspect() {
+    return { state: "fulfilled", value: value };
+  });
+}
+
+/**
+ * Converts thenables to Q promises.
+ * @param promise thenable promise
+ * @returns a Q promise
+ */
+function coerce(promise) {
+  var deferred = defer();
+  Q.nextTick(function () {
+    try {
+      promise.then(deferred.resolve, deferred.reject, deferred.notify);
+    } catch (exception) {
+      deferred.reject(exception);
+    }
+  });
+  return deferred.promise;
+}
+
+/**
+ * Annotates an object such that it will never be
+ * transferred away from this process over any promise
+ * communication channel.
+ * @param object
+ * @returns promise a wrapping of that object that
+ * additionally responds to the "isDef" message
+ * without a rejection.
+ */
+Q.master = master;
+function master(object) {
+  return Promise({
+    isDef: function () {}
+  }, function fallback(op, args) {
+    return dispatch(object, op, args);
+  }, function () {
+    return Q(object).inspect();
+  });
+}
+
+/**
+ * Spreads the values of a promised array of arguments into the
+ * fulfillment callback.
+ * @param fulfilled callback that receives variadic arguments from the
+ * promised array
+ * @param rejected callback that receives the exception if the promise
+ * is rejected.
+ * @returns a promise for the return value or thrown exception of
+ * either callback.
+ */
+Q.spread = spread;
+function spread(value, fulfilled, rejected) {
+  return Q(value).spread(fulfilled, rejected);
+}
+
+Promise.prototype.spread = function (fulfilled, rejected) {
+  return this.all().then(function (array) {
+    return fulfilled.apply(void 0, array);
+  }, rejected);
+};
+
+/**
+ * The async function is a decorator for generator functions, turning
+ * them into asynchronous generators.  Although generators are only part
+ * of the newest ECMAScript 6 drafts, this code does not cause syntax
+ * errors in older engines.  This code should continue to work and will
+ * in fact improve over time as the language improves.
+ *
+ * ES6 generators are currently part of V8 version 3.19 with the
+ * --harmony-generators runtime flag enabled.  SpiderMonkey has had them
+ * for longer, but under an older Python-inspired form.  This function
+ * works on both kinds of generators.
+ *
+ * Decorates a generator function such that:
+ *  - it may yield promises
+ *  - execution will continue when that promise is fulfilled
+ *  - the value of the yield expression will be the fulfilled value
+ *  - it returns a promise for the return value (when the generator
+ *    stops iterating)
+ *  - the decorated function returns a promise for the return value
+ *    of the generator or the first rejected promise among those
+ *    yielded.
+ *  - if an error is thrown in the generator, it propagates through
+ *    every following yield until it is caught, or until it escapes
+ *    the generator function altogether, and is translated into a
+ *    rejection for the promise returned by the decorated generator.
+ */
+Q.async = async;
+function async(makeGenerator) {
+  return function () {
+    // when verb is "send", arg is a value
+    // when verb is "throw", arg is an exception
+    function continuer(verb, arg) {
+      var result;
+
+      // Until V8 3.19 / Chromium 29 is released, SpiderMonkey is the only
+      // engine that has a deployed base of browsers that support generators.
+      // However, SM's generators use the Python-inspired semantics of
+      // outdated ES6 drafts.  We would like to support ES6, but we'd also
+      // like to make it possible to use generators in deployed browsers, so
+      // we also support Python-style generators.  At some point we can remove
+      // this block.
+
+      if (typeof StopIteration === "undefined") {
+        // ES6 Generators
+        try {
+          result = generator[verb](arg);
+        } catch (exception) {
+          return reject(exception);
+        }
+        if (result.done) {
+          return Q(result.value);
+        } else {
+          return when(result.value, callback, errback);
+        }
+      } else {
+        // SpiderMonkey Generators
+        // FIXME: Remove this case when SM does ES6 generators.
+        try {
+          result = generator[verb](arg);
+        } catch (exception) {
+          if (isStopIteration(exception)) {
+            return Q(exception.value);
+          } else {
+            return reject(exception);
+          }
+        }
+        return when(result, callback, errback);
+      }
+    }
+    var generator = makeGenerator.apply(this, arguments);
+    var callback = continuer.bind(continuer, "next");
+    var errback = continuer.bind(continuer, "throw");
+    return callback();
+  };
+}
+
+/**
+ * The spawn function is a small wrapper around async that immediately
+ * calls the generator and also ends the promise chain, so that any
+ * unhandled errors are thrown instead of forwarded to the error
+ * handler. This is useful because it's extremely common to run
+ * generators at the top-level to work with libraries.
+ */
+Q.spawn = spawn;
+function spawn(makeGenerator) {
+  Q.done(Q.async(makeGenerator)());
+}
+
+// FIXME: Remove this interface once ES6 generators are in SpiderMonkey.
+/**
+ * Throws a ReturnValue exception to stop an asynchronous generator.
+ *
+ * This interface is a stop-gap measure to support generator return
+ * values in older Firefox/SpiderMonkey.  In browsers that support ES6
+ * generators like Chromium 29, just use "return" in your generator
+ * functions.
+ *
+ * @param value the return value for the surrounding generator
+ * @throws ReturnValue exception with the value.
+ * @example
+ * // ES6 style
+ * Q.async(function* () {
+ *      var foo = yield getFooPromise();
+ *      var bar = yield getBarPromise();
+ *      return foo + bar;
+ * })
+ * // Older SpiderMonkey style
+ * Q.async(function () {
+ *      var foo = yield getFooPromise();
+ *      var bar = yield getBarPromise();
+ *      Q.return(foo + bar);
+ * })
+ */
+Q["return"] = _return;
+function _return(value) {
+  throw new QReturnValue(value);
+}
+
+/**
+ * The promised function decorator ensures that any promise arguments
+ * are settled and passed as values (`this` is also settled and passed
+ * as a value).  It will also ensure that the result of a function is
+ * always a promise.
+ *
+ * @example
+ * var add = Q.promised(function (a, b) {
+ *     return a + b;
+ * });
+ * add(Q(a), Q(B));
+ *
+ * @param {function} callback The function to decorate
+ * @returns {function} a function that has been decorated.
+ */
+Q.promised = promised;
+function promised(callback) {
+  return function () {
+    return spread([this, all(arguments)], function (self, args) {
+      return callback.apply(self, args);
+    });
+  };
+}
+
+/**
+ * sends a message to a value in a future turn
+ * @param object* the recipient
+ * @param op the name of the message operation, e.g., "when",
+ * @param args further arguments to be forwarded to the operation
+ * @returns result {Promise} a promise for the result of the operation
+ */
+Q.dispatch = dispatch;
+function dispatch(object, op, args) {
+  return Q(object).dispatch(op, args);
+}
+
+Promise.prototype.dispatch = function (op, args) {
+  var self = this;
+  var deferred = defer();
+  Q.nextTick(function () {
+    self.promiseDispatch(deferred.resolve, op, args);
+  });
+  return deferred.promise;
+};
+
+/**
+ * Gets the value of a property in a future turn.
+ * @param object    promise or immediate reference for target object
+ * @param name      name of property to get
+ * @return promise for the property value
+ */
+Q.get = function (object, key) {
+  return Q(object).dispatch("get", [key]);
+};
+
+Promise.prototype.get = function (key) {
+  return this.dispatch("get", [key]);
+};
+
+/**
+ * Sets the value of a property in a future turn.
+ * @param object    promise or immediate reference for object object
+ * @param name      name of property to set
+ * @param value     new value of property
+ * @return promise for the return value
+ */
+Q.set = function (object, key, value) {
+  return Q(object).dispatch("set", [key, value]);
+};
+
+Promise.prototype.set = function (key, value) {
+  return this.dispatch("set", [key, value]);
+};
+
+/**
+ * Deletes a property in a future turn.
+ * @param object    promise or immediate reference for target object
+ * @param name      name of property to delete
+ * @return promise for the return value
+ */
+Q.del = // XXX legacy
+Q["delete"] = function (object, key) {
+  return Q(object).dispatch("delete", [key]);
+};
+
+Promise.prototype.del = // XXX legacy
+Promise.prototype["delete"] = function (key) {
+  return this.dispatch("delete", [key]);
+};
+
+/**
+ * Invokes a method in a future turn.
+ * @param object    promise or immediate reference for target object
+ * @param name      name of method to invoke
+ * @param value     a value to post, typically an array of
+ *                  invocation arguments for promises that
+ *                  are ultimately backed with `resolve` values,
+ *                  as opposed to those backed with URLs
+ *                  wherein the posted value can be any
+ *                  JSON serializable object.
+ * @return promise for the return value
+ */
+// bound locally because it is used by other methods
+Q.mapply = // XXX As proposed by "Redsandro"
+Q.post = function (object, name, args) {
+  return Q(object).dispatch("post", [name, args]);
+};
+
+Promise.prototype.mapply = // XXX As proposed by "Redsandro"
+Promise.prototype.post = function (name, args) {
+  return this.dispatch("post", [name, args]);
+};
+
+/**
+ * Invokes a method in a future turn.
+ * @param object    promise or immediate reference for target object
+ * @param name      name of method to invoke
+ * @param ...args   array of invocation arguments
+ * @return promise for the return value
+ */
+Q.send = // XXX Mark Miller's proposed parlance
+Q.mcall = // XXX As proposed by "Redsandro"
+Q.invoke = function (object, name /*...args*/) {
+  return Q(object).dispatch("post", [name, array_slice(arguments, 2)]);
+};
+
+Promise.prototype.send = // XXX Mark Miller's proposed parlance
+Promise.prototype.mcall = // XXX As proposed by "Redsandro"
+Promise.prototype.invoke = function (name /*...args*/) {
+  return this.dispatch("post", [name, array_slice(arguments, 1)]);
+};
+
+/**
+ * Applies the promised function in a future turn.
+ * @param object    promise or immediate reference for target function
+ * @param args      array of application arguments
+ */
+Q.fapply = function (object, args) {
+  return Q(object).dispatch("apply", [void 0, args]);
+};
+
+Promise.prototype.fapply = function (args) {
+  return this.dispatch("apply", [void 0, args]);
+};
+
+/**
+ * Calls the promised function in a future turn.
+ * @param object    promise or immediate reference for target function
+ * @param ...args   array of application arguments
+ */
+Q["try"] =
+Q.fcall = function (object /* ...args*/) {
+  return Q(object).dispatch("apply", [void 0, array_slice(arguments, 1)]);
+};
+
+Promise.prototype.fcall = function (/*...args*/) {
+  return this.dispatch("apply", [void 0, array_slice(arguments)]);
+};
+
+/**
+ * Binds the promised function, transforming return values into a fulfilled
+ * promise and thrown errors into a rejected one.
+ * @param object    promise or immediate reference for target function
+ * @param ...args   array of application arguments
+ */
+Q.fbind = function (object /*...args*/) {
+  var promise = Q(object);
+  var args = array_slice(arguments, 1);
+  return function fbound() {
+    return promise.dispatch("apply", [
+        this,
+        args.concat(array_slice(arguments))
+    ]);
+  };
+};
+Promise.prototype.fbind = function (/*...args*/) {
+  var promise = this;
+  var args = array_slice(arguments);
+  return function fbound() {
+    return promise.dispatch("apply", [
+        this,
+        args.concat(array_slice(arguments))
+    ]);
+  };
+};
+
+/**
+ * Requests the names of the owned properties of a promised
+ * object in a future turn.
+ * @param object    promise or immediate reference for target object
+ * @return promise for the keys of the eventually settled object
+ */
+Q.keys = function (object) {
+  return Q(object).dispatch("keys", []);
+};
+
+Promise.prototype.keys = function () {
+  return this.dispatch("keys", []);
+};
+
+/**
+ * Turns an array of promises into a promise for an array.  If any of
+ * the promises gets rejected, the whole array is rejected immediately.
+ * @param {Array*} an array (or promise for an array) of values (or
+ * promises for values)
+ * @returns a promise for an array of the corresponding values
+ */
+// By Mark Miller
+// http://wiki.ecmascript.org/doku.php?id=strawman:concurrency&rev=1308776521#allfulfilled
+Q.all = all;
+function all(promises) {
+  return when(promises, function (promises) {
+    var pendingCount = 0;
+    var deferred = defer();
+    array_reduce(promises, function (undefined, promise, index) {
+      var snapshot;
+      if (
+          isPromise(promise) &&
+          (snapshot = promise.inspect()).state === "fulfilled"
+      ) {
+        promises[index] = snapshot.value;
+      } else {
+        ++pendingCount;
+        when(
+            promise,
+                    function (value) {
+                      promises[index] = value;
+                      if (--pendingCount === 0) {
+                        deferred.resolve(promises);
+                      }
+                    },
+                    deferred.reject,
+                    function (progress) {
+                      deferred.notify({ index: index, value: progress });
+                    }
+                );
+      }
+    }, void 0);
+    if (pendingCount === 0) {
+      deferred.resolve(promises);
+    }
+    return deferred.promise;
+  });
+}
+
+Promise.prototype.all = function () {
+  return all(this);
+};
+
+/**
+ * Returns the first resolved promise of an array. Prior rejected promises are
+ * ignored.  Rejects only if all promises are rejected.
+ * @param {Array*} an array containing values or promises for values
+ * @returns a promise fulfilled with the value of the first resolved promise,
+ * or a rejected promise if all promises are rejected.
+ */
+Q.any = any;
+
+function any(promises) {
+  if (promises.length === 0) {
+    return Q.resolve();
+  }
+
+  var deferred = Q.defer();
+  var pendingCount = 0;
+  array_reduce(promises, function (prev, current, index) {
+    var promise = promises[index];
+
+    pendingCount++;
+
+    when(promise, onFulfilled, onRejected, onProgress);
+    function onFulfilled(result) {
+      deferred.resolve(result);
+    }
+    function onRejected() {
+      pendingCount--;
+      if (pendingCount === 0) {
+        deferred.reject(new Error(
+            "Can't get fulfillment value from any promise, all " +
+            "promises were rejected."
+        ));
+      }
+    }
+    function onProgress(progress) {
+      deferred.notify({
+        index: index,
+        value: progress
+      });
+    }
+  }, undefined);
+
+  return deferred.promise;
+}
+
+Promise.prototype.any = function () {
+  return any(this);
+};
+
+/**
+ * Waits for all promises to be settled, either fulfilled or
+ * rejected.  This is distinct from `all` since that would stop
+ * waiting at the first rejection.  The promise returned by
+ * `allResolved` will never be rejected.
+ * @param promises a promise for an array (or an array) of promises
+ * (or values)
+ * @return a promise for an array of promises
+ */
+Q.allResolved = deprecate(allResolved, "allResolved", "allSettled");
+function allResolved(promises) {
+  return when(promises, function (promises) {
+    promises = array_map(promises, Q);
+    return when(all(array_map(promises, function (promise) {
+      return when(promise, noop, noop);
+    })), function () {
+      return promises;
+    });
+  });
+}
+
+Promise.prototype.allResolved = function () {
+  return allResolved(this);
+};
+
+/**
+ * @see Promise#allSettled
+ */
+Q.allSettled = allSettled;
+function allSettled(promises) {
+  return Q(promises).allSettled();
+}
+
+/**
+ * Turns an array of promises into a promise for an array of their states (as
+ * returned by `inspect`) when they have all settled.
+ * @param {Array[Any*]} values an array (or promise for an array) of values (or
+ * promises for values)
+ * @returns {Array[State]} an array of states for the respective values.
+ */
+Promise.prototype.allSettled = function () {
+  return this.then(function (promises) {
+    return all(array_map(promises, function (promise) {
+      promise = Q(promise);
+      function regardless() {
+        return promise.inspect();
+      }
+      return promise.then(regardless, regardless);
+    }));
+  });
+};
+
+/**
+ * Captures the failure of a promise, giving an oportunity to recover
+ * with a callback.  If the given promise is fulfilled, the returned
+ * promise is fulfilled.
+ * @param {Any*} promise for something
+ * @param {Function} callback to fulfill the returned promise if the
+ * given promise is rejected
+ * @returns a promise for the return value of the callback
+ */
+Q.fail = // XXX legacy
+Q["catch"] = function (object, rejected) {
+  return Q(object).then(void 0, rejected);
+};
+
+Promise.prototype.fail = // XXX legacy
+Promise.prototype["catch"] = function (rejected) {
+  return this.then(void 0, rejected);
+};
+
+/**
+ * Attaches a listener that can respond to progress notifications from a
+ * promise's originating deferred. This listener receives the exact arguments
+ * passed to ``deferred.notify``.
+ * @param {Any*} promise for something
+ * @param {Function} callback to receive any progress notifications
+ * @returns the given promise, unchanged
+ */
+Q.progress = progress;
+function progress(object, progressed) {
+  return Q(object).then(void 0, void 0, progressed);
+}
+
+Promise.prototype.progress = function (progressed) {
+  return this.then(void 0, void 0, progressed);
+};
+
+/**
+ * Provides an opportunity to observe the settling of a promise,
+ * regardless of whether the promise is fulfilled or rejected.  Forwards
+ * the resolution to the returned promise when the callback is done.
+ * The callback can return a promise to defer completion.
+ * @param {Any*} promise
+ * @param {Function} callback to observe the resolution of the given
+ * promise, takes no arguments.
+ * @returns a promise for the resolution of the given promise when
+ * ``fin`` is done.
+ */
+Q.fin = // XXX legacy
+Q["finally"] = function (object, callback) {
+  return Q(object)["finally"](callback);
+};
+
+Promise.prototype.fin = // XXX legacy
+Promise.prototype["finally"] = function (callback) {
+  if (!callback || typeof callback.apply !== "function") {
+    throw new Error("Can't apply finally callback");
+  }
+  callback = Q(callback);
+  return this.then(function (value) {
+    return callback.fcall().then(function () {
+      return value;
+    });
+  }, function (reason) {
+    // TODO attempt to recycle the rejection with "this".
+    return callback.fcall().then(function () {
+      throw reason;
+    });
+  });
+};
+
+/**
+ * Terminates a chain of promises, forcing rejections to be
+ * thrown as exceptions.
+ * @param {Any*} promise at the end of a chain of promises
+ * @returns nothing
+ */
+Q.done = function (object, fulfilled, rejected, progress) {
+  return Q(object).done(fulfilled, rejected, progress);
+};
+
+Promise.prototype.done = function (fulfilled, rejected, progress) {
+  var onUnhandledError = function (error) {
+    // forward to a future turn so that ``when``
+    // does not catch it and turn it into a rejection.
+    Q.nextTick(function () {
+      makeStackTraceLong(error, promise);
+      if (Q.onerror) {
+        Q.onerror(error);
+      } else {
+        throw error;
+      }
+    });
+  };
+
+  // Avoid unnecessary `nextTick`ing via an unnecessary `when`.
+  var promise = fulfilled || rejected || progress ?
+      this.then(fulfilled, rejected, progress) :
+      this;
+
+  if (typeof process === "object" && process && process.domain) {
+    onUnhandledError = process.domain.bind(onUnhandledError);
+  }
+
+  promise.then(void 0, onUnhandledError);
+};
+
+/**
+ * Causes a promise to be rejected if it does not get fulfilled before
+ * some milliseconds time out.
+ * @param {Any*} promise
+ * @param {Number} milliseconds timeout
+ * @param {Any*} custom error message or Error object (optional)
+ * @returns a promise for the resolution of the given promise if it is
+ * fulfilled before the timeout, otherwise rejected.
+ */
+Q.timeout = function (object, ms, error) {
+  return Q(object).timeout(ms, error);
+};
+
+Promise.prototype.timeout = function (ms, error) {
+  var deferred = defer();
+  var timeoutId = setTimeout(function () {
+    if (!error || "string" === typeof error) {
+      error = new Error(error || "Timed out after " + ms + " ms");
+      error.code = "ETIMEDOUT";
+    }
+    deferred.reject(error);
+  }, ms);
+
+  this.then(function (value) {
+    clearTimeout(timeoutId);
+    deferred.resolve(value);
+  }, function (exception) {
+    clearTimeout(timeoutId);
+    deferred.reject(exception);
+  }, deferred.notify);
+
+  return deferred.promise;
+};
+
+/**
+ * Returns a promise for the given value (or promised value), some
+ * milliseconds after it resolved. Passes rejections immediately.
+ * @param {Any*} promise
+ * @param {Number} milliseconds
+ * @returns a promise for the resolution of the given promise after milliseconds
+ * time has elapsed since the resolution of the given promise.
+ * If the given promise rejects, that is passed immediately.
+ */
+Q.delay = function (object, timeout) {
+  if (timeout === void 0) {
+    timeout = object;
+    object = void 0;
+  }
+  return Q(object).delay(timeout);
+};
+
+Promise.prototype.delay = function (timeout) {
+  return this.then(function (value) {
+    var deferred = defer();
+    setTimeout(function () {
+      deferred.resolve(value);
+    }, timeout);
+    return deferred.promise;
+  });
+};
+
+/**
+ * Passes a continuation to a Node function, which is called with the given
+ * arguments provided as an array, and returns a promise.
+ *
+ *      Q.nfapply(FS.readFile, [__filename])
+ *      .then(function (content) {
+ *      })
+ *
+ */
+Q.nfapply = function (callback, args) {
+  return Q(callback).nfapply(args);
+};
+
+Promise.prototype.nfapply = function (args) {
+  var deferred = defer();
+  var nodeArgs = array_slice(args);
+  nodeArgs.push(deferred.makeNodeResolver());
+  this.fapply(nodeArgs).fail(deferred.reject);
+  return deferred.promise;
+};
+
+/**
+ * Passes a continuation to a Node function, which is called with the given
+ * arguments provided individually, and returns a promise.
+ * @example
+ * Q.nfcall(FS.readFile, __filename)
+ * .then(function (content) {
+ * })
+ *
+ */
+Q.nfcall = function (callback /*...args*/) {
+  var args = array_slice(arguments, 1);
+  return Q(callback).nfapply(args);
+};
+
+Promise.prototype.nfcall = function (/*...args*/) {
+  var nodeArgs = array_slice(arguments);
+  var deferred = defer();
+  nodeArgs.push(deferred.makeNodeResolver());
+  this.fapply(nodeArgs).fail(deferred.reject);
+  return deferred.promise;
+};
+
+/**
+ * Wraps a NodeJS continuation passing function and returns an equivalent
+ * version that returns a promise.
+ * @example
+ * Q.nfbind(FS.readFile, __filename)("utf-8")
+ * .then(console.log)
+ * .done()
+ */
+Q.nfbind =
+Q.denodeify = function (callback /*...args*/) {
+  var baseArgs = array_slice(arguments, 1);
+  return function () {
+    var nodeArgs = baseArgs.concat(array_slice(arguments));
+    var deferred = defer();
+    nodeArgs.push(deferred.makeNodeResolver());
+    Q(callback).fapply(nodeArgs).fail(deferred.reject);
+    return deferred.promise;
+  };
+};
+
+Promise.prototype.nfbind =
+Promise.prototype.denodeify = function (/*...args*/) {
+  var args = array_slice(arguments);
+  args.unshift(this);
+  return Q.denodeify.apply(void 0, args);
+};
+
+Q.nbind = function (callback, thisp /*...args*/) {
+  var baseArgs = array_slice(arguments, 2);
+  return function () {
+    var nodeArgs = baseArgs.concat(array_slice(arguments));
+    var deferred = defer();
+    nodeArgs.push(deferred.makeNodeResolver());
+    function bound() {
+      return callback.apply(thisp, arguments);
+    }
+    Q(bound).fapply(nodeArgs).fail(deferred.reject);
+    return deferred.promise;
+  };
+};
+
+Promise.prototype.nbind = function (/*thisp, ...args*/) {
+  var args = array_slice(arguments, 0);
+  args.unshift(this);
+  return Q.nbind.apply(void 0, args);
+};
+
+/**
+ * Calls a method of a Node-style object that accepts a Node-style
+ * callback with a given array of arguments, plus a provided callback.
+ * @param object an object that has the named method
+ * @param {String} name name of the method of object
+ * @param {Array} args arguments to pass to the method; the callback
+ * will be provided by Q and appended to these arguments.
+ * @returns a promise for the value or error
+ */
+Q.nmapply = // XXX As proposed by "Redsandro"
+Q.npost = function (object, name, args) {
+  return Q(object).npost(name, args);
+};
+
+Promise.prototype.nmapply = // XXX As proposed by "Redsandro"
+Promise.prototype.npost = function (name, args) {
+  var nodeArgs = array_slice(args || []);
+  var deferred = defer();
+  nodeArgs.push(deferred.makeNodeResolver());
+  this.dispatch("post", [name, nodeArgs]).fail(deferred.reject);
+  return deferred.promise;
+};
+
+/**
+ * Calls a method of a Node-style object that accepts a Node-style
+ * callback, forwarding the given variadic arguments, plus a provided
+ * callback argument.
+ * @param object an object that has the named method
+ * @param {String} name name of the method of object
+ * @param ...args arguments to pass to the method; the callback will
+ * be provided by Q and appended to these arguments.
+ * @returns a promise for the value or error
+ */
+Q.nsend = // XXX Based on Mark Miller's proposed "send"
+Q.nmcall = // XXX Based on "Redsandro's" proposal
+Q.ninvoke = function (object, name /*...args*/) {
+  var nodeArgs = array_slice(arguments, 2);
+  var deferred = defer();
+  nodeArgs.push(deferred.makeNodeResolver());
+  Q(object).dispatch("post", [name, nodeArgs]).fail(deferred.reject);
+  return deferred.promise;
+};
+
+Promise.prototype.nsend = // XXX Based on Mark Miller's proposed "send"
+Promise.prototype.nmcall = // XXX Based on "Redsandro's" proposal
+Promise.prototype.ninvoke = function (name /*...args*/) {
+  var nodeArgs = array_slice(arguments, 1);
+  var deferred = defer();
+  nodeArgs.push(deferred.makeNodeResolver());
+  this.dispatch("post", [name, nodeArgs]).fail(deferred.reject);
+  return deferred.promise;
+};
+
+/**
+ * If a function would like to support both Node continuation-passing-style and
+ * promise-returning-style, it can end its internal promise chain with
+ * `nodeify(nodeback)`, forwarding the optional nodeback argument.  If the user
+ * elects to use a nodeback, the result will be sent there.  If they do not
+ * pass a nodeback, they will receive the result promise.
+ * @param object a result (or a promise for a result)
+ * @param {Function} nodeback a Node.js-style callback
+ * @returns either the promise or nothing
+ */
+Q.nodeify = nodeify;
+function nodeify(object, nodeback) {
+  return Q(object).nodeify(nodeback);
+}
+
+Promise.prototype.nodeify = function (nodeback) {
+  if (nodeback) {
+    this.then(function (value) {
+      Q.nextTick(function () {
+        nodeback(null, value);
+      });
+    }, function (error) {
+      Q.nextTick(function () {
+        nodeback(error);
+      });
+    });
+  } else {
+    return this;
+  }
+};
+
+Q.noConflict = function() {
+  throw new Error("Q.noConflict only works when Q is used as a global");
+};
+
+// All code before this point will be filtered from stack traces.
+var qEndingLine = captureLine();
+
+return Q;
+
+});
 /**
  * @license
  * pixi.js - v3.0.10
@@ -37988,2057 +40266,396 @@ if (!global.cancelAnimationFrame) {
 },{}]},{},[115])(115)
 });
 //# sourceMappingURL=pixi.js.map
-// vim:ts=4:sts=4:sw=4:
-/*!
- *
- * Copyright 2009-2012 Kris Kowal under the terms of the MIT
- * license found at http://github.com/kriskowal/q/raw/master/LICENSE
- *
- * With parts by Tyler Close
- * Copyright 2007-2009 Tyler Close under the terms of the MIT X license found
- * at http://www.opensource.org/licenses/mit-license.html
- * Forked at ref_send.js version: 2009-05-11
- *
- * With parts by Mark Miller
- * Copyright (C) 2011 Google Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- *
- */
+(function(self) {
+  'use strict';
 
-(function (definition) {
-  "use strict";
-
-  // This file will function properly as a <script> tag, or a module
-  // using CommonJS and NodeJS or RequireJS module formats.  In
-  // Common/Node/RequireJS, the module exports the Q API and when
-  // executed as a simple <script>, it creates a Q global instead.
-
-  // Montage Require
-  if (typeof bootstrap === "function") {
-    bootstrap("promise", definition);
-
-// CommonJS
-  } else if (typeof exports === "object" && typeof module === "object") {
-    module.exports = definition();
-
-// RequireJS
-  } else if (typeof define === "function" && define.amd) {
-    define(definition);
-
-// SES (Secure EcmaScript)
-  } else if (typeof ses !== "undefined") {
-    if (!ses.ok()) {
-      return;
-    } else {
-      ses.makeQ = definition;
-    }
-
-// <script>
-  } else if (typeof window !== "undefined" || typeof self !== "undefined") {
-    // Prefer window over self for add-on scripts. Use self for
-    // non-windowed contexts.
-    var global = typeof window !== "undefined" ? window : self;
-
-    // Get the `window` object, save the previous Q global
-    // and initialize Q as a global.
-    var previousQ = global.Q;
-    global.Q = definition();
-
-    // Add a noConflict function so Q can be removed from the
-    // global namespace.
-    global.Q.noConflict = function () {
-      global.Q = previousQ;
-      return this;
-    };
-
-  } else {
-    throw new Error("This environment was not anticipated by Q. Please file a bug.");
+  if (self.fetch) {
+    return
   }
 
-})(function () {
-"use strict";
+  function normalizeName(name) {
+    if (typeof name !== 'string') {
+      name = String(name)
+    }
+    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+      throw new TypeError('Invalid character in header field name')
+    }
+    return name.toLowerCase()
+  }
 
-var hasStacks = false;
-try {
-  throw new Error();
-} catch (e) {
-  hasStacks = !!e.stack;
-}
+  function normalizeValue(value) {
+    if (typeof value !== 'string') {
+      value = String(value)
+    }
+    return value
+  }
 
-// All code after this point will be filtered from stack traces reported
-// by Q.
-var qStartingLine = captureLine();
-var qFileName;
+  function Headers(headers) {
+    this.map = {}
 
-// shims
+    if (headers instanceof Headers) {
+      headers.forEach(function(value, name) {
+        this.append(name, value)
+      }, this)
 
-// used for fallback in "allResolved"
-var noop = function () {};
+    } else if (headers) {
+      Object.getOwnPropertyNames(headers).forEach(function(name) {
+        this.append(name, headers[name])
+      }, this)
+    }
+  }
 
-// Use the fastest possible means to execute a task in a future turn
-// of the event loop.
-var nextTick =(function () {
-  // linked list of tasks (single, with head node)
-  var head = {task: void 0, next: null};
-  var tail = head;
-  var flushing = false;
-  var requestTick = void 0;
-  var isNodeJS = false;
-  // queue for late tasks, used by unhandled rejection tracking
-  var laterQueue = [];
+  Headers.prototype.append = function(name, value) {
+    name = normalizeName(name)
+    value = normalizeValue(value)
+    var list = this.map[name]
+    if (!list) {
+      list = []
+      this.map[name] = list
+    }
+    list.push(value)
+  }
 
-  function flush() {
-    /* jshint loopfunc: true */
-    var task, domain;
+  Headers.prototype['delete'] = function(name) {
+    delete this.map[normalizeName(name)]
+  }
 
-    while (head.next) {
-      head = head.next;
-      task = head.task;
-      head.task = void 0;
-      domain = head.domain;
+  Headers.prototype.get = function(name) {
+    var values = this.map[normalizeName(name)]
+    return values ? values[0] : null
+  }
 
-      if (domain) {
-        head.domain = void 0;
-        domain.enter();
+  Headers.prototype.getAll = function(name) {
+    return this.map[normalizeName(name)] || []
+  }
+
+  Headers.prototype.has = function(name) {
+    return this.map.hasOwnProperty(normalizeName(name))
+  }
+
+  Headers.prototype.set = function(name, value) {
+    this.map[normalizeName(name)] = [normalizeValue(value)]
+  }
+
+  Headers.prototype.forEach = function(callback, thisArg) {
+    Object.getOwnPropertyNames(this.map).forEach(function(name) {
+      this.map[name].forEach(function(value) {
+        callback.call(thisArg, value, name, this)
+      }, this)
+    }, this)
+  }
+
+  function consumed(body) {
+    if (body.bodyUsed) {
+      return Promise.reject(new TypeError('Already read'))
+    }
+    body.bodyUsed = true
+  }
+
+  function fileReaderReady(reader) {
+    return new Promise(function(resolve, reject) {
+      reader.onload = function() {
+        resolve(reader.result)
       }
-      runSingle(task, domain);
-
-    }
-    while (laterQueue.length) {
-      task = laterQueue.pop();
-      runSingle(task);
-    }
-    flushing = false;
-  }
-  // runs a single function in the async queue
-  function runSingle(task, domain) {
-    try {
-      task();
-
-    } catch (e) {
-      if (isNodeJS) {
-        // In node, uncaught exceptions are considered fatal errors.
-        // Re-throw them synchronously to interrupt flushing!
-
-        // Ensure continuation if the uncaught exception is suppressed
-        // listening "uncaughtException" events (as domains does).
-        // Continue in next event to avoid tick recursion.
-        if (domain) {
-          domain.exit();
-        }
-        setTimeout(flush, 0);
-        if (domain) {
-          domain.enter();
-        }
-
-        throw e;
-
-      } else {
-        // In browsers, uncaught exceptions are not fatal.
-        // Re-throw them asynchronously to avoid slow-downs.
-        setTimeout(function () {
-          throw e;
-        }, 0);
+      reader.onerror = function() {
+        reject(reader.error)
       }
-    }
-
-    if (domain) {
-      domain.exit();
-    }
+    })
   }
 
-  nextTick = function (task) {
-    tail = tail.next = {
-      task: task,
-      domain: isNodeJS && process.domain,
-      next: null
-    };
-
-    if (!flushing) {
-      flushing = true;
-      requestTick();
-    }
-  };
-
-  if (typeof process === "object" &&
-      process.toString() === "[object process]" && process.nextTick) {
-    // Ensure Q is in a real Node environment, with a `process.nextTick`.
-    // To see through fake Node environments:
-    // * Mocha test runner - exposes a `process` global without a `nextTick`
-    // * Browserify - exposes a `process.nexTick` function that uses
-    //   `setTimeout`. In this case `setImmediate` is preferred because
-    //    it is faster. Browserify's `process.toString()` yields
-    //   "[object Object]", while in a real Node environment
-    //   `process.nextTick()` yields "[object process]".
-    isNodeJS = true;
-
-    requestTick = function () {
-      process.nextTick(flush);
-    };
-
-  } else if (typeof setImmediate === "function") {
-    // In IE10, Node.js 0.9+, or https://github.com/NobleJS/setImmediate
-    if (typeof window !== "undefined") {
-      requestTick = setImmediate.bind(window, flush);
-    } else {
-      requestTick = function () {
-        setImmediate(flush);
-      };
-    }
-
-  } else if (typeof MessageChannel !== "undefined") {
-    // modern browsers
-    // http://www.nonblocking.io/2011/06/windownexttick.html
-    var channel = new MessageChannel();
-    // At least Safari Version 6.0.5 (8536.30.1) intermittently cannot create
-    // working message ports the first time a page loads.
-    channel.port1.onmessage = function () {
-      requestTick = requestPortTick;
-      channel.port1.onmessage = flush;
-      flush();
-    };
-    var requestPortTick = function () {
-      // Opera requires us to provide a message payload, regardless of
-      // whether we use it.
-      channel.port2.postMessage(0);
-    };
-    requestTick = function () {
-      setTimeout(flush, 0);
-      requestPortTick();
-    };
-
-  } else {
-    // old browsers
-    requestTick = function () {
-      setTimeout(flush, 0);
-    };
-  }
-  // runs a task after all other tasks have been run
-  // this is useful for unhandled rejection tracking that needs to happen
-  // after all `then`d tasks have been run.
-  nextTick.runAfter = function (task) {
-    laterQueue.push(task);
-    if (!flushing) {
-      flushing = true;
-      requestTick();
-    }
-  };
-  return nextTick;
-})();
-
-// Attempt to make generics safe in the face of downstream
-// modifications.
-// There is no situation where this is necessary.
-// If you need a security guarantee, these primordials need to be
-// deeply frozen anyway, and if you don’t need a security guarantee,
-// this is just plain paranoid.
-// However, this **might** have the nice side-effect of reducing the size of
-// the minified code by reducing x.call() to merely x()
-// See Mark Miller’s explanation of what this does.
-// http://wiki.ecmascript.org/doku.php?id=conventions:safe_meta_programming
-var call = Function.call;
-function uncurryThis(f) {
-  return function () {
-    return call.apply(f, arguments);
-  };
-}
-// This is equivalent, but slower:
-// uncurryThis = Function_bind.bind(Function_bind.call);
-// http://jsperf.com/uncurrythis
-
-var array_slice = uncurryThis(Array.prototype.slice);
-
-var array_reduce = uncurryThis(
-    Array.prototype.reduce || function (callback, basis) {
-      var index = 0,
-          length = this.length;
-      // concerning the initial value, if one is not provided
-      if (arguments.length === 1) {
-        // seek to the first value in the array, accounting
-        // for the possibility that is is a sparse array
-        do {
-          if (index in this) {
-            basis = this[index++];
-            break;
-          }
-          if (++index >= length) {
-            throw new TypeError();
-          }
-        } while (1);
-      }
-      // reduce
-      for (; index < length; index++) {
-        // account for the possibility that the array is sparse
-        if (index in this) {
-          basis = callback(basis, this[index], index);
-        }
-      }
-      return basis;
-    }
-);
-
-var array_indexOf = uncurryThis(
-    Array.prototype.indexOf || function (value) {
-      // not a very good shim, but good enough for our one use of it
-      for (var i = 0; i < this.length; i++) {
-        if (this[i] === value) {
-          return i;
-        }
-      }
-      return -1;
-    }
-);
-
-var array_map = uncurryThis(
-    Array.prototype.map || function (callback, thisp) {
-      var self = this;
-      var collect = [];
-      array_reduce(self, function (undefined, value, index) {
-        collect.push(callback.call(thisp, value, index, self));
-      }, void 0);
-      return collect;
-    }
-);
-
-var object_create = Object.create || function (prototype) {
-  function Type() { }
-  Type.prototype = prototype;
-  return new Type();
-};
-
-var object_hasOwnProperty = uncurryThis(Object.prototype.hasOwnProperty);
-
-var object_keys = Object.keys || function (object) {
-  var keys = [];
-  for (var key in object) {
-    if (object_hasOwnProperty(object, key)) {
-      keys.push(key);
-    }
-  }
-  return keys;
-};
-
-var object_toString = uncurryThis(Object.prototype.toString);
-
-function isObject(value) {
-  return value === Object(value);
-}
-
-// generator related shims
-
-// FIXME: Remove this function once ES6 generators are in SpiderMonkey.
-function isStopIteration(exception) {
-  return (
-      object_toString(exception) === "[object StopIteration]" ||
-      exception instanceof QReturnValue
-  );
-}
-
-// FIXME: Remove this helper and Q.return once ES6 generators are in
-// SpiderMonkey.
-var QReturnValue;
-if (typeof ReturnValue !== "undefined") {
-  QReturnValue = ReturnValue;
-} else {
-  QReturnValue = function (value) {
-    this.value = value;
-  };
-}
-
-// long stack traces
-
-var STACK_JUMP_SEPARATOR = "From previous event:";
-
-function makeStackTraceLong(error, promise) {
-  // If possible, transform the error stack trace by removing Node and Q
-  // cruft, then concatenating with the stack trace of `promise`. See #57.
-  if (hasStacks &&
-      promise.stack &&
-      typeof error === "object" &&
-      error !== null &&
-      error.stack &&
-      error.stack.indexOf(STACK_JUMP_SEPARATOR) === -1
-  ) {
-    var stacks = [];
-    for (var p = promise; !!p; p = p.source) {
-      if (p.stack) {
-        stacks.unshift(p.stack);
-      }
-    }
-    stacks.unshift(error.stack);
-
-    var concatedStacks = stacks.join("\n" + STACK_JUMP_SEPARATOR + "\n");
-    error.stack = filterStackString(concatedStacks);
-  }
-}
-
-function filterStackString(stackString) {
-  var lines = stackString.split("\n");
-  var desiredLines = [];
-  for (var i = 0; i < lines.length; ++i) {
-    var line = lines[i];
-
-    if (!isInternalFrame(line) && !isNodeFrame(line) && line) {
-      desiredLines.push(line);
-    }
-  }
-  return desiredLines.join("\n");
-}
-
-function isNodeFrame(stackLine) {
-  return stackLine.indexOf("(module.js:") !== -1 ||
-         stackLine.indexOf("(node.js:") !== -1;
-}
-
-function getFileNameAndLineNumber(stackLine) {
-  // Named functions: "at functionName (filename:lineNumber:columnNumber)"
-  // In IE10 function name can have spaces ("Anonymous function") O_o
-  var attempt1 = /at .+ \((.+):(\d+):(?:\d+)\)$/.exec(stackLine);
-  if (attempt1) {
-    return [attempt1[1], Number(attempt1[2])];
+  function readBlobAsArrayBuffer(blob) {
+    var reader = new FileReader()
+    reader.readAsArrayBuffer(blob)
+    return fileReaderReady(reader)
   }
 
-  // Anonymous functions: "at filename:lineNumber:columnNumber"
-  var attempt2 = /at ([^ ]+):(\d+):(?:\d+)$/.exec(stackLine);
-  if (attempt2) {
-    return [attempt2[1], Number(attempt2[2])];
+  function readBlobAsText(blob) {
+    var reader = new FileReader()
+    reader.readAsText(blob)
+    return fileReaderReady(reader)
   }
 
-  // Firefox style: "function@filename:lineNumber or @filename:lineNumber"
-  var attempt3 = /.*@(.+):(\d+)$/.exec(stackLine);
-  if (attempt3) {
-    return [attempt3[1], Number(attempt3[2])];
-  }
-}
-
-function isInternalFrame(stackLine) {
-  var fileNameAndLineNumber = getFileNameAndLineNumber(stackLine);
-
-  if (!fileNameAndLineNumber) {
-    return false;
-  }
-
-  var fileName = fileNameAndLineNumber[0];
-  var lineNumber = fileNameAndLineNumber[1];
-
-  return fileName === qFileName &&
-      lineNumber >= qStartingLine &&
-      lineNumber <= qEndingLine;
-}
-
-// discover own file name and line number range for filtering stack
-// traces
-function captureLine() {
-  if (!hasStacks) {
-    return;
-  }
-
-  try {
-    throw new Error();
-  } catch (e) {
-    var lines = e.stack.split("\n");
-    var firstLine = lines[0].indexOf("@") > 0 ? lines[1] : lines[2];
-    var fileNameAndLineNumber = getFileNameAndLineNumber(firstLine);
-    if (!fileNameAndLineNumber) {
-      return;
-    }
-
-    qFileName = fileNameAndLineNumber[0];
-    return fileNameAndLineNumber[1];
-  }
-}
-
-function deprecate(callback, name, alternative) {
-  return function () {
-    if (typeof console !== "undefined" &&
-        typeof console.warn === "function") {
-      console.warn(name + " is deprecated, use " + alternative +
-                   " instead.", new Error("").stack);
-    }
-    return callback.apply(callback, arguments);
-  };
-}
-
-// end of shims
-// beginning of real work
-
-/**
- * Constructs a promise for an immediate reference, passes promises through, or
- * coerces promises from different systems.
- * @param value immediate reference or promise
- */
-function Q(value) {
-  // If the object is already a Promise, return it directly.  This enables
-  // the resolve function to both be used to created references from objects,
-  // but to tolerably coerce non-promises to promises.
-  if (value instanceof Promise) {
-    return value;
-  }
-
-  // assimilate thenables
-  if (isPromiseAlike(value)) {
-    return coerce(value);
-  } else {
-    return fulfill(value);
-  }
-}
-Q.resolve = Q;
-
-/**
- * Performs a task in a future turn of the event loop.
- * @param {Function} task
- */
-Q.nextTick = nextTick;
-
-/**
- * Controls whether or not long stack traces will be on
- */
-Q.longStackSupport = false;
-
-// enable long stacks if Q_DEBUG is set
-if (typeof process === "object" && process && process.env && process.env.Q_DEBUG) {
-  Q.longStackSupport = true;
-}
-
-/**
- * Constructs a {promise, resolve, reject} object.
- *
- * `resolve` is a callback to invoke with a more resolved value for the
- * promise. To fulfill the promise, invoke `resolve` with any value that is
- * not a thenable. To reject the promise, invoke `resolve` with a rejected
- * thenable, or invoke `reject` with the reason directly. To resolve the
- * promise to another thenable, thus putting it in the same state, invoke
- * `resolve` with that other thenable.
- */
-Q.defer = defer;
-function defer() {
-  // if "messages" is an "Array", that indicates that the promise has not yet
-  // been resolved.  If it is "undefined", it has been resolved.  Each
-  // element of the messages array is itself an array of complete arguments to
-  // forward to the resolved promise.  We coerce the resolution value to a
-  // promise using the `resolve` function because it handles both fully
-  // non-thenable values and other thenables gracefully.
-  var messages = [], progressListeners = [], resolvedPromise;
-
-  var deferred = object_create(defer.prototype);
-  var promise = object_create(Promise.prototype);
-
-  promise.promiseDispatch = function (resolve, op, operands) {
-    var args = array_slice(arguments);
-    if (messages) {
-      messages.push(args);
-      if (op === "when" && operands[1]) { // progress operand
-        progressListeners.push(operands[1]);
-      }
-    } else {
-      Q.nextTick(function () {
-        resolvedPromise.promiseDispatch.apply(resolvedPromise, args);
-      });
-    }
-  };
-
-  // XXX deprecated
-  promise.valueOf = function () {
-    if (messages) {
-      return promise;
-    }
-    var nearerValue = nearer(resolvedPromise);
-    if (isPromise(nearerValue)) {
-      resolvedPromise = nearerValue; // shorten chain
-    }
-    return nearerValue;
-  };
-
-  promise.inspect = function () {
-    if (!resolvedPromise) {
-      return { state: "pending" };
-    }
-    return resolvedPromise.inspect();
-  };
-
-  if (Q.longStackSupport && hasStacks) {
-    try {
-      throw new Error();
-    } catch (e) {
-      // NOTE: don't try to use `Error.captureStackTrace` or transfer the
-      // accessor around; that causes memory leaks as per GH-111. Just
-      // reify the stack trace as a string ASAP.
-      //
-      // At the same time, cut off the first line; it's always just
-      // "[object Promise]\n", as per the `toString`.
-      promise.stack = e.stack.substring(e.stack.indexOf("\n") + 1);
-    }
-  }
-
-  // NOTE: we do the checks for `resolvedPromise` in each method, instead of
-  // consolidating them into `become`, since otherwise we'd create new
-  // promises with the lines `become(whatever(value))`. See e.g. GH-252.
-
-  function become(newPromise) {
-    resolvedPromise = newPromise;
-    promise.source = newPromise;
-
-    array_reduce(messages, function (undefined, message) {
-      Q.nextTick(function () {
-        newPromise.promiseDispatch.apply(newPromise, message);
-      });
-    }, void 0);
-
-    messages = void 0;
-    progressListeners = void 0;
-  }
-
-  deferred.promise = promise;
-  deferred.resolve = function (value) {
-    if (resolvedPromise) {
-      return;
-    }
-
-    become(Q(value));
-  };
-
-  deferred.fulfill = function (value) {
-    if (resolvedPromise) {
-      return;
-    }
-
-    become(fulfill(value));
-  };
-  deferred.reject = function (reason) {
-    if (resolvedPromise) {
-      return;
-    }
-
-    become(reject(reason));
-  };
-  deferred.notify = function (progress) {
-    if (resolvedPromise) {
-      return;
-    }
-
-    array_reduce(progressListeners, function (undefined, progressListener) {
-      Q.nextTick(function () {
-        progressListener(progress);
-      });
-    }, void 0);
-  };
-
-  return deferred;
-}
-
-/**
- * Creates a Node-style callback that will resolve or reject the deferred
- * promise.
- * @returns a nodeback
- */
-defer.prototype.makeNodeResolver = function () {
-  var self = this;
-  return function (error, value) {
-    if (error) {
-      self.reject(error);
-    } else if (arguments.length > 2) {
-      self.resolve(array_slice(arguments, 1));
-    } else {
-      self.resolve(value);
-    }
-  };
-};
-
-/**
- * @param resolver {Function} a function that returns nothing and accepts
- * the resolve, reject, and notify functions for a deferred.
- * @returns a promise that may be resolved with the given resolve and reject
- * functions, or rejected by a thrown exception in resolver
- */
-Q.Promise = promise; // ES6
-Q.promise = promise;
-function promise(resolver) {
-  if (typeof resolver !== "function") {
-    throw new TypeError("resolver must be a function.");
-  }
-  var deferred = defer();
-  try {
-    resolver(deferred.resolve, deferred.reject, deferred.notify);
-  } catch (reason) {
-    deferred.reject(reason);
-  }
-  return deferred.promise;
-}
-
-promise.race = race; // ES6
-promise.all = all; // ES6
-promise.reject = reject; // ES6
-promise.resolve = Q; // ES6
-
-// XXX experimental.  This method is a way to denote that a local value is
-// serializable and should be immediately dispatched to a remote upon request,
-// instead of passing a reference.
-Q.passByCopy = function (object) {
-  //freeze(object);
-  //passByCopies.set(object, true);
-  return object;
-};
-
-Promise.prototype.passByCopy = function () {
-  //freeze(object);
-  //passByCopies.set(object, true);
-  return this;
-};
-
-/**
- * If two promises eventually fulfill to the same value, promises that value,
- * but otherwise rejects.
- * @param x {Any*}
- * @param y {Any*}
- * @returns {Any*} a promise for x and y if they are the same, but a rejection
- * otherwise.
- *
- */
-Q.join = function (x, y) {
-  return Q(x).join(y);
-};
-
-Promise.prototype.join = function (that) {
-  return Q([this, that]).spread(function (x, y) {
-    if (x === y) {
-      // TODO: "===" should be Object.is or equiv
-      return x;
-    } else {
-      throw new Error("Can't join: not the same: " + x + " " + y);
-    }
-  });
-};
-
-/**
- * Returns a promise for the first of an array of promises to become settled.
- * @param answers {Array[Any*]} promises to race
- * @returns {Any*} the first promise to be settled
- */
-Q.race = race;
-function race(answerPs) {
-  return promise(function (resolve, reject) {
-    // Switch to this once we can assume at least ES5
-    // answerPs.forEach(function (answerP) {
-    //     Q(answerP).then(resolve, reject);
-    // });
-    // Use this in the meantime
-    for (var i = 0, len = answerPs.length; i < len; i++) {
-      Q(answerPs[i]).then(resolve, reject);
-    }
-  });
-}
-
-Promise.prototype.race = function () {
-  return this.then(Q.race);
-};
-
-/**
- * Constructs a Promise with a promise descriptor object and optional fallback
- * function.  The descriptor contains methods like when(rejected), get(name),
- * set(name, value), post(name, args), and delete(name), which all
- * return either a value, a promise for a value, or a rejection.  The fallback
- * accepts the operation name, a resolver, and any further arguments that would
- * have been forwarded to the appropriate method above had a method been
- * provided with the proper name.  The API makes no guarantees about the nature
- * of the returned object, apart from that it is usable whereever promises are
- * bought and sold.
- */
-Q.makePromise = Promise;
-function Promise(descriptor, fallback, inspect) {
-  if (fallback === void 0) {
-    fallback = function (op) {
-      return reject(new Error(
-          "Promise does not support operation: " + op
-      ));
-    };
-  }
-  if (inspect === void 0) {
-    inspect = function () {
-      return {state: "unknown"};
-    };
-  }
-
-  var promise = object_create(Promise.prototype);
-
-  promise.promiseDispatch = function (resolve, op, args) {
-    var result;
-    try {
-      if (descriptor[op]) {
-        result = descriptor[op].apply(promise, args);
-      } else {
-        result = fallback.call(promise, op, args);
-      }
-    } catch (exception) {
-      result = reject(exception);
-    }
-    if (resolve) {
-      resolve(result);
-    }
-  };
-
-  promise.inspect = inspect;
-
-  // XXX deprecated `valueOf` and `exception` support
-  if (inspect) {
-    var inspected = inspect();
-    if (inspected.state === "rejected") {
-      promise.exception = inspected.reason;
-    }
-
-    promise.valueOf = function () {
-      var inspected = inspect();
-      if (inspected.state === "pending" ||
-          inspected.state === "rejected") {
-        return promise;
-      }
-      return inspected.value;
-    };
-  }
-
-  return promise;
-}
-
-Promise.prototype.toString = function () {
-  return "[object Promise]";
-};
-
-Promise.prototype.then = function (fulfilled, rejected, progressed) {
-  var self = this;
-  var deferred = defer();
-  var done = false;   // ensure the untrusted promise makes at most a
-  // single call to one of the callbacks
-
-  function _fulfilled(value) {
-    try {
-      return typeof fulfilled === "function" ? fulfilled(value) : value;
-    } catch (exception) {
-      return reject(exception);
-    }
-  }
-
-  function _rejected(exception) {
-    if (typeof rejected === "function") {
-      makeStackTraceLong(exception, self);
+  var support = {
+    blob: 'FileReader' in self && 'Blob' in self && (function() {
       try {
-        return rejected(exception);
-      } catch (newException) {
-        return reject(newException);
+        new Blob();
+        return true
+      } catch(e) {
+        return false
       }
-    }
-    return reject(exception);
+    })(),
+    formData: 'FormData' in self,
+    arrayBuffer: 'ArrayBuffer' in self
   }
 
-  function _progressed(value) {
-    return typeof progressed === "function" ? progressed(value) : value;
-  }
+  function Body() {
+    this.bodyUsed = false
 
-  Q.nextTick(function () {
-    self.promiseDispatch(function (value) {
-      if (done) {
-        return;
-      }
-      done = true;
 
-      deferred.resolve(_fulfilled(value));
-    }, "when", [function (exception) {
-      if (done) {
-        return;
-      }
-      done = true;
-
-      deferred.resolve(_rejected(exception));
-    }]);
-  });
-
-  // Progress propagator need to be attached in the current tick.
-  self.promiseDispatch(void 0, "when", [void 0, function (value) {
-    var newValue;
-    var threw = false;
-    try {
-      newValue = _progressed(value);
-    } catch (e) {
-      threw = true;
-      if (Q.onerror) {
-        Q.onerror(e);
+    this._initBody = function(body) {
+      this._bodyInit = body
+      if (typeof body === 'string') {
+        this._bodyText = body
+      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+        this._bodyBlob = body
+      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+        this._bodyFormData = body
+      } else if (!body) {
+        this._bodyText = ''
+      } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
+        // Only support ArrayBuffers for POST method.
+        // Receiving ArrayBuffers happens via Blobs, instead.
       } else {
-        throw e;
+        throw new Error('unsupported BodyInit type')
       }
-    }
 
-    if (!threw) {
-      deferred.notify(newValue);
-    }
-  }]);
-
-  return deferred.promise;
-};
-
-Q.tap = function (promise, callback) {
-  return Q(promise).tap(callback);
-};
-
-/**
- * Works almost like "finally", but not called for rejections.
- * Original resolution value is passed through callback unaffected.
- * Callback may return a promise that will be awaited for.
- * @param {Function} callback
- * @returns {Q.Promise}
- * @example
- * doSomething()
- *   .then(...)
- *   .tap(console.log)
- *   .then(...);
- */
-Promise.prototype.tap = function (callback) {
-  callback = Q(callback);
-
-  return this.then(function (value) {
-    return callback.fcall(value).thenResolve(value);
-  });
-};
-
-/**
- * Registers an observer on a promise.
- *
- * Guarantees:
- *
- * 1. that fulfilled and rejected will be called only once.
- * 2. that either the fulfilled callback or the rejected callback will be
- *    called, but not both.
- * 3. that fulfilled and rejected will not be called in this turn.
- *
- * @param value      promise or immediate reference to observe
- * @param fulfilled  function to be called with the fulfilled value
- * @param rejected   function to be called with the rejection exception
- * @param progressed function to be called on any progress notifications
- * @return promise for the return value from the invoked callback
- */
-Q.when = when;
-function when(value, fulfilled, rejected, progressed) {
-  return Q(value).then(fulfilled, rejected, progressed);
-}
-
-Promise.prototype.thenResolve = function (value) {
-  return this.then(function () { return value; });
-};
-
-Q.thenResolve = function (promise, value) {
-  return Q(promise).thenResolve(value);
-};
-
-Promise.prototype.thenReject = function (reason) {
-  return this.then(function () { throw reason; });
-};
-
-Q.thenReject = function (promise, reason) {
-  return Q(promise).thenReject(reason);
-};
-
-/**
- * If an object is not a promise, it is as "near" as possible.
- * If a promise is rejected, it is as "near" as possible too.
- * If it’s a fulfilled promise, the fulfillment value is nearer.
- * If it’s a deferred promise and the deferred has been resolved, the
- * resolution is "nearer".
- * @param object
- * @returns most resolved (nearest) form of the object
- */
-
-// XXX should we re-do this?
-Q.nearer = nearer;
-function nearer(value) {
-  if (isPromise(value)) {
-    var inspected = value.inspect();
-    if (inspected.state === "fulfilled") {
-      return inspected.value;
-    }
-  }
-  return value;
-}
-
-/**
- * @returns whether the given object is a promise.
- * Otherwise it is a fulfilled value.
- */
-Q.isPromise = isPromise;
-function isPromise(object) {
-  return object instanceof Promise;
-}
-
-Q.isPromiseAlike = isPromiseAlike;
-function isPromiseAlike(object) {
-  return isObject(object) && typeof object.then === "function";
-}
-
-/**
- * @returns whether the given object is a pending promise, meaning not
- * fulfilled or rejected.
- */
-Q.isPending = isPending;
-function isPending(object) {
-  return isPromise(object) && object.inspect().state === "pending";
-}
-
-Promise.prototype.isPending = function () {
-  return this.inspect().state === "pending";
-};
-
-/**
- * @returns whether the given object is a value or fulfilled
- * promise.
- */
-Q.isFulfilled = isFulfilled;
-function isFulfilled(object) {
-  return !isPromise(object) || object.inspect().state === "fulfilled";
-}
-
-Promise.prototype.isFulfilled = function () {
-  return this.inspect().state === "fulfilled";
-};
-
-/**
- * @returns whether the given object is a rejected promise.
- */
-Q.isRejected = isRejected;
-function isRejected(object) {
-  return isPromise(object) && object.inspect().state === "rejected";
-}
-
-Promise.prototype.isRejected = function () {
-  return this.inspect().state === "rejected";
-};
-
-//// BEGIN UNHANDLED REJECTION TRACKING
-
-// This promise library consumes exceptions thrown in handlers so they can be
-// handled by a subsequent promise.  The exceptions get added to this array when
-// they are created, and removed when they are handled.  Note that in ES6 or
-// shimmed environments, this would naturally be a `Set`.
-var unhandledReasons = [];
-var unhandledRejections = [];
-var reportedUnhandledRejections = [];
-var trackUnhandledRejections = true;
-
-function resetUnhandledRejections() {
-  unhandledReasons.length = 0;
-  unhandledRejections.length = 0;
-
-  if (!trackUnhandledRejections) {
-    trackUnhandledRejections = true;
-  }
-}
-
-function trackRejection(promise, reason) {
-  if (!trackUnhandledRejections) {
-    return;
-  }
-  if (typeof process === "object" && typeof process.emit === "function") {
-    Q.nextTick.runAfter(function () {
-      if (array_indexOf(unhandledRejections, promise) !== -1) {
-        process.emit("unhandledRejection", reason, promise);
-        reportedUnhandledRejections.push(promise);
-      }
-    });
-  }
-
-  unhandledRejections.push(promise);
-  if (reason && typeof reason.stack !== "undefined") {
-    unhandledReasons.push(reason.stack);
-  } else {
-    unhandledReasons.push("(no stack) " + reason);
-  }
-}
-
-function untrackRejection(promise) {
-  if (!trackUnhandledRejections) {
-    return;
-  }
-
-  var at = array_indexOf(unhandledRejections, promise);
-  if (at !== -1) {
-    if (typeof process === "object" && typeof process.emit === "function") {
-      Q.nextTick.runAfter(function () {
-        var atReport = array_indexOf(reportedUnhandledRejections, promise);
-        if (atReport !== -1) {
-          process.emit("rejectionHandled", unhandledReasons[at], promise);
-          reportedUnhandledRejections.splice(atReport, 1);
+      if (!this.headers.get('content-type')) {
+        if (typeof body === 'string') {
+          this.headers.set('content-type', 'text/plain;charset=UTF-8')
+        } else if (this._bodyBlob && this._bodyBlob.type) {
+          this.headers.set('content-type', this._bodyBlob.type)
         }
-      });
-    }
-    unhandledRejections.splice(at, 1);
-    unhandledReasons.splice(at, 1);
-  }
-}
-
-Q.resetUnhandledRejections = resetUnhandledRejections;
-
-Q.getUnhandledReasons = function () {
-  // Make a copy so that consumers can't interfere with our internal state.
-  return unhandledReasons.slice();
-};
-
-Q.stopUnhandledRejectionTracking = function () {
-  resetUnhandledRejections();
-  trackUnhandledRejections = false;
-};
-
-resetUnhandledRejections();
-
-//// END UNHANDLED REJECTION TRACKING
-
-/**
- * Constructs a rejected promise.
- * @param reason value describing the failure
- */
-Q.reject = reject;
-function reject(reason) {
-  var rejection = Promise({
-    when: function (rejected) {
-      // note that the error has been handled
-      if (rejected) {
-        untrackRejection(this);
       }
-      return rejected ? rejected(reason) : this;
     }
-  }, function fallback() {
-    return this;
-  }, function inspect() {
-    return { state: "rejected", reason: reason };
-  });
 
-  // Note that the reason has not been handled.
-  trackRejection(rejection, reason);
-
-  return rejection;
-}
-
-/**
- * Constructs a fulfilled promise for an immediate reference.
- * @param value immediate reference
- */
-Q.fulfill = fulfill;
-function fulfill(value) {
-  return Promise({
-    when: function () {
-      return value;
-    },
-    get: function (name) {
-      return value[name];
-    },
-    set: function (name, rhs) {
-      value[name] = rhs;
-    },
-    delete: function (name) {
-      delete value[name];
-    },
-    post: function (name, args) {
-      // Mark Miller proposes that post with no name should apply a
-      // promised function.
-      if (name === null || name === void 0) {
-        return value.apply(void 0, args);
-      } else {
-        return value[name].apply(value, args);
-      }
-    },
-    apply: function (thisp, args) {
-      return value.apply(thisp, args);
-    },
-    keys: function () {
-      return object_keys(value);
-    }
-  }, void 0, function inspect() {
-    return { state: "fulfilled", value: value };
-  });
-}
-
-/**
- * Converts thenables to Q promises.
- * @param promise thenable promise
- * @returns a Q promise
- */
-function coerce(promise) {
-  var deferred = defer();
-  Q.nextTick(function () {
-    try {
-      promise.then(deferred.resolve, deferred.reject, deferred.notify);
-    } catch (exception) {
-      deferred.reject(exception);
-    }
-  });
-  return deferred.promise;
-}
-
-/**
- * Annotates an object such that it will never be
- * transferred away from this process over any promise
- * communication channel.
- * @param object
- * @returns promise a wrapping of that object that
- * additionally responds to the "isDef" message
- * without a rejection.
- */
-Q.master = master;
-function master(object) {
-  return Promise({
-    isDef: function () {}
-  }, function fallback(op, args) {
-    return dispatch(object, op, args);
-  }, function () {
-    return Q(object).inspect();
-  });
-}
-
-/**
- * Spreads the values of a promised array of arguments into the
- * fulfillment callback.
- * @param fulfilled callback that receives variadic arguments from the
- * promised array
- * @param rejected callback that receives the exception if the promise
- * is rejected.
- * @returns a promise for the return value or thrown exception of
- * either callback.
- */
-Q.spread = spread;
-function spread(value, fulfilled, rejected) {
-  return Q(value).spread(fulfilled, rejected);
-}
-
-Promise.prototype.spread = function (fulfilled, rejected) {
-  return this.all().then(function (array) {
-    return fulfilled.apply(void 0, array);
-  }, rejected);
-};
-
-/**
- * The async function is a decorator for generator functions, turning
- * them into asynchronous generators.  Although generators are only part
- * of the newest ECMAScript 6 drafts, this code does not cause syntax
- * errors in older engines.  This code should continue to work and will
- * in fact improve over time as the language improves.
- *
- * ES6 generators are currently part of V8 version 3.19 with the
- * --harmony-generators runtime flag enabled.  SpiderMonkey has had them
- * for longer, but under an older Python-inspired form.  This function
- * works on both kinds of generators.
- *
- * Decorates a generator function such that:
- *  - it may yield promises
- *  - execution will continue when that promise is fulfilled
- *  - the value of the yield expression will be the fulfilled value
- *  - it returns a promise for the return value (when the generator
- *    stops iterating)
- *  - the decorated function returns a promise for the return value
- *    of the generator or the first rejected promise among those
- *    yielded.
- *  - if an error is thrown in the generator, it propagates through
- *    every following yield until it is caught, or until it escapes
- *    the generator function altogether, and is translated into a
- *    rejection for the promise returned by the decorated generator.
- */
-Q.async = async;
-function async(makeGenerator) {
-  return function () {
-    // when verb is "send", arg is a value
-    // when verb is "throw", arg is an exception
-    function continuer(verb, arg) {
-      var result;
-
-      // Until V8 3.19 / Chromium 29 is released, SpiderMonkey is the only
-      // engine that has a deployed base of browsers that support generators.
-      // However, SM's generators use the Python-inspired semantics of
-      // outdated ES6 drafts.  We would like to support ES6, but we'd also
-      // like to make it possible to use generators in deployed browsers, so
-      // we also support Python-style generators.  At some point we can remove
-      // this block.
-
-      if (typeof StopIteration === "undefined") {
-        // ES6 Generators
-        try {
-          result = generator[verb](arg);
-        } catch (exception) {
-          return reject(exception);
+    if (support.blob) {
+      this.blob = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
         }
-        if (result.done) {
-          return Q(result.value);
+
+        if (this._bodyBlob) {
+          return Promise.resolve(this._bodyBlob)
+        } else if (this._bodyFormData) {
+          throw new Error('could not read FormData body as blob')
         } else {
-          return when(result.value, callback, errback);
+          return Promise.resolve(new Blob([this._bodyText]))
         }
-      } else {
-        // SpiderMonkey Generators
-        // FIXME: Remove this case when SM does ES6 generators.
-        try {
-          result = generator[verb](arg);
-        } catch (exception) {
-          if (isStopIteration(exception)) {
-            return Q(exception.value);
-          } else {
-            return reject(exception);
-          }
+      }
+
+      this.arrayBuffer = function() {
+        return this.blob().then(readBlobAsArrayBuffer)
+      }
+
+      this.text = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
         }
-        return when(result, callback, errback);
+
+        if (this._bodyBlob) {
+          return readBlobAsText(this._bodyBlob)
+        } else if (this._bodyFormData) {
+          throw new Error('could not read FormData body as text')
+        } else {
+          return Promise.resolve(this._bodyText)
+        }
+      }
+    } else {
+      this.text = function() {
+        var rejected = consumed(this)
+        return rejected ? rejected : Promise.resolve(this._bodyText)
       }
     }
-    var generator = makeGenerator.apply(this, arguments);
-    var callback = continuer.bind(continuer, "next");
-    var errback = continuer.bind(continuer, "throw");
-    return callback();
-  };
-}
 
-/**
- * The spawn function is a small wrapper around async that immediately
- * calls the generator and also ends the promise chain, so that any
- * unhandled errors are thrown instead of forwarded to the error
- * handler. This is useful because it's extremely common to run
- * generators at the top-level to work with libraries.
- */
-Q.spawn = spawn;
-function spawn(makeGenerator) {
-  Q.done(Q.async(makeGenerator)());
-}
+    if (support.formData) {
+      this.formData = function() {
+        return this.text().then(decode)
+      }
+    }
 
-// FIXME: Remove this interface once ES6 generators are in SpiderMonkey.
-/**
- * Throws a ReturnValue exception to stop an asynchronous generator.
- *
- * This interface is a stop-gap measure to support generator return
- * values in older Firefox/SpiderMonkey.  In browsers that support ES6
- * generators like Chromium 29, just use "return" in your generator
- * functions.
- *
- * @param value the return value for the surrounding generator
- * @throws ReturnValue exception with the value.
- * @example
- * // ES6 style
- * Q.async(function* () {
- *      var foo = yield getFooPromise();
- *      var bar = yield getBarPromise();
- *      return foo + bar;
- * })
- * // Older SpiderMonkey style
- * Q.async(function () {
- *      var foo = yield getFooPromise();
- *      var bar = yield getBarPromise();
- *      Q.return(foo + bar);
- * })
- */
-Q["return"] = _return;
-function _return(value) {
-  throw new QReturnValue(value);
-}
+    this.json = function() {
+      return this.text().then(JSON.parse)
+    }
 
-/**
- * The promised function decorator ensures that any promise arguments
- * are settled and passed as values (`this` is also settled and passed
- * as a value).  It will also ensure that the result of a function is
- * always a promise.
- *
- * @example
- * var add = Q.promised(function (a, b) {
- *     return a + b;
- * });
- * add(Q(a), Q(B));
- *
- * @param {function} callback The function to decorate
- * @returns {function} a function that has been decorated.
- */
-Q.promised = promised;
-function promised(callback) {
-  return function () {
-    return spread([this, all(arguments)], function (self, args) {
-      return callback.apply(self, args);
-    });
-  };
-}
+    return this
+  }
 
-/**
- * sends a message to a value in a future turn
- * @param object* the recipient
- * @param op the name of the message operation, e.g., "when",
- * @param args further arguments to be forwarded to the operation
- * @returns result {Promise} a promise for the result of the operation
- */
-Q.dispatch = dispatch;
-function dispatch(object, op, args) {
-  return Q(object).dispatch(op, args);
-}
+  // HTTP methods whose capitalization should be normalized
+  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
 
-Promise.prototype.dispatch = function (op, args) {
-  var self = this;
-  var deferred = defer();
-  Q.nextTick(function () {
-    self.promiseDispatch(deferred.resolve, op, args);
-  });
-  return deferred.promise;
-};
+  function normalizeMethod(method) {
+    var upcased = method.toUpperCase()
+    return (methods.indexOf(upcased) > -1) ? upcased : method
+  }
 
-/**
- * Gets the value of a property in a future turn.
- * @param object    promise or immediate reference for target object
- * @param name      name of property to get
- * @return promise for the property value
- */
-Q.get = function (object, key) {
-  return Q(object).dispatch("get", [key]);
-};
+  function Request(input, options) {
+    options = options || {}
+    var body = options.body
+    if (Request.prototype.isPrototypeOf(input)) {
+      if (input.bodyUsed) {
+        throw new TypeError('Already read')
+      }
+      this.url = input.url
+      this.credentials = input.credentials
+      if (!options.headers) {
+        this.headers = new Headers(input.headers)
+      }
+      this.method = input.method
+      this.mode = input.mode
+      if (!body) {
+        body = input._bodyInit
+        input.bodyUsed = true
+      }
+    } else {
+      this.url = input
+    }
 
-Promise.prototype.get = function (key) {
-  return this.dispatch("get", [key]);
-};
+    this.credentials = options.credentials || this.credentials || 'omit'
+    if (options.headers || !this.headers) {
+      this.headers = new Headers(options.headers)
+    }
+    this.method = normalizeMethod(options.method || this.method || 'GET')
+    this.mode = options.mode || this.mode || null
+    this.referrer = null
 
-/**
- * Sets the value of a property in a future turn.
- * @param object    promise or immediate reference for object object
- * @param name      name of property to set
- * @param value     new value of property
- * @return promise for the return value
- */
-Q.set = function (object, key, value) {
-  return Q(object).dispatch("set", [key, value]);
-};
+    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+      throw new TypeError('Body not allowed for GET or HEAD requests')
+    }
+    this._initBody(body)
+  }
 
-Promise.prototype.set = function (key, value) {
-  return this.dispatch("set", [key, value]);
-};
+  Request.prototype.clone = function() {
+    return new Request(this)
+  }
 
-/**
- * Deletes a property in a future turn.
- * @param object    promise or immediate reference for target object
- * @param name      name of property to delete
- * @return promise for the return value
- */
-Q.del = // XXX legacy
-Q["delete"] = function (object, key) {
-  return Q(object).dispatch("delete", [key]);
-};
+  function decode(body) {
+    var form = new FormData()
+    body.trim().split('&').forEach(function(bytes) {
+      if (bytes) {
+        var split = bytes.split('=')
+        var name = split.shift().replace(/\+/g, ' ')
+        var value = split.join('=').replace(/\+/g, ' ')
+        form.append(decodeURIComponent(name), decodeURIComponent(value))
+      }
+    })
+    return form
+  }
 
-Promise.prototype.del = // XXX legacy
-Promise.prototype["delete"] = function (key) {
-  return this.dispatch("delete", [key]);
-};
+  function headers(xhr) {
+    var head = new Headers()
+    var pairs = xhr.getAllResponseHeaders().trim().split('\n')
+    pairs.forEach(function(header) {
+      var split = header.trim().split(':')
+      var key = split.shift().trim()
+      var value = split.join(':').trim()
+      head.append(key, value)
+    })
+    return head
+  }
 
-/**
- * Invokes a method in a future turn.
- * @param object    promise or immediate reference for target object
- * @param name      name of method to invoke
- * @param value     a value to post, typically an array of
- *                  invocation arguments for promises that
- *                  are ultimately backed with `resolve` values,
- *                  as opposed to those backed with URLs
- *                  wherein the posted value can be any
- *                  JSON serializable object.
- * @return promise for the return value
- */
-// bound locally because it is used by other methods
-Q.mapply = // XXX As proposed by "Redsandro"
-Q.post = function (object, name, args) {
-  return Q(object).dispatch("post", [name, args]);
-};
+  Body.call(Request.prototype)
 
-Promise.prototype.mapply = // XXX As proposed by "Redsandro"
-Promise.prototype.post = function (name, args) {
-  return this.dispatch("post", [name, args]);
-};
+  function Response(bodyInit, options) {
+    if (!options) {
+      options = {}
+    }
 
-/**
- * Invokes a method in a future turn.
- * @param object    promise or immediate reference for target object
- * @param name      name of method to invoke
- * @param ...args   array of invocation arguments
- * @return promise for the return value
- */
-Q.send = // XXX Mark Miller's proposed parlance
-Q.mcall = // XXX As proposed by "Redsandro"
-Q.invoke = function (object, name /*...args*/) {
-  return Q(object).dispatch("post", [name, array_slice(arguments, 2)]);
-};
+    this.type = 'default'
+    this.status = options.status
+    this.ok = this.status >= 200 && this.status < 300
+    this.statusText = options.statusText
+    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
+    this.url = options.url || ''
+    this._initBody(bodyInit)
+  }
 
-Promise.prototype.send = // XXX Mark Miller's proposed parlance
-Promise.prototype.mcall = // XXX As proposed by "Redsandro"
-Promise.prototype.invoke = function (name /*...args*/) {
-  return this.dispatch("post", [name, array_slice(arguments, 1)]);
-};
+  Body.call(Response.prototype)
 
-/**
- * Applies the promised function in a future turn.
- * @param object    promise or immediate reference for target function
- * @param args      array of application arguments
- */
-Q.fapply = function (object, args) {
-  return Q(object).dispatch("apply", [void 0, args]);
-};
+  Response.prototype.clone = function() {
+    return new Response(this._bodyInit, {
+      status: this.status,
+      statusText: this.statusText,
+      headers: new Headers(this.headers),
+      url: this.url
+    })
+  }
 
-Promise.prototype.fapply = function (args) {
-  return this.dispatch("apply", [void 0, args]);
-};
+  Response.error = function() {
+    var response = new Response(null, {status: 0, statusText: ''})
+    response.type = 'error'
+    return response
+  }
 
-/**
- * Calls the promised function in a future turn.
- * @param object    promise or immediate reference for target function
- * @param ...args   array of application arguments
- */
-Q["try"] =
-Q.fcall = function (object /* ...args*/) {
-  return Q(object).dispatch("apply", [void 0, array_slice(arguments, 1)]);
-};
+  var redirectStatuses = [301, 302, 303, 307, 308]
 
-Promise.prototype.fcall = function (/*...args*/) {
-  return this.dispatch("apply", [void 0, array_slice(arguments)]);
-};
+  Response.redirect = function(url, status) {
+    if (redirectStatuses.indexOf(status) === -1) {
+      throw new RangeError('Invalid status code')
+    }
 
-/**
- * Binds the promised function, transforming return values into a fulfilled
- * promise and thrown errors into a rejected one.
- * @param object    promise or immediate reference for target function
- * @param ...args   array of application arguments
- */
-Q.fbind = function (object /*...args*/) {
-  var promise = Q(object);
-  var args = array_slice(arguments, 1);
-  return function fbound() {
-    return promise.dispatch("apply", [
-        this,
-        args.concat(array_slice(arguments))
-    ]);
-  };
-};
-Promise.prototype.fbind = function (/*...args*/) {
-  var promise = this;
-  var args = array_slice(arguments);
-  return function fbound() {
-    return promise.dispatch("apply", [
-        this,
-        args.concat(array_slice(arguments))
-    ]);
-  };
-};
+    return new Response(null, {status: status, headers: {location: url}})
+  }
 
-/**
- * Requests the names of the owned properties of a promised
- * object in a future turn.
- * @param object    promise or immediate reference for target object
- * @return promise for the keys of the eventually settled object
- */
-Q.keys = function (object) {
-  return Q(object).dispatch("keys", []);
-};
+  self.Headers = Headers;
+  self.Request = Request;
+  self.Response = Response;
 
-Promise.prototype.keys = function () {
-  return this.dispatch("keys", []);
-};
-
-/**
- * Turns an array of promises into a promise for an array.  If any of
- * the promises gets rejected, the whole array is rejected immediately.
- * @param {Array*} an array (or promise for an array) of values (or
- * promises for values)
- * @returns a promise for an array of the corresponding values
- */
-// By Mark Miller
-// http://wiki.ecmascript.org/doku.php?id=strawman:concurrency&rev=1308776521#allfulfilled
-Q.all = all;
-function all(promises) {
-  return when(promises, function (promises) {
-    var pendingCount = 0;
-    var deferred = defer();
-    array_reduce(promises, function (undefined, promise, index) {
-      var snapshot;
-      if (
-          isPromise(promise) &&
-          (snapshot = promise.inspect()).state === "fulfilled"
-      ) {
-        promises[index] = snapshot.value;
+  self.fetch = function(input, init) {
+    return new Promise(function(resolve, reject) {
+      var request
+      if (Request.prototype.isPrototypeOf(input) && !init) {
+        request = input
       } else {
-        ++pendingCount;
-        when(
-            promise,
-                    function (value) {
-                      promises[index] = value;
-                      if (--pendingCount === 0) {
-                        deferred.resolve(promises);
-                      }
-                    },
-                    deferred.reject,
-                    function (progress) {
-                      deferred.notify({ index: index, value: progress });
-                    }
-                );
+        request = new Request(input, init)
       }
-    }, void 0);
-    if (pendingCount === 0) {
-      deferred.resolve(promises);
-    }
-    return deferred.promise;
-  });
-}
 
-Promise.prototype.all = function () {
-  return all(this);
-};
+      var xhr = new XMLHttpRequest()
 
-/**
- * Returns the first resolved promise of an array. Prior rejected promises are
- * ignored.  Rejects only if all promises are rejected.
- * @param {Array*} an array containing values or promises for values
- * @returns a promise fulfilled with the value of the first resolved promise,
- * or a rejected promise if all promises are rejected.
- */
-Q.any = any;
+      function responseURL() {
+        if ('responseURL' in xhr) {
+          return xhr.responseURL
+        }
 
-function any(promises) {
-  if (promises.length === 0) {
-    return Q.resolve();
-  }
+        // Avoid security warnings on getResponseHeader when not allowed by CORS
+        if (/^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
+          return xhr.getResponseHeader('X-Request-URL')
+        }
 
-  var deferred = Q.defer();
-  var pendingCount = 0;
-  array_reduce(promises, function (prev, current, index) {
-    var promise = promises[index];
-
-    pendingCount++;
-
-    when(promise, onFulfilled, onRejected, onProgress);
-    function onFulfilled(result) {
-      deferred.resolve(result);
-    }
-    function onRejected() {
-      pendingCount--;
-      if (pendingCount === 0) {
-        deferred.reject(new Error(
-            "Can't get fulfillment value from any promise, all " +
-            "promises were rejected."
-        ));
+        return;
       }
-    }
-    function onProgress(progress) {
-      deferred.notify({
-        index: index,
-        value: progress
-      });
-    }
-  }, undefined);
 
-  return deferred.promise;
-}
-
-Promise.prototype.any = function () {
-  return any(this);
-};
-
-/**
- * Waits for all promises to be settled, either fulfilled or
- * rejected.  This is distinct from `all` since that would stop
- * waiting at the first rejection.  The promise returned by
- * `allResolved` will never be rejected.
- * @param promises a promise for an array (or an array) of promises
- * (or values)
- * @return a promise for an array of promises
- */
-Q.allResolved = deprecate(allResolved, "allResolved", "allSettled");
-function allResolved(promises) {
-  return when(promises, function (promises) {
-    promises = array_map(promises, Q);
-    return when(all(array_map(promises, function (promise) {
-      return when(promise, noop, noop);
-    })), function () {
-      return promises;
-    });
-  });
-}
-
-Promise.prototype.allResolved = function () {
-  return allResolved(this);
-};
-
-/**
- * @see Promise#allSettled
- */
-Q.allSettled = allSettled;
-function allSettled(promises) {
-  return Q(promises).allSettled();
-}
-
-/**
- * Turns an array of promises into a promise for an array of their states (as
- * returned by `inspect`) when they have all settled.
- * @param {Array[Any*]} values an array (or promise for an array) of values (or
- * promises for values)
- * @returns {Array[State]} an array of states for the respective values.
- */
-Promise.prototype.allSettled = function () {
-  return this.then(function (promises) {
-    return all(array_map(promises, function (promise) {
-      promise = Q(promise);
-      function regardless() {
-        return promise.inspect();
+      xhr.onload = function() {
+        var status = (xhr.status === 1223) ? 204 : xhr.status
+        if (status < 100 || status > 599) {
+          reject(new TypeError('Network request failed'))
+          return
+        }
+        var options = {
+          status: status,
+          statusText: xhr.statusText,
+          headers: headers(xhr),
+          url: responseURL()
+        }
+        var body = 'response' in xhr ? xhr.response : xhr.responseText;
+        resolve(new Response(body, options))
       }
-      return promise.then(regardless, regardless);
-    }));
-  });
-};
 
-/**
- * Captures the failure of a promise, giving an oportunity to recover
- * with a callback.  If the given promise is fulfilled, the returned
- * promise is fulfilled.
- * @param {Any*} promise for something
- * @param {Function} callback to fulfill the returned promise if the
- * given promise is rejected
- * @returns a promise for the return value of the callback
- */
-Q.fail = // XXX legacy
-Q["catch"] = function (object, rejected) {
-  return Q(object).then(void 0, rejected);
-};
-
-Promise.prototype.fail = // XXX legacy
-Promise.prototype["catch"] = function (rejected) {
-  return this.then(void 0, rejected);
-};
-
-/**
- * Attaches a listener that can respond to progress notifications from a
- * promise's originating deferred. This listener receives the exact arguments
- * passed to ``deferred.notify``.
- * @param {Any*} promise for something
- * @param {Function} callback to receive any progress notifications
- * @returns the given promise, unchanged
- */
-Q.progress = progress;
-function progress(object, progressed) {
-  return Q(object).then(void 0, void 0, progressed);
-}
-
-Promise.prototype.progress = function (progressed) {
-  return this.then(void 0, void 0, progressed);
-};
-
-/**
- * Provides an opportunity to observe the settling of a promise,
- * regardless of whether the promise is fulfilled or rejected.  Forwards
- * the resolution to the returned promise when the callback is done.
- * The callback can return a promise to defer completion.
- * @param {Any*} promise
- * @param {Function} callback to observe the resolution of the given
- * promise, takes no arguments.
- * @returns a promise for the resolution of the given promise when
- * ``fin`` is done.
- */
-Q.fin = // XXX legacy
-Q["finally"] = function (object, callback) {
-  return Q(object)["finally"](callback);
-};
-
-Promise.prototype.fin = // XXX legacy
-Promise.prototype["finally"] = function (callback) {
-  if (!callback || typeof callback.apply !== "function") {
-    throw new Error("Can't apply finally callback");
-  }
-  callback = Q(callback);
-  return this.then(function (value) {
-    return callback.fcall().then(function () {
-      return value;
-    });
-  }, function (reason) {
-    // TODO attempt to recycle the rejection with "this".
-    return callback.fcall().then(function () {
-      throw reason;
-    });
-  });
-};
-
-/**
- * Terminates a chain of promises, forcing rejections to be
- * thrown as exceptions.
- * @param {Any*} promise at the end of a chain of promises
- * @returns nothing
- */
-Q.done = function (object, fulfilled, rejected, progress) {
-  return Q(object).done(fulfilled, rejected, progress);
-};
-
-Promise.prototype.done = function (fulfilled, rejected, progress) {
-  var onUnhandledError = function (error) {
-    // forward to a future turn so that ``when``
-    // does not catch it and turn it into a rejection.
-    Q.nextTick(function () {
-      makeStackTraceLong(error, promise);
-      if (Q.onerror) {
-        Q.onerror(error);
-      } else {
-        throw error;
+      xhr.onerror = function() {
+        reject(new TypeError('Network request failed'))
       }
-    });
-  };
 
-  // Avoid unnecessary `nextTick`ing via an unnecessary `when`.
-  var promise = fulfilled || rejected || progress ?
-      this.then(fulfilled, rejected, progress) :
-      this;
+      xhr.open(request.method, request.url, true)
 
-  if (typeof process === "object" && process && process.domain) {
-    onUnhandledError = process.domain.bind(onUnhandledError);
+      if (request.credentials === 'include') {
+        xhr.withCredentials = true
+      }
+
+      if ('responseType' in xhr && support.blob) {
+        xhr.responseType = 'blob'
+      }
+
+      request.headers.forEach(function(value, name) {
+        xhr.setRequestHeader(name, value)
+      })
+
+      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+    })
   }
+  self.fetch.polyfill = true
+})(typeof self !== 'undefined' ? self : this);
 
-  promise.then(void 0, onUnhandledError);
-};
-
-/**
- * Causes a promise to be rejected if it does not get fulfilled before
- * some milliseconds time out.
- * @param {Any*} promise
- * @param {Number} milliseconds timeout
- * @param {Any*} custom error message or Error object (optional)
- * @returns a promise for the resolution of the given promise if it is
- * fulfilled before the timeout, otherwise rejected.
- */
-Q.timeout = function (object, ms, error) {
-  return Q(object).timeout(ms, error);
-};
-
-Promise.prototype.timeout = function (ms, error) {
-  var deferred = defer();
-  var timeoutId = setTimeout(function () {
-    if (!error || "string" === typeof error) {
-      error = new Error(error || "Timed out after " + ms + " ms");
-      error.code = "ETIMEDOUT";
-    }
-    deferred.reject(error);
-  }, ms);
-
-  this.then(function (value) {
-    clearTimeout(timeoutId);
-    deferred.resolve(value);
-  }, function (exception) {
-    clearTimeout(timeoutId);
-    deferred.reject(exception);
-  }, deferred.notify);
-
-  return deferred.promise;
-};
-
-/**
- * Returns a promise for the given value (or promised value), some
- * milliseconds after it resolved. Passes rejections immediately.
- * @param {Any*} promise
- * @param {Number} milliseconds
- * @returns a promise for the resolution of the given promise after milliseconds
- * time has elapsed since the resolution of the given promise.
- * If the given promise rejects, that is passed immediately.
- */
-Q.delay = function (object, timeout) {
-  if (timeout === void 0) {
-    timeout = object;
-    object = void 0;
-  }
-  return Q(object).delay(timeout);
-};
-
-Promise.prototype.delay = function (timeout) {
-  return this.then(function (value) {
-    var deferred = defer();
-    setTimeout(function () {
-      deferred.resolve(value);
-    }, timeout);
-    return deferred.promise;
-  });
-};
-
-/**
- * Passes a continuation to a Node function, which is called with the given
- * arguments provided as an array, and returns a promise.
- *
- *      Q.nfapply(FS.readFile, [__filename])
- *      .then(function (content) {
- *      })
- *
- */
-Q.nfapply = function (callback, args) {
-  return Q(callback).nfapply(args);
-};
-
-Promise.prototype.nfapply = function (args) {
-  var deferred = defer();
-  var nodeArgs = array_slice(args);
-  nodeArgs.push(deferred.makeNodeResolver());
-  this.fapply(nodeArgs).fail(deferred.reject);
-  return deferred.promise;
-};
-
-/**
- * Passes a continuation to a Node function, which is called with the given
- * arguments provided individually, and returns a promise.
- * @example
- * Q.nfcall(FS.readFile, __filename)
- * .then(function (content) {
- * })
- *
- */
-Q.nfcall = function (callback /*...args*/) {
-  var args = array_slice(arguments, 1);
-  return Q(callback).nfapply(args);
-};
-
-Promise.prototype.nfcall = function (/*...args*/) {
-  var nodeArgs = array_slice(arguments);
-  var deferred = defer();
-  nodeArgs.push(deferred.makeNodeResolver());
-  this.fapply(nodeArgs).fail(deferred.reject);
-  return deferred.promise;
-};
-
-/**
- * Wraps a NodeJS continuation passing function and returns an equivalent
- * version that returns a promise.
- * @example
- * Q.nfbind(FS.readFile, __filename)("utf-8")
- * .then(console.log)
- * .done()
- */
-Q.nfbind =
-Q.denodeify = function (callback /*...args*/) {
-  var baseArgs = array_slice(arguments, 1);
-  return function () {
-    var nodeArgs = baseArgs.concat(array_slice(arguments));
-    var deferred = defer();
-    nodeArgs.push(deferred.makeNodeResolver());
-    Q(callback).fapply(nodeArgs).fail(deferred.reject);
-    return deferred.promise;
-  };
-};
-
-Promise.prototype.nfbind =
-Promise.prototype.denodeify = function (/*...args*/) {
-  var args = array_slice(arguments);
-  args.unshift(this);
-  return Q.denodeify.apply(void 0, args);
-};
-
-Q.nbind = function (callback, thisp /*...args*/) {
-  var baseArgs = array_slice(arguments, 2);
-  return function () {
-    var nodeArgs = baseArgs.concat(array_slice(arguments));
-    var deferred = defer();
-    nodeArgs.push(deferred.makeNodeResolver());
-    function bound() {
-      return callback.apply(thisp, arguments);
-    }
-    Q(bound).fapply(nodeArgs).fail(deferred.reject);
-    return deferred.promise;
-  };
-};
-
-Promise.prototype.nbind = function (/*thisp, ...args*/) {
-  var args = array_slice(arguments, 0);
-  args.unshift(this);
-  return Q.nbind.apply(void 0, args);
-};
-
-/**
- * Calls a method of a Node-style object that accepts a Node-style
- * callback with a given array of arguments, plus a provided callback.
- * @param object an object that has the named method
- * @param {String} name name of the method of object
- * @param {Array} args arguments to pass to the method; the callback
- * will be provided by Q and appended to these arguments.
- * @returns a promise for the value or error
- */
-Q.nmapply = // XXX As proposed by "Redsandro"
-Q.npost = function (object, name, args) {
-  return Q(object).npost(name, args);
-};
-
-Promise.prototype.nmapply = // XXX As proposed by "Redsandro"
-Promise.prototype.npost = function (name, args) {
-  var nodeArgs = array_slice(args || []);
-  var deferred = defer();
-  nodeArgs.push(deferred.makeNodeResolver());
-  this.dispatch("post", [name, nodeArgs]).fail(deferred.reject);
-  return deferred.promise;
-};
-
-/**
- * Calls a method of a Node-style object that accepts a Node-style
- * callback, forwarding the given variadic arguments, plus a provided
- * callback argument.
- * @param object an object that has the named method
- * @param {String} name name of the method of object
- * @param ...args arguments to pass to the method; the callback will
- * be provided by Q and appended to these arguments.
- * @returns a promise for the value or error
- */
-Q.nsend = // XXX Based on Mark Miller's proposed "send"
-Q.nmcall = // XXX Based on "Redsandro's" proposal
-Q.ninvoke = function (object, name /*...args*/) {
-  var nodeArgs = array_slice(arguments, 2);
-  var deferred = defer();
-  nodeArgs.push(deferred.makeNodeResolver());
-  Q(object).dispatch("post", [name, nodeArgs]).fail(deferred.reject);
-  return deferred.promise;
-};
-
-Promise.prototype.nsend = // XXX Based on Mark Miller's proposed "send"
-Promise.prototype.nmcall = // XXX Based on "Redsandro's" proposal
-Promise.prototype.ninvoke = function (name /*...args*/) {
-  var nodeArgs = array_slice(arguments, 1);
-  var deferred = defer();
-  nodeArgs.push(deferred.makeNodeResolver());
-  this.dispatch("post", [name, nodeArgs]).fail(deferred.reject);
-  return deferred.promise;
-};
-
-/**
- * If a function would like to support both Node continuation-passing-style and
- * promise-returning-style, it can end its internal promise chain with
- * `nodeify(nodeback)`, forwarding the optional nodeback argument.  If the user
- * elects to use a nodeback, the result will be sent there.  If they do not
- * pass a nodeback, they will receive the result promise.
- * @param object a result (or a promise for a result)
- * @param {Function} nodeback a Node.js-style callback
- * @returns either the promise or nothing
- */
-Q.nodeify = nodeify;
-function nodeify(object, nodeback) {
-  return Q(object).nodeify(nodeback);
-}
-
-Promise.prototype.nodeify = function (nodeback) {
-  if (nodeback) {
-    this.then(function (value) {
-      Q.nextTick(function () {
-        nodeback(null, value);
-      });
-    }, function (error) {
-      Q.nextTick(function () {
-        nodeback(error);
-      });
-    });
-  } else {
-    return this;
-  }
-};
-
-Q.noConflict = function() {
-  throw new Error("Q.noConflict only works when Q is used as a global");
-};
-
-// All code before this point will be filtered from stack traces.
-var qEndingLine = captureLine();
-
-return Q;
-
-});
 /*! https://mths.be/repeat v0.2.0 by @mathias */
 if (!String.prototype.repeat) {
 	(function() {
@@ -40089,3 +40706,392 @@ if (!String.prototype.repeat) {
 		}
 	}());
 }
+(function(self) {
+  'use strict';
+
+  if (self.fetch) {
+    return
+  }
+
+  function normalizeName(name) {
+    if (typeof name !== 'string') {
+      name = String(name)
+    }
+    if (/[^a-z0-9\-#$%&'*+.\^_`|~]/i.test(name)) {
+      throw new TypeError('Invalid character in header field name')
+    }
+    return name.toLowerCase()
+  }
+
+  function normalizeValue(value) {
+    if (typeof value !== 'string') {
+      value = String(value)
+    }
+    return value
+  }
+
+  function Headers(headers) {
+    this.map = {}
+
+    if (headers instanceof Headers) {
+      headers.forEach(function(value, name) {
+        this.append(name, value)
+      }, this)
+
+    } else if (headers) {
+      Object.getOwnPropertyNames(headers).forEach(function(name) {
+        this.append(name, headers[name])
+      }, this)
+    }
+  }
+
+  Headers.prototype.append = function(name, value) {
+    name = normalizeName(name)
+    value = normalizeValue(value)
+    var list = this.map[name]
+    if (!list) {
+      list = []
+      this.map[name] = list
+    }
+    list.push(value)
+  }
+
+  Headers.prototype['delete'] = function(name) {
+    delete this.map[normalizeName(name)]
+  }
+
+  Headers.prototype.get = function(name) {
+    var values = this.map[normalizeName(name)]
+    return values ? values[0] : null
+  }
+
+  Headers.prototype.getAll = function(name) {
+    return this.map[normalizeName(name)] || []
+  }
+
+  Headers.prototype.has = function(name) {
+    return this.map.hasOwnProperty(normalizeName(name))
+  }
+
+  Headers.prototype.set = function(name, value) {
+    this.map[normalizeName(name)] = [normalizeValue(value)]
+  }
+
+  Headers.prototype.forEach = function(callback, thisArg) {
+    Object.getOwnPropertyNames(this.map).forEach(function(name) {
+      this.map[name].forEach(function(value) {
+        callback.call(thisArg, value, name, this)
+      }, this)
+    }, this)
+  }
+
+  function consumed(body) {
+    if (body.bodyUsed) {
+      return Promise.reject(new TypeError('Already read'))
+    }
+    body.bodyUsed = true
+  }
+
+  function fileReaderReady(reader) {
+    return new Promise(function(resolve, reject) {
+      reader.onload = function() {
+        resolve(reader.result)
+      }
+      reader.onerror = function() {
+        reject(reader.error)
+      }
+    })
+  }
+
+  function readBlobAsArrayBuffer(blob) {
+    var reader = new FileReader()
+    reader.readAsArrayBuffer(blob)
+    return fileReaderReady(reader)
+  }
+
+  function readBlobAsText(blob) {
+    var reader = new FileReader()
+    reader.readAsText(blob)
+    return fileReaderReady(reader)
+  }
+
+  var support = {
+    blob: 'FileReader' in self && 'Blob' in self && (function() {
+      try {
+        new Blob();
+        return true
+      } catch(e) {
+        return false
+      }
+    })(),
+    formData: 'FormData' in self,
+    arrayBuffer: 'ArrayBuffer' in self
+  }
+
+  function Body() {
+    this.bodyUsed = false
+
+
+    this._initBody = function(body) {
+      this._bodyInit = body
+      if (typeof body === 'string') {
+        this._bodyText = body
+      } else if (support.blob && Blob.prototype.isPrototypeOf(body)) {
+        this._bodyBlob = body
+      } else if (support.formData && FormData.prototype.isPrototypeOf(body)) {
+        this._bodyFormData = body
+      } else if (!body) {
+        this._bodyText = ''
+      } else if (support.arrayBuffer && ArrayBuffer.prototype.isPrototypeOf(body)) {
+        // Only support ArrayBuffers for POST method.
+        // Receiving ArrayBuffers happens via Blobs, instead.
+      } else {
+        throw new Error('unsupported BodyInit type')
+      }
+
+      if (!this.headers.get('content-type')) {
+        if (typeof body === 'string') {
+          this.headers.set('content-type', 'text/plain;charset=UTF-8')
+        } else if (this._bodyBlob && this._bodyBlob.type) {
+          this.headers.set('content-type', this._bodyBlob.type)
+        }
+      }
+    }
+
+    if (support.blob) {
+      this.blob = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
+
+        if (this._bodyBlob) {
+          return Promise.resolve(this._bodyBlob)
+        } else if (this._bodyFormData) {
+          throw new Error('could not read FormData body as blob')
+        } else {
+          return Promise.resolve(new Blob([this._bodyText]))
+        }
+      }
+
+      this.arrayBuffer = function() {
+        return this.blob().then(readBlobAsArrayBuffer)
+      }
+
+      this.text = function() {
+        var rejected = consumed(this)
+        if (rejected) {
+          return rejected
+        }
+
+        if (this._bodyBlob) {
+          return readBlobAsText(this._bodyBlob)
+        } else if (this._bodyFormData) {
+          throw new Error('could not read FormData body as text')
+        } else {
+          return Promise.resolve(this._bodyText)
+        }
+      }
+    } else {
+      this.text = function() {
+        var rejected = consumed(this)
+        return rejected ? rejected : Promise.resolve(this._bodyText)
+      }
+    }
+
+    if (support.formData) {
+      this.formData = function() {
+        return this.text().then(decode)
+      }
+    }
+
+    this.json = function() {
+      return this.text().then(JSON.parse)
+    }
+
+    return this
+  }
+
+  // HTTP methods whose capitalization should be normalized
+  var methods = ['DELETE', 'GET', 'HEAD', 'OPTIONS', 'POST', 'PUT']
+
+  function normalizeMethod(method) {
+    var upcased = method.toUpperCase()
+    return (methods.indexOf(upcased) > -1) ? upcased : method
+  }
+
+  function Request(input, options) {
+    options = options || {}
+    var body = options.body
+    if (Request.prototype.isPrototypeOf(input)) {
+      if (input.bodyUsed) {
+        throw new TypeError('Already read')
+      }
+      this.url = input.url
+      this.credentials = input.credentials
+      if (!options.headers) {
+        this.headers = new Headers(input.headers)
+      }
+      this.method = input.method
+      this.mode = input.mode
+      if (!body) {
+        body = input._bodyInit
+        input.bodyUsed = true
+      }
+    } else {
+      this.url = input
+    }
+
+    this.credentials = options.credentials || this.credentials || 'omit'
+    if (options.headers || !this.headers) {
+      this.headers = new Headers(options.headers)
+    }
+    this.method = normalizeMethod(options.method || this.method || 'GET')
+    this.mode = options.mode || this.mode || null
+    this.referrer = null
+
+    if ((this.method === 'GET' || this.method === 'HEAD') && body) {
+      throw new TypeError('Body not allowed for GET or HEAD requests')
+    }
+    this._initBody(body)
+  }
+
+  Request.prototype.clone = function() {
+    return new Request(this)
+  }
+
+  function decode(body) {
+    var form = new FormData()
+    body.trim().split('&').forEach(function(bytes) {
+      if (bytes) {
+        var split = bytes.split('=')
+        var name = split.shift().replace(/\+/g, ' ')
+        var value = split.join('=').replace(/\+/g, ' ')
+        form.append(decodeURIComponent(name), decodeURIComponent(value))
+      }
+    })
+    return form
+  }
+
+  function headers(xhr) {
+    var head = new Headers()
+    var pairs = xhr.getAllResponseHeaders().trim().split('\n')
+    pairs.forEach(function(header) {
+      var split = header.trim().split(':')
+      var key = split.shift().trim()
+      var value = split.join(':').trim()
+      head.append(key, value)
+    })
+    return head
+  }
+
+  Body.call(Request.prototype)
+
+  function Response(bodyInit, options) {
+    if (!options) {
+      options = {}
+    }
+
+    this.type = 'default'
+    this.status = options.status
+    this.ok = this.status >= 200 && this.status < 300
+    this.statusText = options.statusText
+    this.headers = options.headers instanceof Headers ? options.headers : new Headers(options.headers)
+    this.url = options.url || ''
+    this._initBody(bodyInit)
+  }
+
+  Body.call(Response.prototype)
+
+  Response.prototype.clone = function() {
+    return new Response(this._bodyInit, {
+      status: this.status,
+      statusText: this.statusText,
+      headers: new Headers(this.headers),
+      url: this.url
+    })
+  }
+
+  Response.error = function() {
+    var response = new Response(null, {status: 0, statusText: ''})
+    response.type = 'error'
+    return response
+  }
+
+  var redirectStatuses = [301, 302, 303, 307, 308]
+
+  Response.redirect = function(url, status) {
+    if (redirectStatuses.indexOf(status) === -1) {
+      throw new RangeError('Invalid status code')
+    }
+
+    return new Response(null, {status: status, headers: {location: url}})
+  }
+
+  self.Headers = Headers;
+  self.Request = Request;
+  self.Response = Response;
+
+  self.fetch = function(input, init) {
+    return new Promise(function(resolve, reject) {
+      var request
+      if (Request.prototype.isPrototypeOf(input) && !init) {
+        request = input
+      } else {
+        request = new Request(input, init)
+      }
+
+      var xhr = new XMLHttpRequest()
+
+      function responseURL() {
+        if ('responseURL' in xhr) {
+          return xhr.responseURL
+        }
+
+        // Avoid security warnings on getResponseHeader when not allowed by CORS
+        if (/^X-Request-URL:/m.test(xhr.getAllResponseHeaders())) {
+          return xhr.getResponseHeader('X-Request-URL')
+        }
+
+        return;
+      }
+
+      xhr.onload = function() {
+        var status = (xhr.status === 1223) ? 204 : xhr.status
+        if (status < 100 || status > 599) {
+          reject(new TypeError('Network request failed'))
+          return
+        }
+        var options = {
+          status: status,
+          statusText: xhr.statusText,
+          headers: headers(xhr),
+          url: responseURL()
+        }
+        var body = 'response' in xhr ? xhr.response : xhr.responseText;
+        resolve(new Response(body, options))
+      }
+
+      xhr.onerror = function() {
+        reject(new TypeError('Network request failed'))
+      }
+
+      xhr.open(request.method, request.url, true)
+
+      if (request.credentials === 'include') {
+        xhr.withCredentials = true
+      }
+
+      if ('responseType' in xhr && support.blob) {
+        xhr.responseType = 'blob'
+      }
+
+      request.headers.forEach(function(value, name) {
+        xhr.setRequestHeader(name, value)
+      })
+
+      xhr.send(typeof request._bodyInit === 'undefined' ? null : request._bodyInit)
+    })
+  }
+  self.fetch.polyfill = true
+})(typeof self !== 'undefined' ? self : this);

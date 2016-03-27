@@ -29,11 +29,12 @@
      * @constructor
      * @requires Handlebars
      * @requires hexagon extension
-     * @param  {HTMLElement} modal
-     * @param  {Map} map
-     * @param  {Object} options
+     * @param  {HTMLElement} modal      The modal used in this UI Theme
+     * @param  {Flatworld} FTW          Instance of flatworld class
+     * @param  {Object} options         optional options
+     * @param  {Object} options.styles  styles for the UI
      */
-    constructor(modal, map, options = { styles: "#F0F0F0" }) {
+    constructor(modal, FTW, options = { styles: "#F0F0F0" }) {
       styleSheetElement = this.addStyleElement();
       /* For testing. This is deeefinitely supposed to not be here, but it has stayed there for testing. */
       let createdCSS = `
@@ -55,9 +56,16 @@
       // style.setAttribute("media", "screen")
       // style.setAttribute("media", "only screen and (max-width : 1024px)")
 
-      this.map = map;
+      this.FTW = FTW;
       this.modal = modal || document.getElementById("dialog_select");
       this.styles = options.styles;
+    }
+    /**
+     * @method getTemplates
+     * Required by the map/core/UI.js API
+     */
+    setFlatworld(FTW) {
+      this.FTW = FTW;
     }
     /**
      * @method getTemplates
@@ -75,8 +83,8 @@
      * @param {Object} options        Extra options
      */
     showSelections(objects, getDatas, options) {
-      var updateCB = this.map.drawOnNextTick.bind(this.map);
-      var UILayer = this.map.getMovableLayer();
+      var updateCB = this.FTW.drawOnNextTick.bind(this.FTW);
+      var UILayer = this.FTW.getMovableLayer();
       var cb;
 
       /* We add the objects to be highlighted to the correct UI layer */
@@ -130,7 +138,7 @@
       });
       this.showModal(this.modal, cssClasses);
 
-      highlightableObject = this._highlightSelectedObject(object, this.map.getRenderer());
+      highlightableObject = this._highlightSelectedObject(object, this.FTW.getRenderer());
 
       highlightableObject.dropShadow({
         color: shadow.color,
@@ -140,7 +148,7 @@
         blur: shadow.blur
       });
 
-      this.map.drawOnNextTick();
+      this.FTW.drawOnNextTick();
 
       _getElement("select").style.display = 'block';
 
@@ -154,15 +162,15 @@
       const UINAME = "movementArrow";
       var localTo, localFrom, currentArrow;
 
-      localTo = this.map.getMovableLayer().toLocal(to);
-      localFrom = this.map.getMovableLayer().toLocal(object.toGlobal(new PIXI.Point(0,0)));
+      localTo = this.FTW.getMovableLayer().toLocal(to);
+      localFrom = this.FTW.getMovableLayer().toLocal(object.toGlobal(new PIXI.Point(0,0)));
 
       currentArrow = drawShapes.line(new PIXI.Graphics(), localFrom, localTo );
 
-      this.map.removeUIObject(this.map.layerTypes.movableType.id, UINAME);
+      this.FTW.removeUIObject(this.FTW.layerTypes.movableType.id, UINAME);
 
-      this.map.addUIObject(this.map.layerTypes.movableType.id, currentArrow, UINAME);
-      this.map.drawOnNextTick();
+      this.FTW.addUIObject(this.FTW.layerTypes.movableType.id, currentArrow, UINAME);
+      this.FTW.drawOnNextTick();
     }
     /**
      * @method init
@@ -181,7 +189,7 @@
      * @param  {PIXI.Renderer} renderer
      */
     _highlightSelectedObject(object, renderer) {
-      var movableLayer = this.map.getMovableLayer();
+      var movableLayer = this.FTW.getMovableLayer();
       var clonedObject;
 
       clonedObject = object.clone(renderer);
@@ -205,8 +213,8 @@
     createHighlight(object, options = { coords: new PIXI.Point(0, 0) }) {
       const RADIUS = 47;
       const UI_CONTAINER_NAME = "unit highlight";
-      const movableLayer = this.map.getMovableLayer();
-      const container = new this.map.createSpecialLayer("UILayer", { toLayer: movableLayer});
+      const movableLayer = this.FTW.getMovableLayer();
+      const container = new this.FTW.createSpecialLayer("UILayer", { toLayer: movableLayer});
       const objCoords = {
         x: Number(object.x),
         y: Number(object.y)
@@ -226,8 +234,8 @@
 
       container.position = options.coords;
 
-      this.map.removeUIObject(this.map.layerTypes.movableType.id);
-      this.map.addUIObject(this.map.layerTypes.movableType.id, container, UI_CONTAINER_NAME);
+      this.FTW.removeUIObject(this.FTW.layerTypes.movableType.id);
+      this.FTW.addUIObject(this.FTW.layerTypes.movableType.id, container, UI_CONTAINER_NAME);
     }
     /**
      * @method addCSSRulesToScriptTag

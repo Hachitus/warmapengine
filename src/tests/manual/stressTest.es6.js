@@ -19,6 +19,7 @@
   var Sound = window.flatworld.Sound;
   var mapEvents = window.flatworld.mapEvents;
   var mapAPI = window.flatworld.mapAPI;
+  var UI = window.flatworld.UI;
   /* DATA FILES used for testing */
   var gameData = window.gameData;
   var typeData = window.typeData;
@@ -32,6 +33,19 @@
   polyfills.arrayFind();
   polyfills.es6String();
   hexagons.utils.init(HEXAGON_RADIUS);
+  /* This will suppress the fetch errors and make later possible to emulate http-requests */
+  window.fetch = function () {
+    return {
+      then: function () {
+        return window.fetch();
+      },
+      catch: function () {
+        return {
+          then: 1
+        };
+      }
+    };
+  };
 
   /* Start the whole functionality */
   (function () {
@@ -203,18 +217,20 @@
           map: mapData,
           type: typeData
         },
-        UITheme,
         {
           trackFPSCB: trackFPSCB,
           isHiddenByDefault: true,
           cache: options.cache
         });
 
+      let dialog_selection = document.getElementById("selectionDialog");
+      let initializedUITheme = new UITheme.init(dialog_selection, map);
+      UI(initializedUITheme, map);
+
       map.init( pluginsToActivate, mapData.startPoint );
 
       /* Activate the fullscreen button: */
       document.getElementById("testFullscreen").addEventListener("click", function () {
-        console.log("BOOOO", map, map.setFullScreen)
         map.setFullScreen();
       });
 
@@ -323,17 +339,15 @@
   function activateAPIs() {
     mapAPI.add(
       "objectMove",
-      function (type, data, params) {
-        var object = params[0];
-        var movementData = params[0];
-
+      function (type, data, movementData) {
+        console.log("TYPE", type)
         if (type === "get") {
           return {
-            url: data.baseUrl + object.name
+            url: data.baseUrl + movementData.id
           };
         } else {
           return {
-            url: data.baseUrl + params.name,
+            url: data.baseUrl + movementData.id,
             body: JSON.stringify(movementData)
           };
         }

@@ -114,6 +114,24 @@ Unless overridden there are 3 map events fired currently (each in different file
 * objectsSelected
 ** Data passed to event: array of objects selected as data
 
+# Rough roadmap
+**2016-04-01**
+- Map publicly released and moved to flatworld repository
+**2016-05-10**
+- Minimap added
+- Started making example game
+**2016-07-01**
+- Preliminary server-side functionality ready
+**2016-08-01**
+- Example game front-end ready
+**2016-11-01**
+- Server-side ready
+- The map has been extended with several more features (animation, minimap, offline functionality, hotkeys etc.)
+**2016-12-01**
+- Example game ready
+- Documentation finished
+- Front- and server-sides are ready for version 1.0
+
 # Sponsors
 Thank you to browserstack for providing magnificient testing tools
 <a href="http://www.browserstack.com"><img alt="browserstack logo" src="https://raw.githubusercontent.com/Hachitus/warmapengine/master/nonModuleRelated/browserStackLogo.png" width="150"/></a>

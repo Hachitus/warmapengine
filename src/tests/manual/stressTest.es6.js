@@ -287,7 +287,7 @@
   function populateTerrainLayer(hexagonGrid, typeCount) {
     var layerData = addBase_spriteLayerData("terrainLayer", "terrain");
 
-    hexagonGrid.forEach((coordinates) => {
+    hexagonGrid.forEach(function (coordinates) {
       var { x, y } = coordinates;
 
       layerData.objectGroups.push({
@@ -314,7 +314,7 @@
   function populateUnitLayer(hexagonGrid, typeCount) {
     var layerData = addBase_spriteLayerData("unitLayer", "unit");
 
-    hexagonGrid.forEach((coordinates) => {
+    hexagonGrid.forEach(function (coordinates) {
       var { x, y } = coordinates;
 
       layerData.objectGroups.push({

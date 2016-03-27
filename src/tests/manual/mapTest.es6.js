@@ -89,12 +89,12 @@
 
       promises = map.init( pluginsToActivate, mapData.startPoint );
 
-      Promise.all(promises).then( () => {
+      Promise.all(promises).then( function () {
         document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
       });
     }
 
     return globalMap;
-  };
+  }
 
 })();

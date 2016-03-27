@@ -6,6 +6,8 @@
   ----------------------*/
   var eventListeners = window.flatworld.eventListeners;
   var utils = window.flatworld.utils;
+  var mapStates = window.flatworld.mapStates;
+  var mapLog = window.flatworld.log;
 
   /*---------------------
   --------- API ---------
@@ -121,7 +123,9 @@
 
       if (moved.x > 0 || moved.y > 0 || moved.x < 0 || moved.y < 0) {
         map.moveMap(moved);
-      } else {
+      }
+
+      if (e.isFinal) {
         mapMoved = false;
       }
 

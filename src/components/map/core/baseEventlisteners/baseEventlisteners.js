@@ -23,6 +23,7 @@
    * Core plugin. Houses the default eventlisteners used in the map. When plugins are added to the map this class can be used for the
    * eventlistener management. Creates window.flatworld.setFullScreen function to be used when switching to fullscreen.
    *
+   * @namespace flatworld
    * @class extensions.baseEventlisteners
    * @requires Hammer.js                    (for touch events)
    * @requires Hamster.js                   (for good cross-browser mousewheel events)

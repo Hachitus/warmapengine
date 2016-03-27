@@ -18,7 +18,8 @@
      * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are inherited, depending on
      * the map type. For example you might want to add some click area for these
      *
-     * @class extensions.hexagons.ObjectHexaTerrain
+     * @namespace flatworld.extensions.hexagons
+     * @class ObjectHexaTerrain
      * @constructor
      * @param  {Object} coords
      * @param  {Integer} coords.x         X coordinate
@@ -40,7 +41,7 @@
      * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type.
      * For example you might want to add some click area for these (e.g. hexagon)
      *
-     * @class extensions.hexagons.ObjectHexaUnit
+     * @class ObjectHexaUnit
      * @constructor
      * @param {Object} coords            This units coordinates, relative to it's parent container
      * @param {Integer} coords.x         X coordinate

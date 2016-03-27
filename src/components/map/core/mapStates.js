@@ -17,6 +17,7 @@
   /**
    * Finite state machine for the map. Uses this library and pretty much it's API https://github.com/jakesgordon/javascript-state-machine.
    *
+   * @namespace flatworld
    * @class mapStates
    * @requires  state-machine library
    */

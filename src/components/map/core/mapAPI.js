@@ -17,6 +17,7 @@
   /**
    * Singleton. Uses JSON only data flow
    *
+   * @namespace flatworld
    * @class mapApi
    * @static
    */

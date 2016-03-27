@@ -10,7 +10,8 @@
   --------- PUBLIC --------
   -----------------------*/
   /**
-   * @class utilities.environmentDetections
+   * @namespace flatworld.generalUtils
+   * @class environmentDetections
    * @return {Object}                         Holds methods in this class
    */
   function setupEnvironmentDetection() {

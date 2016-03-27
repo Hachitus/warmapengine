@@ -13,7 +13,8 @@
   /**
    * Add polyfills for the map, as necessary. Easy to drop out.
    *
-   * @class generalUtils.polyfills
+   * @namespace flatworld.generalUtils
+   * @class polyfills
    * @return {Object} arrayFind, objectAssign
    */
   function setupPolyfills() {

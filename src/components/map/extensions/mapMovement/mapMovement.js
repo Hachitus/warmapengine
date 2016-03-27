@@ -24,7 +24,8 @@
   -----------------------*/
   /** This module manages visibility of the objects, based on are they visible to the player (on the canvas / webgl) or outside of it. This makes the map a lot faster and reliable resource-wise and lags otherwise. Requires subcontainers atm.
    *
-   * @class extensions.mapMovement
+   * @namespace flatworld.extensions
+   * @class mapMovement
    **/
   function setupMapMovement () {
     const VIEWPORT_OFFSET = 0.2;

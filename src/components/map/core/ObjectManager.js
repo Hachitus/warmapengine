@@ -9,6 +9,7 @@
      * this module is responsible for doing hitTesting, like returning the units on certain clicked coordinates or when objects or areas
      * collide with each other.
      *
+     * @namespace flatworld
      * @class ObjectManager
      * @constructor
      * @todo It might be a good idea to make the hitDetection more extensive. Now it just uses point or rectangle / bounds to detect hits.

@@ -25,7 +25,8 @@
     /**
      * The simplest default UI implementation. Implemented UI functionalities for: showSelections, highlightSelectedObject
      *
-     * @class UIs.default
+     * @namespace flatworld.UIs
+     * @class default
      * @constructor
      * @requires Handlebars
      * @requires hexagon extension

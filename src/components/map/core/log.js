@@ -8,6 +8,7 @@
 
   loglevel.enableAll();
   /**
+   * @namespace flatworld
    * @class log
    * @requires loglevel.js for frontend logging, or something similar
    **/

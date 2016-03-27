@@ -55,6 +55,7 @@
      * interacting with the map and objects in it. So e.g. when user selects a unit on the map. How that unit is highlighted as selected
      * and what kind of possible info-box we show to the user regarding that object, movement of units etc.
      *
+     * @namespace flatworld
      * @class Flatworld
      * @constructor
      * @requires PIXI.JS framework in global namespace

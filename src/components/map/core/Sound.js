@@ -18,6 +18,7 @@
     /**
      * Add a sound to be used.
      *
+     * @namespace flatworld
      * @method add
      * @param {String} name               Name / identifier
      * @param {String} urls               An array of urls or one url

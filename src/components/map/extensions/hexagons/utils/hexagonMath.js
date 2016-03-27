@@ -26,7 +26,8 @@
   /**
    * Utility module, for making different calculations and tests when hexagon based grid map in use
    *
-   * @class extensions.hexagons.utils
+   * @namespace flatworld.extensions.hexagons
+   * @class utils
    */
   /*-----------------------
   --------- PUBLIC --------

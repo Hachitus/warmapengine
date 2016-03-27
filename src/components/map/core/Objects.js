@@ -16,7 +16,8 @@
     /**
      * The base class of all sprite objects
      *
-     * @class objects.ObjectSprite
+     * @namespace flatworld.objects
+     * @class ObjectSprite
      * @constructor
      * @extends PIXI.Sprite
      * @param {PIXI.Point} coords       the coordinate where the object is located at, relative to it's parent
@@ -169,7 +170,7 @@
      * Terrain tile like desert or mountain, non-movable and cacheable. Normally, but not necessarily, these are
      * inherited, depending on the map type. For example you might want to add some click area for these
      *
-     * @class objects.ObjectSpriteTerrain
+     * @class ObjectSpriteTerrain
      * @constructor
      * @extends ObjectSprite
      * @param {Coordinates} coords        format: {x: Number, y: Number}. Coordinates for the object relative to it's parent
@@ -189,7 +190,7 @@
      * Map unit like infantry or worker, usually something with actions or movable. Usually these are extended, depending on the map type.
      * For example you might want to add some click area for these (e.g. hexagon)
      *
-     * @class objects.ObjectSpriteUnit
+     * @class ObjectSpriteUnit
      * @constructor
      * @extends ObjectSprite
      * @requires graphics

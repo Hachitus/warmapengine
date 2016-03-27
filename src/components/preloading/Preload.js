@@ -13,6 +13,7 @@
     /**
      * Preloads assets before initializing map.
      *
+     * @namespace flatworld
      * @class Preload
      * @constructor
      * @requires Q for promises

@@ -1,6 +1,9 @@
 (function () {
   'use strict';
 
+  /*-----------------------
+  ------- VARIABLES -------
+  -----------------------*/
   const mapLayers = window.flatworld.mapLayers;
   const objects = window.flatworld.objects;
 
@@ -12,6 +15,7 @@
      * Class to get a consistent standard for the engine to be able to filter objects, when retrieving or sorting them. This is used
      * when some method uses filters.
      *
+     * @namespace flatworld
      * @class MapDataManipulator
      * @constructor
      * @param {Array|Object} rules        REQUIRED. The rules that apply for this instance. Multiple rules in Array or one as Object.

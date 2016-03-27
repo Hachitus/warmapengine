@@ -12,7 +12,8 @@
   /**
    * Array manipulation
    *
-   * @class utilities.arrays
+   * @namespace flatworld.generalUtils
+   * @class arrays
    */
   function setupArrays() {
     return {

@@ -25,6 +25,7 @@
    * This keeps all the event listeners and detectors in one class. You add detectors / event listener types with addDetector and you add
    * event listeners with on.
    *
+   * @namespace flatworld
    * @class eventListeners
    */
   function eventListenersModule() {

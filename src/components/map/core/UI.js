@@ -20,6 +20,7 @@
    * Good examples for what this shows are: selected units-list, selection highlight (like a circle on the selected unit), unit movement.
    * How it works is that this is basically the interface that shows what the UI theme class can (or must) implement.
    *
+   * @namespace flatworld
    * @class UI
    * @static
    * @param {Object} UITheme        Module that will be used for the UI theme
@@ -98,7 +99,7 @@
     };
 
     /**
-     * Adds a new method to the class
+     * Adds a new method to this class
      *
      * @method extend
      * @static

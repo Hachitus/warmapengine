@@ -17,7 +17,8 @@
   /**
    * Handles the selection of hexagons on the map
    *
-   * @class extensions.hexagons.selectHexagonObject
+   * @namespace flatworld.extensions.hexagons
+   * @class selectHexagonObject
    * @return {Object}       Return methods inside object
    */
   function setupObject_select_hexagon() {

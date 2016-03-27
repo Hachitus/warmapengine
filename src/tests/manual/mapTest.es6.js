@@ -29,7 +29,7 @@
     mapDrag,
     hexagons.selectHexagonObject
   ];
-  const HEXAGON_RADIUS = gameData.hexagonRadius;
+  var HEXAGON_RADIUS = gameData.hexagonRadius;
 
   /* REQUIRED FOR IE11 */
   polyfills.arrayFind();
@@ -83,8 +83,8 @@
           isHiddenByDefault: false
         });
 
-      let dialog_selection = document.getElementById("selectionDialog");
-      let initializedUITheme = new UITheme.init(dialog_selection, map);
+      var dialog_selection = document.getElementById("selectionDialog");
+      var initializedUITheme = new UITheme.init(dialog_selection, map);
       UI(initializedUITheme, map);
 
       promises = map.init( pluginsToActivate, mapData.startPoint );

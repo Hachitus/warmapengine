@@ -26,8 +26,8 @@
 
   /** ===== CONFIGS ===== */
   /* Note the y is 3/4 of the actual height */
-  const HEXAGON_RADIUS = gameData.hexagonRadius;
-  const BASE_URL = "/requests/";
+  var HEXAGON_RADIUS = gameData.hexagonRadius;
+  var BASE_URL = "/requests/";
 
   /* REQUIRED FOR IE11 */
   polyfills.arrayFind();
@@ -95,8 +95,8 @@
   ****** GENERATE RANDOM MAP DATA *******
   **************************************/
   function getMapData(mapsize) {
-    const TERRAIN_TYPE_COUNT = 5;
-    const UNIT_TYPE_COUNT = 56;
+    var TERRAIN_TYPE_COUNT = 5;
+    var UNIT_TYPE_COUNT = 56;
     var coordMapsize = {
       x: mapsize,
       y: mapsize
@@ -234,8 +234,8 @@
           cache: options.cache
         });
 
-      let dialog_selection = document.getElementById("selectionDialog");
-      let initializedUITheme = new UITheme.init(dialog_selection, map);
+      var dialog_selection = document.getElementById("selectionDialog");
+      var initializedUITheme = new UITheme.init(dialog_selection, map);
       UI(initializedUITheme, map);
 
       map.init( pluginsToActivate, mapData.startPoint );

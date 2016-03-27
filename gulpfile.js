@@ -1,13 +1,16 @@
+/* global require */
+'use strict';
+
 var gulp = require('gulp');
 var rimraf = require('gulp-rimraf');
-var watch = require('gulp-watch')
+//var watch = require('gulp-watch')
 var browserSync = require('browser-sync');
-var reload = browserSync.reload;
+//var reload = browserSync.reload;
 var concat = require("gulp-concat");
 var babel = require("gulp-babel");
 var sourcemaps = require("gulp-sourcemaps");
 var uglify = require('gulp-uglify');
-var cssmin = require('gulp-uglify');
+var cssmin = require('gulp-cssmin');
 //var debug = require('gulp-debug');
 
 var config = {
@@ -117,7 +120,6 @@ gulp.task('bundleCssDev', function () {
 });
 
 gulp.task('develope', ['build', 'watch'], function() {
-  console.log("HEP")
   return browserSync({
     server: {
       baseDir: './src/'

@@ -1,4 +1,5 @@
 [![GPLv3 Affero License](http://img.shields.io/badge/license-LGPLv3-blue.svg)](https://www.gnu.org/licenses/agpl.html)
+[![Gitter](https://badges.gitter.im/Hachitus/FlaTWorld.svg)](https://gitter.im/Hachitus/FlaTWorld)
 
 #NOTE, STILL IN DEVELOPMENT!
 This engine is still in development. It is not well tested for other uses than the current tests / example game. When the most critical development phase is over, the API will be more locked down. At this stage the API and structure can still change, so if you use the engine for something serious, please take that into account!
@@ -9,6 +10,7 @@ Also I am very happy to get feedback on any projects or tests that might be usin
 [Contribution guidelines](https://github.com/Hachitus/warmapengine/blob/master/CONTRIBUTING.md)
 [API documentation](http://hachitus.github.io/warmapengine/documentation/)
 [Changelog (after it is in use)](https://github.com/Hachitus/warmapengine/blob/master/CHANGELOG.md)
+[Chat in Gitter](https://gitter.im/Hachitus/FlaTWorld)
 
 #Introduction
 2D strategy game engine for browsers. Project will move forward at its own pace. The very core functionality has been done, that practically manages adding the objects to the map, moving the map around and selecting + highlighting objects on the map. Other functionality outside of that, has not yet been done. But rough roadmap for these exist.

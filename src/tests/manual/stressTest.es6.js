@@ -102,13 +102,22 @@
       y: mapsize
     };
     var gridSize = {
-      rows: coordMapsize.x / hexagons.utils.calcShortDiagonal(),
-      columns: coordMapsize.y / hexagons.utils.calcLongDiagonal()
+      rows: Math.floor(coordMapsize.x / hexagons.utils.calcShortDiagonal()),
+      columns: Math.floor(coordMapsize.y / hexagons.utils.calcLongDiagonal())
     };
-    var hexagonGridCoordinates = hexagons.utils.createHexagonGridCoordinates(gridSize);
-    var terrainLayer;
+    var gridSizeHalf = {
+      rows: Math.floor(gridSize.rows / 2),
+      columns: Math.floor(gridSize.columns / 2)
+    };
+    var hexagonGridCoordinates = {
+      terrains: hexagons.utils.createHexagonGridCoordinates(gridSize),
+      units: hexagons.utils.createHexagonGridCoordinates(gridSize),
+      units2: hexagons.utils.createHexagonGridCoordinates(gridSizeHalf)
+    };
+    var terrainLayer, terrainLayer2;
 
-    terrainLayer = populateTerrainLayer(hexagonGridCoordinates, TERRAIN_TYPE_COUNT);
+    terrainLayer = populateTerrainLayer(hexagonGridCoordinates.terrains, TERRAIN_TYPE_COUNT);
+    terrainLayer2 = populateTerrainLayer(hexagonGridCoordinates.terrains, TERRAIN_TYPE_COUNT);
 
     return {
       gameID: "53837d47976fed3b24000005",
@@ -117,7 +126,9 @@
       element: "#mapCanvas",
       layers: [
       terrainLayer,
-      populateUnitLayer(hexagonGridCoordinates, UNIT_TYPE_COUNT)
+      terrainLayer2,
+      populateUnitLayer(hexagonGridCoordinates.units, UNIT_TYPE_COUNT),
+      populateUnitLayer(hexagonGridCoordinates.units2, UNIT_TYPE_COUNT)
       ]
     };
   }

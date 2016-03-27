@@ -76,11 +76,14 @@
       objects = utils.dataManipulation.flattenArrayBy1Level(objects);
 
       /* Throw a mapEvent if there are objects found. It might be required to throw this event later on, not yet here. */
-      if (objects.length) {
-        mapEvents.publish("objectsSelected", objects);
+      if (!objects.length) {
+        FTW.currentlySelectedObjects = undefined;
+        mapLog.debug("No objects found for selection!");
+        return;
       }
 
       FTW.currentlySelectedObjects = objects;
+      mapEvents.publish("objectsSelected", objects);
       ui.showSelections(objects, getData);
       FTW.drawOnNextTick();
     }
@@ -104,14 +107,17 @@
           return object.data.typeData;
         }
       };
-      var selectedObject = FTW.currentlySelectedObjects[0];
-      var globalCoords;
+      var globalCoords, selectedObject;
 
-      if (FTW.currentlySelectedObjects.length > 1) {
-        mapLog.error("the selected object is only supported to be one atm." + JSON.stringify(FTW.currentlySelectedObjects));
-      } else if (!selectedObject) {
-        mapLog.error("No objects selected for orders! " + JSON.stringify(selectedObject));
+      if (!FTW.currentlySelectedObjects) {
+        mapLog.debug("No objects selected for orders! " + JSON.stringify(selectedObject));
+        return;
+      } else if (FTW.currentlySelectedObjects.length > 1) {
+        mapLog.debug("the selected object is only supported to be one atm." + JSON.stringify(FTW.currentlySelectedObjects));
+        return;
       }
+
+      selectedObject = FTW.currentlySelectedObjects[0];
 
       mapStates.objectOrder();
 

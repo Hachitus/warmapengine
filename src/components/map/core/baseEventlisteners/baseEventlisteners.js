@@ -197,7 +197,8 @@
       };
     }
     /**
-     * Selecting something from the map
+     * Selecting something from the map. With mouse you can use the default right click and in touch devices you can use continuous press
+     * event (keeping the finger pressed on the screen for a preset time).
      *
      * @method toggleOrder
      * @param {Function} cb     Callback that fires when this event activates
@@ -210,17 +211,14 @@
         on: (cb) => {
           activeCB = cb;
 
-          if (mapInstance.isSupportedTouch) {
-            var tap = new Hammer.Tap();
+          var press = new Hammer.Press();
 
-            hammer.add(tap);
-            hammer.on("tap", clickListener);
-          } else {
-            mapInstance.canvas.addEventListener("contextmenu", clickListener, true);
-          }
+          hammer.add(press);
+          hammer.on("press", clickListener);
+          mapInstance.canvas.addEventListener("contextmenu", clickListener, true);
         },
         off: () => {
-          hammer.off("tap", clickListener);
+          hammer.off("press", clickListener);
           mapInstance.canvas.removeEventListener("contextmenu", clickListener, true);
         }
       };

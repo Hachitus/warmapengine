@@ -74,7 +74,9 @@
         });
 
       var dialog_selection = document.getElementById("selectionDialog");
-      var initializedUITheme = new UITheme.init(dialog_selection, window.globalMap);
+      var initializedUITheme = new UITheme.init(dialog_selection, window.globalMap, { elements: {
+          select: "#dialog_select"
+        }});
       UI(initializedUITheme, window.globalMap);
 
       promises = window.globalMap.init( pluginsToActivate, mapData.startPoint );

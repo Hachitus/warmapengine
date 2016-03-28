@@ -8,13 +8,14 @@
   var templates = window.flatworld.UIs.default.templates;
   var createVisibleHexagon = window.flatworld.extensions.hexagons.utils.createVisibleHexagon;
   var drawShapes = window.flatworld.UIs.default.utils.drawShapes;
+  var mapLog = window.flatworld.log;
 
   /*---------------------
   ------ VARIABLES ------
   ----------------------*/
   var styleSheetElement;
   var cssClasses;
-  var elements = {};
+  var elementList = {};
 
   /*---------------------
   --------- API ---------
@@ -33,7 +34,7 @@
      * @param  {Object} options         optional options
      * @param  {Object} options.styles  styles for the UI
      */
-    constructor(modal, FTW, { styles = "#F0F0F0" , elements }) {
+    constructor(modal, FTW, { styles = "#F0F0F0" , elements } = {}) {
       cssClasses = elements;
       styleSheetElement = this.addStyleElement();
       /* For testing. This is deeefinitely supposed to not be here, but it has stayed there for testing. */
@@ -109,7 +110,7 @@
         cb = () => {
           UILayer.deleteUIObjects();
           updateCB();
-          console.log("Error occured selecting the objects on this coordinates! Nothing found");
+          mapLog.debug("Error occured selecting the objects on this coordinates! Nothing found");
         };
       }
 
@@ -278,12 +279,12 @@
    * @return {[type]}       [description]
    */
   function _getElement(which) {
-    if (!elements[which]) {
+    if (!elementList[which]) {
       let element = document.querySelector(cssClasses[which]);
-      elements[which] = element;
+      elementList[which] = element;
     }
 
-    return elements[which];
+    return elementList[which];
   }
 
   window.flatworld.UIs.default.init = UIDefault;

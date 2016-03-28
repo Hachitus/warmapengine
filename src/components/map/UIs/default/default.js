@@ -13,9 +13,7 @@
   ------ VARIABLES ------
   ----------------------*/
   var styleSheetElement;
-  var cssClasses = {
-    select: "#dialog_select"
-  };
+  var cssClasses;
   var elements = {};
 
   /*---------------------
@@ -35,7 +33,7 @@
      * @param  {Object} options         optional options
      * @param  {Object} options.styles  styles for the UI
      */
-    constructor(modal, FTW, options = { styles: "#F0F0F0" }) {
+    constructor(modal, FTW, { styles = "#F0F0F0" , elements }) {
       styleSheetElement = this.addStyleElement();
       /* For testing. This is deeefinitely supposed to not be here, but it has stayed there for testing. */
       let createdCSS = `
@@ -51,6 +49,7 @@
           padding:15px;
           margin-left:10px;
         }`;
+      cssClasses = elements;
       this.addCSSRulesToScriptTag(styleSheetElement, createdCSS);
 
       // Add a media (and/or media query) here if you'd like!
@@ -59,7 +58,7 @@
 
       this.FTW = FTW;
       this.modal = modal || document.getElementById("dialog_select");
-      this.styles = options.styles;
+      this.styles = styles;
     }
     /**
      * @method getTemplates
@@ -173,10 +172,6 @@
       this.FTW.addUIObject(this.FTW.layerTypes.movableType.id, currentArrow, UINAME);
       this.FTW.drawOnNextTick();
     }
-    /**
-     * @method init
-     */
-    init() {}
 
     /*----------------------
     ------- PRIVATE --------

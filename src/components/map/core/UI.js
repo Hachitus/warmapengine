@@ -75,6 +75,9 @@
         return UITheme.highlightSelectedObject(objects[0], getDatas, UIThemeOptions);
       } else if (objects.length > 1) {
         return UITheme.showSelections(objects, getDatas, UIThemeOptions);
+      } else {
+        // Delete the UI objects, as player clicked somewhere that doesn't have any selectable objects
+        return UITheme.showSelections([]);
       }
 
       mapLog.error("No objects found" + objects.length);

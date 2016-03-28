@@ -75,10 +75,11 @@
       objects = utils.dataManipulation.mapObjectsToArray(objects);
       objects = utils.dataManipulation.flattenArrayBy1Level(objects);
 
-      /* Throw a mapEvent if there are objects found. It might be required to throw this event later on, not yet here. */
       if (!objects.length) {
         FTW.currentlySelectedObjects = undefined;
         mapLog.debug("No objects found for selection!");
+        // Delete the UI objects, as player clicked somewhere that doesn't have any selectable objects
+        ui.showSelections([]);
         return;
       }
 

@@ -34,6 +34,7 @@
      * @param  {Object} options.styles  styles for the UI
      */
     constructor(modal, FTW, { styles = "#F0F0F0" , elements }) {
+      cssClasses = elements;
       styleSheetElement = this.addStyleElement();
       /* For testing. This is deeefinitely supposed to not be here, but it has stayed there for testing. */
       let createdCSS = `
@@ -49,7 +50,6 @@
           padding:15px;
           margin-left:10px;
         }`;
-      cssClasses = elements;
       this.addCSSRulesToScriptTag(styleSheetElement, createdCSS);
 
       // Add a media (and/or media query) here if you'd like!
@@ -101,7 +101,7 @@
 
           _getElement("select").style.display = 'block';
         };
-      } else if (objects.length === 1) {
+      } else if (objects && objects.length === 1) {
         cb = () => {
           this.highlightSelectedObject(objects[0]);
         };

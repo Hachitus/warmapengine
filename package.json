@@ -1,6 +1,6 @@
 {
   "name": "flatworld",
-  "description": "Game engine for 2D strategy games in browsers",
+  "description": "Game engine for 2D turn-based strategy games in browsers",
   "version": "0.0.0",
   "main": "src/dist/flatworld.js",
   "author": "Janne Hyytiä",
@@ -18,7 +18,7 @@
     "stop": "forever stop startEngine.js FlaTWorld",
     "build": "gulp build",
     "deploy": "gulp deploy",
-    "nextVersion": "echo 'npm version patch && git tag -a 0.0 -m 'comment' && git push --tags'",
+    "nextVersion": "echo 'MANUAL: npm version patch/minor/major && git tag -a ?.?.? -m 'comment' && git push --tags && update CHANGELOG && update roadmap if needed'",
     "document": "yuidoc -t node_modules/yuidoc-theme-blue",
     "showDocuments": "echo 'starting instance in http://localhost:9002/' && forever start startDocument.js --uid FlaTWorldDocument",
     "init": "npm i -g forever && ln -s /usr/bin/nodejs /usr/bin/node && npm install"

@@ -12,7 +12,7 @@
   ----------------------*/
   const LAYER_TYPE_STATIC = 0;
   const LAYER_TYPE_MOVABLE = 1;
-  const VERSION = "0.0.1";
+  const VERSION = "0.0.0";
   var _drawMapOnNextTick = false;
   var isMapReadyPromises = [];
   var _staticLayer, _movableLayer, _renderer, ParentLayerConstructor;

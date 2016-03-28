@@ -37,22 +37,12 @@
 
   hexagons.utils.init(HEXAGON_RADIUS);
 
-  initFlatworld(mapData, {
-    canvasContainer: document.getElementById("mapCanvasContainer")
-  });
-
-  function initFlatworld (mapData, options) {
-    var canvasElement = options.canvasContainer;
-    var map = {};
-    var globalMap = {
-      data: {}
-    };
+  /* Start the whole functionality */
+  (function () {
+    var canvasElement = document.getElementById("mapCanvasContainer");
     var preload;
 
-    gameData.mapSize = {
-      x: 1000,
-      y: 1000
-    };
+    window.globalMap = {};
 
     preload = new Preload( "", { crossOrigin: false } );
     preload.addResource( typeData.graphicData.terrainBase.json );
@@ -74,7 +64,7 @@
     function onComplete() {
       var promises = [];
 
-      map = globalMap.data = factories.hexaFactory(canvasElement, {
+      window.globalMap = factories.hexaFactory(canvasElement, {
           game: gameData,
           map: mapData,
           type: typeData
@@ -84,17 +74,14 @@
         });
 
       var dialog_selection = document.getElementById("selectionDialog");
-      var initializedUITheme = new UITheme.init(dialog_selection, map);
-      UI(initializedUITheme, map);
+      var initializedUITheme = new UITheme.init(dialog_selection, window.globalMap);
+      UI(initializedUITheme, window.globalMap);
 
-      promises = map.init( pluginsToActivate, mapData.startPoint );
+      promises = window.globalMap.init( pluginsToActivate, mapData.startPoint );
 
       Promise.all(promises).then( function () {
-        document.getElementById("testFullscreen").addEventListener("click", map.toggleFullScreen);
+        document.getElementById("testFullscreen").addEventListener("click", window.globalMap.toggleFullScreen);
       });
     }
-
-    return globalMap;
-  }
-
+  })();
 })();

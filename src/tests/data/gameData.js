@@ -9,5 +9,9 @@ window.gameData = {
   maxPlayers: 10,
   players: [10],
   skippedTurns: [],
-  hexagonRadius: 69
+  hexagonRadius: 69,
+  mapSize: {
+    x: 1000,
+    y: 1000
+  }
 };

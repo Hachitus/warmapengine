@@ -11,6 +11,7 @@ Also I am very happy to get feedback on any projects or tests that might be usin
 [API documentation](http://hachitus.github.io/warmapengine/documentation/)
 [Changelog (after it is in use)](https://github.com/Hachitus/warmapengine/blob/master/CHANGELOG.md)
 [Chat in Gitter](https://gitter.im/Hachitus/FlaTWorld)
+[Basic base plunkr](https://plnkr.co/edit/X9XexHw65aB5Sa6xSroZ?p=preview)
 
 #Introduction
 2D strategy game engine for browsers. Project will move forward at its own pace. The very core functionality has been done, that practically manages adding the objects to the map, moving the map around and selecting + highlighting objects on the map. Other functionality outside of that, has not yet been done. But rough roadmap for these exist.
